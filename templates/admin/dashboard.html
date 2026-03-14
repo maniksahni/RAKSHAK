@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+.chart-wrapper { position:relative; height:200px; }
+.section-header { font-family:var(--font-display); font-size:1.4rem; font-weight:800; margin:0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+
+  <!-- Page Title -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="section-header"><i class="bi bi-speedometer2 me-2" style="color:var(--red-primary);"></i>Admin Dashboard</h2>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Real-time system overview &amp; controls</p>
+    </div>
+    <div class="d-flex gap-2">
+      <span class="pill pill-approved"><i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> Live</span>
+      <button onclick="refreshAll()" class="btn-glass" style="font-size:0.85rem;padding:6px 14px;"><i class="bi bi-arrow-clockwise"></i></button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total_users }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total_alerts }}</div>
+        <div class="stat-label">Total Alerts</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-number" style="color:var(--red-primary);">{{ stats.active_alerts }}</div>
+        <div class="stat-label">Active SOS</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-number" style="color:var(--accent-amber);">{{ stats.pending_zones }}</div>
+        <div class="stat-label">Pending Zones</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-number" style="color:var(--red-primary);">{{ stats.high_risk }}</div>
+        <div class="stat-label">High Risk Users</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="stat-card">
+        <div class="stat-number" style="color:var(--accent-green);">LIVE</div>
+        <div class="stat-label">System Status</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map + Live Alert Feed -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-7">
+      <div class="glass-card overflow-hidden">
+        <div class="p-3" style="border-bottom:1px solid var(--border-glass);">
+          <span class="section-header" style="font-size:1rem;"><i class="bi bi-map me-2" style="color:var(--red-primary);"></i>Live SOS Map</span>
+        </div>
+        <div id="admin-map" style="height:380px;"></div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="glass-card h-100 d-flex flex-column">
+        <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
+          <span class="section-header" style="font-size:1rem;"><i class="bi bi-rss me-2" style="color:var(--red-primary);"></i>Live Alert Feed</span>
+          <span class="pill pill-active" id="live-dot"><i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> LIVE</span>
+        </div>
+        <div id="admin-alert-feed" style="overflow-y:auto;max-height:380px;padding:12px;flex:1;">
+          {% if recent_alerts %}
+          {% for a in recent_alerts %}
+          <div class="alert-feed-item" id="admin-alert-{{ a.id }}">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <strong style="font-size:0.85rem;">{{ a.full_name }}</strong>
+              <span class="pill pill-{{ a.trigger_type.replace('_','-') }}" style="font-size:0.65rem;">{{ a.trigger_type.replace('_',' ')|upper }}</span>
+            </div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">
+              <i class="bi bi-geo-alt me-1"></i>{{ a.address or (a.latitude|string + ', ' + a.longitude|string) }}
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-1">
+              <span class="pill pill-{{ a.status }}" style="font-size:0.65rem;">{{ a.status }}</span>
+              <div class="d-flex gap-1">
+                {% if a.status == 'active' %}
+                <button onclick="adminResolve({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:4px;padding:2px 8px;font-size:0.7rem;cursor:pointer;">Resolve</button>
+                {% endif %}
+                <span style="font-size:0.7rem;color:var(--text-muted);">{{ a.created_at.strftime('%H:%M') if a.created_at else '' }}</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="empty-state"><i class="bi bi-inbox"></i><p>No alerts yet.</p></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Charts -->
+  <div id="analytics-section" class="mb-4">
+    <h5 class="section-header mb-3"><i class="bi bi-bar-chart-fill me-2" style="color:var(--red-primary);"></i>Analytics</h5>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="glass-card p-4">
+          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Alerts Per Day (14 days)</p>
+          <div class="chart-wrapper"><canvas id="chart-alerts-day"></canvas></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="glass-card p-4">
+          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Peak Alert Hours</p>
+          <div class="chart-wrapper"><canvas id="chart-peak-hours"></canvas></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="glass-card p-4">
+          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Risk Level Distribution</p>
+          <div class="chart-wrapper"><canvas id="chart-risk-dist"></canvas></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="glass-card p-4">
+          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Alert Status Breakdown</p>
+          <div class="chart-wrapper"><canvas id="chart-alert-status"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Management -->
+  <div id="users-section" class="mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 class="section-header"><i class="bi bi-people-fill me-2" style="color:var(--red-primary);"></i>User Management</h5>
+      <div class="d-flex gap-2">
+        <input type="text" id="user-search" placeholder="Search users..." class="form-control form-control-dark" style="width:200px;padding:6px 12px;" oninput="searchUsers(this.value)">
+      </div>
+    </div>
+    <div class="glass-card overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-dark-custom table-hover mb-0" id="users-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Email</th><th>Phone</th>
+              <th>Role</th><th>Risk</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="8"><div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Loading users...</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Danger Zone Approvals -->
+  <div id="zones-section" class="mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 class="section-header"><i class="bi bi-exclamation-triangle-fill me-2" style="color:var(--accent-amber);"></i>Pending Danger Zones</h5>
+      <button onclick="loadPendingZones()" class="btn-glass" style="font-size:0.85rem;padding:6px 14px;"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
+    </div>
+    <div id="pending-zones-list" class="row g-3">
+      <div class="col-12"><div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Loading...</p></div></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script>
+const ADMIN_ALERTS = {{ recent_alerts | tojson(default=str) | safe }};
+const ADMIN_ZONES  = {{ danger_zones  | tojson(default=str) | safe }};
+initAdmin(ADMIN_ALERTS, ADMIN_ZONES);
+</script>
+{% endblock %}

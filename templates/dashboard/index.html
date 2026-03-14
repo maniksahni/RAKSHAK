@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+
+  <!-- Top row: SOS + Risk + Status -->
+  <div class="row g-4 mb-4">
+
+    <!-- Giant SOS Button -->
+    <div class="col-md-4">
+      <div class="glass-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+        <p style="font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;">EMERGENCY TRIGGER</p>
+
+        <div class="sos-btn-wrap">
+          <div class="sonar-ring"></div>
+          <div class="sonar-ring"></div>
+          <div class="sonar-ring"></div>
+          <button class="sos-btn" id="sos-btn" onclick="triggerSOS()">
+            SOS
+            <span class="sos-label">PRESS &amp; HOLD</span>
+          </button>
+        </div>
+
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:1.5rem;" id="sos-status-text">
+          Ready — will capture GPS location automatically
+        </p>
+      </div>
+    </div>
+
+    <!-- Risk Level + AI Status -->
+    <div class="col-md-4">
+      <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <p style="font-size:0.75rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">AI RISK LEVEL</p>
+          <div id="risk-display">
+            <span class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:1rem;">
+              <span style="width:8px;height:8px;border-radius:50%;background:currentColor;"></span>
+              {{ current_user.risk_level|upper }}
+            </span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.75rem;" id="missed-ping-info">
+            Consecutive missed pings: <strong id="missed-count">{{ current_user.consecutive_missed_pings }}</strong>
+          </p>
+          <p style="font-size:0.78rem;color:var(--text-muted);" id="last-ping-info">
+            Last ping: <strong id="last-ping-ts">{{ current_user.last_ping or 'Never' }}</strong>
+          </p>
+        </div>
+
+        <div>
+          <div class="glow-line"></div>
+          <div style="background:var(--red-soft);border:1px solid var(--border-red);border-radius:var(--radius-sm);padding:12px;">
+            <p style="font-size:0.75rem;color:var(--red-primary);font-weight:600;margin:0 0 4px;">AI Engine Active</p>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin:0;">Pinging every 2 min — 3 missed = auto SOS</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="col-md-4">
+      <div class="row g-3 h-100">
+        <div class="col-6">
+          <div class="stat-card h-100">
+            <div class="stat-number" id="total-alerts">{{ alerts|length }}</div>
+            <div class="stat-label">Total Alerts</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-card h-100">
+            <div class="stat-number" id="active-alerts">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
+            <div class="stat-label">Active Alerts</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-card h-100">
+            <div class="stat-number">{{ (current_user.consecutive_missed_pings or 0) }}</div>
+            <div class="stat-label">Missed Pings</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="stat-card h-100 d-flex flex-column justify-content-between">
+            <div class="stat-number" style="color:var(--accent-green);">ON</div>
+            <div class="stat-label">AI Monitor</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map + Alert Feed -->
+  <div class="row g-4">
+
+    <!-- Leaflet Map -->
+    <div class="col-lg-7">
+      <div class="glass-card overflow-hidden">
+        <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
+          <h6 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin:0;"><i class="bi bi-map-fill me-2" style="color:var(--red-primary);"></i>Live Safety Map</h6>
+          <a href="{{ url_for('danger.map_view') }}" class="btn-glass" style="font-size:0.78rem;padding:4px 12px;text-decoration:none;">Open Full Map →</a>
+        </div>
+        <div id="map" style="height:340px;"></div>
+      </div>
+    </div>
+
+    <!-- Alert History Feed -->
+    <div class="col-lg-5">
+      <div class="glass-card h-100 d-flex flex-column">
+        <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
+          <h6 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin:0;"><i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History</h6>
+          <button onclick="markAllRead()" class="btn-glass" style="font-size:0.78rem;padding:4px 12px;">Mark Read</button>
+        </div>
+
+        <div id="alert-feed" style="overflow-y:auto;max-height:340px;padding:12px;flex:1;">
+          {% if alerts %}
+          {% for a in alerts %}
+          <div class="alert-feed-item" id="alert-{{ a.id }}">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="pill pill-{{ a.status }}">{{ a.status }}</span>
+              <span class="pill pill-{{ a.trigger_type.replace('_','-') }}" style="font-size:0.65rem;">{{ a.trigger_type.replace('_',' ')|upper }}</span>
+            </div>
+            <div style="font-size:0.85rem;margin-top:6px;font-weight:500;">{{ a.address or (a.latitude|string + ', ' + a.longitude|string) }}</div>
+            <div class="d-flex align-items-center justify-content-between mt-1">
+              <span style="font-size:0.75rem;color:var(--text-muted);">{{ a.created_at.strftime('%d %b %Y %H:%M') if a.created_at else '' }}</span>
+              <div class="d-flex gap-1">
+                {% if a.status == 'active' %}
+                <button onclick="resolveAlert({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:4px;padding:2px 8px;font-size:0.72rem;cursor:pointer;">Resolve</button>
+                {% endif %}
+                <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" style="background:none;border:1px solid var(--accent-blue);color:var(--accent-blue);border-radius:4px;padding:2px 8px;font-size:0.72rem;text-decoration:none;">PDF</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="empty-state">
+            <i class="bi bi-shield-check"></i>
+            <p>No alerts yet.<br>You're safe! 🛡</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOS Confirm Modal -->
+<div id="sos-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:5000;display:none;align-items:center;justify-content:center;">
+  <div class="glass-card-red p-5 text-center" style="max-width:400px;width:90%;border-radius:var(--radius-xl);">
+    <div style="font-size:3rem;margin-bottom:1rem;">🚨</div>
+    <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--red-primary);margin-bottom:0.5rem;">SEND SOS ALERT?</h3>
+    <p style="color:var(--text-secondary);margin-bottom:1.5rem;">This will immediately alert all your trusted contacts with your GPS location.</p>
+    <div class="d-flex gap-3 justify-content-center">
+      <button onclick="confirmSOS()" class="btn-rakshak" style="padding:12px 32px;">Confirm SOS</button>
+      <button onclick="cancelSOS()" class="btn-glass" style="padding:12px 24px;">Cancel</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+// Pass server data to JS
+const DANGER_ZONES = {{ danger_zones | tojson | safe }};
+const USER_ALERTS = {{ alerts | tojson(default=str) | safe }};
+initDashboard(DANGER_ZONES, USER_ALERTS);
+</script>
+{% endblock %}

@@ -1,0 +1,209 @@
+from flask import (Blueprint, render_template, request, jsonify,
+                   send_file, abort)
+from flask_login import login_required, current_user
+from models import query_db, log_audit
+from socket_events import emit_sos_alert
+from pdf_reports import generate_sos_report
+from datetime import datetime
+
+sos_bp = Blueprint('sos', __name__)
+
+# We import socketio lazily to avoid circular import
+def get_socketio():
+    from app import socketio
+    return socketio
+
+
+# ── Dashboard (User) ──────────────────────────────────────────────────────────
+@sos_bp.route('/dashboard')
+@login_required
+def dashboard_index():
+    if current_user.is_admin:
+        from flask import redirect, url_for
+        return redirect(url_for('admin.dashboard'))
+    return render_template('dashboard/index.html')
+
+
+# Alias route registered in app as blueprint 'dashboard'
+from flask import Blueprint
+dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
+
+@dashboard_bp.route('/')
+@login_required
+def index():
+    if current_user.is_admin:
+        from flask import redirect, url_for
+        return redirect(url_for('admin.dashboard'))
+    # Fetch recent alerts
+    alerts = query_db(
+        'SELECT * FROM sos_alerts WHERE user_id=%s ORDER BY created_at DESC LIMIT 10',
+        (current_user.id,)
+    )
+    notifications = query_db(
+        """SELECT * FROM notifications WHERE user_id=%s AND is_read=FALSE
+           ORDER BY created_at DESC LIMIT 20""",
+        (current_user.id,)
+    )
+    danger_zones = query_db(
+        'SELECT * FROM danger_zones WHERE status="approved" ORDER BY created_at DESC LIMIT 100'
+    )
+    return render_template('dashboard/index.html',
+                           alerts=alerts,
+                           notifications=notifications,
+                           danger_zones=danger_zones)
+
+
+# ── Trigger SOS ───────────────────────────────────────────────────────────────
+@sos_bp.route('/trigger', methods=['POST'])
+@login_required
+def trigger_sos():
+    try:
+        data          = request.get_json() or {}
+        lat           = data.get('latitude')
+        lng           = data.get('longitude')
+        address       = data.get('address', '')
+        trigger_type  = data.get('trigger_type', 'manual')
+        message       = data.get('message', '')
+        battery       = data.get('battery_level')
+        accuracy      = data.get('accuracy')
+
+        if lat is None or lng is None:
+            return jsonify(success=False, error='Location is required for SOS.'), 400
+
+        # Insert alert
+        alert_id = query_db(
+            """INSERT INTO sos_alerts
+               (user_id, latitude, longitude, address, trigger_type, message, battery_level, accuracy)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+            (current_user.id, lat, lng, address, trigger_type, message, battery, accuracy),
+            commit=True
+        )
+
+        alert_row = query_db('SELECT * FROM sos_alerts WHERE id=%s', (alert_id,), one=True)
+
+        # Notify trusted contacts
+        contacts = query_db(
+            'SELECT * FROM trusted_contacts WHERE user_id=%s', (current_user.id,)
+        )
+
+        # Fetch contacts who are also registered users
+        contact_user_ids = []
+        for c in contacts:
+            cu = query_db('SELECT id FROM users WHERE email=%s', (c['contact_email'],), one=True)
+            if cu:
+                contact_user_ids.append(cu['id'])
+                # Save in-app notification
+                query_db(
+                    """INSERT INTO notifications (user_id, title, message, notification_type, related_alert_id)
+                       VALUES (%s, %s, %s, 'sos', %s)""",
+                    (cu['id'],
+                     f'🚨 SOS Alert from {current_user.full_name}',
+                     f'{current_user.full_name} triggered an SOS at {address or f"{lat},{lng}"}',
+                     alert_id),
+                    commit=True
+                )
+
+        alert_dict = dict(alert_row) if alert_row else {}
+        alert_dict['created_at'] = alert_dict.get('created_at', datetime.now()).isoformat() \
+            if hasattr(alert_dict.get('created_at'), 'isoformat') else str(alert_dict.get('created_at', ''))
+
+        emit_sos_alert(get_socketio(), alert_dict, contact_user_ids, current_user.id)
+        log_audit(current_user.id, 'sos_triggered', 'sos_alerts', alert_id,
+                  new_value={'lat': lat, 'lng': lng, 'type': trigger_type},
+                  ip_address=request.remote_addr)
+
+        return jsonify(success=True, alert_id=alert_id,
+                       message='SOS Alert sent to your trusted contacts!')
+
+    except Exception as e:
+        return jsonify(success=False, error=f'SOS failed: {str(e)}'), 500
+
+
+# ── Alert History ─────────────────────────────────────────────────────────────
+@sos_bp.route('/history')
+@login_required
+def history():
+    try:
+        alerts = query_db(
+            'SELECT * FROM sos_alerts WHERE user_id=%s ORDER BY created_at DESC',
+            (current_user.id,)
+        )
+        return jsonify(success=True, alerts=[dict(a) for a in
+                       [{k: (v.isoformat() if hasattr(v, 'isoformat') else v)
+                         for k, v in row.items()} for row in alerts]])
+    except Exception as e:
+        return jsonify(success=False, error=str(e)), 500
+
+
+# ── Mark Alert Resolved ───────────────────────────────────────────────────────
+@sos_bp.route('/<int:alert_id>/resolve', methods=['POST'])
+@login_required
+def resolve_alert(alert_id):
+    try:
+        query_db(
+            """UPDATE sos_alerts SET status='resolved', resolved_at=%s
+               WHERE id=%s AND user_id=%s""",
+            (datetime.now(), alert_id, current_user.id), commit=True
+        )
+        return jsonify(success=True, message='Alert marked as resolved.')
+    except Exception as e:
+        return jsonify(success=False, error=str(e)), 500
+
+
+# ── PDF Report ────────────────────────────────────────────────────────────────
+@sos_bp.route('/<int:alert_id>/pdf')
+@login_required
+def download_pdf(alert_id):
+    try:
+        alert = query_db(
+            'SELECT * FROM sos_alerts WHERE id=%s AND user_id=%s',
+            (alert_id, current_user.id), one=True
+        )
+        if not alert:
+            abort(404)
+
+        user_data = query_db('SELECT * FROM users WHERE id=%s', (current_user.id,), one=True)
+        contacts  = query_db('SELECT * FROM trusted_contacts WHERE user_id=%s', (current_user.id,))
+
+        # Serialize datetime fields
+        alert_dict = {}
+        for k, v in alert.items():
+            alert_dict[k] = v.isoformat() if hasattr(v, 'isoformat') else v
+
+        pdf_buffer = generate_sos_report(alert_dict, dict(user_data) if user_data else {}, contacts)
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'RAKSHAK_Incident_{alert_id}.pdf'
+        )
+    except Exception as e:
+        return jsonify(success=False, error=str(e)), 500
+
+
+# ── Notifications API ─────────────────────────────────────────────────────────
+@sos_bp.route('/notifications')
+@login_required
+def get_notifications():
+    try:
+        notes = query_db(
+            """SELECT * FROM notifications WHERE user_id=%s
+               ORDER BY created_at DESC LIMIT 30""",
+            (current_user.id,)
+        )
+        result = [{k: (v.isoformat() if hasattr(v, 'isoformat') else v)
+                   for k, v in n.items()} for n in notes]
+        return jsonify(success=True, notifications=result)
+    except Exception as e:
+        return jsonify(success=False, error=str(e)), 500
+
+
+@sos_bp.route('/notifications/read-all', methods=['POST'])
+@login_required
+def mark_all_read():
+    try:
+        query_db('UPDATE notifications SET is_read=TRUE WHERE user_id=%s',
+                 (current_user.id,), commit=True)
+        return jsonify(success=True)
+    except Exception as e:
+        return jsonify(success=False, error=str(e)), 500

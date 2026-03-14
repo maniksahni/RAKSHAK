@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}My Profile — RAKSHAK{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4" style="max-width:900px;">
+
+  <div class="mb-4">
+    <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:800;">My Profile</h2>
+    <p style="color:var(--text-secondary);">Manage your personal info and trusted contacts</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Profile Form -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:1.2rem;"><i class="bi bi-person-circle me-2" style="color:var(--red-primary);"></i>Personal Information</h5>
+        <form id="profile-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3"><label class="form-label-dark">Full Name *</label>
+            <input type="text" name="full_name" class="form-control form-control-dark" value="{{ current_user.full_name }}" required></div>
+          <div class="mb-3"><label class="form-label-dark">Email</label>
+            <input type="email" class="form-control form-control-dark" value="{{ current_user.email }}" disabled style="opacity:0.5;cursor:not-allowed;"></div>
+          <div class="mb-3"><label class="form-label-dark">Phone *</label>
+            <input type="tel" name="phone" class="form-control form-control-dark" value="{{ current_user.phone }}" maxlength="10" required></div>
+          <div class="mb-4"><label class="form-label-dark">Address</label>
+            <textarea name="address" class="form-control form-control-dark" rows="2" placeholder="Your home address...">{{ current_user.address or '' }}</textarea></div>
+
+          <hr class="glow-line">
+          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem;"><i class="bi bi-key me-1"></i>Change Password (optional)</p>
+          <div class="mb-3"><label class="form-label-dark">Current Password</label>
+            <input type="password" name="current_password" class="form-control form-control-dark" placeholder="Leave blank to keep current"></div>
+          <div class="mb-3"><label class="form-label-dark">New Password</label>
+            <input type="password" name="new_password" class="form-control form-control-dark" placeholder="8+ chars, uppercase, digit, special"></div>
+
+          <button type="submit" class="btn-rakshak w-100" id="save-profile-btn">
+            Save Changes <i class="bi bi-check-lg ms-1"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Trusted Contacts -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 style="font-family:var(--font-display);font-size:1.3rem;margin:0;"><i class="bi bi-people-fill me-2" style="color:var(--red-primary);"></i>Trusted Contacts</h5>
+          <span style="font-size:0.75rem;color:var(--text-muted);" id="contact-count">{{ contacts|length }}/5</span>
+        </div>
+
+        <div id="contacts-list">
+          {% if contacts %}
+          {% for c in contacts %}
+          <div class="alert-feed-item d-flex align-items-center justify-content-between" id="contact-{{ c.id }}">
+            <div>
+              <div style="font-weight:600;font-size:0.9rem;">{{ c.contact_name }}</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);">{{ c.contact_phone }} &bull; <span class="pill pill-low" style="font-size:0.65rem;">{{ c.relationship }}</span></div>
+            </div>
+            <button onclick="deleteContact({{ c.id }})" style="background:none;border:none;color:var(--red-primary);cursor:pointer;padding:4px 8px;" title="Remove">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="empty-state" id="no-contacts">
+            <i class="bi bi-person-x"></i>
+            <p>No trusted contacts yet.<br>Add up to 5 people who will receive SOS alerts.</p>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if contacts|length < 5 %}
+        <hr class="glow-line">
+        <div id="add-contact-form">
+          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:0.75rem;">Add Contact</p>
+          <form id="contact-form" onsubmit="addContact(event)">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-2">
+              <div class="col-6"><input type="text" name="contact_name" class="form-control form-control-dark" placeholder="Name" required></div>
+              <div class="col-6"><input type="tel" name="contact_phone" class="form-control form-control-dark" placeholder="10-digit phone" maxlength="10" required></div>
+              <div class="col-8"><input type="email" name="contact_email" class="form-control form-control-dark" placeholder="Email" required></div>
+              <div class="col-4">
+                <select name="relationship" class="form-control form-control-dark form-select-dark" style="appearance:auto;">
+                  <option>Friend</option><option>Family</option><option>Colleague</option><option>Neighbour</option><option>Partner</option>
+                </select>
+              </div>
+              <div class="col-12"><button type="submit" class="btn-rakshak w-100" style="padding:10px 20px;font-size:0.9rem;">Add Contact <i class="bi bi-plus-circle ms-1"></i></button></div>
+            </div>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('profile-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('save-profile-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  showLoading('Saving profile...');
+  const fd = new FormData(this);
+  const res = await fetch('/auth/profile', {method:'POST',body:fd});
+  const data = await res.json();
+  hideLoading();
+  if (data.success) showToast(data.message, 'success');
+  else (data.errors||[data.error]).forEach(e=>showToast(e,'error'));
+  btn.disabled = false; btn.innerHTML = 'Save Changes <i class="bi bi-check-lg ms-1"></i>';
+});
+
+async function addContact(e) {
+  e.preventDefault();
+  const form = document.getElementById('contact-form');
+  const fd = new FormData(form);
+  const res = await fetch('/auth/contacts/add', {method:'POST',body:fd});
+  const data = await res.json();
+  if (data.success) {
+    showToast('Contact added!', 'success');
+    setTimeout(() => window.location.reload(), 800);
+  } else showToast(data.error||'Failed', 'error');
+}
+
+async function deleteContact(id) {
+  if (!confirm('Remove this contact?')) return;
+  const res = await fetch(`/auth/contacts/${id}/delete`, {
+    method:'DELETE', headers:{'X-CSRFToken':CSRF_TOKEN}
+  });
+  const data = await res.json();
+  if (data.success) {
+    document.getElementById('contact-'+id)?.remove();
+    showToast('Contact removed.', 'info');
+  } else showToast(data.error||'Failed', 'error');
+}
+</script>
+{% endblock %}

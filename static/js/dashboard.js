@@ -1,0 +1,270 @@
+/**
+ * RAKSHAK Dashboard JS
+ * Handles: Leaflet map, SOS trigger, AI ping, alert feed, SocketIO updates
+ */
+
+let dashMap = null;
+let userMarker = null;
+let currentLat = null, currentLng = null;
+let sosConfirmPending = false;
+let pingInterval = null;
+
+function initDashboard(dangerZones, userAlerts) {
+  initMap(dangerZones);
+  startAIPing();
+  loadRiskScore();
+}
+
+// ── Leaflet Map ─────────────────────────────────────────────────────────────
+function initMap(dangerZones) {
+  dashMap = L.map('map', { zoomControl: true, attributionControl: false });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19
+  }).addTo(dashMap);
+
+  dashMap.setView([20.5937, 78.9629], 5); // Default: India
+
+  // Add danger zones as glowing markers
+  if (dangerZones) {
+    dangerZones.forEach(zone => {
+      const colors = { high: '#e53e3e', medium: '#f6ad55', low: '#48bb78' };
+      const color = colors[zone.severity] || '#e53e3e';
+
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="width:16px;height:16px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.3);box-shadow:0 0 12px ${color},0 0 24px ${color}44;animation:sos-pulse 2s infinite;"></div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+      });
+      L.marker([zone.latitude, zone.longitude], { icon })
+        .bindPopup(`<div style="font-family:Inter,sans-serif;">
+          <strong style="color:#e53e3e;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'DANGER'}</strong><br>
+          <span style="color:#a0aec0;font-size:0.8rem;">${zone.description || ''}</span><br>
+          <span class="pill pill-${zone.severity}" style="font-size:0.7rem;">${zone.severity}</span>
+        </div>`)
+        .addTo(dashMap);
+    });
+  }
+
+  // Locate user
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      currentLat = pos.coords.latitude;
+      currentLng = pos.coords.longitude;
+      dashMap.setView([currentLat, currentLng], 14);
+
+      const userIcon = L.divIcon({
+        className: '',
+        html: `<div style="width:20px;height:20px;border-radius:50%;background:#4299e1;border:3px solid rgba(255,255,255,0.8);box-shadow:0 0 16px #4299e1,0 0 32px #4299e144;"></div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+      });
+      userMarker = L.marker([currentLat, currentLng], { icon: userIcon })
+        .bindPopup('<strong>📍 You are here</strong>')
+        .addTo(dashMap);
+
+      checkProximity(currentLat, currentLng);
+    }, () => {}, { enableHighAccuracy: true });
+  }
+}
+
+// ── SOS Trigger ─────────────────────────────────────────────────────────────
+function triggerSOS() {
+  if (sosConfirmPending) return;
+  sosConfirmPending = true;
+
+  const modal = document.getElementById('sos-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function cancelSOS() {
+  sosConfirmPending = false;
+  const modal = document.getElementById('sos-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function confirmSOS() {
+  cancelSOS();
+  const btn = document.getElementById('sos-btn');
+  const statusText = document.getElementById('sos-status-text');
+
+  showLoading('Capturing GPS & sending SOS...');
+  if (btn) btn.style.opacity = '0.6';
+  if (statusText) statusText.textContent = 'Sending alert...';
+
+  try {
+    // Try to get fresh GPS
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async pos => {
+        currentLat = pos.coords.latitude;
+        currentLng = pos.coords.longitude;
+        await sendSOS(currentLat, currentLng, pos.coords.accuracy, pos.coords.altitude);
+      }, async () => {
+        // Fallback to last known
+        await sendSOS(currentLat || 0, currentLng || 0, null, null);
+      }, { timeout: 5000, enableHighAccuracy: true });
+    } else {
+      await sendSOS(null, null, null, null);
+    }
+  } catch (e) {
+    hideLoading();
+    showToast('SOS failed: ' + e.message, 'error');
+  }
+}
+
+async function sendSOS(lat, lng, accuracy, battery) {
+  try {
+    const resp = await postJSON('/sos/trigger', {
+      latitude: lat,
+      longitude: lng,
+      accuracy: accuracy,
+      battery_level: battery,
+      trigger_type: 'manual',
+    });
+    hideLoading();
+    const btn = document.getElementById('sos-btn');
+    const statusText = document.getElementById('sos-status-text');
+    if (resp.success) {
+      showToast('🚨 SOS Alert sent to your trusted contacts!', 'sos', 8000);
+      if (btn) { btn.style.opacity = '1'; btn.style.background = 'radial-gradient(circle at 35% 35%, #48bb78, #276749)'; }
+      if (statusText) statusText.textContent = `Alert #${resp.alert_id} sent! Contacts notified.`;
+      setTimeout(() => {
+        if (btn) btn.style.background = '';
+        if (statusText) statusText.textContent = 'Ready — will capture GPS location automatically';
+      }, 6000);
+      // Refresh alert feed
+      refreshAlertFeed();
+    } else {
+      showToast('SOS error: ' + (resp.error || 'Unknown error'), 'error');
+      if (btn) btn.style.opacity = '1';
+      if (statusText) statusText.textContent = 'Error — please try again';
+    }
+  } catch (e) {
+    hideLoading();
+    showToast('Network error: ' + e.message, 'error');
+    const btn = document.getElementById('sos-btn');
+    if (btn) btn.style.opacity = '1';
+  }
+}
+
+// ── Alert Actions ────────────────────────────────────────────────────────────
+async function resolveAlert(alertId) {
+  const resp = await postJSON(`/sos/${alertId}/resolve`);
+  if (resp.success) {
+    showToast('Alert marked as resolved.', 'success');
+    const el = document.getElementById('alert-'+alertId);
+    if (el) el.querySelector('.pill').className = 'pill pill-resolved';
+  } else showToast(resp.error || 'Failed', 'error');
+}
+
+async function refreshAlertFeed() {
+  const resp = await fetch('/sos/history').then(r=>r.json());
+  if (!resp.success) return;
+  const feed = document.getElementById('alert-feed');
+  if (!feed || !resp.alerts.length) return;
+  feed.innerHTML = resp.alerts.slice(0,10).map(a => `
+    <div class="alert-feed-item" id="alert-${a.id}">
+      <div class="d-flex align-items-center justify-content-between">
+        <span class="pill pill-${a.status}">${a.status}</span>
+        <span class="pill" style="font-size:0.65rem;">${(a.trigger_type||'').replace(/_/g,' ').toUpperCase()}</span>
+      </div>
+      <div style="font-size:0.85rem;margin-top:6px;">${a.address || (a.latitude+', '+a.longitude)}</div>
+      <div class="d-flex justify-content-between mt-1">
+        <span style="font-size:0.75rem;color:var(--text-muted);">${a.created_at||''}</span>
+        <a href="/sos/${a.id}/pdf" style="font-size:0.72rem;border:1px solid var(--accent-blue);color:var(--accent-blue);border-radius:4px;padding:2px 8px;text-decoration:none;">PDF</a>
+      </div>
+    </div>`).join('');
+}
+
+async function markAllRead() {
+  const resp = await postJSON('/sos/notifications/read-all');
+  if (resp.success) {
+    showToast('All notifications marked as read.', 'info');
+    const badge = document.getElementById('notif-count');
+    if (badge) badge.textContent = '0';
+  }
+}
+
+// ── AI Ping ──────────────────────────────────────────────────────────────────
+function startAIPing() {
+  // Immediate first ping
+  sendPing();
+  // Then every 2 minutes
+  pingInterval = setInterval(sendPing, 120000);
+
+  // Keep-alive on page unload
+  window.addEventListener('beforeunload', () => {
+    clearInterval(pingInterval);
+  });
+}
+
+async function sendPing() {
+  try {
+    // Also emit via SocketIO
+    if (typeof socket !== 'undefined' && socket.connected) {
+      socket.emit('ping_alive', { lat: currentLat, lng: currentLng });
+    }
+    const resp = await postJSON('/ai/ping', { lat: currentLat, lng: currentLng });
+    if (resp.success) {
+      updateRiskBadge(resp.risk_level);
+    }
+  } catch (e) {
+    // Silent fail — server will detect missed pings
+    console.warn('[RAKSHAK] Ping failed:', e.message);
+  }
+}
+
+async function loadRiskScore() {
+  try {
+    const resp = await fetch('/ai/risk-score').then(r=>r.json());
+    if (resp.success) {
+      updateRiskBadge(resp.risk_level);
+      const mc = document.getElementById('missed-count');
+      if (mc) mc.textContent = resp.consecutive_missed_pings || 0;
+      const lp = document.getElementById('last-ping-ts');
+      if (lp) lp.textContent = resp.last_ping ? new Date(resp.last_ping).toLocaleTimeString() : 'Never';
+    }
+  } catch(e) {}
+}
+
+function updateRiskBadge(level) {
+  const disp = document.getElementById('risk-display');
+  const navBadge = document.getElementById('nav-risk-badge');
+  const labels = { low:'LOW', medium:'MEDIUM', high:'HIGH' };
+  const html = `<span class="risk-badge risk-${level}"><span style="width:8px;height:8px;border-radius:50%;background:currentColor;"></span> ${labels[level]||level.toUpperCase()}</span>`;
+  if (disp) disp.innerHTML = html;
+  if (navBadge) navBadge.outerHTML = html;
+}
+
+// ── Proximity Check ──────────────────────────────────────────────────────────
+async function checkProximity(lat, lng) {
+  try {
+    const resp = await postJSON('/danger-zones/proximity', { lat, lng });
+    if (resp.success && resp.count > 0) {
+      const nearest = resp.nearby[0];
+      const el = document.getElementById('proximity-warning');
+      if (el) {
+        el.style.display = 'flex';
+        document.getElementById('proximity-text').textContent =
+          `${nearest.zone_type.replace(/_/g,' ')} zone ${Math.round(nearest.distance_m)}m away — ${nearest.description.substring(0,60)}...`;
+      }
+    }
+  } catch(e) {}
+}
+
+// ── SocketIO live callbacks (defined for base.html) ──────────────────────────
+function onNewSos(data) {
+  showToast(`🚨 New SOS Alert triggered!`, 'sos', 8000);
+  refreshAlertFeed();
+}
+
+function onRiskUpdate(data) {
+  if (data.user_id === window.currentUserId) {
+    updateRiskBadge(data.risk_level);
+  }
+}
+
+function onNewDangerZone(data) {
+  showToast('⚠️ New danger zone approved near you!', 'warning');
+}

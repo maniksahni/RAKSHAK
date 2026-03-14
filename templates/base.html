@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RAKSHAK — Real-time Alert & Knowledge System for Hazard And Crisis. AI-integrated emergency response for women's safety.">
+  <title>{% block title %}RAKSHAK — Women's Safety System{% endblock %}</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  {% block extra_css %}{% endblock %}
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+
+<!-- ── Navbar ──────────────────────────────────────────────────────────────── -->
+{% if current_user.is_authenticated %}
+<nav class="navbar navbar-rakshak d-flex align-items-center px-4" style="position:fixed;top:0;left:{% if not current_user.is_admin %}240px{% else %}240px{% endif %};right:0;z-index:200;">
+  <!-- Mobile toggle -->
+  <button class="btn-glass d-lg-none me-3" id="sidebar-toggle" style="padding:6px 10px;">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <span class="navbar-brand-text me-auto">🛡 RAKSHAK</span>
+
+  <div class="d-flex align-items-center gap-3">
+    <!-- Notifications -->
+    <div class="position-relative" id="notif-bell-wrap" style="cursor:pointer">
+      <i class="bi bi-bell text-secondary" style="font-size:1.2rem;"></i>
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+            style="background:var(--red-primary);font-size:0.6rem;" id="notif-count">0</span>
+    </div>
+
+    <!-- User Info -->
+    <div class="glass-card d-flex align-items-center gap-2 px-3 py-2" style="border-radius:50px;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--red-soft);border:1px solid var(--border-red);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--red-primary);">
+        {{ current_user.full_name[0].upper() }}
+      </div>
+      <span style="font-size:0.85rem;font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ current_user.full_name }}</span>
+      {% if current_user.role == 'admin' %}
+        <span class="pill pill-resolved">Admin</span>
+      {% else %}
+        <span id="nav-risk-badge" class="risk-badge risk-{{ current_user.risk_level }}">
+          <span class="dot" style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
+          {{ current_user.risk_level|upper }}
+        </span>
+      {% endif %}
+    </div>
+
+    <a href="{{ url_for('auth.logout') }}" class="btn-glass" style="padding:8px 16px;font-size:0.85rem;text-decoration:none;">
+      <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
+  </div>
+</nav>
+
+<!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
+<aside class="sidebar pt-4" id="sidebar">
+  <div class="px-4 mb-4">
+    <div class="brand-text" style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--red-primary);text-shadow:0 0 20px rgba(229,62,62,0.5);">🛡 RAKSHAK</div>
+    <div style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;">Safety System</div>
+  </div>
+
+  <hr class="glow-line mx-3">
+
+  {% if current_user.is_admin %}
+  <a class="sidebar-link {% if request.endpoint=='admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">
+    <i class="bi bi-speedometer2"></i> Dashboard
+  </a>
+  <a class="sidebar-link" href="{{ url_for('admin.dashboard') }}#users-section">
+    <i class="bi bi-people"></i> User Management
+  </a>
+  <a class="sidebar-link" href="{{ url_for('admin.dashboard') }}#zones-section">
+    <i class="bi bi-geo-alt"></i> Danger Zones
+  </a>
+  <a class="sidebar-link" href="{{ url_for('admin.dashboard') }}#analytics-section">
+    <i class="bi bi-bar-chart"></i> Analytics
+  </a>
+  <a class="sidebar-link {% if request.endpoint=='danger.map_view' %}active{% endif %}" href="{{ url_for('danger.map_view') }}">
+    <i class="bi bi-map"></i> Live Map
+  </a>
+  {% else %}
+  <a class="sidebar-link {% if request.endpoint=='dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
+    <i class="bi bi-house"></i> Dashboard
+  </a>
+  <a class="sidebar-link {% if request.endpoint=='danger.map_view' %}active{% endif %}" href="{{ url_for('danger.map_view') }}">
+    <i class="bi bi-map-fill"></i> Danger Map
+  </a>
+  <a class="sidebar-link {% if request.endpoint=='auth.profile' %}active{% endif %}" href="{{ url_for('auth.profile') }}">
+    <i class="bi bi-person-circle"></i> My Profile
+  </a>
+  <a class="sidebar-link" href="{{ url_for('sos.history') }}" id="sidebar-history-link">
+    <i class="bi bi-clock-history"></i> Alert History
+  </a>
+  {% endif %}
+
+  <hr class="glow-line mx-3">
+  <a class="sidebar-link text-danger" href="{{ url_for('auth.logout') }}">
+    <i class="bi bi-box-arrow-right"></i> Logout
+  </a>
+</aside>
+{% else %}
+<!-- Public Navbar -->
+<nav class="navbar navbar-rakshak px-4 d-flex align-items-center" style="position:fixed;top:0;left:0;right:0;z-index:1000;">
+  <a class="navbar-brand-text me-auto text-decoration-none" href="{{ url_for('main.index') }}">🛡 RAKSHAK</a>
+  <div class="d-flex gap-3">
+    <a href="{{ url_for('auth.login') }}" class="btn-glass text-decoration-none" style="padding:8px 20px;font-size:0.9rem;">Login</a>
+    <a href="{{ url_for('auth.register') }}" class="btn-rakshak text-decoration-none" style="padding:8px 24px;font-size:0.9rem;">Get Protected</a>
+  </div>
+</nav>
+{% endif %}
+
+<!-- ── Main Wrap ────────────────────────────────────────────────────────────── -->
+<div {% if current_user.is_authenticated %}class="main-content" style="padding-top:70px;"{% else %}style="padding-top:60px;"{% endif %}>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        {% for category, message in messages %}
+          showToast({{ message|tojson }}, '{{ category }}');
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<!-- ── Toast Container ─────────────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ── Loading Overlay ─────────────────────────────────────────────────────── -->
+<div class="spinner-overlay" id="loading-overlay" style="display:none;">
+  <div class="text-center">
+    <div class="spinner-ring"></div>
+    <div style="margin-top:16px;color:var(--text-secondary);font-size:0.85rem;" id="loading-msg">Processing...</div>
+  </div>
+</div>
+
+<!-- ── Scripts ─────────────────────────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+// ── Global Toast System ──────────────────────────────────────────────────────
+function showToast(message, type='info', duration=4000) {
+  const container = document.getElementById('toast-container');
+  const icons = { success:'bi-check-circle-fill', error:'bi-x-circle-fill',
+                  warning:'bi-exclamation-triangle-fill', info:'bi-info-circle-fill', sos:'bi-shield-exclamation' };
+  const icon = icons[type] || icons.info;
+
+  const toast = document.createElement('div');
+  toast.className = `rakshak-toast toast-${type}`;
+  toast.innerHTML = `
+    <i class="bi ${icon}" style="font-size:1.2rem;flex-shrink:0;margin-top:2px;"></i>
+    <div>
+      <div style="font-weight:600;margin-bottom:2px;">${type.charAt(0).toUpperCase()+type.slice(1)}</div>
+      <div style="color:var(--text-secondary);font-size:0.85rem;">${message}</div>
+    </div>
+    <i class="bi bi-x ms-auto" style="cursor:pointer;opacity:0.5;flex-shrink:0;" onclick="this.closest('.rakshak-toast').remove()"></i>`;
+  toast.addEventListener('click', () => toast.remove());
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.animation = 'toast-out 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, duration);
+}
+
+// ── Loading Helpers ──────────────────────────────────────────────────────────
+function showLoading(msg='Processing...') {
+  document.getElementById('loading-msg').textContent = msg;
+  document.getElementById('loading-overlay').style.display = 'flex';
+}
+function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
+
+// ── CSRF Token ───────────────────────────────────────────────────────────────
+const CSRF_TOKEN = '{{ csrf_token() }}';
+
+// ── POST Helper ──────────────────────────────────────────────────────────────
+async function postJSON(url, data={}) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+// ── Sidebar Mobile Toggle ────────────────────────────────────────────────────
+const sidebarToggle = document.getElementById('sidebar-toggle');
+if (sidebarToggle) {
+  sidebarToggle.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+}
+
+// ── SocketIO init (for authenticated users) ──────────────────────────────────
+{% if current_user.is_authenticated %}
+const socket = io({ transports: ['websocket'] });
+
+socket.on('connected', (data) => {
+  console.log('[RAKSHAK] Connected:', data);
+  {% if current_user.is_admin %}
+  socket.emit('join_admin');
+  {% endif %}
+});
+
+socket.on('new_alert', (data) => {
+  showToast(`🚨 SOS Alert from ${data.alert.user_id}!`, 'sos', 8000);
+  updateNotifCount(1);
+});
+
+socket.on('new_sos', (data) => {
+  showToast(`🚨 New SOS Alert received!`, 'sos', 8000);
+  if (typeof onNewSos === 'function') onNewSos(data);
+});
+
+socket.on('risk_update', (data) => {
+  if (typeof onRiskUpdate === 'function') onRiskUpdate(data);
+});
+
+socket.on('new_danger_zone', (data) => {
+  if (typeof onNewDangerZone === 'function') onNewDangerZone(data);
+});
+
+// Notification counter
+function updateNotifCount(delta) {
+  const badge = document.getElementById('notif-count');
+  if (badge) badge.textContent = parseInt(badge.textContent || 0) + delta;
+}
+
+// Load notification count on page load
+fetch('/sos/notifications').then(r=>r.json()).then(data=>{
+  if (data.success) {
+    const unread = data.notifications.filter(n=>!n.is_read).length;
+    document.getElementById('notif-count').textContent = unread;
+  }
+});
+{% endif %}
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

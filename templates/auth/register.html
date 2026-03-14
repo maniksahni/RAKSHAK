@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Register — RAKSHAK{% endblock %}
+
+{% block content %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 50% 30%, rgba(229,62,62,0.07) 0%, transparent 60%);">
+  <div style="width:100%;max-width:520px;">
+
+    <div class="text-center mb-4">
+      <div style="font-family:var(--font-display);font-size:2.5rem;font-weight:800;color:var(--red-primary);text-shadow:0 0 20px rgba(229,62,62,0.5);">🛡 RAKSHAK</div>
+      <p style="color:var(--text-muted);font-size:0.9rem;">Create your safety account</p>
+    </div>
+
+    <div class="glass-card p-4 p-md-5">
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:1.5rem;">Create Account</h2>
+
+      <form id="register-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label-dark">Full Name *</label>
+            <input type="text" name="full_name" class="form-control form-control-dark" placeholder="Priya Sharma" required minlength="2">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-dark">Email Address *</label>
+            <input type="email" name="email" class="form-control form-control-dark" placeholder="you@example.com" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-dark">Phone Number *</label>
+            <input type="tel" name="phone" class="form-control form-control-dark" placeholder="10-digit mobile" maxlength="10" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-dark">Password *</label>
+            <div style="position:relative;">
+              <input type="password" id="pwd" name="password" class="form-control form-control-dark" placeholder="Min 8 chars" required>
+              <button type="button" onclick="togglePwd2('pwd')" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;">
+                <i class="bi bi-eye" id="eye-pwd"></i>
+              </button>
+            </div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">Uppercase, lowercase, digit & special char required</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-dark">Confirm Password *</label>
+            <input type="password" name="confirm_password" class="form-control form-control-dark" placeholder="Repeat password" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label-dark">Security Question *</label>
+            <select name="security_question" class="form-control form-control-dark form-select-dark" required style="appearance:auto;">
+              <option value="">Choose a question...</option>
+              <option>What is your mother's maiden name?</option>
+              <option>What was the name of your first pet?</option>
+              <option>What city were you born in?</option>
+              <option>What is your favourite teacher's name?</option>
+              <option>What is your childhood nickname?</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label-dark">Security Answer *</label>
+            <input type="text" name="security_answer" class="form-control form-control-dark" placeholder="Your answer (stored securely)" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-rakshak w-100 mt-4" id="reg-btn">
+          Create Account <i class="bi bi-shield-check ms-1"></i>
+        </button>
+      </form>
+
+      <hr class="glow-line">
+      <p class="text-center" style="color:var(--text-secondary);font-size:0.9rem;margin:0;">
+        Already have an account?
+        <a href="{{ url_for('auth.login') }}" style="color:var(--red-primary);text-decoration:none;font-weight:600;">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePwd2(id) {
+  const inp = document.getElementById(id);
+  const eye = document.getElementById('eye-'+id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  eye.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+
+document.getElementById('register-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true;
+  btn.textContent = 'Creating account...';
+  showLoading('Creating your account...');
+
+  const fd = new FormData(this);
+  try {
+    const res = await fetch('/auth/register', { method:'POST', body:fd });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Account created! Redirecting to login...', 'success');
+      setTimeout(() => window.location.href = data.redirect, 1000);
+    } else {
+      (data.errors||['Registration failed']).forEach(e => showToast(e, 'error'));
+      btn.disabled = false;
+      btn.innerHTML = 'Create Account <i class="bi bi-shield-check ms-1"></i>';
+    }
+  } catch(err) {
+    showToast('Network error. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Create Account <i class="bi bi-shield-check ms-1"></i>';
+  } finally {
+    hideLoading();
+  }
+});
+</script>
+{% endblock %}

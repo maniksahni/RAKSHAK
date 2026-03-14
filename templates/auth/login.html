@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Login — RAKSHAK{% endblock %}
+
+{% block content %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 50% 30%, rgba(229,62,62,0.07) 0%, transparent 60%);">
+  <div style="width:100%;max-width:440px;">
+
+    <div class="text-center mb-4">
+      <div style="font-family:var(--font-display);font-size:2.5rem;font-weight:800;color:var(--red-primary);text-shadow:0 0 20px rgba(229,62,62,0.5);">🛡 RAKSHAK</div>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-top:4px;">Sign in to your safety dashboard</p>
+    </div>
+
+    <div class="glass-card p-4 p-md-5">
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:1.5rem;">Welcome back</h2>
+
+      <form id="login-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="mb-3">
+          <label class="form-label-dark">Email Address</label>
+          <input type="email" id="email" name="email" class="form-control form-control-dark" placeholder="you@example.com" required autocomplete="email">
+        </div>
+
+        <div class="mb-4">
+          <div class="d-flex justify-content-between">
+            <label class="form-label-dark">Password</label>
+            <a href="{{ url_for('auth.forgot_password') }}" style="font-size:0.8rem;color:var(--red-primary);text-decoration:none;">Forgot password?</a>
+          </div>
+          <div style="position:relative;">
+            <input type="password" id="password" name="password" class="form-control form-control-dark" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" onclick="togglePwd('password')" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;">
+              <i class="bi bi-eye" id="eye-password"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-rakshak w-100" id="login-btn">
+          Sign In <i class="bi bi-arrow-right-circle ms-1"></i>
+        </button>
+      </form>
+
+      <hr class="glow-line">
+      <p class="text-center" style="color:var(--text-secondary);font-size:0.9rem;margin:0;">
+        Don't have an account?
+        <a href="{{ url_for('auth.register') }}" style="color:var(--red-primary);text-decoration:none;font-weight:600;">Register now</a>
+      </p>
+    </div>
+
+    <!-- Demo credentials -->
+    <div class="glass-card mt-3 p-3" style="border-color:rgba(246,173,85,0.3);">
+      <p style="font-size:0.78rem;color:var(--accent-amber);margin:0;text-align:center;">
+        <i class="bi bi-info-circle me-1"></i>
+        <strong>Demo:</strong> admin@rakshak.com / Admin@123 &nbsp;|&nbsp; priya@example.com / User@123
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePwd(id) {
+  const inp = document.getElementById(id);
+  const eye = document.getElementById('eye-'+id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  eye.className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+  showLoading('Signing you in...');
+
+  const fd = new FormData(this);
+  try {
+    const res = await fetch('/auth/login', { method:'POST', body:fd });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Welcome back! Redirecting...', 'success');
+      setTimeout(() => window.location.href = data.redirect, 800);
+    } else {
+      const errs = data.errors || [data.error || 'Login failed'];
+      errs.forEach(e => showToast(e, 'error'));
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In <i class="bi bi-arrow-right-circle ms-1"></i>';
+    }
+  } catch(err) {
+    showToast('Network error. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Sign In <i class="bi bi-arrow-right-circle ms-1"></i>';
+  } finally {
+    hideLoading();
+  }
+});
+</script>
+{% endblock %}
