@@ -25,6 +25,7 @@ body {
   background: var(--bg);
   color: var(--white);
   overflow-x: hidden;
+  visibility: visible !important;
 }
 
 /* noise */
@@ -215,27 +216,29 @@ body::before {
   background: linear-gradient(90deg, transparent, rgba(229,62,62,.35) 40%, rgba(255,107,53,.35) 60%, transparent);
 }
 
-/* ── FIX 2 — Marquee ──────────────────── */
-.marquee-container {
+/* ── Marquee ──────────────────── */
+.marquee-wrapper {
   overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 14px 0;
+  background: rgba(255,255,255,0.02);
+}
+.marquee-inner {
+  display: flex;
   white-space: nowrap;
-  border-top: 1px solid var(--bdr);
-  border-bottom: 1px solid var(--bdr);
-  padding: 16px 0;
-  background: rgba(255,255,255,.01);
+  animation: marquee 25s linear infinite;
 }
-.marquee-track {
-  display: inline-flex;
-  animation: marqueeScroll 20s linear infinite;
+.marquee-inner span {
+  color: #e53e3e;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  padding-right: 0;
+  flex-shrink: 0;
 }
-.marquee-track span {
-  font-family: var(--sg); font-size: .8rem; font-weight: 600;
-  letter-spacing: .25em; text-transform: uppercase;
-  color: var(--red); padding: 0 2rem;
-}
-.marquee-track .sep { color: rgba(229,62,62,.35); padding: 0; letter-spacing: 0; }
-@keyframes marqueeScroll {
-  0%   { transform: translateX(0); }
+@keyframes marquee {
+  0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
@@ -480,22 +483,17 @@ body::before {
   </div>
 </section>
 
-<!-- ── FIX 2: Marquee ─────────────────── -->
-<div class="marquee-container">
-  <div class="marquee-track">
-    <span>PROTECT</span><span class="sep">•</span>
-    <span>ALERT</span><span class="sep">•</span>
-    <span>RESPOND</span><span class="sep">•</span>
-    <span>DETECT</span><span class="sep">•</span>
-    <span>SECURE</span><span class="sep">•</span>
-    <span>RAKSHAK</span><span class="sep">•</span>
-    <!-- duplicate for seamless loop -->
-    <span>PROTECT</span><span class="sep">•</span>
-    <span>ALERT</span><span class="sep">•</span>
-    <span>RESPOND</span><span class="sep">•</span>
-    <span>DETECT</span><span class="sep">•</span>
-    <span>SECURE</span><span class="sep">•</span>
-    <span>RAKSHAK</span><span class="sep">•</span>
+<!-- ── Marquee ─────────────────── -->
+<div class="marquee-wrapper">
+  <div class="marquee-inner">
+    <span>PROTECT • ALERT • RESPOND • 
+    DETECT • SECURE • RAKSHAK • 
+    PROTECT • ALERT • RESPOND • 
+    DETECT • SECURE • RAKSHAK • </span>
+    <span>PROTECT • ALERT • RESPOND • 
+    DETECT • SECURE • RAKSHAK • 
+    PROTECT • ALERT • RESPOND • 
+    DETECT • SECURE • RAKSHAK • </span>
   </div>
 </div>
 
@@ -664,6 +662,13 @@ body::before {
 
 {% block extra_js %}
 <script>
+/* ── Loader Fix ─────────────────────── */
+setTimeout(() => {
+  const loader = document.getElementById('loader');
+  if (loader) loader.style.display = 'none';
+  document.body.style.overflow = 'auto';
+}, 1500);
+
 /* ── Navbar scroll ──────────────────── */
 const nav = document.getElementById('rk-nav');
 window.addEventListener('scroll', () => {
