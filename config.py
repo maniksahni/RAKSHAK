@@ -9,12 +9,12 @@ class Config:
     WTF_CSRF_TIME_LIMIT = 3600
     WTF_CSRF_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE']  # Allow GET without CSRF token
 
-    # Database
-    DB_HOST = os.environ.get('DB_HOST', 'localhost')
-    DB_PORT = int(os.environ.get('DB_PORT', 3306))
-    DB_USER = os.environ.get('DB_USER', 'root')
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
-    DB_NAME = os.environ.get('DB_NAME', 'rakshak')
+    # Database — supports Railway MySQL plugin env vars
+    DB_HOST = os.environ.get('MYSQLHOST') or os.environ.get('DB_HOST', 'localhost')
+    DB_PORT = int(os.environ.get('MYSQLPORT') or os.environ.get('DB_PORT', 3306))
+    DB_USER = os.environ.get('MYSQLUSER') or os.environ.get('DB_USER', 'root')
+    DB_PASSWORD = os.environ.get('MYSQLPASSWORD') or os.environ.get('DB_PASSWORD', '')
+    DB_NAME = os.environ.get('MYSQLDATABASE') or os.environ.get('DB_NAME', 'rakshak')
 
     # Rate limiting
     RATELIMIT_STORAGE_URL = 'memory://'
