@@ -437,14 +437,7 @@ body::before {
 {% block content %}
 <div class="rk-page">
 
-<!-- Navbar -->
-<nav class="rk-nav" id="rk-nav">
-  <a class="rk-logo" href="#">🛡 RAKSHAK</a>
-  <div class="rk-nav-links">
-    <a href="{{ url_for('auth.login') }}" class="rk-nbtn ghost">Login</a>
-    <a href="{{ url_for('auth.register') }}" class="rk-nbtn solid">Get Protected</a>
-  </div>
-</nav>
+<!-- Navbar handled in base.html -->
 
 <!-- ── HERO ───────────────────────────── -->
 <section class="rk-hero">
@@ -486,14 +479,8 @@ body::before {
 <!-- ── Marquee ─────────────────── -->
 <div class="marquee-wrapper">
   <div class="marquee-inner">
-    <span>PROTECT • ALERT • RESPOND • 
-    DETECT • SECURE • RAKSHAK • 
-    PROTECT • ALERT • RESPOND • 
-    DETECT • SECURE • RAKSHAK • </span>
-    <span>PROTECT • ALERT • RESPOND • 
-    DETECT • SECURE • RAKSHAK • 
-    PROTECT • ALERT • RESPOND • 
-    DETECT • SECURE • RAKSHAK • </span>
+    <span>PROTECT • ALERT • RESPOND • DETECT • SECURE • RAKSHAK • </span>
+    <span>PROTECT • ALERT • RESPOND • DETECT • SECURE • RAKSHAK • </span>
   </div>
 </div>
 
@@ -506,19 +493,19 @@ body::before {
     </div>
     <div class="stats-row reveal">
       <div class="stat-cell">
-        <div class="stat-n" data-target="3" data-suffix="">0</div>
+        <div class="stat-n" data-target="3" data-suffix="">3</div>
         <div class="stat-l">User Roles</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-n" data-target="6" data-suffix="">0</div>
+        <div class="stat-n" data-target="6" data-suffix="">6</div>
         <div class="stat-l">Core Modules</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-n" data-target="2" data-suffix="min">0</div>
+        <div class="stat-n" data-target="2" data-suffix="min">2min</div>
         <div class="stat-l">AI Ping Cycle</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-n" data-target="500" data-suffix="m">0</div>
+        <div class="stat-n" data-target="500" data-suffix="m">500m</div>
         <div class="stat-l">Danger Radius</div>
       </div>
     </div>
@@ -697,27 +684,29 @@ const observer = new IntersectionObserver(
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 /* ── Stat counters ──────────────────── */
-function runCounter(el) {
-  if (el.dataset.counted) return;
-  el.dataset.counted = '1';
-  const target = parseInt(el.dataset.target, 10);
-  const suffix = el.dataset.suffix || '';
-  const dur = 1800; const t0 = performance.now();
-  (function tick(now) {
-    const p = Math.min((now - t0) / dur, 1);
-    el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target) + suffix;
-    if (p < 1) requestAnimationFrame(tick);
-  })(t0);
-}
-const statsIO = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('.stat-n[data-target]').forEach(runCounter);
-      statsIO.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.3 });
-const statsEl = document.getElementById('stats-section');
-if (statsEl) statsIO.observe(statsEl);
+document.addEventListener('DOMContentLoaded', function() {
+  function runCounter(el) {
+    if (el.dataset.counted) return;
+    el.dataset.counted = '1';
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1800; const t0 = performance.now();
+    (function tick(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+  const statsIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.stat-n[data-target]').forEach(runCounter);
+        statsIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const statsEl = document.getElementById('stats-section');
+  if (statsEl) statsIO.observe(statsEl);
+});
 </script>
 {% endblock %}
