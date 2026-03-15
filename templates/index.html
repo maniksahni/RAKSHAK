@@ -114,7 +114,7 @@ body::before {
   font-size: .72rem; font-weight: 500; letter-spacing: .2em;
   text-transform: uppercase; color: rgba(255,255,255,.7);
   margin-bottom: 2.5rem;
-  opacity: 0; animation: slideUp .7s ease .4s both;
+  opacity: 1;
 }
 .badge-pulse {
   width: 7px; height: 7px; border-radius: 50%;
@@ -133,35 +133,29 @@ body::before {
 .hl-line { display: block; overflow: hidden; }
 .hl-inner {
   display: block;
-  opacity: 0; transform: translateY(110%);
-  animation: wordRise .75s cubic-bezier(.16,1,.3,1) both;
+  opacity: 1;
 }
-.hl-line:nth-child(1) .hl-inner { animation-delay: .6s; color: var(--white); }
+.hl-line:nth-child(1) .hl-inner { color: var(--white); }
 .hl-line:nth-child(2) .hl-inner {
-  animation-delay: .82s;
   background: linear-gradient(135deg,#e53e3e,#ff6b35);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-@keyframes wordRise {
-  from { opacity:0; transform:translateY(110%); }
-  to   { opacity:1; transform:translateY(0); }
 }
 
 .hero-sub {
   font-size: clamp(.95rem,2vw,1.1rem);
   color: rgba(255,255,255,.55);
   max-width: 520px; margin: 0 auto 2.8rem; line-height: 1.8;
-  opacity: 0; animation: slideUp .7s ease 1.05s both;
+  opacity: 1;
 }
 .hero-cta {
   display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
   margin-bottom: 4rem;
-  opacity: 0; animation: slideUp .6s ease 1.2s both;
+  opacity: 1;
 }
 
 /* Floating SOS card */
-.hero-card-wrap { opacity: 0; animation: slideUp .7s ease 1.4s both; }
+.hero-card-wrap { opacity: 1; }
 .sos-card {
   display: inline-flex; align-items: center; gap: 14px;
   background: rgba(255,255,255,.05);
@@ -186,11 +180,6 @@ body::before {
 .sos-card-title { font-size: .9rem; font-weight: 600; color: var(--white); margin-bottom: 2px; }
 .sos-card-sub   { font-size: .78rem; color: rgba(255,255,255,.5); }
 .sos-card-time  { font-size: .7rem; color: var(--red); margin-top: 2px; font-weight: 500; }
-
-@keyframes slideUp {
-  from { opacity:0; transform:translateY(24px); }
-  to   { opacity:1; transform:none; }
-}
 
 /* ── Buttons ──────────────────────────── */
 .rk-btn {
@@ -258,8 +247,9 @@ body::before {
 }
 .stat-cell:last-child { border-right: none; }
 .stat-cell:hover { background: rgba(255,255,255,.025); }
-.stat-n {
+.stat-number {
   font-family: var(--sg); font-size: 3rem; font-weight: 700;
+  display: block;
   background: linear-gradient(135deg,#e53e3e,#ff6b35);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; line-height: 1; margin-bottom: .5rem;
@@ -392,14 +382,13 @@ body::before {
 
 /* ── FIX 5 — Scroll reveal ────────────── */
 .reveal {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: opacity .8s ease, transform .8s ease;
+  opacity: 1;
+  transform: translateY(0);
 }
 .reveal.active    { opacity: 1; transform: translateY(0); }
-.reveal-delay-1   { transition-delay: .1s; }
-.reveal-delay-2   { transition-delay: .2s; }
-.reveal-delay-3   { transition-delay: .3s; }
+.reveal-delay-1   { }
+.reveal-delay-2   { }
+.reveal-delay-3   { }
 
 /* ── FIX 7 — Footer ───────────────────── */
 .rk-footer {
@@ -493,19 +482,19 @@ body::before {
     </div>
     <div class="stats-row reveal">
       <div class="stat-cell">
-        <div class="stat-n" data-target="3" data-suffix="">3</div>
+        <span class="stat-number" data-target="3" data-suffix="">3</span>
         <div class="stat-l">User Roles</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-n" data-target="6" data-suffix="">6</div>
+        <span class="stat-number" data-target="6" data-suffix="">6</span>
         <div class="stat-l">Core Modules</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-n" data-target="2" data-suffix="min">2min</div>
+        <span class="stat-number" data-target="2" data-suffix="min">2min</span>
         <div class="stat-l">AI Ping Cycle</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-n" data-target="500" data-suffix="m">500m</div>
+        <span class="stat-number" data-target="500" data-suffix="m">500m</span>
         <div class="stat-l">Danger Radius</div>
       </div>
     </div>
@@ -649,12 +638,7 @@ body::before {
 
 {% block extra_js %}
 <script>
-/* ── Loader Fix ─────────────────────── */
-setTimeout(() => {
-  const loader = document.getElementById('loader');
-  if (loader) loader.style.display = 'none';
-  document.body.style.overflow = 'auto';
-}, 1500);
+/* ── Loader Fix (Removed) ─────────────────────── */
 
 /* ── Navbar scroll ──────────────────── */
 const nav = document.getElementById('rk-nav');
@@ -700,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const statsIO = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        e.target.querySelectorAll('.stat-n[data-target]').forEach(runCounter);
+        e.target.querySelectorAll('.stat-number[data-target]').forEach(runCounter);
         statsIO.unobserve(e.target);
       }
     });
