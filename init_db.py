@@ -6,9 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SCHEMA_SQL = """
-CREATE DATABASE IF NOT EXISTS rakshak CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE rakshak;
-
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -125,26 +122,40 @@ SEEDS = [
        '$2b$12$eImiTXuWVxfM37uY4JANjQeOCwdQ1fPyFI2moxAmT6TPBVGB7dR3q')""",
 ]
 
-_host = os.environ.get('MYSQLHOST') or os.environ.get('DB_HOST', 'localhost')
-_port = int(os.environ.get('MYSQLPORT') or os.environ.get('DB_PORT', 3306))
-_user = os.environ.get('MYSQLUSER') or os.environ.get('DB_USER', 'root')
+_host     = os.environ.get('MYSQLHOST')     or os.environ.get('DB_HOST', 'localhost')
+_port     = int(os.environ.get('MYSQLPORT') or os.environ.get('DB_PORT', 3306))
+_user     = os.environ.get('MYSQLUSER')     or os.environ.get('DB_USER', 'root')
 _password = os.environ.get('MYSQLPASSWORD') or os.environ.get('DB_PASSWORD', '')
+_db       = os.environ.get('MYSQLDATABASE') or os.environ.get('DB_NAME', 'rakshak')
+
+# Strip CREATE DATABASE / USE statements — Railway provides the DB already
+def _clean_schema(sql, db_name):
+    lines = []
+    for line in sql.splitlines():
+        stripped = line.strip().upper()
+        if stripped.startswith('CREATE DATABASE') or stripped.startswith('USE '):
+            continue
+        lines.append(line)
+    return '\n'.join(lines)
 
 try:
-    conn = mysql.connector.connect(host=_host, port=_port, user=_user, password=_password)
+    conn = mysql.connector.connect(
+        host=_host, port=_port, user=_user, password=_password, database=_db
+    )
     cursor = conn.cursor()
 
-    # Execute schema statements one by one
-    for stmt in SCHEMA_SQL.split(';'):
+    clean_sql = _clean_schema(SCHEMA_SQL, _db)
+    for stmt in clean_sql.split(';'):
         stmt = stmt.strip()
         if stmt:
             cursor.execute(stmt)
 
     conn.commit()
-    print("✅ All tables created successfully.")
+    print(f"✅ All tables created in '{_db}' successfully.")
 
     # Seed
     for seed in SEEDS:
+        # Replace hardcoded 'rakshak' db references with actual db name
         try:
             cursor.execute(seed)
             conn.commit()
@@ -152,9 +163,9 @@ try:
             print(f"  ℹ️  Seed note: {e}")
 
     # Verify
-    cursor.execute("USE rakshak; SELECT COUNT(*) FROM users;")
-    for r in cursor:
-        print(f"✅ Database ready — {r[0]} user(s) seeded.")
+    cursor.execute("SELECT COUNT(*) FROM users")
+    count = cursor.fetchone()[0]
+    print(f"✅ Database ready — {count} user(s) seeded.")
 
     cursor.close()
     conn.close()
