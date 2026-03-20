@@ -21,7 +21,7 @@ def generate_sos_report(alert: dict, user: dict, contacts: list) -> BytesIO:
     )
 
     # ── Colour Palette ──────────────────────────────────────────────
-    RED      = colors.HexColor('#e53e3e')
+    RED      = colors.HexColor('#dc2626')
     DARK_BG  = colors.HexColor('#1a1a2e')
     LIGHT    = colors.HexColor('#f0f0f0')
     WHITE    = colors.white

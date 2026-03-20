@@ -28,8 +28,8 @@ function initMap(dangerZones) {
   // Add danger zones as glowing markers
   if (dangerZones) {
     dangerZones.forEach(zone => {
-      const colors = { high: '#e53e3e', medium: '#f6ad55', low: '#48bb78' };
-      const color = colors[zone.severity] || '#e53e3e';
+      const colors = { high: '#dc2626', medium: '#f6ad55', low: '#48bb78' };
+      const color = colors[zone.severity] || '#dc2626';
 
       const icon = L.divIcon({
         className: '',
@@ -39,7 +39,7 @@ function initMap(dangerZones) {
       });
       L.marker([zone.latitude, zone.longitude], { icon })
         .bindPopup(`<div style="font-family:Inter,sans-serif;">
-          <strong style="color:#e53e3e;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'DANGER'}</strong><br>
+          <strong style="color:#dc2626;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'DANGER'}</strong><br>
           <span style="color:#a0aec0;font-size:0.8rem;">${zone.description || ''}</span><br>
           <span class="pill pill-${zone.severity}" style="font-size:0.7rem;">${zone.severity}</span>
         </div>`)
@@ -99,7 +99,7 @@ async function confirmSOS() {
       navigator.geolocation.getCurrentPosition(async pos => {
         currentLat = pos.coords.latitude;
         currentLng = pos.coords.longitude;
-        await sendSOS(currentLat, currentLng, pos.coords.accuracy, null);
+        await sendSOS(currentLat, currentLng, pos.coords.accuracy, pos.coords.altitude);
       }, async () => {
         // Fallback to last known
         await sendSOS(currentLat || 0, currentLng || 0, null, null);

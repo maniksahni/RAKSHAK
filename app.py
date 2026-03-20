@@ -166,7 +166,7 @@ def create_app(config_name=None):
     )
     socketio.init_app(
         app,
-        async_mode='threading',
+        async_mode='eventlet',
         cors_allowed_origins=cors_origins,
         logger=False,
         engineio_logger=False,
