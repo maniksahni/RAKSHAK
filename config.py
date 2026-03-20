@@ -21,7 +21,7 @@ class Config:
     RATELIMIT_DEFAULT = '200 per day;50 per hour'
 
     # SocketIO
-    SOCKETIO_ASYNC_MODE = 'threading'
+    SOCKETIO_ASYNC_MODE = 'eventlet'
 
 
 class DevelopmentConfig(Config):
