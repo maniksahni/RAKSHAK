@@ -146,8 +146,15 @@
   </div>
 </div>
 
+<!-- Proximity Warning Banner -->
+<div id="proximity-warning" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:4000;background:rgba(246,173,85,0.15);border:1px solid #f6ad55;border-radius:8px;padding:12px 20px;max-width:500px;width:90%;align-items:center;gap:12px;">
+  <i class="bi bi-exclamation-triangle-fill" style="color:#f6ad55;font-size:1.2rem;flex-shrink:0;"></i>
+  <span id="proximity-text" style="font-size:0.85rem;color:var(--text-secondary);flex:1;"></span>
+  <button onclick="this.closest('#proximity-warning').style.display='none'" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:0 4px;">&times;</button>
+</div>
+
 <!-- SOS Confirm Modal -->
-<div id="sos-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:5000;display:none;align-items:center;justify-content:center;">
+<div id="sos-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:5000;align-items:center;justify-content:center;">
   <div class="glass-card-red p-5 text-center" style="max-width:400px;width:90%;border-radius:var(--radius-xl);">
     <div style="font-size:3rem;margin-bottom:1rem;">🚨</div>
     <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--red-primary);margin-bottom:0.5rem;">SEND SOS ALERT?</h3>
@@ -165,6 +172,7 @@
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
 // Pass server data to JS
+window.currentUserId = {{ current_user.id | tojson }};
 const DANGER_ZONES = {{ danger_zones | tojson | safe }};
 const USER_ALERTS = {{ alerts | tojson(default=str) | safe }};
 initDashboard(DANGER_ZONES, USER_ALERTS);

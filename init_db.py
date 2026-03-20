@@ -1,6 +1,9 @@
 """One-shot DB initialiser for RAKSHAK — run once to create all tables."""
 import mysql.connector
 import sys
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 SCHEMA_SQL = """
 CREATE DATABASE IF NOT EXISTS rakshak CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -122,8 +125,13 @@ SEEDS = [
        '$2b$12$eImiTXuWVxfM37uY4JANjQeOCwdQ1fPyFI2moxAmT6TPBVGB7dR3q')""",
 ]
 
+_host = os.environ.get('MYSQLHOST') or os.environ.get('DB_HOST', 'localhost')
+_port = int(os.environ.get('MYSQLPORT') or os.environ.get('DB_PORT', 3306))
+_user = os.environ.get('MYSQLUSER') or os.environ.get('DB_USER', 'root')
+_password = os.environ.get('MYSQLPASSWORD') or os.environ.get('DB_PASSWORD', '')
+
 try:
-    conn = mysql.connector.connect(host='localhost', user='root', password='')
+    conn = mysql.connector.connect(host=_host, port=_port, user=_user, password=_password)
     cursor = conn.cursor()
 
     # Execute schema statements one by one
