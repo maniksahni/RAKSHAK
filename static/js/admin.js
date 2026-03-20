@@ -30,13 +30,13 @@ function initAdminMap(alerts, zones) {
       if (!a.latitude || !a.longitude) return;
       const icon = L.divIcon({
         className: '',
-        html: `<div style="width:18px;height:18px;border-radius:50%;background:#e53e3e;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 12px #e53e3e,0 0 24px #e53e3e44;${a.status==='active'?'animation:sos-pulse 1.5s infinite;':''}"></div>`,
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:#dc2626;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 12px #dc2626,0 0 24px #dc262644;${a.status==='active'?'animation:sos-pulse 1.5s infinite;':''}"></div>`,
         iconSize: [18, 18], iconAnchor: [9, 9],
       });
       const m = L.marker([a.latitude, a.longitude], { icon })
         .bindPopup(`
           <div style="font-family:Inter,sans-serif;min-width:180px;">
-            <strong style="color:#e53e3e;">🚨 ${a.full_name||'User'}</strong><br>
+            <strong style="color:#dc2626;">🚨 ${a.full_name||'User'}</strong><br>
             <span style="font-size:0.8rem;color:#a0aec0;">${a.phone||''}</span><br>
             <span style="font-size:0.78rem;">${a.address||`${a.latitude},${a.longitude}`}</span><br>
             <span class="pill pill-${a.status}" style="font-size:0.7rem;">${a.status}</span>
@@ -79,8 +79,8 @@ async function loadAnalytics() {
         labels: daysData.map(d => d.date),
         datasets: [{
           label: 'Alerts', data: daysData.map(d => d.count),
-          backgroundColor: 'rgba(229,62,62,0.6)',
-          borderColor: '#e53e3e', borderWidth: 1, borderRadius: 4,
+          backgroundColor: 'rgba(220,38,38,0.6)',
+          borderColor: '#dc2626', borderWidth: 1, borderRadius: 4,
         }]
       },
       options: {
@@ -126,8 +126,8 @@ async function loadAnalytics() {
         labels: ['Low','Medium','High'],
         datasets: [{
           data: [riskMap.low||0, riskMap.medium||0, riskMap.high||0],
-          backgroundColor: ['rgba(72,187,120,0.7)','rgba(246,173,85,0.7)','rgba(229,62,62,0.7)'],
-          borderColor: ['#48bb78','#f6ad55','#e53e3e'],
+          backgroundColor: ['rgba(72,187,120,0.7)','rgba(246,173,85,0.7)','rgba(220,38,38,0.7)'],
+          borderColor: ['#48bb78','#f6ad55','#dc2626'],
           borderWidth: 1.5, hoverOffset: 8,
         }]
       },
@@ -147,8 +147,8 @@ async function loadAnalytics() {
         labels: ['Active','Resolved','False Alarm'],
         datasets: [{
           data: [statusMap.active||0, statusMap.resolved||0, statusMap.false_alarm||0],
-          backgroundColor: ['rgba(229,62,62,0.7)','rgba(72,187,120,0.7)','rgba(160,174,192,0.4)'],
-          borderColor: ['#e53e3e','#48bb78','#a0aec0'],
+          backgroundColor: ['rgba(220,38,38,0.7)','rgba(72,187,120,0.7)','rgba(160,174,192,0.4)'],
+          borderColor: ['#dc2626','#48bb78','#a0aec0'],
           borderWidth: 1, borderRadius: 4,
         }]
       },
@@ -311,11 +311,11 @@ function onNewSos(data) {
   if (adminMap && a.latitude && a.longitude) {
     const icon = L.divIcon({
       className:'',
-      html:`<div style="width:22px;height:22px;border-radius:50%;background:#e53e3e;border:3px solid white;box-shadow:0 0 20px #e53e3e;animation:sos-pulse 1s infinite;"></div>`,
+      html:`<div style="width:22px;height:22px;border-radius:50%;background:#dc2626;border:3px solid white;box-shadow:0 0 20px #dc2626;animation:sos-pulse 1s infinite;"></div>`,
       iconSize:[22,22],iconAnchor:[11,11],
     });
     L.marker([a.latitude,a.longitude],{icon})
-      .bindPopup(`<strong style="color:#e53e3e;">🚨 New SOS Alert!</strong><br>User #${a.user_id}`)
+      .bindPopup(`<strong style="color:#dc2626;">🚨 New SOS Alert!</strong><br>User #${a.user_id}`)
       .addTo(adminMap).openPopup();
     adminMap.setView([a.latitude,a.longitude],14);
   }

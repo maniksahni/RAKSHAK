@@ -3,39 +3,104 @@
 
 {% block content %}
 <div class="container-fluid py-4">
+
+  <!-- Page Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;"><i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History</h2>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Complete record of all your safety alerts</p>
+    </div>
+    <span class="pill pill-active" style="font-size:0.8rem;">{{ alerts|length }} alert{{ 's' if alerts|length != 1 }}</span>
+  </div>
+
+  <!-- Summary Stats Strip -->
+  {% set active_count = alerts|selectattr('status','eq','active')|list|length %}
+  {% set resolved_count = alerts|selectattr('status','eq','resolved')|list|length %}
+  {% set manual_count = alerts|selectattr('trigger_type','eq','manual')|list|length %}
+  {% set auto_count = alerts|length - manual_count %}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-number">{{ alerts|length }}</div>
+        <div class="stat-label">Total Alerts</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-number" style="color:var(--red-primary);">{{ active_count }}</div>
+        <div class="stat-label">Active</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-number" style="color:var(--accent-green);">{{ resolved_count }}</div>
+        <div class="stat-label">Resolved</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card text-center">
+        <div class="stat-number" style="color:var(--accent-amber);">{{ auto_count }}</div>
+        <div class="stat-label">Auto-triggered</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert Table -->
   <div class="glass-card">
-    <div class="p-4" style="border-bottom:1px solid var(--border-glass);display:flex;align-items:center;justify-content:space-between;">
-      <h5 style="font-family:var(--font-display);font-weight:700;margin:0;"><i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History</h5>
-      <span style="font-size:0.85rem;color:var(--text-muted);">{{ alerts|length }} alert{{ 's' if alerts|length != 1 }}</span>
+    <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
+      <span style="font-family:var(--font-display);font-size:1rem;font-weight:700;"><i class="bi bi-list-ul me-2" style="color:var(--red-primary);"></i>All Alerts</span>
+      <input type="text" id="alert-search" class="form-control form-control-dark" placeholder="Search alerts..." style="width:200px;padding:6px 12px;font-size:0.82rem;" oninput="filterAlerts(this.value)">
     </div>
 
     {% if alerts %}
     <div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;">
+      <table style="width:100%;border-collapse:collapse;" id="alerts-table">
         <thead>
           <tr style="border-bottom:1px solid var(--border-glass);">
-            <th style="padding:12px 16px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">#</th>
-            <th style="padding:12px 16px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Status</th>
-            <th style="padding:12px 16px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Type</th>
-            <th style="padding:12px 16px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Location</th>
-            <th style="padding:12px 16px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Date</th>
-            <th style="padding:12px 16px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Actions</th>
+            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">#</th>
+            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Status</th>
+            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Type</th>
+            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Location</th>
+            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Date</th>
+            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for a in alerts %}
-          <tr style="border-bottom:1px solid var(--border-glass);" id="alert-row-{{ a.id }}">
-            <td style="padding:14px 16px;font-size:0.85rem;color:var(--text-muted);">{{ a.id }}</td>
-            <td style="padding:14px 16px;"><span class="pill pill-{{ a.status }}">{{ a.status }}</span></td>
-            <td style="padding:14px 16px;"><span class="pill" style="font-size:0.7rem;">{{ a.trigger_type.replace('_',' ')|upper }}</span></td>
-            <td style="padding:14px 16px;font-size:0.85rem;">{{ a.address or (a.latitude|string + ', ' + a.longitude|string) }}</td>
-            <td style="padding:14px 16px;font-size:0.82rem;color:var(--text-muted);">{{ a.created_at.strftime('%d %b %Y %H:%M') if a.created_at else '' }}</td>
+          <tr style="border-bottom:1px solid var(--border-glass);transition:background 0.2s;" class="alert-table-row" id="alert-row-{{ a.id }}" onmouseover="this.style.background='var(--bg-card-hover)'" onmouseout="this.style.background=''">
+            <td style="padding:14px 16px;font-size:0.85rem;color:var(--text-muted);font-weight:600;">{{ a.id }}</td>
+            <td style="padding:14px 16px;">
+              <span class="pill pill-{{ a.status }}">
+                {% if a.status == 'active' %}<i class="bi bi-exclamation-circle-fill" style="font-size:0.55rem;"></i> {% endif %}
+                {{ a.status }}
+              </span>
+            </td>
+            <td style="padding:14px 16px;">
+              <span class="pill {% if a.trigger_type == 'manual' %}pill-active{% else %}pill-pending{% endif %}" style="font-size:0.7rem;">
+                {% if a.trigger_type == 'manual' %}<i class="bi bi-hand-index-thumb" style="font-size:0.55rem;"></i>{% else %}<i class="bi bi-cpu" style="font-size:0.55rem;"></i>{% endif %}
+                {{ a.trigger_type.replace('_',' ')|upper }}
+              </span>
+            </td>
+            <td style="padding:14px 16px;font-size:0.85rem;">
+              <i class="bi bi-geo-alt-fill me-1" style="color:var(--red-primary);font-size:0.75rem;"></i>
+              {{ a.address or (a.latitude|string + ', ' + a.longitude|string) }}
+            </td>
+            <td style="padding:14px 16px;font-size:0.82rem;color:var(--text-muted);">
+              {% if a.created_at %}
+              <div>{{ a.created_at.strftime('%d %b %Y') }}</div>
+              <div style="font-size:0.72rem;color:var(--text-muted);opacity:0.7;">{{ a.created_at.strftime('%H:%M') }}</div>
+              {% endif %}
+            </td>
             <td style="padding:14px 16px;">
               <div class="d-flex gap-2">
                 {% if a.status == 'active' %}
-                <button onclick="resolveAlert({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:4px;padding:3px 10px;font-size:0.75rem;cursor:pointer;">Resolve</button>
+                <button onclick="resolveAlert({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:6px;padding:4px 12px;font-size:0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(72,187,120,0.15)'" onmouseout="this.style.background='none'">
+                  <i class="bi bi-check-circle me-1"></i>Resolve
+                </button>
                 {% endif %}
-                <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" style="background:none;border:1px solid var(--accent-blue);color:var(--accent-blue);border-radius:4px;padding:3px 10px;font-size:0.75rem;text-decoration:none;">PDF</a>
+                <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" style="background:none;border:1px solid var(--accent-blue);color:var(--accent-blue);border-radius:6px;padding:4px 12px;font-size:0.75rem;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(66,153,225,0.15)'" onmouseout="this.style.background='none'">
+                  <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+                </a>
               </div>
             </td>
           </tr>
@@ -44,9 +109,9 @@
       </table>
     </div>
     {% else %}
-    <div class="empty-state" style="padding:60px 20px;">
-      <i class="bi bi-shield-check"></i>
-      <p>No alerts yet.<br>You're safe! 🛡</p>
+    <div class="empty-state" style="padding:80px 20px;">
+      <i class="bi bi-shield-check" style="font-size:4rem;color:var(--accent-green);opacity:0.5;"></i>
+      <p style="font-size:1.1rem;margin-top:1rem;">No alerts recorded yet.<br><span style="font-size:0.85rem;color:var(--text-muted);">Your safety record will appear here.</span></p>
     </div>
     {% endif %}
   </div>
@@ -54,15 +119,24 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
 async function resolveAlert(alertId) {
   const resp = await postJSON(`/sos/${alertId}/resolve`);
   if (resp.success) {
     showToast('Alert marked as resolved.', 'success');
     const row = document.getElementById('alert-row-' + alertId);
-    if (row) row.querySelector('.pill').className = 'pill pill-resolved';
+    if (row) {
+      row.querySelector('.pill').className = 'pill pill-resolved';
+      row.querySelector('.pill').innerHTML = 'resolved';
+    }
   } else showToast(resp.error || 'Failed', 'error');
+}
+
+function filterAlerts(q) {
+  const query = q.toLowerCase();
+  document.querySelectorAll('.alert-table-row').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+  });
 }
 </script>
 {% endblock %}

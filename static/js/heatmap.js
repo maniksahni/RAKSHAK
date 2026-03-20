@@ -35,7 +35,7 @@ async function initHeatmap() {
       // Temp marker
       if (window._tempMarker) heatMap.removeLayer(window._tempMarker);
       window._tempMarker = L.circleMarker([selectedLat, selectedLng], {
-        radius: 10, color: '#e53e3e', fillColor: '#e53e3e', fillOpacity: 0.5, weight: 2
+        radius: 10, color: '#dc2626', fillColor: '#dc2626', fillOpacity: 0.5, weight: 2
       }).addTo(heatMap);
 
       document.getElementById('report-modal').style.display = 'flex';
@@ -86,7 +86,7 @@ async function loadHeatmap() {
       blur: 25,
       maxZoom: 17,
       max: 1.0,
-      gradient: { 0.0: '#4299e1', 0.3: '#f6ad55', 0.6: '#e53e3e', 1.0: '#fff' },
+      gradient: { 0.0: '#4299e1', 0.3: '#f6ad55', 0.6: '#dc2626', 1.0: '#fff' },
     });
     heatLayer.addTo(heatMap);
   } catch (e) {
@@ -111,8 +111,8 @@ function addZoneMarker(zone, coords) {
   const lng = zone.longitude || (coords && coords[0]);
   if (!lat || !lng) return;
 
-  const colors = { high: '#e53e3e', medium: '#f6ad55', low: '#48bb78' };
-  const color = colors[zone.severity] || '#e53e3e';
+  const colors = { high: '#dc2626', medium: '#f6ad55', low: '#48bb78' };
+  const color = colors[zone.severity] || '#dc2626';
 
   const icon = L.divIcon({
     className: '',
@@ -133,7 +133,7 @@ function addZoneMarker(zone, coords) {
   const marker = L.marker([lat, lng], { icon }).bindPopup(`
     <div style="font-family:Inter,sans-serif;min-width:180px;">
       <div style="font-size:1.2rem;margin-bottom:4px;">${emoji}</div>
-      <strong style="color:#e53e3e;">${(zone.zone_type||'danger').replace(/_/g,' ').toUpperCase()}</strong>
+      <strong style="color:#dc2626;">${(zone.zone_type||'danger').replace(/_/g,' ').toUpperCase()}</strong>
       <div style="color:#a0aec0;font-size:0.82rem;margin:6px 0;">${zone.description || ''}</div>
       <div style="display:flex;gap:6px;align-items:center;">
         <span class="pill pill-${zone.severity}" style="font-size:0.7rem;">${zone.severity}</span>
