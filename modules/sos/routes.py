@@ -1,10 +1,14 @@
+import logging
 from flask import (Blueprint, render_template, request, jsonify,
                    send_file, abort)
 from flask_login import login_required, current_user
 from models import query_db, log_audit
 from socket_events import emit_sos_alert
 from pdf_reports import generate_sos_report
+from healer import validate_coords, validate_battery, sanitize_str
 from datetime import datetime
+
+log = logging.getLogger('rakshak')
 
 sos_bp = Blueprint('sos', __name__)
 
@@ -58,17 +62,28 @@ def index():
 @login_required
 def trigger_sos():
     try:
-        data          = request.get_json() or {}
-        lat           = data.get('latitude')
-        lng           = data.get('longitude')
-        address       = data.get('address', '')
-        trigger_type  = data.get('trigger_type', 'manual')
-        message       = data.get('message', '')
-        battery       = data.get('battery_level')
-        accuracy      = data.get('accuracy')
+        data         = request.get_json() or {}
+        raw_lat      = data.get('latitude')
+        raw_lng      = data.get('longitude')
+        address      = sanitize_str(data.get('address', ''), 500)
+        trigger_type = data.get('trigger_type', 'manual')
+        message      = sanitize_str(data.get('message', ''), 1000)
+        battery      = validate_battery(data.get('battery_level'))
+        accuracy     = data.get('accuracy')
 
-        if lat is None or lng is None:
+        if raw_lat is None or raw_lng is None:
             return jsonify(success=False, error='Location is required for SOS.'), 400
+
+        try:
+            lat, lng = validate_coords(raw_lat, raw_lng)
+        except ValueError as ve:
+            return jsonify(success=False, error=str(ve)), 400
+
+        # Clamp accuracy to sane range
+        try:
+            accuracy = max(0.0, float(accuracy)) if accuracy is not None else None
+        except (TypeError, ValueError):
+            accuracy = None
 
         # Insert alert
         alert_id = query_db(
@@ -116,7 +131,8 @@ def trigger_sos():
                        message='SOS Alert sent to your trusted contacts!')
 
     except Exception as e:
-        return jsonify(success=False, error=f'SOS failed: {str(e)}'), 500
+        log.error(f'SOS trigger failed for user {current_user.id}: {e}')
+        return jsonify(success=False, error='SOS failed. Please try again.'), 500
 
 
 # ── Alert History ─────────────────────────────────────────────────────────────
