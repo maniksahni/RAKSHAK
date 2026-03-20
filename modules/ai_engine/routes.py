@@ -1,8 +1,12 @@
+import logging
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from models import query_db, log_audit
 from socket_events import emit_risk_update, emit_sos_alert
+from healer import validate_coords
 from datetime import datetime, timedelta
+
+log = logging.getLogger('rakshak')
 
 ai_bp = Blueprint('ai', __name__)
 
@@ -27,9 +31,17 @@ PING_INTERVAL_SEC  = 120  # JS pings every 2 minutes
 def ping():
     """JS calls this every 2 minutes. Updates last_ping and resets counters."""
     try:
-        data = request.get_json() or {}
-        lat  = data.get('lat')
-        lng  = data.get('lng')
+        data    = request.get_json() or {}
+        raw_lat = data.get('lat')
+        raw_lng = data.get('lng')
+
+        # Validate coordinates if provided
+        lat, lng = None, None
+        if raw_lat is not None and raw_lng is not None:
+            try:
+                lat, lng = validate_coords(raw_lat, raw_lng)
+            except ValueError:
+                lat, lng = None, None   # store null if invalid, don't block ping
 
         now = datetime.now()
         query_db(
@@ -154,8 +166,8 @@ def _trigger_auto_sos(user_id):
             'message': f'AUTO SOS: {name} stopped responding'
         }, contact_user_ids, user_id)
 
-    except Exception:
-        pass  # Auto-SOS failure logged silently
+    except Exception as e:
+        log.error(f'Auto-SOS failed for user {user_id}: {e}')
 
 
 # ── Risk Score API ────────────────────────────────────────────────────────────
