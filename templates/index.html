@@ -38,42 +38,50 @@ body::before {
 
 /* ── Navbar ─────────────────────────────── */
 .rk-nav {
-  position: fixed; inset: 0 0 auto 0; z-index: 1000;
+  position: fixed !important; inset: 0 0 auto 0; z-index: 1000;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(1.5rem,4vw,3rem); height: 64px;
-  border-bottom: 1px solid transparent;
+  padding: 0 clamp(1.5rem,4vw,3rem) !important; height: 64px;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid transparent !important;
   transition: background .4s, border-color .4s, backdrop-filter .4s;
-  animation: navIn .6s ease 1.4s both;
 }
-@keyframes navIn { from{opacity:0} to{opacity:1} }
 .rk-nav.scrolled {
-  background: rgba(4,4,10,.88);
-  border-color: var(--bdr);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(4,4,10,.92) !important;
+  border-color: var(--bdr) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
 }
-.rk-logo {
-  font-family: var(--sg); font-weight: 700; font-size: 1.25rem;
-  color: var(--red); letter-spacing: .15em; text-decoration: none;
+/* Override main.css brand styles for landing nav */
+.rk-nav .navbar-brand-text {
+  font-family: var(--sg) !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .15em !important;
+  color: var(--red) !important;
+  text-shadow: none !important;
 }
-.rk-nav-links { display: flex; gap: .75rem; align-items: center; }
-.rk-nbtn {
-  padding: 9px 20px; border-radius: 8px;
-  font-family: var(--sg); font-weight: 500; font-size: .88rem;
-  cursor: pointer; text-decoration: none;
-  transition: all .22s ease;
+/* Override main.css button styles for landing nav */
+.rk-nav .btn-glass {
+  border-radius: 8px !important;
+  font-family: var(--sg) !important;
+  font-size: .88rem !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  padding: 9px 20px !important;
 }
-.rk-nbtn.ghost {
-  background: transparent;
-  border: 1px solid var(--bdr);
-  color: rgba(255,255,255,.75);
+.rk-nav .btn-rakshak {
+  border-radius: 8px !important;
+  font-family: var(--sg) !important;
+  font-size: .88rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  padding: 9px 22px !important;
+  box-shadow: 0 0 20px rgba(229,62,62,.35) !important;
 }
-.rk-nbtn.ghost:hover { border-color: rgba(255,255,255,.25); color: var(--white); }
-.rk-nbtn.solid {
-  background: var(--red); border: 1px solid var(--red); color: #fff;
-  box-shadow: 0 0 20px rgba(229,62,62,.35);
-}
-.rk-nbtn.solid:hover { box-shadow: 0 0 36px rgba(229,62,62,.65); transform: translateY(-1px); }
 
 /* ── Page wrapper ─────────────────────── */
 .rk-page { position: relative; z-index: 1; }
@@ -103,7 +111,7 @@ body::before {
   50%      { transform: translate(30px,-30px) scale(1.1); }
 }
 
-.rk-hero > * { position: relative; z-index: 1; }
+.rk-hero > *:not(.blob) { position: relative; z-index: 1; }
 
 /* Badge */
 .hero-badge {
@@ -642,9 +650,11 @@ body::before {
 
 /* ── Navbar scroll ──────────────────── */
 const nav = document.getElementById('rk-nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 50);
-}, { passive: true });
+if (nav) {
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+}
 
 /* ── Smooth anchor ──────────────────── */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
