@@ -99,7 +99,7 @@ async function confirmSOS() {
       navigator.geolocation.getCurrentPosition(async pos => {
         currentLat = pos.coords.latitude;
         currentLng = pos.coords.longitude;
-        await sendSOS(currentLat, currentLng, pos.coords.accuracy, pos.coords.altitude);
+        await sendSOS(currentLat, currentLng, pos.coords.accuracy, null);
       }, async () => {
         // Fallback to last known
         await sendSOS(currentLat || 0, currentLng || 0, null, null);

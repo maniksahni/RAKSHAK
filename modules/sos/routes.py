@@ -128,6 +128,10 @@ def history():
             'SELECT * FROM sos_alerts WHERE user_id=%s ORDER BY created_at DESC',
             (current_user.id,)
         )
+        # Return HTML page if browser request, JSON if AJAX/fetch
+        if request.accept_mimetypes.accept_html and not request.is_json \
+                and request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+            return render_template('dashboard/history.html', alerts=alerts)
         return jsonify(success=True, alerts=[dict(a) for a in
                        [{k: (v.isoformat() if hasattr(v, 'isoformat') else v)
                          for k, v in row.items()} for row in alerts]])
