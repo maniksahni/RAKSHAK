@@ -2,22 +2,22 @@
 {% block title %}RAKSHAK — Every Second Counts{% endblock %}
 
 {% block extra_css %}
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════════
-   RAKSHAK — Landing Page
-   ════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   RAKSHAK — Immersive Landing v3
+   ═══════════════════════════════════════════ */
 :root {
-  --bg:    #04040a;
+  --bg:    #050508;
+  --bg2:   #08080f;
   --red:   #e53e3e;
   --red2:  #ff6b35;
   --white: #ffffff;
-  --muted: rgba(255,255,255,0.5);
-  --dim:   rgba(255,255,255,0.03);
-  --bdr:   rgba(255,255,255,0.06);
+  --muted: rgba(255,255,255,0.45);
+  --bdr:   rgba(255,255,255,0.07);
   --sg:    'Space Grotesk', sans-serif;
+  --int:   'Inter', sans-serif;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -25,408 +25,549 @@ body {
   background: var(--bg);
   color: var(--white);
   overflow-x: hidden;
-  visibility: visible !important;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* noise */
+/* dot grid */
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 0%, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 0%, black 30%, transparent 80%);
 }
 
-/* ── Navbar ─────────────────────────────── */
+/* ── Navbar ── */
 .rk-nav {
   position: fixed !important; inset: 0 0 auto 0; z-index: 1000;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 clamp(1.5rem,4vw,3rem) !important; height: 64px;
+  padding: 0 clamp(1.5rem,4vw,3.5rem) !important; height: 62px;
   background: transparent !important;
   backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
   border-bottom: 1px solid transparent !important;
   transition: background .4s, border-color .4s, backdrop-filter .4s;
 }
 .rk-nav.scrolled {
-  background: rgba(4,4,10,.92) !important;
+  background: rgba(5,5,8,.93) !important;
   border-color: var(--bdr) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
 }
-/* Override main.css brand styles for landing nav */
 .rk-nav .navbar-brand-text {
-  font-family: var(--sg) !important;
-  font-size: 1.25rem !important;
-  font-weight: 700 !important;
-  letter-spacing: .15em !important;
-  color: var(--red) !important;
-  text-shadow: none !important;
+  font-family: var(--sg) !important; font-size: 1.1rem !important;
+  font-weight: 700 !important; letter-spacing: .2em !important;
+  color: var(--white) !important; text-shadow: none !important;
 }
-/* Override main.css button styles for landing nav */
 .rk-nav .btn-glass {
-  border-radius: 8px !important;
-  font-family: var(--sg) !important;
-  font-size: .88rem !important;
-  font-weight: 500 !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
-  padding: 9px 20px !important;
+  border-radius: 8px !important; font-family: var(--sg) !important;
+  font-size: .83rem !important; font-weight: 500 !important;
+  text-transform: none !important; letter-spacing: normal !important;
+  padding: 8px 18px !important;
 }
 .rk-nav .btn-rakshak {
-  border-radius: 8px !important;
-  font-family: var(--sg) !important;
-  font-size: .88rem !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
-  padding: 9px 22px !important;
-  box-shadow: 0 0 20px rgba(229,62,62,.35) !important;
+  border-radius: 8px !important; font-family: var(--sg) !important;
+  font-size: .83rem !important; font-weight: 600 !important;
+  text-transform: none !important; letter-spacing: normal !important;
+  padding: 8px 20px !important;
+  background: var(--red) !important;
+  box-shadow: 0 0 22px rgba(229,62,62,.4) !important;
 }
 
-/* ── Page wrapper ─────────────────────── */
+/* page wrapper */
 .rk-page { position: relative; z-index: 1; }
 
-/* ── HERO ─────────────────────────────── */
-.rk-hero {
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════*/
+.hero-section {
   min-height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 100px clamp(1.5rem,5vw,4rem) 5rem;
-  position: relative; overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 4rem;
+  align-items: center;
+  padding: 80px clamp(2rem,6vw,6rem) 4rem;
+  max-width: 1380px;
+  margin: 0 auto;
+  position: relative;
 }
 
-/* FIX 1 — animated red blobs */
-.blob {
-  position: absolute; width: 600px; height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(229,62,62,0.15) 0%, transparent 70%);
+/* ambient glow under hero */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  width: 900px; height: 600px;
+  top: 50%; left: 40%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(229,62,62,.09) 0%, transparent 65%);
+  filter: blur(60px);
   pointer-events: none; z-index: 0;
-  animation: blobMove 8s ease-in-out infinite;
-}
-.blob-1 { top: -200px; right: -100px; }
-.blob-2 { bottom: -200px; left: -100px; animation-delay: 4s; }
-@keyframes blobMove {
-  0%,100% { transform: translate(0,0) scale(1); }
-  50%      { transform: translate(30px,-30px) scale(1.1); }
 }
 
-.rk-hero > *:not(.blob) { position: relative; z-index: 1; }
+.hero-content { position: relative; z-index: 1; }
+.hero-visual  { position: relative; z-index: 1; }
 
-/* Badge */
-.hero-badge {
+/* ── eyebrow pill ── */
+.pill {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 7px 18px; border-radius: 50px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  font-size: .72rem; font-weight: 500; letter-spacing: .2em;
-  text-transform: uppercase; color: rgba(255,255,255,.7);
-  margin-bottom: 2.5rem;
-  opacity: 1;
+  padding: 5px 14px; border-radius: 100px;
+  border: 1px solid rgba(229,62,62,.3);
+  background: rgba(229,62,62,.08);
+  font-size: .68rem; font-weight: 600; letter-spacing: .22em;
+  text-transform: uppercase; color: rgba(255,120,80,.9);
+  margin-bottom: 2rem;
+  animation: slideUp .5s ease both;
 }
-.badge-pulse {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--red); flex-shrink: 0;
-  animation: blink 1.4s ease-in-out infinite;
+.pill-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--red); box-shadow: 0 0 7px var(--red);
+  animation: blink 1.5s ease-in-out infinite;
 }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
 
-/* Headline */
-.hero-headline {
-  font-family: var(--sg);
-  font-size: clamp(3.6rem,10vw,9rem);
-  font-weight: 700; line-height: 1.02;
-  letter-spacing: -.02em; margin-bottom: 1.8rem;
+/* ── headline ── */
+.hero-h1 {
+  font-size: clamp(3.2rem,5.5vw,6rem);
+  font-weight: 700; line-height: 1.04;
+  letter-spacing: -.035em;
+  margin-bottom: 1.5rem;
+  animation: slideUp .5s .08s ease both;
 }
-.hl-line { display: block; overflow: hidden; }
-.hl-inner {
+.h1-white { display: block; color: var(--white); }
+.h1-grad {
   display: block;
-  opacity: 1;
-}
-.hl-line:nth-child(1) .hl-inner { color: var(--white); }
-.hl-line:nth-child(2) .hl-inner {
-  background: linear-gradient(135deg,#e53e3e,#ff6b35);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: linear-gradient(120deg, #e53e3e 0%, #ff6b35 55%, #ffb347 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 
-.hero-sub {
-  font-size: clamp(.95rem,2vw,1.1rem);
-  color: rgba(255,255,255,.55);
-  max-width: 520px; margin: 0 auto 2.8rem; line-height: 1.8;
-  opacity: 1;
-}
-.hero-cta {
-  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-  margin-bottom: 4rem;
-  opacity: 1;
+/* ── sub ── */
+.hero-p {
+  font-family: var(--int);
+  font-size: clamp(.9rem,1.3vw,1.02rem);
+  color: rgba(255,255,255,.48);
+  max-width: 480px; line-height: 1.9;
+  margin-bottom: 2.4rem;
+  animation: slideUp .5s .16s ease both;
 }
 
-/* Floating SOS card */
-.hero-card-wrap { opacity: 1; }
-.sos-card {
-  display: inline-flex; align-items: center; gap: 14px;
-  background: rgba(255,255,255,.05);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 16px; padding: 16px 22px; text-align: left;
-  box-shadow: 0 8px 40px rgba(0,0,0,.4);
-  max-width: 340px;
-  animation: cardFloat 3.5s ease-in-out infinite;
+/* ── CTA ── */
+.hero-btns {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 3rem;
+  animation: slideUp .5s .24s ease both;
 }
-@keyframes cardFloat {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
-}
-.sos-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); position: relative; flex-shrink: 0; }
-.sos-dot::before {
-  content: ''; position: absolute; inset: -5px; border-radius: 50%;
-  background: rgba(229,62,62,.3);
-  animation: sonar 1.6s ease-out infinite;
-}
-@keyframes sonar { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(2.8);opacity:0} }
-.sos-card-title { font-size: .9rem; font-weight: 600; color: var(--white); margin-bottom: 2px; }
-.sos-card-sub   { font-size: .78rem; color: rgba(255,255,255,.5); }
-.sos-card-time  { font-size: .7rem; color: var(--red); margin-top: 2px; font-weight: 500; }
-
-/* ── Buttons ──────────────────────────── */
-.rk-btn {
-  padding: 14px 32px; border-radius: 10px;
-  font-family: var(--sg); font-weight: 600; font-size: .95rem;
-  cursor: pointer; text-decoration: none; display: inline-block;
-  transition: all .25s cubic-bezier(.4,0,.2,1);
-}
-.rk-btn-red {
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 28px; border-radius: 10px;
+  font-family: var(--sg); font-weight: 600; font-size: .93rem;
   background: var(--red); color: #fff; border: 1px solid var(--red);
-  box-shadow: 0 0 24px rgba(229,62,62,.4);
+  text-decoration: none; cursor: pointer;
+  box-shadow: 0 0 30px rgba(229,62,62,.4);
+  transition: transform .22s ease, box-shadow .22s ease;
 }
-.rk-btn-red:hover { box-shadow: 0 0 48px rgba(229,62,62,.65); transform: translateY(-2px); }
-.rk-btn-ghost {
-  background: transparent; color: rgba(255,255,255,.8);
-  border: 1px solid var(--bdr);
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 55px rgba(229,62,62,.65); color:#fff; }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 26px; border-radius: 10px;
+  font-family: var(--sg); font-weight: 500; font-size: .93rem;
+  background: rgba(255,255,255,.04); color: rgba(255,255,255,.7);
+  border: 1px solid var(--bdr); text-decoration: none; cursor: pointer;
+  transition: transform .22s ease, background .22s ease, border-color .22s ease, color .22s ease;
 }
-.rk-btn-ghost:hover { border-color: rgba(255,255,255,.2); color: var(--white); transform: translateY(-2px); }
+.btn-outline:hover { transform: translateY(-2px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); color:#fff; }
 
-/* ── Dividers ─────────────────────────── */
-.rk-hr {
-  height: 1px; border: none;
-  background: linear-gradient(90deg, transparent, rgba(229,62,62,.35) 40%, rgba(255,107,53,.35) 60%, transparent);
+/* ── trust bar ── */
+.hero-trust {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--int); font-size: .75rem; color: rgba(255,255,255,.3);
+  animation: slideUp .5s .32s ease both;
+}
+.trust-avatars { display: flex; }
+.ta {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1.5px solid rgba(229,62,62,.35);
+  background: rgba(229,62,62,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .62rem; font-weight: 700; color: rgba(255,255,255,.6);
+  margin-right: -8px;
 }
 
-/* ── Marquee ──────────────────── */
-.marquee-wrapper {
+/* ═══════════════════════════════════════════
+   HERO RIGHT — RADAR + CARDS
+═══════════════════════════════════════════*/
+.radar-scene {
+  width: 100%; aspect-ratio: 1;
+  position: relative; display: flex;
+  align-items: center; justify-content: center;
+}
+
+/* rings */
+.r-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(229,62,62,.15);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+.r-ring:nth-child(1) { width: 100%; height: 100%; }
+.r-ring:nth-child(2) { width: 75%;  height: 75%;  border-color: rgba(229,62,62,.2); }
+.r-ring:nth-child(3) { width: 50%;  height: 50%;  border-color: rgba(229,62,62,.28); }
+.r-ring:nth-child(4) { width: 27%;  height: 27%;  border-color: rgba(229,62,62,.38); }
+
+/* cross hairs */
+.r-cross::before, .r-cross::after {
+  content: ''; position: absolute;
+  background: rgba(229,62,62,.1);
+}
+.r-cross { position: absolute; inset: 0; }
+.r-cross::before { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
+.r-cross::after  { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
+
+/* sweep */
+.r-sweep {
+  position: absolute; inset: 0; border-radius: 50%;
   overflow: hidden;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding: 14px 0;
-  background: rgba(255,255,255,0.02);
+  animation: spin 4s linear infinite;
 }
-.marquee-inner {
-  display: flex;
-  white-space: nowrap;
-  animation: marquee 25s linear infinite;
+.r-sweep::before {
+  content: ''; position: absolute;
+  top: 50%; left: 50%;
+  width: 50%; height: 50%;
+  transform-origin: 0% 100%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(229,62,62,.3) 55deg, transparent 55deg);
+  border-radius: 0 100% 0 0;
 }
-.marquee-inner span {
-  color: #e53e3e;
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
-  font-weight: 600;
-  padding-right: 0;
-  flex-shrink: 0;
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* center shield */
+.r-center {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 52px; height: 52px; border-radius: 50%; z-index: 5;
+  background: radial-gradient(circle, #e53e3e, rgba(229,62,62,.5));
+  box-shadow: 0 0 0 0 rgba(229,62,62,.4);
+  animation: pulse 2s ease-out infinite;
+  display: flex; align-items: center; justify-content: center;
 }
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.r-center svg { width: 22px; height: 22px; }
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(229,62,62,.5); }
+  70%  { box-shadow: 0 0 0 22px rgba(229,62,62,0); }
+  100% { box-shadow: 0 0 0 0   rgba(229,62,62,0); }
 }
 
-/* ── Stats ────────────────────────────── */
-.rk-stats-wrap {
-  padding: 6rem clamp(1.5rem,5vw,6rem);
-  max-width: 1100px; margin: 0 auto;
+/* blips */
+.r-blip {
+  position: absolute; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--red); box-shadow: 0 0 12px var(--red);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  z-index: 4;
 }
-.stats-row {
+.b1 { margin-top: -90px; margin-left:  70px; animation: blip 4s .3s  infinite; }
+.b2 { margin-top:  60px; margin-left: -100px; animation: blip 4s 1.9s infinite; }
+.b3 { margin-top:  95px; margin-left:  45px;  animation: blip 4s 3.1s infinite; }
+@keyframes blip {
+  0%,100% { opacity:0; transform:translate(-50%,-50%) scale(.4); }
+  50%      { opacity:1; transform:translate(-50%,-50%) scale(1.3); }
+}
+
+/* floating alert cards */
+.r-card {
+  position: absolute;
+  background: rgba(8,8,15,.88);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px; padding: 12px 16px;
+  min-width: 195px; max-width: 220px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.55);
+  z-index: 10;
+}
+.rc1 { top: 2%; right: -12%; animation: floatA 3.5s ease-in-out infinite, fadeIn .6s .5s both; }
+.rc2 { bottom: 6%; left: -10%; animation: floatB 4.2s ease-in-out infinite, fadeIn .6s .8s both; }
+.rc3 { top: 52%; right: -14%; animation: floatA 5s 1s    ease-in-out infinite, fadeIn .6s 1s both; }
+@keyframes floatA { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+@keyframes floatB { 0%,100%{transform:translateY(0)} 50%{transform:translateY( 9px)} }
+
+.rc-head { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.rc-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.rc-dot.alive  { background:#e53e3e; box-shadow:0 0 7px #e53e3e; animation:blink 1.4s infinite; }
+.rc-dot.ok     { background:#22c55e; box-shadow:0 0 7px #22c55e; }
+.rc-dot.warn   { background:#f97316; box-shadow:0 0 7px #f97316; }
+.rc-title { font-size:.8rem; font-weight:600; color:var(--white); }
+.rc-body  { font-family:var(--int); font-size:.71rem; color:rgba(255,255,255,.42); line-height:1.5; }
+.rc-time  { font-family:var(--int); font-size:.64rem; color:var(--red); margin-top:4px; font-weight:500; }
+.rc-tag {
+  display:inline-block; font-size:.61rem; font-weight:600; letter-spacing:.06em;
+  padding:2px 8px; border-radius:20px; margin-top:5px; text-transform:uppercase;
+}
+.rc-tag.r { background:rgba(229,62,62,.12); color:var(--red); border:1px solid rgba(229,62,62,.3); }
+.rc-tag.g { background:rgba(34,197,94,.12);  color:#22c55e;   border:1px solid rgba(34,197,94,.3); }
+.rc-tag.o { background:rgba(249,115,22,.12); color:#f97316;   border:1px solid rgba(249,115,22,.3); }
+
+/* ═══════════════════════════════════════════
+   MARQUEE
+═══════════════════════════════════════════*/
+.marquee-wrap {
+  border-top: 1px solid var(--bdr);
+  border-bottom: 1px solid var(--bdr);
+  padding: 13px 0; overflow: hidden;
+  background: rgba(229,62,62,.025);
+}
+.marquee-track {
+  display: flex; white-space: nowrap;
+  animation: marquee 28s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+.m-item {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 0 2.2rem; font-size: .73rem; font-weight: 700;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(229,62,62,.65);
+}
+.m-item::after { content: '◆'; font-size: .3rem; color: rgba(229,62,62,.3); }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ═══════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════*/
+.stats-section {
+  padding: 6rem clamp(2rem,6vw,6rem);
+  max-width: 1380px; margin: 0 auto;
+}
+.sec-hd { text-align: center; margin-bottom: 3.5rem; }
+.eyebrow {
+  display: inline-block; font-size: .66rem; font-weight: 700;
+  letter-spacing: .28em; text-transform: uppercase;
+  color: var(--red); margin-bottom: .9rem;
+}
+.sec-title {
+  font-size: clamp(1.9rem,3.8vw,3.2rem); font-weight: 700;
+  line-height: 1.15; letter-spacing: -.025em;
+}
+.sec-sub {
+  font-family: var(--int); font-size: .95rem; color: var(--muted);
+  max-width: 420px; margin: .65rem auto 0; line-height: 1.8;
+}
+.stats-grid {
   display: grid; grid-template-columns: repeat(4,1fr);
-  border: 1px solid var(--bdr); border-radius: 20px; overflow: hidden;
+  border: 1px solid var(--bdr); border-radius: 22px; overflow: hidden;
 }
 .stat-cell {
   padding: 2.5rem 2rem; text-align: center;
   border-right: 1px solid var(--bdr);
   transition: background .3s;
+  position: relative; overflow: hidden;
 }
+.stat-cell::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(229,62,62,.5), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.stat-cell:hover::before { opacity: 1; }
 .stat-cell:last-child { border-right: none; }
-.stat-cell:hover { background: rgba(255,255,255,.025); }
-.stat-number {
-  font-family: var(--sg); font-size: 3rem; font-weight: 700;
-  display: block;
+.stat-cell:hover { background: rgba(255,255,255,.022); }
+.stat-num {
+  font-size: clamp(2.4rem,4vw,3.5rem); font-weight: 700;
   background: linear-gradient(135deg,#e53e3e,#ff6b35);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text; line-height: 1; margin-bottom: .5rem;
+  background-clip: text; display: block; line-height: 1; margin-bottom: .4rem;
 }
-.stat-l { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; font-weight: 500; }
+.stat-lbl {
+  font-size: .7rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .14em; font-weight: 500;
+}
 
-/* ── Section labels ───────────────────── */
-.sec-eyebrow {
-  font-size: .7rem; font-weight: 600; letter-spacing: .28em;
-  text-transform: uppercase; color: var(--red);
-  margin-bottom: 1rem; display: block;
+/* ═══════════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════════*/
+.how-section {
+  padding: 0 clamp(2rem,6vw,6rem) 6rem;
+  max-width: 1380px; margin: 0 auto;
 }
-.sec-title {
-  font-family: var(--sg); font-size: clamp(2rem,4vw,3rem);
-  font-weight: 700; line-height: 1.15; color: var(--white);
-  margin-bottom: .75rem;
-}
-.sec-sub { font-size: .95rem; color: var(--muted); max-width: 480px; line-height: 1.75; }
-
-/* ── FIX 3 — How It Works Cards ──────── */
-.rk-how-wrap {
-  padding: 2rem clamp(1.5rem,5vw,6rem) 6rem;
-  max-width: 1100px; margin: 0 auto;
-}
-.step-cards {
-  display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem;
-  margin-top: 3rem;
+.steps-row {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1.5rem; margin-top: 3.5rem;
 }
 .step-card {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 20px; padding: 40px 32px;
-  transition: border-color .3s ease, box-shadow .3s ease;
+  background: rgba(255,255,255,.022);
+  border: 1px solid var(--bdr);
+  border-radius: 22px; padding: 40px 36px;
+  position: relative; overflow: hidden;
+  transition: border-color .3s, box-shadow .3s, background .3s;
 }
-.step-card:hover {
-  border-color: rgba(229,62,62,.5);
-  box-shadow: 0 0 40px rgba(229,62,62,.1);
+.step-card::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: 22px;
+  background: radial-gradient(circle at 50% 0%, rgba(229,62,62,.07), transparent 55%);
+  opacity: 0; transition: opacity .3s;
 }
-.step-card-top {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 1.5rem;
-}
-.step-big-num {
-  font-family: var(--sg); font-size: 5rem; font-weight: 900;
-  line-height: 1; color: rgba(229,62,62,.2);
-}
-.step-icon {
-  width: 48px; height: 48px; border-radius: 50%;
-  background: rgba(229,62,62,.12);
-  border: 1px solid rgba(229,62,62,.25);
+.step-card:hover { border-color: rgba(229,62,62,.3); box-shadow: 0 0 48px rgba(229,62,62,.07); background: rgba(255,255,255,.032); }
+.step-card:hover::after { opacity: 1; }
+.step-top   { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.8rem; }
+.step-big   { font-size: 5.5rem; font-weight: 900; line-height: 1; color: rgba(229,62,62,.1); letter-spacing: -.04em; }
+.step-icon  {
+  width: 50px; height: 50px; border-radius: 14px;
+  background: rgba(229,62,62,.1); border: 1px solid rgba(229,62,62,.22);
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.step-icon svg {
-  width: 22px; height: 22px; stroke: var(--red);
-  fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
-}
-.step-title { font-size: 1.4rem; font-weight: 700; color: var(--white); margin-bottom: .75rem; }
-.step-desc  { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.75; }
-
-/* ── Features Grid ────────────────────── */
-.rk-feat-wrap {
-  padding: 2rem clamp(1.5rem,5vw,6rem) 6rem;
-  max-width: 1100px; margin: 0 auto;
-}
-.features-grid {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  gap: 1px; background: var(--bdr);
-  border-radius: 20px; overflow: hidden;
-  border: 1px solid var(--bdr); margin-top: 3rem;
-}
-.fc {
-  background: var(--bg); padding: 32px 28px;
-  position: relative; transition: background .3s;
-}
-.fc:hover { background: rgba(255,255,255,.025); }
-.fc-num {
-  position: absolute; top: 22px; right: 22px;
-  font-size: .68rem; font-weight: 700; letter-spacing: .08em;
-  color: rgba(229,62,62,.4);
-}
-.fc-icon {
-  width: 48px; height: 48px; border-radius: 12px;
-  background: rgba(229,62,62,.1);
-  border: 1px solid rgba(229,62,62,.2);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 18px;
   transition: background .3s, box-shadow .3s;
 }
-.fc:hover .fc-icon { background: rgba(229,62,62,.18); box-shadow: 0 0 20px rgba(229,62,62,.2); }
-.fc-icon svg { width: 24px; height: 24px; stroke: var(--red); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.fc::before {
-  content: ''; position: absolute; left: 0; top: 16px; bottom: 16px;
-  width: 3px; background: linear-gradient(180deg,var(--red),var(--red2));
-  border-radius: 0 2px 2px 0; opacity: 0; transition: opacity .3s;
-}
-.fc:hover::before { opacity: 1; }
-.fc-title { font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
-.fc-desc  { font-size: .84rem; color: var(--muted); line-height: 1.65; }
+.step-card:hover .step-icon { background: rgba(229,62,62,.18); box-shadow: 0 0 24px rgba(229,62,62,.22); }
+.step-icon svg { width: 24px; height: 24px; stroke: var(--red); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.step-h   { font-size: 1.3rem; font-weight: 700; color: var(--white); margin-bottom: .6rem; }
+.step-p   { font-family: var(--int); font-size: .875rem; color: rgba(255,255,255,.5); line-height: 1.8; }
 
-/* ── FIX 6 — Final CTA ────────────────── */
-.rk-final {
-  padding: 8rem clamp(1.5rem,5vw,6rem);
+/* ═══════════════════════════════════════════
+   BENTO GRID
+═══════════════════════════════════════════*/
+.bento-section {
+  padding: 0 clamp(2rem,6vw,6rem) 6rem;
+  max-width: 1380px; margin: 0 auto;
+}
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1rem; margin-top: 3.5rem;
+}
+.bc {
+  background: rgba(255,255,255,.022);
+  border: 1px solid var(--bdr);
+  border-radius: 22px; padding: 34px 30px;
+  position: relative; overflow: hidden;
+  transition: border-color .3s, box-shadow .3s, background .3s;
+}
+.bc::before {
+  content: ''; position: absolute; left: 0; top: 12px; bottom: 12px;
+  width: 3px; background: linear-gradient(180deg, var(--red), var(--red2));
+  border-radius: 0 3px 3px 0; opacity: 0; transition: opacity .3s;
+}
+.bc:hover::before { opacity: 1; }
+.bc:hover { border-color: rgba(229,62,62,.28); box-shadow: 0 0 40px rgba(229,62,62,.07); background: rgba(255,255,255,.032); }
+
+.bc-span2 {
+  grid-row: span 2;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.bc-num {
+  position: absolute; top: 20px; right: 22px;
+  font-size: .62rem; font-weight: 700; letter-spacing: .1em;
+  color: rgba(229,62,62,.32);
+}
+.bc-icon {
+  width: 50px; height: 50px; border-radius: 13px;
+  background: rgba(229,62,62,.1); border: 1px solid rgba(229,62,62,.2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.3rem;
+  transition: background .3s, box-shadow .3s;
+}
+.bc:hover .bc-icon { background: rgba(229,62,62,.18); box-shadow: 0 0 20px rgba(229,62,62,.2); }
+.bc-icon svg { width: 23px; height: 23px; stroke: var(--red); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.bc-h  { font-size: 1.02rem; font-weight: 700; color: var(--white); margin-bottom: .5rem; }
+.bc-p  { font-family: var(--int); font-size: .83rem; color: var(--muted); line-height: 1.7; }
+
+/* live feed inside big card */
+.bc-feed {
+  margin-top: 2rem;
+  background: rgba(229,62,62,.04); border: 1px solid rgba(229,62,62,.12);
+  border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px;
+}
+.feed-row {
+  display: flex; align-items: center; gap: 9px;
+  font-family: var(--int); font-size: .71rem;
+}
+.fd {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.fd.r { background: var(--red); box-shadow: 0 0 7px var(--red); }
+.fd.g { background: #22c55e; box-shadow: 0 0 7px #22c55e; }
+.fd.o { background: #f97316; box-shadow: 0 0 7px #f97316; }
+.fd-txt  { color: rgba(255,255,255,.5); flex: 1; }
+.fd-time { color: rgba(255,255,255,.2); font-size: .63rem; white-space: nowrap; }
+
+/* divider */
+.rk-hr {
+  border: none; height: 1px;
+  max-width: 1380px; margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(229,62,62,.2) 30%, rgba(255,107,53,.2) 70%, transparent);
+}
+
+/* ═══════════════════════════════════════════
+   CTA
+═══════════════════════════════════════════*/
+.cta-section {
+  padding: 7rem clamp(2rem,6vw,6rem);
   text-align: center; position: relative; overflow: hidden;
 }
-.rk-final::before {
-  content: '';
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  width: 600px; height: 400px;
-  background: radial-gradient(ellipse, rgba(229,62,62,.1) 0%, transparent 70%);
-  filter: blur(50px); pointer-events: none;
+.cta-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 70% 90% at 50% 105%, rgba(229,62,62,.11), transparent 65%);
 }
-.final-title {
-  font-family: var(--sg); font-size: clamp(2.4rem,6vw,4.5rem);
-  font-weight: 700; line-height: 1.12; margin-bottom: 1.2rem;
-  color: var(--white); position: relative; z-index: 1;
+.cta-inner { position: relative; z-index: 1; }
+.cta-eyebrow { display: block; font-size: .66rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: var(--red); margin-bottom: 1.2rem; }
+.cta-h2 {
+  font-size: clamp(2.4rem,5.5vw,5rem); font-weight: 700;
+  line-height: 1.08; letter-spacing: -.03em; margin-bottom: 1.2rem;
 }
-.final-title em {
+.cta-h2 em {
   font-style: normal;
-  background: linear-gradient(135deg,#e53e3e,#ff6b35);
+  background: linear-gradient(120deg,#e53e3e,#ff6b35,#ffb347);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.final-sub {
-  font-size: 1rem; color: var(--muted); margin-bottom: 2.5rem;
-  max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.7;
-  position: relative; z-index: 1;
+.cta-p {
+  font-family: var(--int); font-size: .98rem; color: var(--muted);
+  max-width: 360px; margin: 0 auto 2.5rem; line-height: 1.8;
 }
-.final-btn-wrap { position: relative; z-index: 1; }
+.cta-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 
-/* ── FIX 5 — Scroll reveal ────────────── */
-.reveal {
-  opacity: 1;
-  transform: translateY(0);
-}
-.reveal.active    { opacity: 1; transform: translateY(0); }
-.reveal-delay-1   { }
-.reveal-delay-2   { }
-.reveal-delay-3   { }
-
-/* ── FIX 7 — Footer ───────────────────── */
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════*/
 .rk-footer {
-  padding: 2rem clamp(1.5rem,4vw,3rem);
-  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 2rem clamp(2rem,4vw,6rem);
+  border-top: 1px solid var(--bdr);
   display: flex; align-items: center; justify-content: space-between;
-  color: rgba(255,255,255,.3); font-size: .8rem; flex-wrap: wrap; gap: .5rem;
+  flex-wrap: wrap; gap: .75rem;
 }
-.rk-footer-logo {
-  font-family: var(--sg); font-weight: 700; font-size: 1rem;
-  color: var(--red); letter-spacing: .12em; margin-bottom: 2px;
-}
-.rk-footer-tag { color: rgba(255,255,255,.25); font-size: .75rem; }
+.ft-logo   { font-weight: 700; font-size: .95rem; color: var(--white); letter-spacing: .14em; }
+.ft-logo span { color: var(--red); }
+.ft-sub    { font-family: var(--int); font-size: .7rem; color: rgba(255,255,255,.2); margin-top: 3px; }
+.ft-copy   { font-family: var(--int); font-size: .74rem; color: rgba(255,255,255,.22); }
 
-/* ── Responsive ───────────────────────── */
-@media (max-width: 900px) {
-  .step-cards { grid-template-columns: 1fr; }
-  .features-grid { grid-template-columns: 1fr 1fr; }
-  .stats-row {
-    grid-template-columns: 1fr 1fr;
-  }
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════*/
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.reveal { opacity: 1; transform: none; }
+.d1 { } .d2 { } .d3 { } .d4 { }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════*/
+@media (max-width: 1050px) {
+  .hero-section { grid-template-columns: 1fr; text-align: center; padding-top: 100px; }
+  .hero-visual  { display: none; }
+  .hero-btns    { justify-content: center; }
+  .hero-trust   { justify-content: center; }
+  .hero-p       { max-width: 100%; }
+  .bento-grid   { grid-template-columns: 1fr 1fr; }
+  .bc-span2     { grid-row: span 1; }
+  .steps-row    { grid-template-columns: 1fr; }
+  .stats-grid   { grid-template-columns: 1fr 1fr; }
   .stat-cell:nth-child(2) { border-right: none; }
-  .stat-cell:nth-child(3) { border-right: 1px solid var(--bdr); border-top: 1px solid var(--bdr); }
+  .stat-cell:nth-child(3) { border-top: 1px solid var(--bdr); border-right: 1px solid var(--bdr); }
   .stat-cell:nth-child(4) { border-top: 1px solid var(--bdr); border-right: none; }
 }
-@media (max-width: 580px) {
-  .features-grid { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .blob { width: 300px; height: 300px; }
-  .rk-footer { flex-direction: column; text-align: center; }
+@media (max-width: 640px) {
+  .bento-grid   { grid-template-columns: 1fr; }
+  .cta-btns     { flex-direction: column; align-items: center; }
+  .rk-footer    { flex-direction: column; text-align: center; }
 }
 </style>
 {% endblock %}
@@ -434,76 +575,137 @@ body::before {
 {% block content %}
 <div class="rk-page">
 
-<!-- Navbar handled in base.html -->
+<!-- ══════════ HERO ══════════ -->
+<section class="hero-section">
 
-<!-- ── HERO ───────────────────────────── -->
-<section class="rk-hero">
-  <!-- FIX 1: Blobs -->
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
+  <!-- LEFT -->
+  <div class="hero-content">
+    <div class="pill">
+      <span class="pill-dot"></span>
+      AI-Powered &nbsp;·&nbsp; Women's Safety Platform
+    </div>
 
-  <div class="hero-badge">
-    <span class="badge-pulse"></span>
-    AI-POWERED &nbsp;•&nbsp; WOMEN'S SAFETY
+    <h1 class="hero-h1">
+      <span class="h1-white">Every Second</span>
+      <span class="h1-grad">Counts.</span>
+    </h1>
+
+    <p class="hero-p">
+      RAKSHAK detects danger in real time, silently alerts your trusted circle,
+      and maps unsafe zones — automatically. Built for the moments that matter most.
+    </p>
+
+    <div class="hero-btns">
+      <a href="{{ url_for('auth.register') }}" class="btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Get Protected Free
+      </a>
+      <a href="#how" class="btn-outline">
+        How It Works
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="hero-trust">
+      <div class="trust-avatars">
+        <div class="ta">P</div>
+        <div class="ta">A</div>
+        <div class="ta">R</div>
+        <div class="ta">K</div>
+      </div>
+      <span>AI-powered protection &nbsp;·&nbsp; Always watching &nbsp;·&nbsp; Zero delay</span>
+    </div>
   </div>
 
-  <h1 class="hero-headline" aria-label="Every Second Counts.">
-    <span class="hl-line"><span class="hl-inner">Every Second</span></span>
-    <span class="hl-line"><span class="hl-inner">Counts.</span></span>
-  </h1>
+  <!-- RIGHT: RADAR -->
+  <div class="hero-visual">
+    <div class="radar-scene">
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
+      <div class="r-ring"></div>
+      <div class="r-cross"></div>
+      <div class="r-sweep"></div>
+      <div class="r-center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="r-blip b1"></div>
+      <div class="r-blip b2"></div>
+      <div class="r-blip b3"></div>
 
-  <p class="hero-sub">
-    RAKSHAK detects danger, alerts your circle, and maps unsafe zones — automatically.
-  </p>
-
-  <div class="hero-cta">
-    <a href="{{ url_for('auth.register') }}" class="rk-btn rk-btn-red">🛡&nbsp; Get Protected</a>
-    <a href="#how" class="rk-btn rk-btn-ghost">See How It Works &darr;</a>
-  </div>
-
-  <div class="hero-card-wrap">
-    <div class="sos-card">
-      <div class="sos-dot"></div>
-      <div>
-        <div class="sos-card-title">🔴 SOS Alert Sent</div>
-        <div class="sos-card-sub">Location shared with 3 contacts</div>
-        <div class="sos-card-time">2 seconds ago</div>
+      <!-- Alert Cards -->
+      <div class="r-card rc1">
+        <div class="rc-head"><div class="rc-dot alive"></div><div class="rc-title">🚨 SOS Triggered</div></div>
+        <div class="rc-body">GPS captured · 3 contacts alerted</div>
+        <div class="rc-time">Just now</div>
+        <span class="rc-tag r">Active</span>
+      </div>
+      <div class="r-card rc2">
+        <div class="rc-head"><div class="rc-dot ok"></div><div class="rc-title">✅ AI Check-in</div></div>
+        <div class="rc-body">User responded · Risk: Low</div>
+        <div class="rc-time">2 min ago</div>
+        <span class="rc-tag g">Safe</span>
+      </div>
+      <div class="r-card rc3">
+        <div class="rc-head"><div class="rc-dot warn"></div><div class="rc-title">⚠️ Danger Zone</div></div>
+        <div class="rc-body">500m proximity · Sector 7</div>
+        <div class="rc-time">4 min ago</div>
+        <span class="rc-tag o">Caution</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── Marquee ─────────────────── -->
-<div class="marquee-wrapper">
-  <div class="marquee-inner">
-    <span>PROTECT • ALERT • RESPOND • DETECT • SECURE • RAKSHAK • </span>
-    <span>PROTECT • ALERT • RESPOND • DETECT • SECURE • RAKSHAK • </span>
+<!-- ══════════ MARQUEE ══════════ -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="m-item">Instant SOS</span>
+    <span class="m-item">AI Risk Engine</span>
+    <span class="m-item">Live Heatmap</span>
+    <span class="m-item">Danger Zones</span>
+    <span class="m-item">Evidence Vault</span>
+    <span class="m-item">Command Center</span>
+    <span class="m-item">Secure Auth</span>
+    <span class="m-item">Real-time Alerts</span>
+    <span class="m-item">RAKSHAK</span>
+    <span class="m-item">Instant SOS</span>
+    <span class="m-item">AI Risk Engine</span>
+    <span class="m-item">Live Heatmap</span>
+    <span class="m-item">Danger Zones</span>
+    <span class="m-item">Evidence Vault</span>
+    <span class="m-item">Command Center</span>
+    <span class="m-item">Secure Auth</span>
+    <span class="m-item">Real-time Alerts</span>
+    <span class="m-item">RAKSHAK</span>
   </div>
 </div>
 
-<!-- ── Stats ──────────────────────────── -->
+<!-- ══════════ STATS ══════════ -->
 <section id="stats-section">
-  <div class="rk-stats-wrap">
-    <div class="text-center mb-4 reveal">
-      <span class="sec-eyebrow">By the numbers</span>
+  <div class="stats-section">
+    <div class="sec-hd reveal">
+      <span class="eyebrow">By the numbers</span>
       <h2 class="sec-title">Built for impact.</h2>
+      <p class="sec-sub">The numbers defining how RAKSHAK keeps you safe, every minute of every day.</p>
     </div>
-    <div class="stats-row reveal">
+    <div class="stats-grid reveal d1">
       <div class="stat-cell">
-        <span class="stat-number" data-target="3" data-suffix="">3</span>
-        <div class="stat-l">User Roles</div>
+        <span class="stat-num" data-target="3"   data-suffix="">3</span>
+        <div class="stat-lbl">User Roles</div>
       </div>
       <div class="stat-cell">
-        <span class="stat-number" data-target="6" data-suffix="">6</span>
-        <div class="stat-l">Core Modules</div>
+        <span class="stat-num" data-target="6"   data-suffix="">6</span>
+        <div class="stat-lbl">Core Modules</div>
       </div>
       <div class="stat-cell">
-        <span class="stat-number" data-target="2" data-suffix="min">2min</span>
-        <div class="stat-l">AI Ping Cycle</div>
+        <span class="stat-num" data-target="2"   data-suffix="min">2min</span>
+        <div class="stat-lbl">AI Ping Cycle</div>
       </div>
       <div class="stat-cell">
-        <span class="stat-number" data-target="500" data-suffix="m">500m</span>
-        <div class="stat-l">Danger Radius</div>
+        <span class="stat-num" data-target="500" data-suffix="m">500m</span>
+        <div class="stat-lbl">Danger Radius</div>
       </div>
     </div>
   </div>
@@ -511,106 +713,112 @@ body::before {
 
 <hr class="rk-hr">
 
-<!-- ── FIX 3: How It Works ────────────── -->
+<!-- ══════════ HOW IT WORKS ══════════ -->
 <section id="how">
-  <div class="rk-how-wrap">
-    <div class="text-center mb-2 reveal">
-      <span class="sec-eyebrow">How it works</span>
+  <div class="how-section">
+    <div class="sec-hd reveal">
+      <span class="eyebrow">How it works</span>
       <h2 class="sec-title">Three steps to safety.</h2>
     </div>
-    <div class="step-cards">
-
-      <div class="step-card reveal reveal-delay-1">
-        <div class="step-card-top">
-          <div class="step-big-num">01</div>
+    <div class="steps-row">
+      <div class="step-card reveal d1">
+        <div class="step-top">
+          <div class="step-big">01</div>
           <div class="step-icon">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
           </div>
         </div>
-        <div class="step-title">One Tap. Instant Alert.</div>
-        <p class="step-desc">Press SOS once. No menus, no confirmation screens. RAKSHAK acts in under a second.</p>
+        <div class="step-h">One Tap. Instant Alert.</div>
+        <p class="step-p">Press SOS once. No menus, no confirmation screens. RAKSHAK fires in under a second — GPS captured, contacts notified.</p>
       </div>
-
-      <div class="step-card reveal reveal-delay-2">
-        <div class="step-card-top">
-          <div class="step-big-num">02</div>
+      <div class="step-card reveal d2">
+        <div class="step-top">
+          <div class="step-big">02</div>
           <div class="step-icon">
             <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
         </div>
-        <div class="step-title">GPS. Captured Silently.</div>
-        <p class="step-desc">Your exact coordinates are captured and encrypted the moment SOS is triggered.</p>
+        <div class="step-h">GPS. Captured Silently.</div>
+        <p class="step-p">Your exact coordinates are captured and encrypted the moment SOS is triggered. No manual input needed.</p>
       </div>
-
-      <div class="step-card reveal reveal-delay-3">
-        <div class="step-card-top">
-          <div class="step-big-num">03</div>
+      <div class="step-card reveal d3">
+        <div class="step-top">
+          <div class="step-big">03</div>
           <div class="step-icon">
             <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.8 19.79 19.79 0 010 .22 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.1 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
           </div>
         </div>
-        <div class="step-title">Your Circle. Notified Instantly.</div>
-        <p class="step-desc">Up to 5 trusted contacts receive live location alerts with real-time push notifications.</p>
+        <div class="step-h">Your Circle. Notified.</div>
+        <p class="step-p">Up to 5 trusted contacts receive live location alerts with real-time push notifications. Instantly. Always.</p>
       </div>
-
     </div>
   </div>
 </section>
 
 <hr class="rk-hr">
 
-<!-- ── Feature Cards ──────────────────── -->
+<!-- ══════════ BENTO FEATURES ══════════ -->
 <section>
-  <div class="rk-feat-wrap">
-    <div class="reveal">
-      <span class="sec-eyebrow">What's inside</span>
-      <h2 class="sec-title">Built to protect.</h2>
-      <p class="sec-sub">Six powerful modules working in sync to keep you safe around the clock.</p>
+  <div class="bento-section">
+    <div class="sec-hd reveal">
+      <span class="eyebrow">What's inside</span>
+      <h2 class="sec-title">Six shields. One system.</h2>
+      <p class="sec-sub">Every module built to protect — working in sync, around the clock.</p>
     </div>
 
-    <div class="features-grid">
+    <div class="bento-grid">
 
-      <div class="fc reveal reveal-delay-1">
-        <span class="fc-num">01</span>
-        <div class="fc-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-        <div class="fc-title">SOS Alert System</div>
-        <p class="fc-desc">One-tap emergency trigger with GPS capture and real-time push to 5 trusted contacts.</p>
+      <!-- BIG: SOS -->
+      <div class="bc bc-span2 reveal d1">
+        <span class="bc-num">01</span>
+        <div>
+          <div class="bc-icon">
+            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="bc-h">SOS Alert System</div>
+          <p class="bc-p">One-tap emergency trigger with GPS capture and real-time push to 5 trusted contacts. No delays, no confirmation needed.</p>
+        </div>
+        <div class="bc-feed">
+          <div class="feed-row"><div class="fd r"></div><span class="fd-txt">SOS triggered · GPS captured</span><span class="fd-time">0.8s</span></div>
+          <div class="feed-row"><div class="fd g"></div><span class="fd-txt">Contact 1 notified</span><span class="fd-time">1.2s</span></div>
+          <div class="feed-row"><div class="fd g"></div><span class="fd-txt">Contact 2 notified</span><span class="fd-time">1.5s</span></div>
+          <div class="feed-row"><div class="fd o"></div><span class="fd-txt">Admin alerted · Case #4471 opened</span><span class="fd-time">2.1s</span></div>
+        </div>
       </div>
 
-      <div class="fc reveal reveal-delay-2">
-        <span class="fc-num">02</span>
-        <div class="fc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
-        <div class="fc-title">AI Risk Engine</div>
-        <p class="fc-desc">Silent 2-minute pings detect inactivity. 3 misses auto-fires SOS with live risk scoring.</p>
+      <div class="bc reveal d2">
+        <span class="bc-num">02</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
+        <div class="bc-h">AI Risk Engine</div>
+        <p class="bc-p">Silent 2-min pings detect inactivity. 3 missed responses auto-fires SOS with live risk scoring.</p>
       </div>
 
-      <div class="fc reveal reveal-delay-3">
-        <span class="fc-num">03</span>
-        <div class="fc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div class="fc-title">Danger Heatmap</div>
-        <p class="fc-desc">Community-reported zones on a live heatmap. 500m proximity auto-warning.</p>
+      <div class="bc reveal d3">
+        <span class="bc-num">03</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="bc-h">Danger Heatmap</div>
+        <p class="bc-p">Community-reported unsafe zones on a live map. 500m proximity triggers automatic warnings.</p>
       </div>
 
-      <!-- FIX 4: Updated cards -->
-      <div class="fc reveal reveal-delay-1">
-        <span class="fc-num">04</span>
-        <div class="fc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-        <div class="fc-title">Command Center</div>
-        <p class="fc-desc">Live SOS map, real-time risk scores, user control panel, and 4-panel crisis analytics.</p>
+      <div class="bc reveal d1">
+        <span class="bc-num">04</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+        <div class="bc-h">Command Center</div>
+        <p class="bc-p">Live SOS map, risk scores, user panel, and 4-panel crisis analytics for admins.</p>
       </div>
 
-      <div class="fc reveal reveal-delay-2">
-        <span class="fc-num">05</span>
-        <div class="fc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-        <div class="fc-title">Evidence Vault</div>
-        <p class="fc-desc">Auto-generated legal PDFs with GPS coordinates, incident timeline, and contact records.</p>
+      <div class="bc reveal d2">
+        <span class="bc-num">05</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
+        <div class="bc-h">Evidence Vault</div>
+        <p class="bc-p">Auto-generated legal PDFs with GPS coordinates, incident timeline, and full contact records.</p>
       </div>
 
-      <div class="fc reveal reveal-delay-3">
-        <span class="fc-num">06</span>
-        <div class="fc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-        <div class="fc-title">Secure Auth</div>
-        <p class="fc-desc">bcrypt hashing, CSRF tokens, rate limiting, and security-question recovery.</p>
+      <div class="bc reveal d3">
+        <span class="bc-num">06</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <div class="bc-h">Secure Auth</div>
+        <p class="bc-p">bcrypt hashing, CSRF tokens, rate limiting, and security-question recovery. Enterprise-grade.</p>
       </div>
 
     </div>
@@ -619,26 +827,32 @@ body::before {
 
 <hr class="rk-hr">
 
-<!-- ── FIX 6: Final CTA ───────────────── -->
-<section class="rk-final">
-  <div class="reveal">
-    <h2 class="final-title">Start protecting<br>yourself <em>today.</em></h2>
-    <p class="final-sub">Join thousands staying safer with RAKSHAK.</p>
-    <div class="final-btn-wrap">
-      <a href="{{ url_for('auth.register') }}" class="rk-btn rk-btn-red" style="font-size:1.05rem;padding:16px 44px;">
-        🛡&nbsp; Get Protected Free
+<!-- ══════════ CTA ══════════ -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="cta-inner reveal">
+    <span class="cta-eyebrow">Start today · It's free</span>
+    <h2 class="cta-h2">Protection that<br>never <em>sleeps.</em></h2>
+    <p class="cta-p">Join RAKSHAK and stay protected — every second, everywhere.</p>
+    <div class="cta-btns">
+      <a href="{{ url_for('auth.register') }}" class="btn-primary" style="font-size:1rem;padding:15px 38px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Get Protected Free
+      </a>
+      <a href="{{ url_for('auth.login') }}" class="btn-outline" style="font-size:1rem;padding:15px 32px;">
+        Sign In
       </a>
     </div>
   </div>
 </section>
 
-<!-- ── FIX 7: Footer ──────────────────── -->
+<!-- ══════════ FOOTER ══════════ -->
 <footer class="rk-footer">
   <div>
-    <div class="rk-footer-logo">🛡 RAKSHAK</div>
-    <div class="rk-footer-tag">Real-time Alert &amp; Knowledge System for Hazard And Crisis</div>
+    <div class="ft-logo"><span>🛡</span> RAKSHAK</div>
+    <div class="ft-sub">Real-time Alert &amp; Knowledge System for Hazard And Crisis</div>
   </div>
-  <span>© 2025 &nbsp;•&nbsp; Designed for Safety</span>
+  <span class="ft-copy">© 2025 &nbsp;·&nbsp; Designed for Safety</span>
 </footer>
 
 </div>
@@ -646,61 +860,41 @@ body::before {
 
 {% block extra_js %}
 <script>
-/* ── Loader Fix (Removed) ─────────────────────── */
-
-/* ── Navbar scroll ──────────────────── */
+/* navbar scroll */
 const nav = document.getElementById('rk-nav');
-if (nav) {
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 50);
-  }, { passive: true });
-}
+if (nav) window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
 
-/* ── Smooth anchor ──────────────────── */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
+/* smooth anchors */
+document.querySelectorAll('a[href^="#"]').forEach(a =>
   a.addEventListener('click', e => {
     const t = document.querySelector(a.getAttribute('href'));
     if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
-  });
-});
-
-/* ── FIX 5: IntersectionObserver reveal ─ */
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      }
-    });
-  },
-  { threshold: 0.1 }
+  })
 );
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-/* ── Stat counters ──────────────────── */
-document.addEventListener('DOMContentLoaded', function() {
-  function runCounter(el) {
-    if (el.dataset.counted) return;
-    el.dataset.counted = '1';
-    const target = parseInt(el.dataset.target, 10);
-    const suffix = el.dataset.suffix || '';
-    const dur = 1800; const t0 = performance.now();
-    (function tick(now) {
-      const p = Math.min((now - t0) / dur, 1);
-      el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target) + suffix;
-      if (p < 1) requestAnimationFrame(tick);
-    })(t0);
-  }
-  const statsIO = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.stat-number[data-target]').forEach(runCounter);
-        statsIO.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  const statsEl = document.getElementById('stats-section');
-  if (statsEl) statsIO.observe(statsEl);
-});
+/* no scroll reveal needed — all content always visible */
+
+/* stat counters */
+function counter(el) {
+  if (el._done) return; el._done = true;
+  const target = +el.dataset.target, suffix = el.dataset.suffix || '';
+  const dur = 1600, t0 = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const v = Math.round((1 - Math.pow(1 - p, 3)) * target);
+    el.textContent = v + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+const statsIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.stat-num[data-target]').forEach(counter);
+      statsIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.25 });
+const s = document.getElementById('stats-section');
+if (s) statsIO.observe(s);
 </script>
 {% endblock %}
