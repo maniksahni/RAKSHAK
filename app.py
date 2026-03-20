@@ -225,6 +225,9 @@ def create_app(config_name=None):
         from flask import jsonify
         return jsonify(success=False, error='Too many requests. Please slow down.'), 429
 
+    # ── Auto-init DB tables on first run ─────────────────────────────────
+    _auto_init_db(app)
+
     # ── APScheduler — start background AI checks ─────────────────────────
     if not scheduler.running:
         scheduler.add_job(
@@ -241,8 +244,55 @@ def create_app(config_name=None):
     return app
 
 
+def _auto_init_db(app):
+    """Auto-create tables & seed admin if DB is empty (for Docker first-run)."""
+    import time
+    for attempt in range(10):
+        try:
+            with app.app_context():
+                from models import query_db
+                query_db("SELECT 1 FROM users LIMIT 1")
+                log.info('DB tables already exist — skipping init.')
+                return
+        except Exception as e:
+            err = str(e)
+            if 'doesn\'t exist' in err or "doesn't exist" in err:
+                break  # tables missing, run init
+            log.warning(f'DB not ready (attempt {attempt+1}/10): {e}')
+            time.sleep(3)
+
+    log.info('Initialising database tables...')
+    try:
+        import mysql.connector
+        cfg = app.config
+        conn = mysql.connector.connect(
+            host=cfg['DB_HOST'], port=cfg['DB_PORT'],
+            user=cfg['DB_USER'], password=cfg['DB_PASSWORD'],
+            database=cfg['DB_NAME'],
+        )
+        cursor = conn.cursor()
+        from init_db import SCHEMA_SQL, SEEDS
+        for stmt in SCHEMA_SQL.split(';'):
+            stmt = stmt.strip()
+            if stmt:
+                cursor.execute(stmt)
+        conn.commit()
+        for seed in SEEDS:
+            try:
+                cursor.execute(seed)
+                conn.commit()
+            except Exception:
+                pass
+        cursor.close()
+        conn.close()
+        log.info('DB init complete — tables created & admin seeded.')
+    except Exception as e:
+        log.error(f'Auto DB init failed: {e}')
+
+
 if __name__ == '__main__':
     app = create_app()
+    _auto_init_db(app)
     port = int(os.environ.get('PORT', 5001))
     socketio.run(app, host='0.0.0.0', port=port, debug=False,
                  allow_unsafe_werkzeug=True)
