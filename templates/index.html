@@ -119,32 +119,35 @@ body::before{
 }
 @keyframes glowPulse{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 
-/* phone frame — tilted */
+/* phone frame — 17 Pro Max Titanium */
 .phone-frame{
-  width:270px;
-  background:linear-gradient(165deg,rgba(22,22,38,.99),rgba(9,9,18,1));
-  border:1.5px solid rgba(255,255,255,.13);
-  border-radius:48px;
-  padding:14px 10px 22px;
-  position:relative;z-index:2;
-  transform:perspective(1400px) rotateY(-10deg) rotateX(4deg);
-  transition:transform .5s cubic-bezier(.25,.46,.45,.94),box-shadow .5s;
+  width: 320px;
+  background: linear-gradient(165deg, #2a2a2e, #1a1a1c, #2f3033);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 54px;
+  padding: 14px 12px 24px;
+  position: relative; z-index: 2;
+  transform: perspective(1400px) rotateY(-10deg) rotateX(4deg);
+  transition: transform .5s cubic-bezier(.25,.46,.45,.94), box-shadow .5s;
   box-shadow:
     0 50px 120px rgba(0,0,0,.85),
-    0 0 0 1px rgba(220,38,38,.15),
-    0 0 30px rgba(220,38,38,.08),
-    inset 0 1px 0 rgba(255,255,255,.07);
-  animation:phoneBorderGlow 3s 1s ease-in-out infinite;
-  will-change:transform;
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    inset 0 0 10px rgba(255,255,255,.1);
+  animation: phoneBorderGlow 3s 1s ease-in-out infinite;
+  will-change: transform;
 }
 @keyframes phoneBorderGlow{
-  0%,100%{box-shadow:0 50px 120px rgba(0,0,0,.85),0 0 0 1px rgba(220,38,38,.15),0 0 30px rgba(220,38,38,.08),inset 0 1px 0 rgba(255,255,255,.07)}
-  50%{box-shadow:0 50px 120px rgba(0,0,0,.85),0 0 0 1px rgba(220,38,38,.42),0 0 50px rgba(220,38,38,.2),inset 0 1px 0 rgba(255,255,255,.07)}
+  0%,100%{box-shadow:0 50px 120px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.05), inset 0 0 10px rgba(255,255,255,.1)}
+  50%{box-shadow:0 50px 120px rgba(0,0,0,.85), inset 0 0 0 1px rgba(220,38,38,.12), inset 0 0 10px rgba(220,38,38,.15)}
 }
 
-/* side buttons */
-.phone-frame::before{content:'';position:absolute;right:-3px;top:88px;width:3px;height:36px;background:rgba(255,255,255,.09);border-radius:0 2px 2px 0}
-.phone-frame::after{content:'';position:absolute;left:-3px;top:76px;width:3px;height:24px;background:rgba(255,255,255,.09);border-radius:2px 0 0 2px;box-shadow:0 30px 0 rgba(255,255,255,.09)}
+/* side buttons - 17 Pro Max */
+/* Right Side: Power */
+.phone-frame::before{content:'';position:absolute;right:-3px;top:120px;width:3px;height:42px;background:#3a3a3e;border-radius:0 2px 2px 0}
+/* Right Side: Camera Control */
+.phone-cam-ctrl{position:absolute;right:-2px;top:260px;width:2px;height:28px;background:#2a2a2e;border-radius:0 2px 2px 0}
+/* Left Side: Action & Volume */
+.phone-frame::after{content:'';position:absolute;left:-3px;top:90px;width:3px;height:24px;background:#3a3a3e;border-radius:2px 0 0 2px;box-shadow:0 40px 0 #3a3a3e, 0 85px 0 #3a3a3e}
 
 /* Dynamic Island (iPhone 17 Pro) — Interactive */
 .dynamic-island {
@@ -235,11 +238,11 @@ body::before{
 
 /* screen */
 .phone-screen{
-  background:#07070e;
-  border-radius:38px;overflow:hidden;
-  padding:2px 12px 14px;
-  border:2px solid #000;
-  min-height:450px;
+  background:#05050a;
+  border-radius:44px;overflow:hidden;
+  padding:2px 14px 20px;
+  border:4px solid #000;
+  min-height:560px;
   position:relative;
 }
 /* dot grid inside screen */
@@ -614,6 +617,7 @@ body::before{
       <div class="phone-glow2"></div>
 
       <div class="phone-frame">
+        <div class="phone-cam-ctrl"></div>
         <div class="phone-screen">
           <div class="dynamic-island">
             <!-- Default Collapsed -->
