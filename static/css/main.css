@@ -454,6 +454,7 @@ h1,h2,h3,h4,h5,h6 {
   font-weight: 500;
   transition: var(--transition);
   border-left: 3px solid transparent;
+  position: relative;
 }
 .sidebar-link:hover, .sidebar-link.active {
   color: var(--text-primary);
@@ -470,6 +471,24 @@ h1,h2,h3,h4,h5,h6 {
 }
 .sidebar-link i { width: 20px; text-align: center; transition: color .2s, filter .2s; }
 .sidebar-link:hover i { color: var(--red-primary); }
+.sidebar-link:hover {
+  padding-left: 24px;
+}
+.sidebar-link::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleX(0);
+  width: 3px;
+  height: 60%;
+  background: var(--red-primary);
+  border-radius: 3px 0 0 3px;
+  transition: transform .3s cubic-bezier(.22,1,.36,1);
+}
+.sidebar-link:hover::after {
+  transform: translateY(-50%) scaleX(1);
+}
 
 .main-content { margin-left: 240px; padding: 1.5rem; }
 
@@ -1041,4 +1060,115 @@ h1,h2,h3,h4,h5,h6 {
 @keyframes pageIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* ── Glow border effect on cards ───────────────────────────────────────── */
+.glass-card {
+  position: relative;
+}
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(220,38,38,0.1), transparent 50%, rgba(220,38,38,0.05));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity .4s;
+  pointer-events: none;
+}
+.glass-card:hover::after {
+  opacity: 1;
+}
+
+/* ── Animated gradient border on focus inputs ──────────────────────────── */
+.form-control-dark {
+  transition: border-color .3s, box-shadow .3s, background .3s;
+}
+.form-control-dark:focus {
+  background: rgba(255,255,255,0.06);
+}
+
+/* ── Breathing animation for cards on page load ────────────────────────── */
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+  50% { box-shadow: 0 0 20px rgba(220,38,38,0.05); }
+}
+
+/* ── Tooltip style ─────────────────────────────────────────────────────── */
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: rgba(10,10,15,0.95);
+  border: 1px solid var(--border-glass);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 9999;
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Number counter animation ──────────────────────────────────────────── */
+.count-up {
+  display: inline-block;
+  transition: transform .2s;
+}
+.count-up:hover {
+  transform: scale(1.05);
+}
+
+/* ── Subtle navbar link underline on hover ─────────────────────────────── */
+.nav-link-custom {
+  position: relative;
+}
+.nav-link-custom::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--red-primary);
+  border-radius: 2px;
+  transition: width .3s, left .3s;
+}
+.nav-link-custom:hover::after,
+.nav-link-custom.active::after {
+  width: 100%;
+  left: 0;
+}
+
+/* ── Scrollbar track glow ──────────────────────────────────────────────── */
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-corner {
+  background: var(--bg-primary);
+}
+
+/* ── Glass button press effect ─────────────────────────────────────────── */
+.btn-glass:active,
+.btn-rakshak:active {
+  transform: scale(0.97);
+}
+
+/* ── Animated border for active sections ───────────────────────────────── */
+@keyframes borderShimmer {
+  0% { border-color: rgba(220,38,38,0.1); }
+  50% { border-color: rgba(220,38,38,0.3); }
+  100% { border-color: rgba(220,38,38,0.1); }
 }
