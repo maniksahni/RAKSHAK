@@ -22,3 +22,11 @@ services:
           property: connectionString
       - key: PYTHON_VERSION
         value: "3.11.6"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_ADMIN_EMAILS
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false

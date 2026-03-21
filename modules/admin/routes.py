@@ -29,11 +29,11 @@ def get_socketio():
 @admin_required
 def dashboard():
     # Summary stats
-    total_users   = query_db('SELECT COUNT(*) as cnt FROM users WHERE role="user"', one=True)
+    total_users   = query_db("SELECT COUNT(*) as cnt FROM users WHERE role='user'", one=True)
     total_alerts  = query_db('SELECT COUNT(*) as cnt FROM sos_alerts', one=True)
-    active_alerts = query_db('SELECT COUNT(*) as cnt FROM sos_alerts WHERE status="active"', one=True)
-    pending_zones = query_db('SELECT COUNT(*) as cnt FROM danger_zones WHERE status="pending"', one=True)
-    high_risk     = query_db('SELECT COUNT(*) as cnt FROM users WHERE risk_level="high" AND role="user"', one=True)
+    active_alerts = query_db("SELECT COUNT(*) as cnt FROM sos_alerts WHERE status='active'", one=True)
+    pending_zones = query_db("SELECT COUNT(*) as cnt FROM danger_zones WHERE status='pending'", one=True)
+    high_risk     = query_db("SELECT COUNT(*) as cnt FROM users WHERE risk_level='high' AND role='user'", one=True)
 
     # Recent SOS alerts for map
     recent_alerts = query_db(
