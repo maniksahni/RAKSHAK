@@ -83,15 +83,15 @@ def analytics():
         alerts_per_day = query_db(
             """SELECT DATE(created_at) as date, COUNT(*) as count
                FROM sos_alerts
-               WHERE created_at >= DATE_SUB(NOW(), INTERVAL 14 DAY)
+               WHERE created_at >= NOW() - INTERVAL '14 days'
                GROUP BY DATE(created_at)
                ORDER BY date ASC"""
         )
 
         # Peak hours distribution
         peak_hours = query_db(
-            """SELECT HOUR(created_at) as hour, COUNT(*) as count
-               FROM sos_alerts GROUP BY HOUR(created_at) ORDER BY hour"""
+            """SELECT EXTRACT(HOUR FROM created_at)::int as hour, COUNT(*) as count
+               FROM sos_alerts GROUP BY EXTRACT(HOUR FROM created_at) ORDER BY hour"""
         )
 
         # Risk level distribution
@@ -147,7 +147,7 @@ def list_users():
             users = query_db(
                 """SELECT id, full_name, email, phone, role, risk_level,
                           is_active, created_at, last_ping
-                   FROM users WHERE (full_name LIKE %s OR email LIKE %s)
+                   FROM users WHERE (full_name ILIKE %s OR email ILIKE %s)
                    ORDER BY created_at DESC LIMIT %s OFFSET %s""",
                 (f'%{search}%', f'%{search}%', per_page, offset)
             )

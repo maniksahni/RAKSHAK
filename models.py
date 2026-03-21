@@ -1,7 +1,8 @@
 import time
 import logging
-import mysql.connector
-from mysql.connector import pooling
+import psycopg2
+import psycopg2.pool
+import psycopg2.extras
 from flask import current_app, g
 from flask_login import UserMixin
 import bcrypt
@@ -12,21 +13,29 @@ log = logging.getLogger('rakshak')
 
 _pool = None
 
+
+def _dsn():
+    """Build DSN from config — prefer DATABASE_URL if set."""
+    cfg = current_app.config
+    url = cfg.get('DATABASE_URL', '')
+    if url:
+        # Render uses postgres:// but psycopg2 needs postgresql://
+        if url.startswith('postgres://'):
+            url = url.replace('postgres://', 'postgresql://', 1)
+        return url
+    return (f"host={cfg['DB_HOST']} port={cfg['DB_PORT']} "
+            f"user={cfg['DB_USER']} password={cfg['DB_PASSWORD']} "
+            f"dbname={cfg['DB_NAME']}")
+
+
 def get_pool():
     global _pool
     if _pool is None:
-        cfg = current_app.config
-        _pool = pooling.MySQLConnectionPool(
-            pool_name="rakshak_pool",
-            pool_size=5,
-            host=cfg['DB_HOST'],
-            port=cfg['DB_PORT'],
-            user=cfg['DB_USER'],
-            password=cfg['DB_PASSWORD'],
-            database=cfg['DB_NAME'],
-            charset='utf8mb4',
-            autocommit=False,
-            connection_timeout=10,
+        _pool = psycopg2.pool.SimpleConnectionPool(
+            minconn=1,
+            maxconn=5,
+            dsn=_dsn(),
+            connect_timeout=10,
         )
     return _pool
 
@@ -34,23 +43,34 @@ def get_pool():
 def _fresh_connection():
     """Force a new connection bypassing pool cache."""
     global _pool
-    _pool = None          # reset pool so next call rebuilds
-    return get_pool().get_connection()
+    if _pool:
+        try:
+            _pool.closeall()
+        except Exception:
+            pass
+    _pool = None
+    return get_pool().getconn()
 
 
 def get_db():
     if 'db' not in g:
         try:
-            g.db = get_pool().get_connection()
+            g.db = get_pool().getconn()
         except Exception as e:
             log.error(f'DB pool exhausted or connection failed: {e}')
             raise
     else:
-        # Ping existing connection — heal if broken
+        # Check if connection is still alive
         try:
-            if not g.db.is_connected():
-                g.db.reconnect(attempts=3, delay=0.5)
+            g.db.isolation_level  # triggers exception if connection is closed
+            cur = g.db.cursor()
+            cur.execute('SELECT 1')
+            cur.close()
         except Exception:
+            try:
+                get_pool().putconn(g.db, close=True)
+            except Exception:
+                pass
             try:
                 g.db = _fresh_connection()
             except Exception as e:
@@ -63,10 +83,13 @@ def close_db(error=None):
     db = g.pop('db', None)
     if db is not None:
         try:
-            if db.is_connected():
-                db.close()
+            if not db.closed:
+                get_pool().putconn(db)
         except Exception:
-            pass
+            try:
+                db.close()
+            except Exception:
+                pass
 
 
 def query_db(query, args=(), one=False, commit=False, _retries=2):
@@ -79,43 +102,54 @@ def query_db(query, args=(), one=False, commit=False, _retries=2):
         conn = None
         cursor = None
         try:
-            conn   = get_db()
-            cursor = conn.cursor(dictionary=True)
+            conn = get_db()
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             cursor.execute(query, args)
             if commit:
                 conn.commit()
-                return cursor.lastrowid
+                # Try to get the last inserted id (for INSERT ... RETURNING id)
+                try:
+                    row = cursor.fetchone()
+                    return row['id'] if row else 0
+                except Exception:
+                    return 0
             rv = cursor.fetchall()
+            # Convert RealDictRow to regular dicts
+            rv = [dict(r) for r in rv]
             return (rv[0] if rv else None) if one else rv
 
-        except mysql.connector.errors.OperationalError as e:
+        except psycopg2.OperationalError as e:
             last_err = e
-            err_code = e.errno if hasattr(e, 'errno') else 0
-            # 2006 = server gone away, 2013 = lost connection
-            if err_code in (2006, 2013) and attempt <= _retries:
-                log.warning(f'DB OperationalError {err_code}, retrying (attempt {attempt})...')
+            if attempt <= _retries:
+                log.warning(f'DB OperationalError, retrying (attempt {attempt})...')
                 try:
-                    g.pop('db', None)          # force fresh connection next get_db()
+                    g.pop('db', None)
                 except Exception:
                     pass
                 time.sleep(0.5 * attempt)
                 continue
             if commit and conn:
-                try: conn.rollback()
-                except Exception: pass
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
             raise
 
         except Exception as e:
             last_err = e
             if commit and conn:
-                try: conn.rollback()
-                except Exception: pass
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
             raise
 
         finally:
             if cursor:
-                try: cursor.close()
-                except Exception: pass
+                try:
+                    cursor.close()
+                except Exception:
+                    pass
 
     raise last_err
 
