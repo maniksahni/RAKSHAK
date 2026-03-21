@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', initHeatmap);
 async function initHeatmap() {
   // Initialize dark Leaflet map
   heatMap = L.map('map', { zoomControl: true, attributionControl: false });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     maxZoom: 19
   }).addTo(heatMap);
   heatMap.setView([20.5937, 78.9629], 4);
@@ -438,6 +438,36 @@ function locateMe() {
       heatMap.setView([pos.coords.latitude, pos.coords.longitude], 15);
     });
   }
+}
+
+// ── Satellite Toggle ─────────────────────────────────────────────────────────
+let satelliteLayer = null;
+let darkLayer = null;
+let isSatellite = false;
+
+function toggleSatellite() {
+  if (!heatMap) return;
+  const btn = document.getElementById('sat-toggle');
+  if (!satelliteLayer) {
+    satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution:'Esri',maxZoom:19
+    });
+  }
+  if (!darkLayer) {
+    darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution:'CARTO',maxZoom:19
+    });
+  }
+  if (isSatellite) {
+    heatMap.removeLayer(satelliteLayer);
+    darkLayer.addTo(heatMap);
+    if (btn) btn.innerHTML = '<i class="bi bi-layers me-1" style="color:var(--accent-green);"></i> Satellite';
+  } else {
+    heatMap.removeLayer(darkLayer);
+    satelliteLayer.addTo(heatMap);
+    if (btn) btn.innerHTML = '<i class="bi bi-layers me-1" style="color:var(--accent-green);"></i> Dark Map';
+  }
+  isSatellite = !isSatellite;
 }
 
 // ── Proximity Warning ─────────────────────────────────────────────────────────
