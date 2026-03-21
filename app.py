@@ -150,14 +150,18 @@ def _auto_seed(app):
     USER_HASH  = '$2b$12$xIgo6mm/SnEmom75hQ.A3.4/FuIrGi9cdfNYemHRcFNgTTZPSeaQK'
     SEC_HASH   = '$2b$12$lCTx6wgXfHGyQxgDsEyBLOkAyZ/yJQJovUfYCKA.jogKyHiFozeAe'
     seeds = [
-        ("INSERT IGNORE INTO users (full_name,email,phone,password_hash,role,"
+        ("INSERT INTO users (full_name,email,phone,password_hash,role,"
          "security_question,security_answer_hash) VALUES "
          "('System Admin','admin@rakshak.com','9999999999',%s,'admin',"
-         "'What is the system name?',%s)", (ADMIN_HASH, SEC_HASH)),
-        ("INSERT IGNORE INTO users (full_name,email,phone,password_hash,role,"
+         "'What is the system name?',%s) "
+         "ON DUPLICATE KEY UPDATE password_hash=%s",
+         (ADMIN_HASH, SEC_HASH, ADMIN_HASH)),
+        ("INSERT INTO users (full_name,email,phone,password_hash,role,"
          "security_question,security_answer_hash) VALUES "
          "('Priya Sharma','priya@example.com','9876543210',%s,'user',"
-         "'What is your mother name?',%s)", (USER_HASH, SEC_HASH)),
+         "'What is your mother name?',%s) "
+         "ON DUPLICATE KEY UPDATE password_hash=%s",
+         (USER_HASH, SEC_HASH, USER_HASH)),
     ]
     try:
         from models import query_db
