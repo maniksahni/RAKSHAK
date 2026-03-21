@@ -125,7 +125,7 @@ def google_callback():
                    (full_name, email, phone, password_hash, role,
                     security_question, security_answer_hash, is_active)
                    VALUES (%s, %s, '0000000000', %s, %s,
-                           'How did you register?', %s, TRUE) RETURNING id""",
+                           'How did you register?', %s, TRUE)""",
                 (google_name, google_email, pw_hash, role, ans_hash),
                 commit=True
             )

@@ -104,7 +104,7 @@ def trigger_sos():
         alert_id = query_db(
             """INSERT INTO sos_alerts
                (user_id, latitude, longitude, address, trigger_type, message, battery_level, accuracy)
-               VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
             (current_user.id, lat, lng, address, trigger_type, message, battery, accuracy),
             commit=True
         )
