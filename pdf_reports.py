@@ -1,47 +1,57 @@
+import uuid
+import hashlib
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from io import BytesIO
 from datetime import datetime
 
-
 def generate_sos_report(alert: dict, user: dict, contacts: list) -> BytesIO:
-    """Generate a PDF incident report for an SOS alert using ReportLab."""
+    """Generate a highly official PDF incident dossier for an SOS alert."""
     buffer = BytesIO()
     doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
-        rightMargin=2*cm,
-        leftMargin=2*cm,
-        topMargin=2*cm,
-        bottomMargin=2*cm
+        rightMargin=1.5*cm,
+        leftMargin=1.5*cm,
+        topMargin=1.5*cm,
+        bottomMargin=1.5*cm
     )
 
-    # ── Colour Palette ──────────────────────────────────────────────
-    RED      = colors.HexColor('#dc2626')
-    DARK_BG  = colors.HexColor('#1a1a2e')
-    LIGHT    = colors.HexColor('#f0f0f0')
+    # ── Color Palette ──────────────────────────────────────────────
+    CRIMSON  = colors.HexColor('#dc2626')
+    BLOOD    = colors.HexColor('#991b1b')
+    DARK_BG  = colors.HexColor('#0a0a0f')
+    STEEL    = colors.HexColor('#cbd5e1')
     WHITE    = colors.white
+    BLACK    = colors.black
     GRAY     = colors.HexColor('#6b7280')
 
     styles = getSampleStyleSheet()
 
+    # Define custom styles
     title_style = ParagraphStyle(
-        'Title', parent=styles['Title'],
-        textColor=RED, fontSize=22, spaceAfter=6, alignment=TA_CENTER,
-        fontName='Helvetica-Bold'
+        'DossierTitle', parent=styles['Title'],
+        textColor=CRIMSON, fontSize=28, spaceAfter=2, alignment=TA_LEFT,
+        fontName='Helvetica-Bold', textTransform='uppercase'
     )
     subtitle_style = ParagraphStyle(
         'Subtitle', parent=styles['Normal'],
-        textColor=DARK_BG, fontSize=10, spaceAfter=4, alignment=TA_CENTER
+        textColor=GRAY, fontSize=11, spaceAfter=15, alignment=TA_LEFT,
+        fontName='Helvetica-Bold'
+    )
+    confidential_style = ParagraphStyle(
+        'Confidential', parent=styles['Normal'],
+        textColor=BLOOD, fontSize=14, spaceAfter=8, alignment=TA_RIGHT,
+        fontName='Helvetica-Bold'
     )
     section_style = ParagraphStyle(
         'Section', parent=styles['Heading2'],
-        textColor=DARK_BG, fontSize=13, spaceBefore=14, spaceAfter=6,
-        fontName='Helvetica-Bold'
+        textColor=BLACK, fontSize=14, spaceBefore=18, spaceAfter=8,
+        fontName='Helvetica-Bold', textTransform='uppercase'
     )
     body_style  = ParagraphStyle(
         'Body', parent=styles['Normal'],
@@ -50,126 +60,138 @@ def generate_sos_report(alert: dict, user: dict, contacts: list) -> BytesIO:
 
     story = []
 
-    # ── Header ───────────────────────────────────────────────────────
-    story.append(Paragraph("🛡 RAKSHAK", title_style))
-    story.append(Paragraph("Real-time Alert & Knowledge System for Hazard And Crisis", subtitle_style))
-    story.append(Paragraph("INCIDENT REPORT", ParagraphStyle(
-        'IR', parent=styles['Normal'], textColor=RED, fontSize=12,
-        alignment=TA_CENTER, fontName='Helvetica-Bold', spaceAfter=6
-    )))
-    story.append(HRFlowable(width="100%", thickness=2, color=RED))
-    story.append(Spacer(1, 0.4*cm))
+    # ── Header Layer ─────────────────────────────────────────────────
+    # Generate cryptographic-looking evidence hash
+    raw_hash_data = f"{alert.get('id', 0)}-{alert.get('created_at', '')}-{user.get('id', 0)}"
+    evidence_hash = hashlib.sha256(raw_hash_data.encode()).hexdigest()[:16].upper()
+    tracking_id   = f"RAKS-DOSSIER-{str(uuid.uuid4()).split('-')[0].upper()}"
 
-    # ── Alert Meta ───────────────────────────────────────────────────
+    story.append(Paragraph("TOP SECRET // CONFIDENTIAL", confidential_style))
+    story.append(Paragraph("RAKSHAK COMMAND CENTER", title_style))
+    story.append(Paragraph("OFFICIAL INCIDENT RESPONSE DOSSIER", subtitle_style))
+    story.append(HRFlowable(width="100%", thickness=3, color=DARK_BG))
+    story.append(Spacer(1, 0.5*cm))
+
+    # ── Alert Meta Data ──────────────────────────────────────────────
     created_at = alert.get('created_at', datetime.now())
     if isinstance(created_at, str):
-        created_at = datetime.fromisoformat(created_at)
+        created_at = datetime.fromisoformat(created_at).replace(tzinfo=None)
 
+    story.append(Paragraph("I. INCIDENT CLASSIFICATION", section_style))
     meta_data = [
-        ['Report ID', f"RAKS-{alert.get('id', 'N/A'):05d}"],
-        ['Generated At', datetime.now().strftime('%d %b %Y  %H:%M:%S')],
-        ['Alert Triggered At', created_at.strftime('%d %b %Y  %H:%M:%S')],
-        ['Trigger Type', alert.get('trigger_type', 'manual').replace('_', ' ').upper()],
-        ['Status', alert.get('status', 'active').upper()],
+        ['TRACKING ID', tracking_id],
+        ['EVIDENCE HASH', evidence_hash],
+        ['TIMESTAMP (LOCAL)', datetime.now().strftime('%d %b %Y  %H:%M:%S')],
+        ['INCIDENT TIME', created_at.strftime('%d %b %Y  %H:%M:%S')],
+        ['TRIGGER PROTOCOL', alert.get('trigger_type', 'manual').replace('_', ' ').upper()],
+        ['MISSION STATUS', alert.get('status', 'active').upper()],
     ]
-    meta_table = Table(meta_data, colWidths=[5*cm, 12*cm])
+    meta_table = Table(meta_data, colWidths=[6*cm, 12*cm])
     meta_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#fef2f2')),
-        ('BACKGROUND', (1, 0), (1, -1), WHITE),
-        ('TEXTCOLOR', (0, 0), (0, -1), RED),
-        ('TEXTCOLOR', (1, 0), (1, -1), DARK_BG),
-        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, 0), (0, -1), DARK_BG),
+        ('TEXTCOLOR', (0, 0), (0, -1), WHITE),
+        ('BACKGROUND', (1, 0), (1, -1), colors.HexColor('#f8fafc')),
+        ('TEXTCOLOR', (1, 0), (1, -1), BLACK),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb')),
-        ('ROWBACKGROUNDS', (0, 0), (-1, -1), [colors.HexColor('#fef2f2'), WHITE]),
-        ('PADDING', (0, 0), (-1, -1), 8),
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+        ('GRID', (0, 0), (-1, -1), 1, STEEL),
+        ('PADDING', (0, 0), (-1, -1), 10),
+        # Highlight status row if active
+        ('TEXTCOLOR', (1, 5), (1, 5), CRIMSON if alert.get('status') == 'active' else colors.HexColor('#16a34a')),
     ]))
     story.append(meta_table)
-    story.append(Spacer(1, 0.5*cm))
 
-    # ── User Details ─────────────────────────────────────────────────
-    story.append(Paragraph("User Information", section_style))
+    # ── Subject Overview ─────────────────────────────────────────────
+    story.append(Paragraph("II. SUBJECT OVERVIEW", section_style))
     user_data = [
-        ['Full Name', user.get('full_name', 'N/A')],
-        ['Email', user.get('email', 'N/A')],
-        ['Phone', user.get('phone', 'N/A')],
-        ['Address', user.get('address') or 'Not provided'],
+        ['SUBJECT NAME', user.get('full_name', 'N/A').upper()],
+        ['CONTACT EMAIL', user.get('email', 'N/A')],
+        ['PRIMARY PHONE', user.get('phone', 'N/A')],
+        ['REGISTERED ADDRESS', user.get('address') or 'Classified / Not provided'],
     ]
-    user_table = Table(user_data, colWidths=[5*cm, 12*cm])
+    user_table = Table(user_data, colWidths=[6*cm, 12*cm])
     user_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f3f4f6')),
+        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#e2e8f0')),
         ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb')),
-        ('PADDING', (0, 0), (-1, -1), 8),
+        ('GRID', (0, 0), (-1, -1), 1, STEEL),
+        ('PADDING', (0, 0), (-1, -1), 10),
     ]))
     story.append(user_table)
-    story.append(Spacer(1, 0.5*cm))
 
-    # ── Location ─────────────────────────────────────────────────────
-    story.append(Paragraph("Location Details", section_style))
+    # ── Tactical Coordinates ─────────────────────────────────────────
+    story.append(Paragraph("III. TACTICAL COORDINATES", section_style))
     lat  = alert.get('latitude', 0)
     lng  = alert.get('longitude', 0)
     maps_url = f"https://maps.google.com/?q={lat},{lng}"
     loc_data = [
-        ['Latitude',  str(lat)],
-        ['Longitude', str(lng)],
-        ['Address',   alert.get('address') or 'Not available'],
-        ['Google Maps', maps_url],
-        ['Battery Level', f"{alert.get('battery_level', 'N/A')}%"],
-        ['GPS Accuracy', f"±{alert.get('accuracy', 'N/A')} m"],
+        ['LATITUDE',  str(lat)],
+        ['LONGITUDE', str(lng)],
+        ['APPROX. ADDRESS', alert.get('address') or 'Signal Lost / Not available'],
+        ['GPS ACCURACY', f"Â±{alert.get('accuracy', 'N/A')} METERS"],
+        ['DEVICE BATTERY', f"{alert.get('battery_level', 'N/A')}% (AT TIME OF INCIDENT)"],
+        ['LIVE TRACKING LINK', maps_url],
     ]
-    loc_table = Table(loc_data, colWidths=[5*cm, 12*cm])
+    loc_table = Table(loc_data, colWidths=[6*cm, 12*cm])
     loc_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f3f4f6')),
+        ('BACKGROUND', (0, 0), (0, -1), DARK_BG),
+        ('TEXTCOLOR', (0, 0), (0, -1), WHITE),
         ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb')),
-        ('PADDING', (0, 0), (-1, -1), 8),
-        ('TEXTCOLOR', (1, 3), (1, 3), colors.blue),
+        ('GRID', (0, 0), (-1, -1), 1, STEEL),
+        ('PADDING', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (1, 5), (1, 5), colors.blue),
     ]))
     story.append(loc_table)
-    story.append(Spacer(1, 0.5*cm))
 
-    # ── Trusted Contacts Notified ────────────────────────────────────
+    # ── Emergency Contacts Broadcast ─────────────────────────────────
     if contacts:
-        story.append(Paragraph("Trusted Contacts Notified", section_style))
-        contact_rows = [['#', 'Name', 'Phone', 'Email', 'Relationship']]
+        story.append(Paragraph("IV. EMERGENCY BROADCAST LOG", section_style))
+        contact_rows = [['#', 'PROTOCOL NAME', 'PHONE', 'RELATION']]
         for i, c in enumerate(contacts, 1):
             contact_rows.append([
                 str(i),
-                c.get('contact_name', 'N/A'),
+                c.get('contact_name', 'N/A').upper(),
                 c.get('contact_phone', 'N/A'),
-                c.get('contact_email', 'N/A'),
-                c.get('relationship', 'N/A'),
+                c.get('relationship', 'N/A').upper(),
             ])
-        contact_table = Table(contact_rows, colWidths=[1*cm, 4*cm, 3.5*cm, 5*cm, 3.5*cm])
+        contact_table = Table(contact_rows, colWidths=[1.5*cm, 6.5*cm, 5*cm, 5*cm])
         contact_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), RED),
+            ('BACKGROUND', (0, 0), (-1, 0), CRIMSON),
             ('TEXTCOLOR', (0, 0), (-1, 0), WHITE),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, -1), 9),
-            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb')),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [WHITE, colors.HexColor('#f9fafb')]),
-            ('PADDING', (0, 0), (-1, -1), 6),
+            ('GRID', (0, 0), (-1, -1), 1, STEEL),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [WHITE, colors.HexColor('#f8fafc')]),
+            ('PADDING', (0, 0), (-1, -1), 8),
         ]))
         story.append(contact_table)
+
+    # ── Additional Intel ─────────────────────────────────────────────
+    if alert.get('message'):
+        story.append(Paragraph("V. ADDITIONAL INTEL / COMMUNIQUE", section_style))
+        story.append(Paragraph(
+            f"<b>Intercepted Message:</b> {alert['message']}", 
+            ParagraphStyle('Intel', parent=styles['Normal'], fontSize=11, leading=16, 
+                           backColor=colors.HexColor('#fef2f2'), textColor=BLOOD, borderPadding=10)
+        ))
         story.append(Spacer(1, 0.5*cm))
 
-    # ── Message ──────────────────────────────────────────────────────
-    if alert.get('message'):
-        story.append(Paragraph("Additional Information", section_style))
-        story.append(Paragraph(alert['message'], body_style))
-        story.append(Spacer(1, 0.3*cm))
-
     # ── Footer ───────────────────────────────────────────────────────
-    story.append(HRFlowable(width="100%", thickness=1, color=GRAY))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 1*cm))
+    story.append(HRFlowable(width="100%", thickness=1.5, color=DARK_BG))
+    story.append(Spacer(1, 0.3*cm))
+    
+    footer_text = (
+        "<b>WARNING:</b> THIS DOCUMENT CONTAINS HIGHLY SENSITIVE LOCATION AND PERSONAL IDENTIFICATION DATA. "
+        "UNAUTHORIZED DISTRIBUTION IS STRICTLY PROHIBITED. <br/>"
+        "GENERATED BY RAKSHAK CORE AI INFRASTRUCTURE. FOR EMERGENCY USE EXCLUSIVELY."
+    )
     story.append(Paragraph(
-        "This report was automatically generated by RAKSHAK — Women Safety System. "
-        "For emergencies, please contact local authorities immediately.",
+        footer_text,
         ParagraphStyle('Footer', parent=styles['Normal'], textColor=GRAY,
-                       fontSize=8, alignment=TA_CENTER)
+                       fontSize=7, alignment=TA_CENTER, leading=10)
     ))
 
     doc.build(story)
