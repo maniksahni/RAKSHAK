@@ -186,8 +186,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 <script>
-const ADMIN_ALERTS = {{ recent_alerts | tojson(default=str) | safe }};
-const ADMIN_ZONES  = {{ danger_zones  | tojson(default=str) | safe }};
+const ADMIN_ALERTS = {{ recent_alerts | tojson | safe }};
+const ADMIN_ZONES  = {{ danger_zones  | tojson | safe }};
 initAdmin(ADMIN_ALERTS, ADMIN_ZONES);
 </script>
 {% endblock %}

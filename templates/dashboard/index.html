@@ -174,7 +174,7 @@
 // Pass server data to JS
 window.currentUserId = {{ current_user.id | tojson }};
 const DANGER_ZONES = {{ danger_zones | tojson | safe }};
-const USER_ALERTS = {{ alerts | tojson(default=str) | safe }};
+const USER_ALERTS = {{ alerts | tojson | safe }};
 initDashboard(DANGER_ZONES, USER_ALERTS);
 </script>
 {% endblock %}

@@ -51,10 +51,25 @@ def index():
     danger_zones = query_db(
         'SELECT * FROM danger_zones WHERE status="approved" ORDER BY created_at DESC LIMIT 100'
     )
+    def _safe(rows):
+        from decimal import Decimal
+        out = []
+        for r in (rows or []):
+            d = {}
+            for k, v in dict(r).items():
+                if hasattr(v, 'isoformat'):
+                    d[k] = v.isoformat()
+                elif isinstance(v, Decimal):
+                    d[k] = float(v)
+                else:
+                    d[k] = v
+            out.append(d)
+        return out
+
     return render_template('dashboard/index.html',
-                           alerts=alerts,
+                           alerts=_safe(alerts),
                            notifications=notifications,
-                           danger_zones=danger_zones)
+                           danger_zones=_safe(danger_zones))
 
 
 # ── Trigger SOS ───────────────────────────────────────────────────────────────
