@@ -438,6 +438,21 @@ fetch('/sos/notifications').then(r=>r.json()).then(data=>{
 @keyframes transBar { 0%{left:-30%;opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{left:100%;opacity:0} }
 </style>
 <script>
+// Ripple effect on buttons
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.btn-rakshak, .btn-glass');
+  if (!btn) return;
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+  ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+  btn.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+});
+
 // Page transition on link clicks
 document.addEventListener('click', function(e) {
   const link = e.target.closest('a[href]');

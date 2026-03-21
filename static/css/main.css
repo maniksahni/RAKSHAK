@@ -817,6 +817,151 @@ h1,h2,h3,h4,h5,h6 {
 .notif-dropdown-body::-webkit-scrollbar { width: 4px; }
 .notif-dropdown-body::-webkit-scrollbar-thumb { background: var(--red-primary); border-radius: 2px; }
 
+/* ── Skeleton Loading ────────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton-text { height: 12px; margin-bottom: 8px; width: 80%; }
+.skeleton-text.short { width: 50%; }
+.skeleton-circle { width: 40px; height: 40px; border-radius: 50%; }
+.skeleton-card { height: 120px; }
+
+/* ── Focus Ring — Accessibility ──────────────────────────────────────────── */
+.btn-rakshak:focus-visible, .btn-glass:focus-visible, .form-control-dark:focus-visible {
+  outline: 2px solid var(--red-primary);
+  outline-offset: 2px;
+}
+
+/* ── Ripple Effect for Buttons ───────────────────────────────────────────── */
+.btn-rakshak, .btn-glass {
+  position: relative;
+  overflow: hidden;
+}
+.btn-rakshak .ripple, .btn-glass .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transform: scale(0);
+  animation: rippleAnim 0.6s linear;
+  pointer-events: none;
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── Gradient Text Utility ───────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--red-primary), #ff6b6b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Floating label inputs ───────────────────────────────────────────────── */
+.form-control-dark::placeholder {
+  transition: opacity .2s, transform .2s;
+}
+.form-control-dark:focus::placeholder {
+  opacity: 0.3;
+  transform: translateX(8px);
+}
+
+/* ── Card hover lift — universal ─────────────────────────────────────────── */
+.hover-lift {
+  transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 20px rgba(220,38,38,0.06);
+}
+
+/* ── Typing indicator dots ───────────────────────────────────────────────── */
+.typing-dots {
+  display: inline-flex; gap: 4px; align-items: center;
+}
+.typing-dots span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--text-muted);
+  animation: typingBounce 1.4s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ── Glow border on focus for glass-card ─────────────────────────────────── */
+.glass-card:focus-within {
+  border-color: rgba(220,38,38,0.2);
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.08);
+}
+
+/* ── Number highlight animation ──────────────────────────────────────────── */
+.stat-number {
+  transition: color .3s, transform .2s;
+}
+.stat-card:hover .stat-number {
+  transform: scale(1.08);
+}
+
+/* ── Badge pulse for active items ────────────────────────────────────────── */
+.pill-active {
+  position: relative;
+}
+.pill-active::before {
+  content: '';
+  position: absolute; top: -1px; right: -1px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--red-primary);
+  animation: badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
+  50% { box-shadow: 0 0 0 4px rgba(220,38,38,0); }
+}
+
+/* ── Smooth scrollbar for main content ───────────────────────────────────── */
+.main-content::-webkit-scrollbar { width: 6px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb {
+  background: rgba(220,38,38,0.2);
+  border-radius: 3px;
+}
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(220,38,38,0.4);
+}
+
+/* ── Table row stagger animation ─────────────────────────────────────────── */
+.alert-table-row {
+  animation: rowSlideIn .3s cubic-bezier(.22,1,.36,1) both;
+}
+.alert-table-row:nth-child(1) { animation-delay: .05s; }
+.alert-table-row:nth-child(2) { animation-delay: .08s; }
+.alert-table-row:nth-child(3) { animation-delay: .11s; }
+.alert-table-row:nth-child(4) { animation-delay: .14s; }
+.alert-table-row:nth-child(5) { animation-delay: .17s; }
+.alert-table-row:nth-child(6) { animation-delay: .2s; }
+.alert-table-row:nth-child(7) { animation-delay: .23s; }
+.alert-table-row:nth-child(8) { animation-delay: .26s; }
+@keyframes rowSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Selection color ─────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(220,38,38,0.3);
+  color: #fff;
+}
+
 /* ── Toast slide-in animation ───────────────────────────────────────────── */
 .toast-notification {
   animation: toastSlide .35s cubic-bezier(.22,1,.36,1) both;
