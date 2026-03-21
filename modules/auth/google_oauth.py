@@ -3,8 +3,10 @@ Google OAuth 2.0 login for RAKSHAK.
 Uses authlib for the OAuth flow.
 
 Environment variables required:
-  GOOGLE_CLIENT_ID     — from Google Cloud Console
-  GOOGLE_CLIENT_SECRET — from Google Cloud Console
+  GOOGLE_CLIENT_ID      — from Google Cloud Console
+  GOOGLE_CLIENT_SECRET  — from Google Cloud Console
+  GOOGLE_ADMIN_EMAILS   — comma-separated list of Gmail addresses that get admin role
+                          e.g. maniksahni5@gmail.com,other@gmail.com
 """
 
 import os
@@ -21,6 +23,14 @@ google_bp = Blueprint('google_auth', __name__)
 # OAuth object — configured per-app in register_google_oauth()
 oauth = OAuth()
 google = None   # populated after init
+
+
+def _get_admin_emails():
+    """Return set of lowercase emails that should have admin role via Google login."""
+    raw = os.environ.get('GOOGLE_ADMIN_EMAILS', '')
+    base = {os.environ.get('ADMIN_EMAIL', 'admin@rakshak.com').strip().lower()}
+    extras = {e.strip().lower() for e in raw.split(',') if e.strip()}
+    return base | extras
 
 
 def register_google_oauth(app):
@@ -51,7 +61,6 @@ def google_login():
         flash('Google login is not configured yet.', 'warning')
         return redirect(url_for('auth.login'))
 
-    # nonce prevents replay attacks
     import secrets
     nonce = secrets.token_urlsafe(16)
     session['google_nonce'] = nonce
@@ -79,14 +88,25 @@ def google_callback():
             flash('Could not retrieve your email from Google. Try again.', 'error')
             return redirect(url_for('auth.login'))
 
+        # Determine if this email should be admin
+        should_be_admin = google_email in _get_admin_emails()
+        role = 'admin' if should_be_admin else 'user'
+
         # ── Look up user by email ────────────────────────────────────────────
         data = query_db('SELECT * FROM users WHERE email=%s', (google_email,), one=True)
 
         if data:
-            # Existing user — check if active
             if not data['is_active']:
                 flash('Your account has been deactivated. Contact support.', 'error')
                 return redirect(url_for('auth.login'))
+
+            # Auto-elevate to admin if email is in admin list
+            if should_be_admin and data['role'] != 'admin':
+                query_db('UPDATE users SET role=%s WHERE email=%s',
+                         ('admin', google_email), commit=True)
+                log.info(f'Google login: elevated {google_email} to admin')
+                data = query_db('SELECT * FROM users WHERE email=%s',
+                                (google_email,), one=True)
 
             user = User(data)
             login_user(user, remember=True)
@@ -94,21 +114,19 @@ def google_callback():
             flash(f'Welcome back, {user.full_name.split()[0]}! 👋', 'success')
 
         else:
-            # New user — auto-register with Google
-            import bcrypt, secrets as sec
-            # Create a random unguessable password (they'll use Google to login)
+            # New user — auto-register with Google, assign correct role
+            import secrets as sec
             random_pw = sec.token_urlsafe(32)
             pw_hash   = User.hash_password(random_pw)
-            # Dummy security answer
             ans_hash  = User.hash_password('google_oauth_user')
 
             user_id = query_db(
                 """INSERT INTO users
                    (full_name, email, phone, password_hash, role,
                     security_question, security_answer_hash, is_active)
-                   VALUES (%s, %s, '0000000000', %s, 'user',
+                   VALUES (%s, %s, '0000000000', %s, %s,
                            'How did you register?', %s, TRUE)""",
-                (google_name, google_email, pw_hash, ans_hash),
+                (google_name, google_email, pw_hash, role, ans_hash),
                 commit=True
             )
             log_audit(user_id, 'google_register', 'users', user_id,
@@ -117,7 +135,7 @@ def google_callback():
             data = query_db('SELECT * FROM users WHERE id=%s', (user_id,), one=True)
             user = User(data)
             login_user(user, remember=True)
-            flash(f'Account created via Google! Welcome, {google_name.split()[0]} 🎉', 'success')
+            flash(f'Welcome, {google_name.split()[0]}! 🎉', 'success')
 
         # Redirect to appropriate dashboard
         if user.is_admin:
