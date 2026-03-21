@@ -244,7 +244,24 @@ def create_app(config_name=None):
     # ── Ensure demo users exist on every cold start ───────────────────────
     _auto_seed(app)
 
-    # ── HTTP Error handlers ───────────────────────────────────────────────
+    # ── Global Jinja2 helpers ─────────────────────────────────────────────────
+    def _fmt_dt(value, fmt='%d %b %Y %H:%M'):
+        """Safe date formatter: works with datetime objects, ISO strings, or None."""
+        if not value:
+            return ''
+        try:
+            from datetime import datetime
+            if hasattr(value, 'strftime'):
+                return value.strftime(fmt)
+            # ISO string: "2026-03-21T13:25:53" or "2026-03-21 13:25:53"
+            s = str(value).replace('T', ' ').split('.')[0]
+            return datetime.strptime(s, '%Y-%m-%d %H:%M:%S').strftime(fmt)
+        except Exception:
+            return str(value)[:16]  # fallback: return raw string slice
+
+    app.jinja_env.filters['fmt_dt'] = _fmt_dt
+
+    # ── HTTP Error handlers ───────────────────────────────────────────────────────────
     @app.errorhandler(404)
     def not_found(e):
         from flask import render_template
@@ -252,8 +269,15 @@ def create_app(config_name=None):
 
     @app.errorhandler(500)
     def internal_error(e):
-        from flask import render_template
-        return render_template('errors/500.html'), 500
+        """Never show a crash page — redirect home with a flash message."""
+        from flask import redirect, url_for, flash, request as req
+        log.error(f'500 on {req.path}: {e}')
+        try:
+            flash('Something went wrong. Please try again.', 'warning')
+            return redirect(url_for('main.index')), 302
+        except Exception:
+            from flask import render_template
+            return render_template('errors/500.html'), 500
 
     @app.errorhandler(429)
     def ratelimit_handler(e):
