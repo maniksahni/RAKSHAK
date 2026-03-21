@@ -18,7 +18,86 @@
 </head>
 <body>
 
-<!-- ── Navbar ──────────────────────────────────────────────────────────────── -->
+<!-- ── GLOBAL BOOT SEQUENCE ─────────────────────────────────────────────────── -->
+<div id="cyber-boot-loader" style="position:fixed;inset:0;z-index:99999;background:#030305;color:#dc2626;font-family:'Courier New', monospace;padding:2rem;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;border-radius:50%;border:1px dashed rgba(220,38,38,0.2);animation:spinBoot 8s linear infinite;"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:350px;height:350px;border-radius:50%;border:2px solid rgba(220,38,38,0.1);animation:spinBootRev 5s linear infinite;"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;opacity:0.05;font-weight:900;">SYS.BOOT</div>
+  <div id="boot-text-container" style="position:relative;z-index:2;font-size:0.9rem;line-height:1.6;text-shadow:0 0 8px rgba(220,38,38,0.6);margin-bottom:10px;"></div>
+  <div style="width:100%;height:3px;background:rgba(220,38,38,0.1);margin-top:10px;position:relative;overflow:hidden;">
+    <div id="boot-progress" style="width:0;height:100%;background:var(--red-primary);box-shadow:0 0 10px var(--red-primary);transition:width 0.2s;"></div>
+  </div>
+</div>
+<script>
+(function() {
+  if (sessionStorage.getItem('rakshak_booted')) {
+    const loader = document.getElementById('cyber-boot-loader');
+    if(loader) loader.style.display = 'none';
+    return;
+  }
+  
+  const lines = [
+    "--------------------------------------------------",
+    "RAKSHAK KERNEL v2.4.9 — INITIATING SECURE BOOT",
+    "--------------------------------------------------",
+    "[SYS] ESTABLISHING DIRECT SATELLITE UPLINK...",
+    "[SYS] UPLINK SECURED. PING: 14ms",
+    "[SEC] ENABLING MILITARY-GRADE ENCRYPTION PROTOCOLS...",
+    "[SEC] FIREWALL ENGAGED. IP SPOOFING ACTIVE.",
+    "[MOD] THREAT ENGINE: STANDBY...",
+    "[MOD] DANGER MAP TELEMETRY: CALIBRATING...",
+    "[UI]  LOADING TACTICAL OVERWATCH HUD...",
+    "[AUTH] VERIFYING OPERATIVE CLEARANCE LEVEL...",
+    "> CLEARANCE LEVEL: MAXIMUM",
+    "> ACCESS GRANTED"
+  ];
+  
+  const container = document.getElementById('boot-text-container');
+  const prog = document.getElementById('boot-progress');
+  const loader = document.getElementById('cyber-boot-loader');
+  let currentLine = 0;
+  
+  function typeLine() {
+    if(currentLine >= lines.length) {
+      setTimeout(() => {
+        loader.style.transition = 'opacity 0.8s cubic-bezier(.22,1,.36,1), filter 0.8s ease-out, transform 0.8s ease-in';
+        loader.style.opacity = '0';
+        loader.style.filter = 'blur(15px)';
+        loader.style.transform = 'scale(1.1)';
+        sessionStorage.setItem('rakshak_booted', 'true');
+        setTimeout(() => loader.remove(), 1000);
+      }, 600);
+      return;
+    }
+    
+    const div = document.createElement('div');
+    if (lines[currentLine].includes("GRAN")) { div.style.color = "#22c55e"; div.style.fontWeight = "bold"; }
+    container.appendChild(div);
+    
+    let charIdx = 0;
+    const text = lines[currentLine];
+    const isFast = text.includes("---");
+    
+    const typeInt = setInterval(() => {
+      div.textContent += text.charAt(charIdx);
+      charIdx++;
+      if(charIdx >= text.length) {
+        clearInterval(typeInt);
+        currentLine++;
+        prog.style.width = (currentLine / lines.length) * 100 + "%";
+        setTimeout(typeLine, isFast ? 10 : (Math.random() * 150 + 50));
+      }
+    }, isFast ? 2 : 12);
+  }
+  
+  setTimeout(typeLine, 200);
+})();
+</script>
+<style>
+@keyframes spinBoot { 100% { transform: translate(-50%,-50%) rotate(360deg); } }
+@keyframes spinBootRev { 100% { transform: translate(-50%,-50%) rotate(-360deg); } }
+</style>
+<!-- ────────────────────────────────────────────────────────────────────────── -->
 {% if current_user.is_authenticated %}
 <nav class="navbar navbar-rakshak d-flex align-items-center px-4" style="position:fixed;top:0;left:240px;right:0;z-index:200;">
   <!-- Mobile toggle -->
