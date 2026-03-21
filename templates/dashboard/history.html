@@ -242,26 +242,26 @@
   {% set manual_count = alerts|selectattr('trigger_type','eq','manual')|list|length %}
   {% set auto_count = alerts|length - manual_count %}
   <div class="row g-3 mb-4 history-stats">
-    <div class="col-6 col-md-3">
-      <div class="stat-card text-center">
+    <div class="col-6 col-md-3 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card text-center" style="transform:translateZ(10px);">
         <div class="stat-number">{{ alerts|length }}</div>
         <div class="stat-label">Total Alerts</div>
       </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="stat-card stat-card-red text-center">
+    <div class="col-6 col-md-3 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card stat-card-red text-center" style="transform:translateZ(10px);">
         <div class="stat-number">{{ active_count }}</div>
         <div class="stat-label">Active</div>
       </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="stat-card stat-card-green text-center">
+    <div class="col-6 col-md-3 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card stat-card-green text-center" style="transform:translateZ(10px);">
         <div class="stat-number">{{ resolved_count }}</div>
         <div class="stat-label">Resolved</div>
       </div>
     </div>
-    <div class="col-6 col-md-3">
-      <div class="stat-card stat-card-amber text-center">
+    <div class="col-6 col-md-3 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card stat-card-amber text-center" style="transform:translateZ(10px);">
         <div class="stat-number">{{ auto_count }}</div>
         <div class="stat-label">Auto-triggered</div>
       </div>
@@ -484,5 +484,26 @@ function filterAlerts(q) {
     item.style.display = item.textContent.toLowerCase().includes(query) ? '' : 'none';
   });
 }
+</script>
+<script>
+/* 3D tilt tracking for history stat cards */
+(function(){
+  const cards = document.querySelectorAll('.tilt-card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const deltaX = (x - centerX) / centerX;
+      const deltaY = (y - centerY) / centerY;
+      card.style.transform = `perspective(800px) rotateX(${deltaY * -10}deg) rotateY(${deltaX * 10}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(800px) rotateX(0) rotateY(0)`;
+    });
+  });
+})();
 </script>
 {% endblock %}
