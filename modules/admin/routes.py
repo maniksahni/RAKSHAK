@@ -46,6 +46,21 @@ def dashboard():
         "SELECT * FROM danger_zones WHERE status='approved' ORDER BY created_at DESC LIMIT 100"
     )
 
+    def _safe_rows(rows):
+        from decimal import Decimal
+        out = []
+        for r in (rows or []):
+            d = {}
+            for k, v in dict(r).items():
+                if hasattr(v, 'isoformat'):
+                    d[k] = v.isoformat()
+                elif isinstance(v, Decimal):
+                    d[k] = float(v)
+                else:
+                    d[k] = v
+            out.append(d)
+        return out
+
     stats = {
         'total_users':   total_users['cnt'] if total_users else 0,
         'total_alerts':  total_alerts['cnt'] if total_alerts else 0,
@@ -54,7 +69,8 @@ def dashboard():
         'high_risk':     high_risk['cnt'] if high_risk else 0,
     }
     return render_template('admin/dashboard.html', stats=stats,
-                           recent_alerts=recent_alerts, danger_zones=danger_zones)
+                           recent_alerts=_safe_rows(recent_alerts),
+                           danger_zones=_safe_rows(danger_zones))
 
 
 # ── Analytics ─────────────────────────────────────────────────────────────────
