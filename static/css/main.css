@@ -264,6 +264,7 @@ h1,h2,h3,h4,h5,h6 {
 .nav-link-custom:hover {
   color: var(--text-primary) !important;
   background: var(--bg-card);
+  transform: translateY(-1px);
 }
 
 /* ── Risk Badge ─────────────────────────────────────────────────────────────── */
@@ -349,8 +350,9 @@ h1,h2,h3,h4,h5,h6 {
 .form-control-dark:focus {
   background: rgba(255,255,255,0.08) !important;
   border-color: var(--red-primary) !important;
-  box-shadow: 0 0 0 3px rgba(220,38,38,0.15) !important;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.15), 0 0 20px rgba(220,38,38,0.08) !important;
   outline: none !important;
+  transform: translateY(-1px);
 }
 .form-control-dark::placeholder { color: var(--text-muted) !important; }
 .form-label-dark { color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; margin-bottom: 6px; }
@@ -435,6 +437,7 @@ h1,h2,h3,h4,h5,h6 {
   color: var(--text-primary);
   background: var(--bg-card);
   border-left-color: var(--red-primary);
+  box-shadow: inset 3px 0 12px rgba(220,38,38,0.08);
 }
 .sidebar-link i { width: 20px; text-align: center; }
 

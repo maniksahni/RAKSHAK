@@ -1,34 +1,155 @@
 {% extends "base.html" %}
 {% block title %}Login — RAKSHAK{% endblock %}
 
-{% block content %}
-<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:radial-gradient(ellipse at 50% 30%, rgba(220,38,38,0.07) 0%, transparent 60%);">
-  <div style="width:100%;max-width:440px;">
+{% block extra_css %}
+<style>
+/* ── Auth page background ── */
+.auth-bg {
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;
+  background:#0a0a0f;position:relative;overflow:hidden;
+}
+.auth-bg::before {
+  content:'';position:absolute;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,38,38,0.12) 0%,transparent 70%);
+  top:-100px;right:-150px;pointer-events:none;animation:drift 12s ease-in-out infinite alternate;
+}
+.auth-bg::after {
+  content:'';position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,38,38,0.06) 0%,transparent 70%);
+  bottom:-120px;left:-100px;pointer-events:none;animation:drift 15s ease-in-out 2s infinite alternate-reverse;
+}
+@keyframes drift {
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(40px,30px) scale(1.15)}
+}
 
+/* grid pattern overlay */
+.grid-overlay {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(220,38,38,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220,38,38,0.03) 1px, transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;
+  mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
+}
+
+/* card entrance */
+.auth-card-wrap {
+  width:100%;max-width:440px;position:relative;z-index:2;
+  animation:cardIn .7s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes cardIn {
+  from{opacity:0;transform:translateY(30px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* logo pulse */
+.auth-logo {
+  font-family:var(--font-display);font-size:2.5rem;font-weight:800;
+  color:var(--red-primary);
+  text-shadow:0 0 30px rgba(220,38,38,0.5);
+  animation:logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%,100%{text-shadow:0 0 20px rgba(220,38,38,0.5)}
+  50%{text-shadow:0 0 40px rgba(220,38,38,0.8),0 0 80px rgba(220,38,38,0.3)}
+}
+
+/* shield icon */
+.shield-icon {
+  display:inline-flex;align-items:center;justify-content:center;
+  width:56px;height:56px;border-radius:16px;margin:0 auto 1rem;
+  background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.25);
+  font-size:1.5rem;animation:shieldBob 3s ease-in-out infinite;
+}
+@keyframes shieldBob {
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+
+/* input focus glow */
+.form-control-dark:focus {
+  box-shadow:0 0 0 3px rgba(220,38,38,0.15), 0 0 20px rgba(220,38,38,0.08) !important;
+}
+
+/* submit button shine */
+.btn-rakshak {
+  position:relative;overflow:hidden;
+}
+.btn-rakshak::after {
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
+  transition:none;animation:btnShine 3s ease-in-out infinite;
+}
+@keyframes btnShine {
+  0%{left:-100%}
+  50%{left:120%}
+  100%{left:120%}
+}
+
+/* floating particles */
+.auth-particles {
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;
+}
+.auth-particle {
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:rgba(220,38,38,0.3);
+  animation:floatUp linear infinite;
+}
+@keyframes floatUp {
+  0%{transform:translateY(0) scale(1);opacity:0}
+  10%{opacity:1}
+  90%{opacity:1}
+  100%{transform:translateY(-100vh) scale(0.5);opacity:0}
+}
+
+/* divider text */
+.divider-or {
+  display:flex;align-items:center;gap:1rem;margin:1.5rem 0;
+  color:var(--text-muted);font-size:0.8rem;letter-spacing:0.1em;
+}
+.divider-or::before,.divider-or::after {
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-glass),transparent);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-bg">
+  <div class="grid-overlay"></div>
+  <div class="auth-particles" id="auth-particles"></div>
+
+  <div class="auth-card-wrap">
     <div class="text-center mb-4">
-      <div style="font-family:var(--font-display);font-size:2.5rem;font-weight:800;color:var(--red-primary);text-shadow:0 0 20px rgba(220,38,38,0.5);">🛡 RAKSHAK</div>
-      <p style="color:var(--text-muted);font-size:0.9rem;margin-top:4px;">Sign in to your safety dashboard</p>
+      <div class="shield-icon">
+        <i class="bi bi-shield-lock-fill" style="color:var(--red-primary);"></i>
+      </div>
+      <div class="auth-logo">RAKSHAK</div>
+      <p style="color:var(--text-muted);font-size:0.88rem;margin-top:6px;letter-spacing:0.05em;">Sign in to your safety dashboard</p>
     </div>
 
-    <div class="glass-card p-4 p-md-5">
+    <div class="glass-card p-4 p-md-5" style="border-radius:var(--radius-xl);">
       <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:1.5rem;">Welcome back</h2>
 
       <form id="login-form" novalidate>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <div class="mb-3">
-          <label class="form-label-dark">Email Address</label>
+          <label class="form-label-dark"><i class="bi bi-envelope me-1" style="color:var(--red-primary);font-size:0.8rem;"></i>Email Address</label>
           <input type="email" id="email" name="email" class="form-control form-control-dark" placeholder="you@example.com" required autocomplete="email">
         </div>
 
         <div class="mb-4">
           <div class="d-flex justify-content-between">
-            <label class="form-label-dark">Password</label>
-            <a href="{{ url_for('auth.forgot_password') }}" style="font-size:0.8rem;color:var(--red-primary);text-decoration:none;">Forgot password?</a>
+            <label class="form-label-dark"><i class="bi bi-lock me-1" style="color:var(--red-primary);font-size:0.8rem;"></i>Password</label>
+            <a href="{{ url_for('auth.forgot_password') }}" style="font-size:0.78rem;color:var(--text-muted);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--red-primary)'" onmouseout="this.style.color='var(--text-muted)'">Forgot password?</a>
           </div>
           <div style="position:relative;">
             <input type="password" id="password" name="password" class="form-control form-control-dark" placeholder="••••••••" required autocomplete="current-password">
-            <button type="button" onclick="togglePwd('password')" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;">
+            <button type="button" onclick="togglePwd('password')" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--red-primary)'" onmouseout="this.style.color='var(--text-muted)'">
               <i class="bi bi-eye" id="eye-password"></i>
             </button>
           </div>
@@ -39,17 +160,33 @@
         </button>
       </form>
 
-      <hr class="glow-line">
+      <div class="divider-or">OR</div>
       <p class="text-center" style="color:var(--text-secondary);font-size:0.9rem;margin:0;">
         Don't have an account?
-        <a href="{{ url_for('auth.register') }}" style="color:var(--red-primary);text-decoration:none;font-weight:600;">Register now</a>
+        <a href="{{ url_for('auth.register') }}" style="color:var(--red-primary);text-decoration:none;font-weight:600;transition:text-shadow .2s;" onmouseover="this.style.textShadow='0 0 12px rgba(220,38,38,0.5)'" onmouseout="this.style.textShadow='none'">Register now</a>
       </p>
     </div>
 
+    <p class="text-center mt-3" style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.08em;">SECURED WITH AES-256 ENCRYPTION</p>
   </div>
 </div>
 
 <script>
+/* floating particles */
+(function(){
+  const c = document.getElementById('auth-particles');
+  for(let i=0;i<20;i++){
+    const p = document.createElement('div');
+    p.className='auth-particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.animationDuration = (8+Math.random()*12)+'s';
+    p.style.animationDelay = Math.random()*8+'s';
+    p.style.width = p.style.height = (2+Math.random()*3)+'px';
+    p.style.opacity = 0.15+Math.random()*0.3;
+    c.appendChild(p);
+  }
+})();
+
 function togglePwd(id) {
   const inp = document.getElementById(id);
   const eye = document.getElementById('eye-'+id);
@@ -61,7 +198,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
   e.preventDefault();
   const btn = document.getElementById('login-btn');
   btn.disabled = true;
-  btn.textContent = 'Signing in...';
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
   showLoading('Signing you in...');
 
   const fd = new FormData(this);
