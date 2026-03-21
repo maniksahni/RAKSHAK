@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rakshak123
+      MYSQL_DATABASE: rakshak
+    ports:
+      - "3307:3306"
+    volumes:
+      - rakshak_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prakshak123"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      FLASK_ENV: development
+      SECRET_KEY: rakshak_super_secret_key_2024
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: rakshak123
+      DB_NAME: rakshak
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  rakshak_db:
