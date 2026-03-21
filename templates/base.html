@@ -548,6 +548,84 @@ document.addEventListener('DOMContentLoaded', function() {
     requestAnimationFrame(() => { main.style.opacity = '1'; });
   }
 });
+
+// ── SYSTEM OVERWATCH CYBER-AUDIO ENGINE ─────────────────────────────────────
+(function() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if(!AudioContext) return;
+  const audioCtx = new AudioContext();
+
+  function playCyberClick() {
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+    
+    osc.type = 'square'; // Cyberpunk harsh tone
+    osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.05);
+
+    filter.type = 'bandpass';
+    filter.frequency.value = 1000;
+    
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  }
+
+  function tacticalAnnounce(text) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel(); // cancel playing
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.pitch = 0.5; // Deep, synthetic voice
+    utterance.rate = 1.25; 
+    utterance.volume = 0.8;
+    // Try to find a synthetic or English voice
+    let voices = window.speechSynthesis.getVoices();
+    if(voices.length > 0) {
+      const bestVoice = voices.find(v => v.name.toLowerCase().includes('google usa') || v.name.toLowerCase().includes('siri') || v.lang === 'en-US');
+      if(bestVoice) utterance.voice = bestVoice;
+    } else {
+      // Chrome loads voices asynchronously
+      window.speechSynthesis.addEventListener('voiceschanged', () => {
+        voices = window.speechSynthesis.getVoices();
+        const bestVoice = voices.find(v => v.name.toLowerCase().includes('google usa') || v.lang === 'en-US');
+        if(bestVoice) utterance.voice = bestVoice;
+      }, {once:true});
+    }
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Attach mechanical clicks to all interaction surfaces globally
+  document.addEventListener('mousedown', function(e) {
+    if (e.target.closest('a, button, input[type="submit"], .btn-rakshak, .btn-glass, .pill, .sidebar-link, .stat-card')) {
+      playCyberClick();
+    }
+    
+    // Check for SOS triggers
+    const sosTrigger = e.target.closest('#sos-btn, .ph-sos-btn, #btn-sos-main');
+    if (sosTrigger) {
+      setTimeout(() => tacticalAnnounce("Warning. S O S Protocol engaged. Threat response initiated. Target tracking active."), 150);
+    }
+  });
+
+  // Welcome announcer for logged in dashboard
+  if (window.location.pathname.includes('/dashboard/') && !sessionStorage.getItem('cyber_welcome_played')) {
+    document.addEventListener('click', function initAudio() {
+      sessionStorage.setItem('cyber_welcome_played', 'true');
+      tacticalAnnounce("System Online. Overwatch Active. Welcome to Command.");
+      document.removeEventListener('click', initAudio);
+    }, {once:true});
+  }
+
+})();
+// ────────────────────────────────────────────────────────────────────────────
 </script>
 </body>
 </html>
