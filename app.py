@@ -99,7 +99,7 @@ def _trigger_auto_sos_bg(user_id):
             """INSERT INTO sos_alerts
                (user_id, latitude, longitude, trigger_type, message)
                VALUES (%s, %s, %s, 'auto_ai',
-                       'Auto-triggered: No heartbeat detected for 6+ minutes')""",
+                       'Auto-triggered: No heartbeat detected for 6+ minutes') RETURNING id""",
             (user_id, lat, lng), commit=True
         )
         query_db(
@@ -286,7 +286,7 @@ def create_app(config_name=None):
 
 
 def _auto_init_db(app):
-    """Auto-create tables & seed admin if DB is empty (for Docker first-run)."""
+    """Auto-create tables & seed admin if DB is empty (for Render/Docker first-run)."""
     import time
     for attempt in range(10):
         try:
@@ -297,35 +297,34 @@ def _auto_init_db(app):
                 return
         except Exception as e:
             err = str(e)
-            if 'doesn\'t exist' in err or "doesn't exist" in err:
+            if 'does not exist' in err or 'relation' in err:
                 break  # tables missing, run init
             log.warning(f'DB not ready (attempt {attempt+1}/10): {e}')
             time.sleep(3)
 
     log.info('Initialising database tables...')
     try:
-        import mysql.connector
+        import psycopg2
         cfg = app.config
-        conn = mysql.connector.connect(
-            host=cfg['DB_HOST'], port=cfg['DB_PORT'],
-            user=cfg['DB_USER'], password=cfg['DB_PASSWORD'],
-            database=cfg['DB_NAME'],
-        )
+        url = cfg.get('DATABASE_URL', '')
+        if url:
+            if url.startswith('postgres://'):
+                url = url.replace('postgres://', 'postgresql://', 1)
+            conn = psycopg2.connect(url)
+        else:
+            conn = psycopg2.connect(
+                host=cfg['DB_HOST'], port=cfg['DB_PORT'],
+                user=cfg['DB_USER'], password=cfg['DB_PASSWORD'],
+                dbname=cfg['DB_NAME'],
+            )
+        conn.autocommit = True
         cursor = conn.cursor()
-        from init_db import SCHEMA_SQL, SEEDS
-        for stmt in SCHEMA_SQL.split(';'):
-            stmt = stmt.strip()
-            if not stmt:
-                continue
-            low = stmt.lower()
-            if low.startswith('create database') or low.startswith('use '):
-                continue  # skip — DB already selected via connection
-            cursor.execute(stmt)
-        conn.commit()
+        from init_db import SCHEMA_SQL, TRIGGER_SQL, SEEDS
+        cursor.execute(SCHEMA_SQL)
+        cursor.execute(TRIGGER_SQL)
         for seed in SEEDS:
             try:
                 cursor.execute(seed)
-                conn.commit()
             except Exception:
                 pass
         cursor.close()

@@ -137,7 +137,7 @@ def _trigger_auto_sos(user_id):
         alert_id = query_db(
             """INSERT INTO sos_alerts
                (user_id, latitude, longitude, trigger_type, message)
-               VALUES (%s, %s, %s, 'auto_ai', 'Auto-triggered: No heartbeat detected for 6+ minutes')""",
+               VALUES (%s, %s, %s, 'auto_ai', 'Auto-triggered: No heartbeat detected for 6+ minutes') RETURNING id""",
             (user_id, lat, lng), commit=True
         )
         # Log
