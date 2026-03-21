@@ -269,12 +269,17 @@ def create_app(config_name=None):
 
     @app.errorhandler(500)
     def internal_error(e):
-        """Never show a crash page — redirect home with a flash message."""
+        """Never show a crash page — redirect back or to login."""
         from flask import redirect, url_for, flash, request as req
         log.error(f'500 on {req.path}: {e}')
         try:
-            flash('Something went wrong. Please try again.', 'warning')
-            return redirect(url_for('main.index')), 302
+            flash('Something went wrong on that page. Please try again.', 'warning')
+            # Go back to previous page if available and different from crashed page
+            referrer = req.referrer
+            if referrer and req.path and req.path not in referrer:
+                return redirect(referrer), 302
+            # Safe fallback: login page (always works, no auth required)
+            return redirect(url_for('auth.login')), 302
         except Exception:
             from flask import render_template
             return render_template('errors/500.html'), 500
