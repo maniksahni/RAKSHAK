@@ -1,12 +1,83 @@
 {% extends "base.html" %}
 {% block title %}404 — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+.err-bg {
+  min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:#0a0a0f;position:relative;overflow:hidden;
+}
+.err-bg::before {
+  content:'';position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,38,38,0.1) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
+  animation:errPulse 4s ease-in-out infinite;
+}
+@keyframes errPulse {
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.6}
+  50%{transform:translate(-50%,-50%) scale(1.3);opacity:1}
+}
+.err-code {
+  font-family:var(--font-display);font-size:clamp(8rem,20vw,14rem);font-weight:900;
+  color:transparent;line-height:1;position:relative;
+  background:linear-gradient(180deg,rgba(220,38,38,0.9) 0%,rgba(220,38,38,0.15) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 0 60px rgba(220,38,38,0.4));
+  animation:codeIn .8s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes codeIn {
+  from{opacity:0;transform:scale(0.8) translateY(20px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.err-title {
+  font-family:var(--font-display);font-size:1.8rem;margin:0.5rem 0 0.8rem;
+  animation:fadeUp .6s .2s cubic-bezier(.22,1,.36,1) both;
+}
+.err-desc {
+  color:var(--text-secondary);margin-bottom:2rem;max-width:400px;margin-left:auto;margin-right:auto;
+  animation:fadeUp .6s .35s cubic-bezier(.22,1,.36,1) both;
+}
+.err-btn {
+  animation:fadeUp .6s .5s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.err-grid {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(220,38,38,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220,38,38,0.025) 1px, transparent 1px);
+  background-size:60px 60px;pointer-events:none;
+  mask-image:radial-gradient(ellipse at 50% 50%, black 20%, transparent 60%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 50%, black 20%, transparent 60%);
+}
+/* scan line */
+.scan-line {
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(220,38,38,0.3),transparent);
+  animation:scan 4s linear infinite;pointer-events:none;
+}
+@keyframes scan {
+  0%{top:-2px}100%{top:100%}
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;">
-  <div>
-    <div style="font-family:var(--font-display);font-size:7rem;font-weight:900;color:var(--red-primary);line-height:1;text-shadow:0 0 60px rgba(220,38,38,0.5);">404</div>
-    <h2 style="font-family:var(--font-display);font-size:2rem;margin:1rem 0 0.5rem;">Page Not Found</h2>
-    <p style="color:var(--text-secondary);margin-bottom:2rem;">The page you're looking for doesn't exist or has been moved.</p>
-    <a href="/" class="btn-rakshak" style="text-decoration:none;">← Back to Safety</a>
+<div class="err-bg">
+  <div class="err-grid"></div>
+  <div class="scan-line"></div>
+  <div style="position:relative;z-index:2;">
+    <div class="err-code">404</div>
+    <h2 class="err-title">Signal Lost</h2>
+    <p class="err-desc">The page you're looking for doesn't exist or has been moved to a secure location.</p>
+    <div class="err-btn">
+      <a href="/" class="btn-rakshak" style="text-decoration:none;display:inline-block;">
+        <i class="bi bi-shield-check me-2"></i>Back to Safety
+      </a>
+    </div>
   </div>
 </div>
 {% endblock %}
