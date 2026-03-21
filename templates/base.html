@@ -120,12 +120,29 @@
     <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
   </a>
 
-  <!-- Sidebar footer -->
-  <div class="sidebar-footer">
-    <div class="sidebar-status-dot"></div>
-    <span>System Online</span>
+  <!-- Sidebar footer — enhanced -->
+  <div class="sidebar-footer" style="flex-direction:column;gap:8px;align-items:flex-start;">
+    <div class="d-flex align-items-center gap-2">
+      <div class="sidebar-status-dot"></div>
+      <span>System Online</span>
+    </div>
+    <div style="width:100%;display:flex;gap:4px;">
+      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-green);opacity:0.6;animation:barPulseG 3s ease-in-out infinite;"></div>
+      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-green);opacity:0.4;animation:barPulseG 3s .5s ease-in-out infinite;"></div>
+      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-blue);opacity:0.5;animation:barPulseG 3s 1s ease-in-out infinite;"></div>
+      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-green);opacity:0.3;animation:barPulseG 3s 1.5s ease-in-out infinite;"></div>
+    </div>
+  </div>
+
+  <!-- Sidebar animated background -->
+  <div style="position:absolute;bottom:0;left:0;right:0;height:120px;pointer-events:none;overflow:hidden;">
+    <div style="position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(220,38,38,0.04) 0%,transparent 70%);animation:sidebarGlow 6s ease-in-out infinite;"></div>
   </div>
 </aside>
+<style>
+@keyframes barPulseG { 0%,100%{opacity:0.3;transform:scaleX(0.8)} 50%{opacity:0.8;transform:scaleX(1)} }
+@keyframes sidebarGlow { 0%,100%{opacity:0.4;transform:translateX(-50%) scale(1)} 50%{opacity:0.8;transform:translateX(-50%) scale(1.2)} }
+</style>
 {% else %}
 <!-- Public Navbar -->
 <nav class="navbar navbar-rakshak px-4 d-flex align-items-center" style="position:fixed;top:0;left:0;right:0;z-index:1000;">
@@ -436,8 +453,46 @@ fetch('/sos/notifications').then(r=>r.json()).then(data=>{
 </div>
 <style>
 @keyframes transBar { 0%{left:-30%;opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{left:100%;opacity:0} }
+@keyframes bellShake { 0%{transform:rotate(0)} 15%{transform:rotate(14deg)} 30%{transform:rotate(-12deg)} 45%{transform:rotate(10deg)} 60%{transform:rotate(-8deg)} 75%{transform:rotate(4deg)} 100%{transform:rotate(0)} }
 </style>
 <script>
+// ── Notification bell shake when unread ──────────────────────────────────────
+(function(){
+  const badge = document.getElementById('notif-count');
+  const bell = document.querySelector('#notif-bell-wrap i.bi-bell');
+  if (badge && bell) {
+    const observer = new MutationObserver(() => {
+      const count = parseInt(badge.textContent || 0);
+      if (count > 0) {
+        bell.style.animation = 'bellShake .6s ease-in-out';
+        bell.style.color = 'var(--red-primary)';
+        setTimeout(() => bell.style.animation = '', 600);
+      } else {
+        bell.style.color = '';
+      }
+    });
+    observer.observe(badge, {childList:true, characterData:true, subtree:true});
+    // Initial check
+    if (parseInt(badge.textContent || 0) > 0) {
+      bell.style.color = 'var(--red-primary)';
+    }
+  }
+})();
+
+// ── Cursor glow trail ────────────────────────────────────────────────────────
+(function(){
+  const trail = document.createElement('div');
+  trail.id = 'cursor-glow';
+  trail.style.cssText = 'position:fixed;width:250px;height:250px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(220,38,38,0.03) 0%,transparent 70%);transform:translate(-50%,-50%);transition:left .3s ease-out,top .3s ease-out;display:none;';
+  document.body.appendChild(trail);
+  let visible = false;
+  document.addEventListener('mousemove', e => {
+    if (!visible) { trail.style.display = 'block'; visible = true; }
+    trail.style.left = e.clientX + 'px';
+    trail.style.top = e.clientY + 'px';
+  });
+})();
+
 // Ripple effect on buttons
 document.addEventListener('click', function(e) {
   const btn = e.target.closest('.btn-rakshak, .btn-glass');
