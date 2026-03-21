@@ -158,19 +158,11 @@
   50% { transform: translateY(-8px) scale(1.05); }
 }
 
-/* Floating ambient particles */
-.auth-particles { position: absolute; inset: 0; pointer-events: none; }
-.auth-particle {
-  position: absolute; border-radius: 50%;
-  background: var(--red-primary); filter: blur(1px);
-  animation: particleFloat linear infinite;
+/* Matrix Rain Canvas */
+#matrix-rain {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6;
 }
-@keyframes particleFloat {
-  0% { transform: translateY(100vh) scale(0); opacity: 0; }
-  20% { opacity: 0.5; }
-  80% { opacity: 0.5; transform: translateY(-20vh) scale(1.5); }
-  100% { transform: translateY(-50vh) scale(0); opacity: 0; }
-}
+.grid-floor { z-index: 1; }
 
 /* Divider */
 .divider-or {
@@ -198,8 +190,9 @@
 
 {% block content %}
 <div class="auth-bg" id="auth-bg">
+  <!-- Matrix Matrix Rain -->
+  <canvas id="matrix-rain"></canvas>
   <div class="grid-floor"></div>
-  <div class="auth-particles" id="auth-particles"></div>
 
   <div class="auth-card-wrap" id="auth-card">
     <div class="text-center mb-4">
@@ -277,7 +270,7 @@
   if (!el) return;
   const phrases = [
     'Sign in to your safety dashboard',
-    'AI-powered protection at your fingertips',
+    'Advanced protection at your fingertips',
     'Real-time emergency response system',
     'Protecting women across the globe',
     'System integrity verified. Awaiting login.'
@@ -309,19 +302,48 @@
   type();
 })();
 
-/* floating immersive particles */
+/* Matrix Rain Effect */
 (function(){
-  const c = document.getElementById('auth-particles');
-  for(let i=0;i<25;i++){
-    const p = document.createElement('div');
-    p.className='auth-particle';
-    p.style.left = Math.random()*100+'%';
-    p.style.animationDuration = (10+Math.random()*15)+'s';
-    p.style.animationDelay = Math.random()*5+'s';
-    const size = (2+Math.random()*4);
-    p.style.width = p.style.height = size + 'px';
-    c.appendChild(p);
+  const canvas = document.getElementById('matrix-rain');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+  
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%.&*+=-_|<>'.split('');
+  const fontSize = 14;
+  const numColumns = Math.floor(width / fontSize) + 1;
+  const columns = Array(numColumns).fill(0).map(() => Math.floor(Math.random() * -100));
+  
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 8, 0.15)'; // Trail length
+    ctx.fillRect(0, 0, width, height);
+    
+    // Draw columns
+    ctx.fillStyle = '#dc2626'; // primary red
+    ctx.font = fontSize + 'px monospace';
+    
+    columns.forEach((y, i) => {
+      // Glow on the leading character
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const x = i * fontSize;
+      ctx.fillText(char, x, y);
+      
+      // Randomly reset column to top
+      if (y > height && Math.random() > 0.98) {
+        columns[i] = 0;
+      } else {
+        columns[i] = y + fontSize;
+      }
+    });
+    requestAnimationFrame(draw);
   }
+  draw();
 })();
 
 /* 3D Tilt Effect on mousemove */
