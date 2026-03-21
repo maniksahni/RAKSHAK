@@ -162,21 +162,17 @@
   position: fixed; inset: 0; z-index: -2; top: 50%; bottom: -50%;
   pointer-events: none;
   background-image: 
-    linear-gradient(rgba(220, 38, 38, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(220, 38, 38, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(220, 38, 38, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220, 38, 38, 0.04) 1px, transparent 1px);
   background-size: 80px 80px;
   transform-origin: center top;
-  transform: perspective(1000px) rotateX(75deg) translateY(0);
-  animation: bgGridMove 30s linear infinite;
+  transform: perspective(1000px) rotateX(75deg) translateZ(0); 
   mask-image: linear-gradient(to top, black, transparent 80%);
   -webkit-mask-image: linear-gradient(to top, black, transparent 80%);
-}
-@keyframes bgGridMove {
-  from { background-position: 0 0; }
-  to { background-position: 0 80px; }
+  will-change: transform;
 }
 </style>
-<canvas id="ambient-canvas" style="position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.3;mix-blend-mode:screen;"></canvas>
+<canvas id="ambient-canvas" style="position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.2;"></canvas>
 {% endif %}
 
 <!-- ── Main Wrap ────────────────────────────────────────────────────────────── -->
