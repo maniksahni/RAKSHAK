@@ -137,6 +137,11 @@
 </nav>
 {% endif %}
 
+<!-- ── Ambient Background ──────────────────────────────────────────────────── -->
+{% if current_user.is_authenticated %}
+<canvas id="ambient-canvas" style="position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.4;"></canvas>
+{% endif %}
+
 <!-- ── Main Wrap ────────────────────────────────────────────────────────────── -->
 <div {% if current_user.is_authenticated %}class="main-content" style="padding-top:70px;"{% else %}style="padding-top:60px;"{% endif %}>
 
@@ -183,7 +188,7 @@ function showToast(message, type='info', duration=4000) {
   const icon = icons[type] || icons.info;
 
   const toast = document.createElement('div');
-  toast.className = `rakshak-toast toast-${type}`;
+  toast.className = `rakshak-toast toast-${type} toast-notification`;
   toast.innerHTML = `
     <i class="bi ${icon}" style="font-size:1.2rem;flex-shrink:0;margin-top:2px;"></i>
     <div>
@@ -193,7 +198,7 @@ function showToast(message, type='info', duration=4000) {
     <i class="bi bi-x ms-auto" style="cursor:pointer;opacity:0.5;flex-shrink:0;" onclick="this.closest('.rakshak-toast').remove()"></i>`;
   toast.addEventListener('click', () => toast.remove());
   container.appendChild(toast);
-  setTimeout(() => { toast.style.animation = 'toast-out 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, duration);
+  setTimeout(() => { toast.classList.add('toast-exit'); setTimeout(() => toast.remove(), 300); }, duration);
 }
 
 // ── Loading Helpers ──────────────────────────────────────────────────────────
@@ -264,6 +269,52 @@ document.addEventListener('click', e => {
 });
 
 // ── SocketIO init (for authenticated users) ──────────────────────────────────
+// ── Ambient Particle Canvas ──────────────────────────────────────────────────
+(function() {
+  const c = document.getElementById('ambient-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let w, h, particles = [];
+  function resize() { w = c.width = window.innerWidth; h = c.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < 30; i++) {
+    particles.push({
+      x: Math.random()*w, y: Math.random()*h,
+      r: Math.random()*1.5+0.5, dx: (Math.random()-0.5)*0.3, dy: (Math.random()-0.5)*0.3,
+      o: Math.random()*0.5+0.1
+    });
+  }
+  function draw() {
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p => {
+      p.x += p.dx; p.y += p.dy;
+      if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+      if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(220,38,38,${p.o})`;
+      ctx.fill();
+    });
+    // Draw faint connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < particles.length; j++) {
+        const dx = particles[i].x-particles[j].x, dy = particles[i].y-particles[j].y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d < 150) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(220,38,38,${0.06*(1-d/150)})`;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
 {% if current_user.is_authenticated %}
 const socket = io({ transports: ['websocket'] });
 

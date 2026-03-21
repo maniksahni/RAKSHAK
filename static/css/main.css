@@ -439,7 +439,15 @@ h1,h2,h3,h4,h5,h6 {
   border-left-color: var(--red-primary);
   box-shadow: inset 3px 0 12px rgba(220,38,38,0.08);
 }
-.sidebar-link i { width: 20px; text-align: center; }
+.sidebar-link.active {
+  background: linear-gradient(90deg, rgba(220,38,38,0.08), transparent);
+}
+.sidebar-link.active i {
+  color: var(--red-primary);
+  filter: drop-shadow(0 0 6px rgba(220,38,38,0.4));
+}
+.sidebar-link i { width: 20px; text-align: center; transition: color .2s, filter .2s; }
+.sidebar-link:hover i { color: var(--red-primary); }
 
 .main-content { margin-left: 240px; padding: 1.5rem; }
 
