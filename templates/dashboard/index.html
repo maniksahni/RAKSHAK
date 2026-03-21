@@ -108,13 +108,13 @@
         <h4 id="greeting-text"><i class="bi bi-shield-check me-2" style="color:var(--red-primary);font-size:1.1rem;"></i>Welcome, {{ current_user.full_name.split()[0] }}</h4>
         <div class="dash-ticker">
           <div class="dash-ticker-track">
-            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> AI Engine Online</span>
-            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> GPS Tracking Active</span>
-            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Contacts Synced</span>
-            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> WebSocket Connected</span>
-            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Encryption Enabled</span>
-            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> AI Engine Online</span>
-            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> GPS Tracking Active</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> System Monitor Online</span>
+            <span class="dash-ticker-item"><i class="bi bi-shield-check"></i> RAKSHAK Core Live</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> System Monitor Online</span>
+            <span class="dash-ticker-item"><i class="bi bi-geo-alt"></i> GPS Tracking Active</span>
+            <span class="dash-ticker-item"><i class="bi bi-shield-check"></i> RAKSHAK Core Live</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> System Monitor Online</span>
+            <span class="dash-ticker-item"><i class="bi bi-geo-alt"></i> GPS Tracking Active</span>
             <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Contacts Synced</span>
             <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> WebSocket Connected</span>
             <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Encryption Enabled</span>
@@ -169,11 +169,11 @@
       </div>
     </div>
 
-    <!-- Risk Level + AI Status -->
+    <!-- Risk Level + Threat Status -->
     <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
       <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between" style="transform:translateZ(10px);">
         <div style="transform:translateZ(15px);">
-          <p style="font-size:0.75rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">AI RISK LEVEL</p>
+          <p style="font-size:0.75rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">THREAT RISK LEVEL</p>
           <div id="risk-display">
             <span class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:1rem;">
               <span style="width:8px;height:8px;border-radius:50%;background:currentColor;"></span>
@@ -189,13 +189,15 @@
         </div>
 
         <div>
-          <div class="glow-line"></div>
-          <div class="ai-card-glow">
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <div class="live-dot"></div>
-              <p style="font-size:0.75rem;color:var(--red-primary);font-weight:600;margin:0;">AI Engine Active</p>
+          <div class="ai-card-glow" style="transform:translateZ(10px);">
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:40px;height:40px;border-radius:10px;background:rgba(220,38,38,0.15);display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-cpu" style="color:var(--red-primary);font-size:1.2rem;"></i>
             </div>
-            <p style="font-size:0.75rem;color:var(--text-muted);margin:0;">Pinging every 2 min — 3 missed = auto SOS</p>
+            <div>
+              <p style="font-size:0.75rem;color:var(--red-primary);font-weight:600;margin:0;">Threat Engine Active</p>
+              <p style="font-size:0.65rem;color:var(--text-muted);margin:0;">Analyzing surroundings...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -225,7 +227,7 @@
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
           <div class="stat-card h-100 d-flex flex-column justify-content-between" style="transform:translateZ(10px);">
             <div class="stat-number" style="color:var(--accent-green);">ON</div>
-            <div class="stat-label">AI Monitor</div>
+            <div class="stat-label">Sys Monitor</div>
           </div>
         </div>
       </div>

@@ -246,7 +246,7 @@ async function confirmSOS() {
     `[SEC] Bypassing localized network interference...`,
     `[GPS] Locking orbital coordinates >> \${currentLat ? currentLat.toFixed(5) : 'UNKNOWN'}, \${currentLng ? currentLng.toFixed(5) : 'UNKNOWN'}`,
     `[NET] Establishing encrypted 256-bit handshake...`,
-    `[AI] Threat vector analyzed. Level: CRITICAL.`,
+    `[SYS] Threat vector analyzed. Level: CRITICAL.`,
     `[COM] Injecting distress payload to Trusted Contacts...`,
     `[COM] Payload securely delivered. Terminating uplink.`,
   ];
