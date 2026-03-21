@@ -37,6 +37,72 @@
   box-shadow:0 4px 24px rgba(220,38,38,0.06);
 }
 
+/* security score ring */
+.security-ring-wrap {
+  width:80px;height:80px;position:relative;flex-shrink:0;
+}
+.security-ring-wrap svg {width:100%;height:100%;transform:rotate(-90deg);}
+.security-ring-bg {fill:none;stroke:var(--border-glass);stroke-width:4;}
+.security-ring-fill {
+  fill:none;stroke-width:4;stroke-linecap:round;
+  transition:stroke-dashoffset 1.5s cubic-bezier(.22,1,.36,1), stroke 0.5s;
+}
+.security-score-text {
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:var(--font-display);
+}
+.security-score-num {font-size:1.3rem;font-weight:800;line-height:1;}
+.security-score-label {font-size:0.55rem;color:var(--text-muted);letter-spacing:0.08em;margin-top:2px;}
+
+/* activity pulse dot */
+.activity-dot {
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;position:relative;
+}
+.activity-dot::after {
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  border:1px solid currentColor;opacity:0;
+  animation:actPulse 2s ease-out infinite;
+}
+@keyframes actPulse {0%{transform:scale(0.8);opacity:0.6}100%{transform:scale(1.8);opacity:0}}
+
+/* stat counter */
+.profile-stat {
+  text-align:center;padding:12px 8px;border-radius:var(--radius-sm);
+  background:var(--bg-card);border:1px solid var(--border-glass);
+  transition:all .3s cubic-bezier(.22,1,.36,1);
+}
+.profile-stat:hover {
+  border-color:rgba(220,38,38,0.2);transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(220,38,38,0.08);
+}
+.profile-stat-num {
+  font-family:var(--font-display);font-size:1.5rem;font-weight:800;
+  color:var(--text-primary);line-height:1;
+}
+.profile-stat-label {font-size:0.68rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.05em;}
+
+/* shield badge */
+.shield-badge {
+  display:inline-flex;align-items:center;gap:6px;padding:6px 14px;
+  border-radius:50px;font-size:0.75rem;font-weight:600;letter-spacing:0.05em;
+  animation:shieldGlow 3s ease-in-out infinite;
+}
+@keyframes shieldGlow {
+  0%,100%{box-shadow:0 0 8px rgba(220,38,38,0.1)}
+  50%{box-shadow:0 0 20px rgba(220,38,38,0.25)}
+}
+
+/* contact entrance stagger */
+.contact-item {
+  animation:contactSlide .4s cubic-bezier(.22,1,.36,1) both;
+}
+.contact-item:nth-child(1){animation-delay:.05s}
+.contact-item:nth-child(2){animation-delay:.1s}
+.contact-item:nth-child(3){animation-delay:.15s}
+.contact-item:nth-child(4){animation-delay:.2s}
+.contact-item:nth-child(5){animation-delay:.25s}
+@keyframes contactSlide {from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+
 /* contact card */
 .contact-item {
   background:var(--bg-card);border-left:3px solid transparent;
@@ -85,21 +151,66 @@
 <div class="container-fluid py-4" style="max-width:900px;">
 
   <!-- Header -->
-  <div class="profile-header d-flex align-items-center gap-4 mb-4">
-    <div class="profile-avatar">
-      {{ current_user.full_name[0].upper() }}
+  <div class="profile-header glass-card p-4 mb-4" style="border-radius:var(--radius-xl);">
+    <div class="d-flex align-items-center gap-4">
+      <div class="profile-avatar">
+        {{ current_user.full_name[0].upper() }}
+      </div>
+      <div style="flex:1;">
+        <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;">{{ current_user.full_name }}</h2>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:0.25rem 0 0;">{{ current_user.email }}</p>
+        <div class="d-flex gap-2 mt-2 flex-wrap">
+          <span class="risk-badge risk-{{ current_user.risk_level }}">
+            <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
+            {{ current_user.risk_level|upper }} RISK
+          </span>
+          <span class="shield-badge" style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);color:var(--red-primary);">
+            <i class="bi bi-shield-fill-check"></i> PROTECTED
+          </span>
+        </div>
+      </div>
+      <!-- Security Score -->
+      <div class="security-ring-wrap d-none d-md-block" id="security-ring">
+        <svg viewBox="0 0 36 36">
+          <circle class="security-ring-bg" cx="18" cy="18" r="15.9"/>
+          <circle class="security-ring-fill" id="score-ring" cx="18" cy="18" r="15.9"
+            stroke-dasharray="100" stroke-dashoffset="100"/>
+        </svg>
+        <div class="security-score-text">
+          <span class="security-score-num" id="score-num">0</span>
+          <span class="security-score-label">SCORE</span>
+        </div>
+      </div>
     </div>
-    <div>
-      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;">{{ current_user.full_name }}</h2>
-      <p style="color:var(--text-muted);font-size:0.85rem;margin:0.25rem 0 0;">{{ current_user.email }}</p>
-      <div class="d-flex gap-2 mt-2">
-        <span class="risk-badge risk-{{ current_user.risk_level }}">
-          <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-          {{ current_user.risk_level|upper }} RISK
-        </span>
-        <span class="info-badge">
-          <i class="bi bi-people-fill"></i> {{ contacts|length }}/5 contacts
-        </span>
+
+    <!-- Stats row -->
+    <div class="row g-2 mt-3">
+      <div class="col-3">
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="stat-contacts">{{ contacts|length }}</div>
+          <div class="profile-stat-label">Contacts</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="stat-alerts">0</div>
+          <div class="profile-stat-label">Alerts</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="profile-stat">
+          <div class="d-flex align-items-center justify-content-center gap-1">
+            <div class="activity-dot" style="background:var(--accent-green);color:var(--accent-green);"></div>
+            <div class="profile-stat-num" style="color:var(--accent-green);font-size:1.1rem;">ON</div>
+          </div>
+          <div class="profile-stat-label">Shield</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="profile-stat">
+          <div class="profile-stat-num" style="font-size:1.1rem;">{{ current_user.risk_level|upper }}</div>
+          <div class="profile-stat-label">Risk</div>
+        </div>
       </div>
     </div>
   </div>
@@ -252,6 +363,39 @@ async function addContact(e) {
     setTimeout(() => window.location.reload(), 800);
   } else showToast(data.error||'Failed', 'error');
 }
+
+/* Security score animation */
+(function(){
+  const ring = document.getElementById('score-ring');
+  const num = document.getElementById('score-num');
+  if (!ring || !num) return;
+  // Calculate score based on profile completeness
+  let score = 20; // base for having account
+  const contacts = parseInt(document.getElementById('stat-contacts')?.textContent||'0');
+  score += contacts * 12; // up to 60 for 5 contacts
+  const phone = '{{ current_user.phone or "" }}';
+  if (phone.length >= 10) score += 10;
+  const addr = '{{ current_user.address or "" }}';
+  if (addr.length > 0) score += 10;
+  score = Math.min(score, 100);
+  // Animate
+  const circumference = 100;
+  const offset = circumference - score;
+  setTimeout(() => {
+    ring.style.strokeDashoffset = offset;
+    if (score >= 80) ring.style.stroke = 'var(--accent-green)';
+    else if (score >= 50) ring.style.stroke = 'var(--accent-amber)';
+    else ring.style.stroke = 'var(--red-primary)';
+  }, 300);
+  // Count up number
+  let current = 0;
+  const step = Math.max(1, Math.floor(score / 30));
+  const counter = setInterval(() => {
+    current += step;
+    if (current >= score) { current = score; clearInterval(counter); }
+    num.textContent = current;
+  }, 40);
+})();
 
 async function deleteContact(id) {
   if (!confirm('Remove this contact?')) return;

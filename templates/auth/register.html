@@ -72,6 +72,29 @@
   animation:btnShine 3s ease-in-out infinite;
 }
 @keyframes btnShine {0%{left:-100%}50%{left:120%}100%{left:120%}}
+@keyframes lockPulse {
+  0%,100%{opacity:0.5;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.15)}
+}
+@keyframes inputShake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}80%{transform:translateX(4px)}
+}
+.input-error { animation:inputShake .4s ease-in-out; border-color:var(--red-primary) !important; }
+
+/* step progress indicator */
+.reg-steps {display:flex;align-items:center;gap:0;margin-bottom:1.5rem;}
+.reg-step-dot {
+  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;font-weight:700;background:var(--bg-card);border:2px solid var(--border-glass);
+  color:var(--text-muted);flex-shrink:0;transition:all 0.4s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;
+}
+.reg-step-dot.active {background:var(--red-primary);border-color:var(--red-primary);color:#fff;box-shadow:0 0 16px rgba(220,38,38,0.4);transform:scale(1.1);}
+.reg-step-dot.done {background:rgba(72,187,120,0.2);border-color:var(--accent-green);color:var(--accent-green);}
+.reg-step-line {flex:1;height:2px;background:var(--border-glass);position:relative;overflow:hidden;}
+.reg-step-line-fill {position:absolute;inset:0;background:var(--accent-green);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1);}
+.reg-step-line.done .reg-step-line-fill {transform:scaleX(1);}
 
 .divider-or {
   display:flex;align-items:center;gap:1rem;margin:1.5rem 0;
@@ -113,11 +136,22 @@
         <i class="bi bi-person-plus-fill" style="color:var(--red-primary);"></i>
       </div>
       <div class="auth-logo">RAKSHAK</div>
-      <p style="color:var(--text-muted);font-size:0.88rem;margin-top:6px;letter-spacing:0.05em;">Create your safety account</p>
+      <p id="reg-typewriter" style="color:var(--text-muted);font-size:0.88rem;margin-top:6px;letter-spacing:0.05em;min-height:1.3em;"></p>
     </div>
 
     <div class="glass-card p-4 p-md-5" style="border-radius:var(--radius-xl);">
-      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:1.5rem;">Create Account</h2>
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:0.5rem;">Create Account</h2>
+
+      <!-- Registration progress -->
+      <div class="reg-steps" id="reg-steps">
+        <div class="reg-step-dot active" data-step="1"><i class="bi bi-person" style="font-size:0.65rem;"></i></div>
+        <div class="reg-step-line"><div class="reg-step-line-fill"></div></div>
+        <div class="reg-step-dot" data-step="2"><i class="bi bi-envelope" style="font-size:0.65rem;"></i></div>
+        <div class="reg-step-line"><div class="reg-step-line-fill"></div></div>
+        <div class="reg-step-dot" data-step="3"><i class="bi bi-lock" style="font-size:0.65rem;"></i></div>
+        <div class="reg-step-line"><div class="reg-step-line-fill"></div></div>
+        <div class="reg-step-dot" data-step="4"><i class="bi bi-shield-check" style="font-size:0.65rem;"></i></div>
+      </div>
 
       <form id="register-form" novalidate>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -179,11 +213,45 @@
       </p>
     </div>
 
-    <p class="text-center mt-3" style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.08em;">SECURED WITH AES-256 ENCRYPTION</p>
+    <div class="text-center mt-3 d-flex align-items-center" style="justify-content:center;">
+      <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+        <i class="bi bi-lock-fill" style="color:rgba(72,187,120,0.6);font-size:0.7rem;animation:lockPulse 3s ease-in-out infinite;"></i>
+        <span style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.08em;">SECURED WITH AES-256 ENCRYPTION</span>
+        <span style="width:4px;height:4px;border-radius:50%;background:var(--accent-green);animation:statusBlink 2s infinite;"></span>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
+/* typewriter effect */
+(function(){
+  const el = document.getElementById('reg-typewriter');
+  if (!el) return;
+  const phrases = [
+    'Join the safety network today',
+    'AI-powered protection awaits you',
+    'Your safety is our priority',
+    'One account, complete protection'
+  ];
+  let phraseIdx = 0, charIdx = 0, deleting = false;
+  function type() {
+    const phrase = phrases[phraseIdx];
+    if (!deleting) {
+      el.textContent = phrase.substring(0, charIdx+1);
+      charIdx++;
+      if (charIdx === phrase.length) { setTimeout(() => { deleting = true; type(); }, 2500); return; }
+      setTimeout(type, 45);
+    } else {
+      el.textContent = phrase.substring(0, charIdx);
+      charIdx--;
+      if (charIdx < 0) { deleting = false; phraseIdx = (phraseIdx+1) % phrases.length; charIdx = 0; setTimeout(type, 400); return; }
+      setTimeout(type, 25);
+    }
+  }
+  type();
+})();
+
 /* particles */
 (function(){
   const c = document.getElementById('auth-particles');
@@ -197,6 +265,34 @@
     c.appendChild(p);
   }
 })();
+
+/* step progress tracker */
+function updateRegSteps() {
+  const form = document.getElementById('register-form');
+  const dots = document.querySelectorAll('.reg-step-dot');
+  const lines = document.querySelectorAll('.reg-step-line');
+  const name = form.querySelector('[name="full_name"]').value.trim();
+  const email = form.querySelector('[name="email"]').value.trim();
+  const phone = form.querySelector('[name="phone"]').value.trim();
+  const pwd = form.querySelector('[name="password"]').value;
+  const confirm = form.querySelector('[name="confirm_password"]').value;
+  const sq = form.querySelector('[name="security_question"]').value;
+  const sa = form.querySelector('[name="security_answer"]').value.trim();
+  let step = 1;
+  if (name.length >= 2) step = 2;
+  if (step >= 2 && email.includes('@') && phone.length >= 10) step = 3;
+  if (step >= 3 && pwd.length >= 8 && confirm === pwd) step = 4;
+  if (step >= 4 && sq && sa.length >= 1) step = 5;
+  dots.forEach((d, i) => {
+    const s = i + 1;
+    d.className = 'reg-step-dot' + (s < step ? ' done' : s === step ? ' active' : '');
+  });
+  lines.forEach((l, i) => {
+    l.className = 'reg-step-line' + (i + 1 < step ? ' done' : '');
+  });
+}
+document.getElementById('register-form').addEventListener('input', updateRegSteps);
+setTimeout(updateRegSteps, 100);
 
 /* password strength meter */
 function checkStrength(v) {
@@ -240,6 +336,10 @@ document.getElementById('register-form').addEventListener('submit', async functi
       setTimeout(() => window.location.href = data.redirect, 1000);
     } else {
       (data.errors||['Registration failed']).forEach(e => showToast(e, 'error'));
+      document.querySelectorAll('.form-control-dark').forEach(inp => {
+        inp.classList.add('input-error');
+        setTimeout(() => inp.classList.remove('input-error'), 500);
+      });
       btn.disabled = false;
       btn.innerHTML = 'Create Account <i class="bi bi-shield-check ms-1"></i>';
     }
