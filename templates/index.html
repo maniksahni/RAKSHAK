@@ -146,18 +146,48 @@ body::before{
 .phone-frame::before{content:'';position:absolute;right:-3px;top:88px;width:3px;height:36px;background:rgba(255,255,255,.09);border-radius:0 2px 2px 0}
 .phone-frame::after{content:'';position:absolute;left:-3px;top:76px;width:3px;height:24px;background:rgba(255,255,255,.09);border-radius:2px 0 0 2px;box-shadow:0 30px 0 rgba(255,255,255,.09)}
 
-/* notch */
-.phone-notch{width:64px;height:11px;background:rgba(0,0,0,.95);border:1px solid rgba(255,255,255,.06);border-radius:0 0 12px 12px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;gap:4px}
-.notch-cam{width:5px;height:5px;border-radius:50%;background:#111;border:1px solid rgba(255,255,255,.1)}
-.notch-mic{width:14px;height:3px;border-radius:3px;background:#111;border:1px solid rgba(255,255,255,.08)}
+/* Dynamic Island (iPhone 17 Pro) */
+.dynamic-island {
+  width: 90px;
+  height: 22px;
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  margin: 6px auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.04);
+  animation: floatIsland 4s ease-in-out infinite;
+  z-index: 50;
+}
+.di-cam {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #444, #050505);
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.8);
+}
+.di-sensor {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #0a0a0a;
+  border: 1px solid rgba(255,255,255,0.02);
+}
+.di-indicator {
+  position: absolute; right: 24px; top: 8px;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #22c55e; box-shadow: 0 0 8px #22c55e;
+  animation: blink 2s infinite;
+}
+@keyframes floatIsland { 0%,100%{transform:translateY(0)} 50%{transform:translateY(1px)} }
 
 /* screen */
 .phone-screen{
   background:#07070e;
-  border-radius:34px;overflow:hidden;
-  padding:14px 12px;
-  border:1px solid rgba(255,255,255,.05);
-  min-height:430px;
+  border-radius:38px;overflow:hidden;
+  padding:2px 12px 14px;
+  border:2px solid #000;
+  min-height:450px;
   position:relative;
 }
 /* dot grid inside screen */
@@ -532,12 +562,12 @@ body::before{
       <div class="phone-glow2"></div>
 
       <div class="phone-frame">
-        <div class="phone-notch">
-          <div class="notch-cam"></div>
-          <div class="notch-mic"></div>
-        </div>
-
         <div class="phone-screen">
+          <div class="dynamic-island">
+            <div class="di-cam"></div>
+            <div class="di-indicator"></div>
+            <div class="di-sensor"></div>
+          </div>
           <!-- status bar -->
           <div class="ph-status">
             <span class="ph-time">9:41</span>
