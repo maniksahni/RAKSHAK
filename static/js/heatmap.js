@@ -86,7 +86,15 @@ async function initHeatmap() {
   markersLayer = L.layerGroup().addTo(heatMap);
   globalMarkersLayer = L.layerGroup().addTo(heatMap);
 
-  // Map click handler
+  // Map drag/move HUD Telemetry loop
+  heatMap.on('move', function() {
+    triggerHUDTelemetry();
+  });
+  heatMap.on('zoomend', function() {
+    triggerHUDTelemetry();
+  });
+  
+  // Map click handler (report mode)
   heatMap.on('click', function(e) {
     if (reportingMode) {
       selectedLat = e.latlng.lat;
@@ -145,6 +153,27 @@ async function initHeatmap() {
 
   // Update global zone count badge
   updateGlobalStats();
+}
+
+// ── HUD Telemetry Formatter ───────────────────────────────────────────────────
+function triggerHUDTelemetry() {
+  if(!heatMap) return;
+  const center = heatMap.getCenter();
+  const zoom = heatMap.getZoom();
+  
+  const elLat = document.getElementById('hud-lat');
+  const elLng = document.getElementById('hud-lng');
+  const elZoom = document.getElementById('hud-zoom');
+  const elBearing = document.getElementById('hud-bearing');
+  
+  if(elLat) elLat.textContent = center.lat.toFixed(5);
+  if(elLng) elLng.textContent = center.lng.toFixed(5);
+  if(elZoom) elZoom.textContent = zoom.toFixed(1) + 'x';
+  if(elBearing) {
+    // Generate an artificial sweep bearing based on milliseconds to simulate radar spin direction
+    const artificialBearing = ((Date.now() / 20) % 360).toFixed(1);
+    elBearing.textContent = artificialBearing + '°';
+  }
 }
 
 // ── Inject CSS for animated markers ─────────────────────────────────────────
