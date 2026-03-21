@@ -179,8 +179,8 @@
             </td>
             <td class="td-cell" style="font-size:0.82rem;color:var(--text-muted);">
               {% if a.created_at %}
-              <div>{{ a.created_at.strftime('%d %b %Y') }}</div>
-              <div style="font-size:0.72rem;opacity:0.7;">{{ a.created_at.strftime('%H:%M') }}</div>
+              <div>{{ a.created_at | fmt_dt('%d %b %Y') }}</div>
+              <div style="font-size:0.72rem;opacity:0.7;">{{ a.created_at | fmt_dt('%H:%M') }}</div>
               {% endif %}
             </td>
             <td class="td-cell">
