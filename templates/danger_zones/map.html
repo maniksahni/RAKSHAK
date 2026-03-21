@@ -4,16 +4,42 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-#map { height: calc(100vh - 130px); border-radius: var(--radius-md); }
+#map { 
+  height: calc(100vh - 130px); 
+  border-radius: var(--radius-md); 
+  background: #050508; 
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 40px rgba(0,0,0,0.6);
+}
+
+/* Deep Cyberpunk Map Filter */
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(120%) saturate(150%) sepia(30%) hue-rotate(330deg) drop-shadow(0 0 2px rgba(220,38,38,0.3));
+}
+
+/* Radar Sweep Overlay Overlay */
+.radar-sweep {
+  position: absolute; inset: -50%;
+  background: conic-gradient(from 0deg, transparent 70%, rgba(220,38,38,0.15) 90%, rgba(220,38,38,0.4) 100%);
+  border-radius: 50%;
+  animation: radarScan 6s linear infinite;
+  pointer-events: none; z-index: 400; /* above tiles, below controls */
+  mix-blend-mode: screen;
+}
+@keyframes radarScan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 /* floating control panel */
 .map-controls {
   position: absolute; top: 80px; right: 20px; z-index: 1000;
-  display: flex; flex-direction: column; gap: 8px;
-  animation: slideInRight .5s cubic-bezier(.22,1,.36,1) both;
+  display: flex; flex-direction: column; gap: 10px;
+  animation: slideInRight .6s cubic-bezier(.22,1,.36,1) both;
 }
 @keyframes slideInRight {
-  from { opacity:0; transform:translateX(20px); }
+  from { opacity:0; transform:translateX(30px); }
   to { opacity:1; transform:translateX(0); }
 }
 
@@ -98,8 +124,10 @@
 
 {% block content %}
 <div style="position:relative;">
-  <!-- Map -->
-  <div id="map"></div>
+  <!-- Map & Radar Wrap -->
+  <div id="map">
+    <div class="radar-sweep"></div>
+  </div>
 
   <!-- Title bar -->
   <div class="map-title-bar">
@@ -169,15 +197,21 @@
 
 <!-- Report Zone Modal -->
 <div id="report-modal" class="report-modal-bg">
-  <div class="glass-card report-modal-card p-4" style="width:90%;max-width:480px;border-radius:var(--radius-xl);">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin:0;">
-        <i class="bi bi-exclamation-triangle me-2" style="color:var(--red-primary);"></i>Report Danger Zone
-      </h5>
-      <button onclick="closeReportModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;transition:color .2s;" onmouseover="this.style.color='var(--red-primary)'" onmouseout="this.style.color='var(--text-muted)'"><i class="bi bi-x-lg"></i></button>
+  <div class="glass-card report-modal-card p-4 p-md-5" style="width:95%;max-width:520px;border-radius:var(--radius-xl);transform-style:preserve-3d;">
+    
+    <div style="position:absolute;inset:-2px;border-radius:var(--radius-xl);background:conic-gradient(from 0deg,transparent 60%,var(--red-primary) 80%,transparent 100%);z-index:-1;animation:radarScan 4s linear infinite;opacity:0.6;"></div>
+
+    <div class="text-center mb-4">
+      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(220,38,38,0.15),rgba(220,38,38,0.02));border:1px solid rgba(220,38,38,0.3);box-shadow:inset 0 0 20px rgba(220,38,38,0.1),0 0 30px rgba(220,38,38,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;letter-spacing:1px;color:#fff;">Report Danger Zone</h3>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-top:4px;">Global Database Updates in 0.8s</p>
     </div>
-    <div id="selected-location" class="glass-card-red p-3 mb-3" style="font-size:0.85rem;border-radius:var(--radius-sm);">
-      <i class="bi bi-geo-alt me-1"></i><span id="loc-display">Click on the map to select location</span>
+
+    <div id="selected-location" class="glass-card-red p-3 mb-4 d-flex align-items-center gap-2" style="font-size:0.85rem;border-radius:var(--radius-md);">
+      <i class="bi bi-geo-alt" style="color:var(--red-primary);font-size:1.1rem;"></i>
+      <span id="loc-display" style="color:var(--text-primary);letter-spacing:0.05em;">Click on the map to select location</span>
     </div>
     <form id="report-form" onsubmit="submitReport(event)">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
