@@ -164,49 +164,116 @@
 <!-- ── Toast Container ─────────────────────────────────────────────────────── -->
 <div id="toast-container"></div>
 
-<!-- ── Loading Overlay ─────────────────────────────────────────────────────── -->
+<!-- ── Loading Overlay — Enhanced ──────────────────────────────────────────── -->
 <div class="spinner-overlay" id="loading-overlay" style="display:none;">
-  <div class="text-center">
-    <div class="spinner-rakshak">
-      <div class="spinner-ring"></div>
-      <div class="spinner-inner-icon"><i class="bi bi-shield-lock-fill" style="color:var(--red-primary);font-size:1.2rem;"></i></div>
+  <div class="text-center" style="animation:loadIn .4s cubic-bezier(.22,1,.36,1);">
+    <!-- Animated shield with orbit ring -->
+    <div style="position:relative;width:80px;height:80px;margin:0 auto;">
+      <div class="spinner-rakshak">
+        <div class="spinner-ring"></div>
+        <div class="spinner-inner-icon"><i class="bi bi-shield-lock-fill" style="color:var(--red-primary);font-size:1.4rem;"></i></div>
+      </div>
+      <!-- Orbiting dot -->
+      <div style="position:absolute;inset:-8px;animation:orbitSpin 1.5s linear infinite;">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--red-primary);box-shadow:0 0 10px var(--red-primary);"></div>
+      </div>
     </div>
-    <div style="margin-top:16px;color:var(--text-secondary);font-size:0.85rem;letter-spacing:0.05em;" id="loading-msg"></div>
+
+    <div style="margin-top:20px;color:var(--text-primary);font-size:0.95rem;font-weight:600;letter-spacing:0.05em;" id="loading-msg">Processing...</div>
+
+    <!-- Progress bar -->
+    <div style="width:200px;height:3px;background:rgba(255,255,255,0.06);border-radius:3px;margin:12px auto 0;overflow:hidden;">
+      <div id="loading-progress" style="width:0%;height:100%;background:linear-gradient(90deg,var(--red-primary),#ff6b6b);border-radius:3px;transition:width .3s;animation:loadBarPulse 2s ease-in-out infinite;"></div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;letter-spacing:0.15em;" id="loading-sub">SECURING CONNECTION...</div>
   </div>
 </div>
+<style>
+@keyframes loadIn { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
+@keyframes orbitSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes loadBarPulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+</style>
 
 <!-- ── Scripts ─────────────────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
 <script>
-// ── Global Toast System ──────────────────────────────────────────────────────
+// ── Global Toast System — Enhanced ───────────────────────────────────────────
 function showToast(message, type='info', duration=4000) {
   const container = document.getElementById('toast-container');
   const icons = { success:'bi-check-circle-fill', error:'bi-x-circle-fill',
                   warning:'bi-exclamation-triangle-fill', info:'bi-info-circle-fill', sos:'bi-shield-exclamation' };
+  const colors = { success:'#48bb78', error:'#dc2626', warning:'#f6ad55', info:'#4299e1', sos:'#dc2626' };
   const icon = icons[type] || icons.info;
+  const color = colors[type] || colors.info;
 
   const toast = document.createElement('div');
   toast.className = `rakshak-toast toast-${type} toast-notification`;
   toast.innerHTML = `
+    <div style="position:absolute;bottom:0;left:0;right:0;height:2px;overflow:hidden;border-radius:0 0 8px 8px;">
+      <div class="toast-timer" style="height:100%;background:${color};width:100%;border-radius:2px;animation:toastTimer ${duration}ms linear forwards;"></div>
+    </div>
     <i class="bi ${icon}" style="font-size:1.2rem;flex-shrink:0;margin-top:2px;"></i>
-    <div>
+    <div style="flex:1;">
       <div style="font-weight:600;margin-bottom:2px;">${type.charAt(0).toUpperCase()+type.slice(1)}</div>
       <div style="color:var(--text-secondary);font-size:0.85rem;">${message}</div>
     </div>
-    <i class="bi bi-x ms-auto" style="cursor:pointer;opacity:0.5;flex-shrink:0;" onclick="this.closest('.rakshak-toast').remove()"></i>`;
+    <i class="bi bi-x ms-auto" style="cursor:pointer;opacity:0.5;flex-shrink:0;" onclick="event.stopPropagation();this.closest('.rakshak-toast').remove()"></i>`;
+  toast.style.position = 'relative';
   toast.addEventListener('click', () => toast.remove());
   container.appendChild(toast);
   setTimeout(() => { toast.classList.add('toast-exit'); setTimeout(() => toast.remove(), 300); }, duration);
 }
+// Toast timer animation (injected once)
+if (!document.getElementById('toast-timer-css')) {
+  const s = document.createElement('style');
+  s.id = 'toast-timer-css';
+  s.textContent = '@keyframes toastTimer { from{width:100%} to{width:0%} }';
+  document.head.appendChild(s);
+}
 
 // ── Loading Helpers ──────────────────────────────────────────────────────────
-function showLoading(msg='Processing...') {
+let loadingStepTimer = null;
+function showLoading(msg='Processing...', steps=null) {
   document.getElementById('loading-msg').textContent = msg;
   document.getElementById('loading-overlay').style.display = 'flex';
+  const bar = document.getElementById('loading-progress');
+  const sub = document.getElementById('loading-sub');
+  if (bar) bar.style.width = '10%';
+  if (sub) sub.textContent = 'SECURING CONNECTION...';
+
+  // Auto-progress animation
+  if (steps && Array.isArray(steps)) {
+    let i = 0;
+    const interval = 1200;
+    loadingStepTimer = setInterval(() => {
+      i++;
+      if (i < steps.length) {
+        if (sub) sub.textContent = steps[i].toUpperCase();
+        if (bar) bar.style.width = Math.min(15 + (i * (70/steps.length)), 85) + '%';
+      } else {
+        clearInterval(loadingStepTimer);
+      }
+    }, interval);
+  } else {
+    // Simple progress animation
+    let pct = 10;
+    loadingStepTimer = setInterval(() => {
+      pct = Math.min(pct + Math.random()*12, 85);
+      if (bar) bar.style.width = pct + '%';
+    }, 600);
+  }
 }
-function hideLoading() { document.getElementById('loading-overlay').style.display = 'none'; }
+function hideLoading() {
+  const bar = document.getElementById('loading-progress');
+  if (bar) bar.style.width = '100%';
+  if (loadingStepTimer) { clearInterval(loadingStepTimer); loadingStepTimer = null; }
+  setTimeout(() => {
+    document.getElementById('loading-overlay').style.display = 'none';
+    if (bar) bar.style.width = '0%';
+  }, 300);
+}
 
 // ── CSRF Token ───────────────────────────────────────────────────────────────
 const CSRF_TOKEN = '{{ csrf_token() }}';
@@ -360,5 +427,41 @@ fetch('/sos/notifications').then(r=>r.json()).then(data=>{
 </script>
 
 {% block extra_js %}{% endblock %}
+
+<!-- ── Page Transition ────────────────────────────────────────────────────── -->
+<div id="page-transition" style="position:fixed;inset:0;z-index:9999;pointer-events:none;display:none;">
+  <div style="position:absolute;top:0;left:0;right:0;height:3px;overflow:hidden;">
+    <div id="page-trans-bar" style="height:100%;background:linear-gradient(90deg,transparent,var(--red-primary),transparent);width:30%;border-radius:3px;"></div>
+  </div>
+</div>
+<style>
+@keyframes transBar { 0%{left:-30%;opacity:0} 20%{opacity:1} 80%{opacity:1} 100%{left:100%;opacity:0} }
+</style>
+<script>
+// Page transition on link clicks
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('a[href]');
+  if (!link || link.target === '_blank' || link.href.startsWith('javascript') ||
+      link.href.includes('#') || link.getAttribute('download')) return;
+  const url = new URL(link.href, window.location.origin);
+  if (url.origin !== window.location.origin) return;
+
+  const trans = document.getElementById('page-transition');
+  const bar = document.getElementById('page-trans-bar');
+  if (trans && bar) {
+    trans.style.display = 'block';
+    bar.style.animation = 'transBar 0.8s ease-in-out';
+  }
+});
+// Fade in content on load
+document.addEventListener('DOMContentLoaded', function() {
+  const main = document.querySelector('.main-content');
+  if (main) {
+    main.style.opacity = '0';
+    main.style.transition = 'opacity .3s ease-in';
+    requestAnimationFrame(() => { main.style.opacity = '1'; });
+  }
+});
+</script>
 </body>
 </html>
