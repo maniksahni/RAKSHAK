@@ -104,6 +104,25 @@ SCHEMA_SQL = [
     user_agent TEXT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",
+
+    """CREATE TABLE IF NOT EXISTS journeys (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    start_lat DECIMAL(10, 8) NOT NULL,
+    start_lng DECIMAL(11, 8) NOT NULL,
+    dest_lat DECIMAL(10, 8) NOT NULL,
+    dest_lng DECIMAL(11, 8) NOT NULL,
+    current_lat DECIMAL(10, 8) DEFAULT NULL,
+    current_lng DECIMAL(11, 8) DEFAULT NULL,
+    eta_minutes INT NOT NULL DEFAULT 30,
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expected_end TIMESTAMP NULL DEFAULT NULL,
+    ended_at TIMESTAMP NULL DEFAULT NULL,
+    status VARCHAR(20) DEFAULT 'active',
+    share_token VARCHAR(64) UNIQUE DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",
 ]
 
 # Seed data (passwords pre-hashed with bcrypt cost 12)

@@ -202,6 +202,8 @@ def create_app(config_name=None):
     from modules.danger_zones.routes  import danger_bp
     from modules.admin.routes         import admin_bp
     from modules.main.routes          import main_bp
+    from modules.safety_tips.routes   import safety_tips_bp
+    from modules.emergency.routes     import emergency_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp,      url_prefix='/auth')
@@ -211,6 +213,8 @@ def create_app(config_name=None):
     app.register_blueprint(ai_bp,        url_prefix='/ai')
     app.register_blueprint(danger_bp,    url_prefix='/danger-zones')
     app.register_blueprint(admin_bp,     url_prefix='/admin')
+    app.register_blueprint(safety_tips_bp, url_prefix='/safety-tips')
+    app.register_blueprint(emergency_bp,   url_prefix='/emergency')
 
     # ── Google OAuth ──────────────────────────────────────────────────────
     register_google_oauth(app)
@@ -286,7 +290,7 @@ def create_app(config_name=None):
 
 
 def _auto_init_db(app):
-    """Auto-create tables & seed admin if DB is empty (for Render/Docker first-run)."""
+    """Auto-create tables & seed admin if DB is empty (Railway/Docker first-run)."""
     import time
     for attempt in range(10):
         try:

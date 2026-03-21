@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+{% block title %}Safe Walk — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+.sw-container { max-width: 900px; margin: 0 auto; }
+
+/* glassmorphism card */
+.sw-card {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.sw-card h5 {
+  font-family: var(--font-display, 'Inter', sans-serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+/* map */
+#sw-map {
+  width: 100%;
+  height: 340px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: #0a0a0f;
+}
+
+/* form inputs */
+.sw-input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.sw-input:focus {
+  outline: none;
+  border-color: rgba(220,38,38,0.5);
+  background: rgba(255,255,255,0.06);
+}
+.sw-input::placeholder { color: rgba(255,255,255,0.3); }
+
+.sw-label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ETA slider */
+.sw-range {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+}
+.sw-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #dc2626;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(220,38,38,0.5);
+}
+
+/* buttons */
+.sw-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.sw-btn-primary {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(220,38,38,0.3);
+}
+.sw-btn-primary:hover { box-shadow: 0 6px 28px rgba(220,38,38,0.5); transform: translateY(-1px); }
+
+.sw-btn-safe {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(22,163,74,0.3);
+}
+.sw-btn-safe:hover { box-shadow: 0 6px 28px rgba(22,163,74,0.5); transform: translateY(-1px); }
+
+.sw-btn-sos {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  color: #fff;
+  font-size: 1rem;
+  padding: 16px 32px;
+  animation: sosPulse 2s ease-in-out infinite;
+}
+@keyframes sosPulse {
+  0%,100% { box-shadow: 0 0 20px rgba(220,38,38,0.3); }
+  50% { box-shadow: 0 0 40px rgba(220,38,38,0.6); }
+}
+
+.sw-btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+}
+.sw-btn-outline:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+/* countdown */
+.sw-countdown {
+  font-family: 'Courier New', monospace;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+.sw-countdown.overdue { color: #dc2626; animation: overdueFlash 1s ease-in-out infinite; }
+@keyframes overdueFlash { 50% { opacity: 0.5; } }
+
+/* status badge */
+.sw-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sw-status.active { background: rgba(22,163,74,0.15); color: #22c55e; }
+.sw-status.overdue { background: rgba(220,38,38,0.15); color: #ef4444; }
+
+/* share link */
+.sw-share-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.6);
+  word-break: break-all;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sw-share-box:hover { background: rgba(255,255,255,0.08); }
+
+.hidden { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sw-container">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h4 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;">
+        <i class="bi bi-signpost-2 me-2" style="color:#dc2626;"></i>Safe Walk
+      </h4>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0;">Track your journey and share with trusted contacts</p>
+    </div>
+  </div>
+
+  <!-- ── START JOURNEY FORM ──────────────────────────────────────────────── -->
+  <div id="sw-start-section">
+    <div class="sw-card">
+      <h5><i class="bi bi-geo-alt me-2" style="color:#dc2626;"></i>Start a Journey</h5>
+
+      <div id="sw-setup-map" style="margin-bottom:16px;">
+        <div id="sw-map"></div>
+        <p style="color:rgba(255,255,255,0.35);font-size:0.7rem;margin-top:6px;">
+          <i class="bi bi-info-circle me-1"></i>Click on the map to set your destination. Your current location is detected automatically.
+        </p>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="sw-label">Destination</label>
+          <input type="text" id="sw-dest-input" class="sw-input" placeholder="Click map or enter address" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="sw-label">Estimated Time: <span id="sw-eta-val">30</span> min</label>
+          <input type="range" id="sw-eta" class="sw-range" min="5" max="180" value="30" step="5">
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <button class="sw-btn sw-btn-primary" id="sw-start-btn">
+          <i class="bi bi-play-fill"></i> Start Journey
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ACTIVE JOURNEY VIEW ─────────────────────────────────────────────── -->
+  <div id="sw-active-section" class="hidden">
+    <div class="sw-card">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 style="margin:0;"><i class="bi bi-broadcast me-2" style="color:#22c55e;"></i>Journey in Progress</h5>
+        <span id="sw-active-status" class="sw-status active">
+          <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> ACTIVE
+        </span>
+      </div>
+
+      <div id="sw-active-map" style="height:300px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:16px;background:#0a0a0f;"></div>
+
+      <div class="text-center mb-3">
+        <div class="sw-label">Time Remaining</div>
+        <div id="sw-countdown" class="sw-countdown">--:--:--</div>
+      </div>
+
+      <!-- Share link -->
+      <div id="sw-share-section" class="mb-3">
+        <div class="sw-label">Share tracking link with contacts</div>
+        <div id="sw-share-link" class="sw-share-box" onclick="copyShareLink()">
+          Click to copy tracking link
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 justify-content-center">
+        <button class="sw-btn sw-btn-safe" id="sw-safe-btn">
+          <i class="bi bi-shield-check"></i> I'm Safe — End Journey
+        </button>
+        <button class="sw-btn sw-btn-sos" id="sw-sos-btn">
+          <i class="bi bi-exclamation-triangle-fill"></i> SOS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function() {
+  const csrf = document.querySelector('meta[name=csrf-token]')?.content
+    || '{{ csrf_token() }}';
+  const headers = {'Content-Type':'application/json','X-CSRFToken': csrf};
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  let setupMap, activeMap;
+  let startMarker, destMarker, routeLine;
+  let activeMarker, activeDestMarker, activeLine;
+  let myLat = null, myLng = null;
+  let destLat = null, destLng = null;
+  let activeJourney = null;
+  let countdownTimer = null;
+  let locationWatcher = null;
+  let shareToken = null;
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  function init() {
+    initSetupMap();
+    checkActiveJourney();
+    document.getElementById('sw-eta').addEventListener('input', function() {
+      document.getElementById('sw-eta-val').textContent = this.value;
+    });
+    document.getElementById('sw-start-btn').addEventListener('click', startJourney);
+    document.getElementById('sw-safe-btn').addEventListener('click', endJourney);
+    document.getElementById('sw-sos-btn').addEventListener('click', triggerSOS);
+  }
+
+  function initSetupMap() {
+    setupMap = L.map('sw-map', {attributionControl: false}).setView([28.6139, 77.2090], 13);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(setupMap);
+
+    // Get current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        myLat = pos.coords.latitude;
+        myLng = pos.coords.longitude;
+        setupMap.setView([myLat, myLng], 15);
+        startMarker = L.circleMarker([myLat, myLng], {
+          radius: 8, fillColor: '#22c55e', fillOpacity: 1,
+          color: '#fff', weight: 2
+        }).addTo(setupMap).bindPopup('You are here');
+      });
+    }
+
+    // Click to set destination
+    setupMap.on('click', function(e) {
+      destLat = e.latlng.lat;
+      destLng = e.latlng.lng;
+      if (destMarker) setupMap.removeLayer(destMarker);
+      if (routeLine) setupMap.removeLayer(routeLine);
+
+      destMarker = L.marker([destLat, destLng], {
+        icon: L.divIcon({
+          className: '',
+          html: '<div style="width:14px;height:14px;background:#dc2626;border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(220,38,38,0.6);"></div>',
+          iconSize: [14, 14], iconAnchor: [7, 7]
+        })
+      }).addTo(setupMap).bindPopup('Destination');
+
+      document.getElementById('sw-dest-input').value =
+        destLat.toFixed(5) + ', ' + destLng.toFixed(5);
+
+      if (myLat !== null) {
+        routeLine = L.polyline([[myLat, myLng], [destLat, destLng]], {
+          color: '#dc2626', weight: 2, dashArray: '8 6', opacity: 0.6
+        }).addTo(setupMap);
+        setupMap.fitBounds(routeLine.getBounds().pad(0.2));
+      }
+    });
+  }
+
+  // ── Check for existing active journey ─────────────────────────────────────
+  function checkActiveJourney() {
+    fetch('/safe-walk/active', {headers})
+      .then(r => r.json())
+      .then(d => {
+        if (d.success && d.journey) {
+          activeJourney = d.journey;
+          shareToken = d.journey.share_token;
+          showActiveView();
+        }
+      });
+  }
+
+  // ── Start Journey ─────────────────────────────────────────────────────────
+  function startJourney() {
+    if (myLat === null || myLng === null) {
+      if (typeof showToast === 'function') showToast('Waiting for GPS location...', 'warning');
+      return;
+    }
+    if (destLat === null || destLng === null) {
+      if (typeof showToast === 'function') showToast('Click on the map to set your destination.', 'warning');
+      return;
+    }
+    const eta = parseInt(document.getElementById('sw-eta').value);
+
+    fetch('/safe-walk/start', {
+      method: 'POST', headers,
+      body: JSON.stringify({
+        start_lat: myLat, start_lng: myLng,
+        dest_lat: destLat, dest_lng: destLng,
+        eta_minutes: eta
+      })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        activeJourney = d.journey;
+        shareToken = d.share_token;
+        showActiveView();
+        if (typeof showToast === 'function') showToast('Journey started! Stay safe.', 'success');
+      } else {
+        if (typeof showToast === 'function') showToast(d.error || 'Failed to start', 'error');
+      }
+    })
+    .catch(() => {
+      if (typeof showToast === 'function') showToast('Network error', 'error');
+    });
+  }
+
+  // ── Show Active Journey View ──────────────────────────────────────────────
+  function showActiveView() {
+    document.getElementById('sw-start-section').classList.add('hidden');
+    document.getElementById('sw-active-section').classList.remove('hidden');
+
+    // Share link
+    const shareUrl = window.location.origin + '/safe-walk/share/' + shareToken;
+    document.getElementById('sw-share-link').textContent = shareUrl;
+
+    // Init active map
+    setTimeout(function() {
+      if (activeMap) activeMap.remove();
+      activeMap = L.map('sw-active-map', {attributionControl: false}).setView(
+        [activeJourney.current_lat || activeJourney.start_lat,
+         activeJourney.current_lng || activeJourney.start_lng], 15
+      );
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19
+      }).addTo(activeMap);
+
+      activeMarker = L.circleMarker(
+        [activeJourney.current_lat || activeJourney.start_lat,
+         activeJourney.current_lng || activeJourney.start_lng],
+        {radius: 8, fillColor: '#22c55e', fillOpacity: 1, color: '#fff', weight: 2}
+      ).addTo(activeMap);
+
+      activeDestMarker = L.marker(
+        [activeJourney.dest_lat, activeJourney.dest_lng],
+        {icon: L.divIcon({
+          className: '',
+          html: '<div style="width:14px;height:14px;background:#dc2626;border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(220,38,38,0.6);"></div>',
+          iconSize: [14, 14], iconAnchor: [7, 7]
+        })}
+      ).addTo(activeMap);
+
+      activeLine = L.polyline([
+        [activeJourney.start_lat, activeJourney.start_lng],
+        [activeJourney.dest_lat, activeJourney.dest_lng]
+      ], {color: '#dc2626', weight: 2, dashArray: '8 6', opacity: 0.5}).addTo(activeMap);
+
+      activeMap.fitBounds(activeLine.getBounds().pad(0.2));
+    }, 100);
+
+    // Start countdown
+    startCountdown();
+
+    // Start location tracking
+    startLocationTracking();
+  }
+
+  // ── Countdown Timer ───────────────────────────────────────────────────────
+  function startCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(function() {
+      if (!activeJourney || !activeJourney.expected_end) return;
+      const end = new Date(activeJourney.expected_end);
+      const now = new Date();
+      const diff = end - now;
+      const el = document.getElementById('sw-countdown');
+      const statusEl = document.getElementById('sw-active-status');
+
+      if (diff <= 0) {
+        el.textContent = 'OVERDUE';
+        el.classList.add('overdue');
+        statusEl.className = 'sw-status overdue';
+        statusEl.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> OVERDUE';
+        // Check ETA on server
+        fetch('/safe-walk/check-eta', {method: 'POST', headers})
+          .then(r => r.json())
+          .then(d => {
+            if (d.overdue && typeof showToast === 'function') {
+              showToast('Journey overdue! Contacts notified.', 'warning');
+            }
+          });
+        clearInterval(countdownTimer);
+        // Continue checking every 30s
+        countdownTimer = setInterval(function() {
+          fetch('/safe-walk/check-eta', {method: 'POST', headers});
+        }, 30000);
+        return;
+      }
+
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.textContent =
+        String(h).padStart(2,'0') + ':' +
+        String(m).padStart(2,'0') + ':' +
+        String(s).padStart(2,'0');
+    }, 1000);
+  }
+
+  // ── Location Tracking ─────────────────────────────────────────────────────
+  function startLocationTracking() {
+    if (!navigator.geolocation) return;
+    locationWatcher = navigator.geolocation.watchPosition(function(pos) {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+
+      // Update marker on map
+      if (activeMarker) activeMarker.setLatLng([lat, lng]);
+
+      // Send to server every update
+      fetch('/safe-walk/update', {
+        method: 'POST', headers,
+        body: JSON.stringify({latitude: lat, longitude: lng})
+      });
+    }, null, {enableHighAccuracy: true, maximumAge: 10000});
+  }
+
+  // ── End Journey ───────────────────────────────────────────────────────────
+  function endJourney() {
+    fetch('/safe-walk/end', {method: 'POST', headers})
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          if (typeof showToast === 'function') showToast('Journey ended. Glad you are safe!', 'success');
+          resetToStart();
+        } else {
+          if (typeof showToast === 'function') showToast(d.error || 'Failed', 'error');
+        }
+      });
+  }
+
+  // ── SOS ────────────────────────────────────────────────────────────────────
+  function triggerSOS() {
+    if (window.triggerGlobalSOS) {
+      window.triggerGlobalSOS();
+    }
+  }
+
+  // ── Copy share link ───────────────────────────────────────────────────────
+  window.copyShareLink = function() {
+    const link = document.getElementById('sw-share-link').textContent;
+    navigator.clipboard.writeText(link).then(function() {
+      if (typeof showToast === 'function') showToast('Tracking link copied!', 'success');
+    });
+  };
+
+  // ── Reset to start view ───────────────────────────────────────────────────
+  function resetToStart() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    if (locationWatcher) navigator.geolocation.clearWatch(locationWatcher);
+    activeJourney = null;
+    shareToken = null;
+    document.getElementById('sw-active-section').classList.add('hidden');
+    document.getElementById('sw-start-section').classList.remove('hidden');
+    destLat = null; destLng = null;
+    document.getElementById('sw-dest-input').value = '';
+    if (destMarker && setupMap) setupMap.removeLayer(destMarker);
+    if (routeLine && setupMap) setupMap.removeLayer(routeLine);
+    setTimeout(function(){ if(setupMap) setupMap.invalidateSize(); }, 200);
+  }
+
+  // ── Boot ──────────────────────────────────────────────────────────────────
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+{% endblock %}

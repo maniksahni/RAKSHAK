@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+{% block title %}Emergency Quick-Dial — RAKSHAK{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+
+  <!-- ── Page Header ──────────────────────────────────────────────────────── -->
+  <div class="mb-4">
+    <h2 style="font-family:var(--font-display,Inter,sans-serif);font-weight:800;color:#fff;margin:0;">
+      <i class="bi bi-telephone-fill" style="color:#dc2626;"></i> Emergency Quick-Dial
+    </h2>
+    <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0.25rem 0 0;">One tap to call. Stay calm, help is always available.</p>
+  </div>
+
+  <!-- ── Your Location Card ───────────────────────────────────────────────── -->
+  <div class="location-card mb-4" id="location-card">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <div class="loc-icon-wrap">
+        <i class="bi bi-geo-alt-fill" style="color:#dc2626;font-size:1.3rem;"></i>
+        <div class="loc-pulse"></div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-weight:600;">Your Current Location</div>
+        <div id="location-text" style="color:#fff;font-size:0.95rem;font-weight:600;margin-top:2px;">Detecting location...</div>
+        <div id="location-coords" style="color:rgba(255,255,255,0.35);font-size:0.75rem;margin-top:2px;font-family:monospace;"></div>
+      </div>
+      <button onclick="refreshLocation()" class="loc-refresh-btn" title="Refresh location">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Primary Emergency: Police ────────────────────────────────────────── -->
+  <a href="tel:100" class="police-card mb-3" id="police-dial">
+    <div class="d-flex align-items-center gap-3">
+      <div class="police-icon">
+        <span style="font-size:2.2rem;">🚔</span>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;">Emergency</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#fff;line-height:1.1;">Call Police</div>
+        <div style="font-size:1.1rem;color:rgba(255,255,255,0.7);font-family:monospace;font-weight:700;margin-top:2px;">100</div>
+      </div>
+      <div class="police-call-icon">
+        <i class="bi bi-telephone-fill" style="font-size:1.8rem;"></i>
+      </div>
+    </div>
+    <div class="police-desc">For any crime, threat, or law and order emergency. Available 24/7 across India.</div>
+  </a>
+
+  <!-- ── Secondary: Women Helpline ────────────────────────────────────────── -->
+  <a href="tel:1091" class="women-card mb-4" id="women-dial">
+    <div class="d-flex align-items-center gap-3">
+      <div class="women-icon">
+        <span style="font-size:1.8rem;">👩‍🦰</span>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;">Women in Distress</div>
+        <div style="font-size:1.25rem;font-weight:800;color:#fff;line-height:1.1;">Women Helpline</div>
+        <div style="font-size:1rem;color:rgba(255,255,255,0.65);font-family:monospace;font-weight:700;margin-top:2px;">1091</div>
+      </div>
+      <div class="women-call-icon">
+        <i class="bi bi-telephone-fill" style="font-size:1.4rem;"></i>
+      </div>
+    </div>
+    <div class="women-desc">Report harassment, stalking, domestic violence, or any threat. 24/7 support.</div>
+  </a>
+
+  <!-- ── All Emergency Numbers Grid ───────────────────────────────────────── -->
+  <h5 style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:1rem;">
+    <i class="bi bi-grid-3x3-gap-fill" style="color:#dc2626;"></i> All Emergency Numbers
+  </h5>
+
+  <div class="emergency-grid" id="emergency-grid">
+    {% for num in numbers %}
+    {% if num.id > 2 %}
+    <div class="em-card" style="--card-color: {{ num.color }};">
+      <div class="d-flex align-items-center gap-3 mb-2">
+        <div class="em-icon">{{ num.icon }}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="em-name">{{ num.name }}</div>
+          <div class="em-number">{{ num.number }}</div>
+        </div>
+        <button class="em-copy-btn" onclick="event.preventDefault();event.stopPropagation();copyNumber('{{ num.number }}', this)" title="Copy number">
+          <i class="bi bi-clipboard"></i>
+        </button>
+      </div>
+      <p class="em-desc">{{ num.description }}</p>
+      <a href="tel:{{ num.number }}" class="em-call-btn" style="--btn-color: {{ num.color }};">
+        <i class="bi bi-telephone-fill"></i> Call {{ num.number }}
+      </a>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- ── Disclaimer ───────────────────────────────────────────────────────── -->
+  <div style="text-align:center;padding:2rem 1rem 1rem;color:rgba(255,255,255,0.25);font-size:0.72rem;">
+    <i class="bi bi-info-circle"></i> These are official Indian emergency numbers. Calling is free from any phone. In an emergency, stay calm and provide your location clearly.
+  </div>
+</div>
+
+<style>
+/* ── Location Card ────────────────────────────────────────────────────────── */
+.location-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1.25rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.loc-icon-wrap {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(220,38,38,0.1);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.loc-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 14px;
+  border: 2px solid rgba(220,38,38,0.3);
+  animation: locPulse 2s ease-in-out infinite;
+}
+@keyframes locPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.08); }
+}
+.loc-refresh-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+.loc-refresh-btn:hover {
+  background: rgba(220,38,38,0.1);
+  border-color: rgba(220,38,38,0.3);
+  color: #dc2626;
+}
+
+/* ── Police Card (Primary) ────────────────────────────────────────────────── */
+.police-card {
+  display: block;
+  text-decoration: none;
+  background: linear-gradient(135deg, rgba(220,38,38,0.25) 0%, rgba(220,38,38,0.08) 100%);
+  border: 2px solid rgba(220,38,38,0.4);
+  border-radius: 18px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(220,38,38,0.15);
+}
+.police-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -30%;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,38,38,0.12), transparent 70%);
+  pointer-events: none;
+}
+.police-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(220,38,38,0.3);
+  border-color: rgba(220,38,38,0.6);
+}
+.police-card:active {
+  transform: scale(0.98);
+}
+.police-icon {
+  width: 68px;
+  height: 68px;
+  background: rgba(220,38,38,0.2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(220,38,38,0.3);
+}
+.police-call-icon {
+  width: 60px;
+  height: 60px;
+  background: #dc2626;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  animation: callPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 25px rgba(220,38,38,0.5);
+}
+@keyframes callPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(220,38,38,0.4); }
+  50% { box-shadow: 0 0 35px rgba(220,38,38,0.7); }
+}
+.police-desc {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.78rem;
+  margin: 0.75rem 0 0;
+  line-height: 1.5;
+}
+
+/* ── Women Helpline Card (Secondary) ──────────────────────────────────────── */
+.women-card {
+  display: block;
+  text-decoration: none;
+  background: linear-gradient(135deg, rgba(225,29,72,0.15) 0%, rgba(225,29,72,0.04) 100%);
+  border: 1px solid rgba(225,29,72,0.3);
+  border-radius: 16px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.women-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(225,29,72,0.2);
+  border-color: rgba(225,29,72,0.5);
+}
+.women-card:active {
+  transform: scale(0.98);
+}
+.women-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(225,29,72,0.12);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(225,29,72,0.2);
+}
+.women-call-icon {
+  width: 50px;
+  height: 50px;
+  background: #e11d48;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(225,29,72,0.4);
+}
+.women-desc {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.75rem;
+  margin: 0.75rem 0 0;
+  line-height: 1.4;
+}
+
+/* ── Emergency Numbers Grid ───────────────────────────────────────────────── */
+.emergency-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+@media (max-width: 480px) {
+  .emergency-grid { grid-template-columns: 1fr; }
+}
+
+.em-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1.15rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.em-card:hover {
+  border-color: color-mix(in srgb, var(--card-color) 40%, transparent);
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+}
+.em-icon {
+  font-size: 1.6rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--card-color) 12%, transparent);
+  border-radius: 12px;
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--card-color) 20%, transparent);
+}
+.em-name {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.em-number {
+  color: var(--card-color);
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: monospace;
+  margin-top: 1px;
+}
+.em-desc {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+.em-copy-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.4);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.em-copy-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+.em-copy-btn.copied {
+  background: rgba(34,197,94,0.15);
+  border-color: rgba(34,197,94,0.3);
+  color: #22c55e;
+}
+
+.em-call-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: color-mix(in srgb, var(--btn-color) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn-color) 30%, transparent);
+  border-radius: 10px;
+  color: var(--btn-color);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.em-call-btn:hover {
+  background: color-mix(in srgb, var(--btn-color) 25%, transparent);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--btn-color) 25%, transparent);
+  color: #fff;
+}
+.em-call-btn:active {
+  transform: scale(0.97);
+}
+</style>
+
+<script>
+/* ── Geolocation Detection ────────────────────────────────────────────────── */
+function refreshLocation() {
+  const textEl = document.getElementById('location-text');
+  const coordsEl = document.getElementById('location-coords');
+  textEl.textContent = 'Detecting location...';
+  coordsEl.textContent = '';
+
+  if (!navigator.geolocation) {
+    textEl.textContent = 'Geolocation not supported by your browser';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lng = pos.coords.longitude.toFixed(6);
+      const acc = Math.round(pos.coords.accuracy);
+      coordsEl.textContent = lat + ', ' + lng + ' (accuracy: ~' + acc + 'm)';
+      textEl.textContent = 'Location detected — share these coordinates with emergency services';
+      textEl.style.color = '#22c55e';
+    },
+    function(err) {
+      if (err.code === 1) {
+        textEl.textContent = 'Location access denied — enable GPS for emergency reporting';
+      } else {
+        textEl.textContent = 'Unable to detect location. Please share manually.';
+      }
+      textEl.style.color = '#f59e0b';
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+/* ── Copy to Clipboard ────────────────────────────────────────────────────── */
+function copyNumber(number, btn) {
+  navigator.clipboard.writeText(number).then(function() {
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+    setTimeout(function() {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="bi bi-clipboard"></i>';
+    }, 2000);
+  }).catch(function() {
+    /* Fallback for older browsers */
+    const ta = document.createElement('textarea');
+    ta.value = number;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.classList.add('copied');
+    btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+    setTimeout(function() {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i class="bi bi-clipboard"></i>';
+    }, 2000);
+  });
+}
+
+/* Auto-detect location on page load */
+document.addEventListener('DOMContentLoaded', refreshLocation);
+</script>
+{% endblock %}

@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+{% block title %}Safety Score — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+  .ss-page { padding: 24px; max-width: 900px; margin: 0 auto; }
+
+  /* Glass card */
+  .ss-card {
+    background: linear-gradient(135deg, rgba(15,15,23,0.85), rgba(26,26,46,0.75));
+    border: 1px solid rgba(220,38,38,0.12);
+    border-radius: 16px;
+    padding: 28px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+  }
+  .ss-card-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted, #888);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  /* Gauge */
+  .ss-gauge-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+  }
+  .ss-gauge-svg { width: 220px; height: 220px; }
+  .ss-gauge-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 14; }
+  .ss-gauge-fill {
+    fill: none;
+    stroke-width: 14;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1), stroke 0.5s;
+  }
+  .ss-gauge-text {
+    font-size: 3.2rem;
+    font-weight: 900;
+    fill: #fff;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .ss-gauge-label {
+    font-size: 0.7rem;
+    fill: var(--text-muted, #888);
+    text-anchor: middle;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .ss-score-tag {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-top: 12px;
+  }
+  .ss-score-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .ss-score-amber { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .ss-score-red   { background: rgba(220,38,38,0.15); color: #dc2626; }
+
+  /* Breakdown */
+  .ss-breakdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .ss-breakdown-item:last-child { border-bottom: none; }
+  .ss-breakdown-label { font-size: 0.88rem; color: var(--text-secondary, #ccc); }
+  .ss-breakdown-value { font-weight: 700; font-size: 0.9rem; }
+
+  /* Zone list */
+  .ss-zone-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .ss-zone-severity {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ss-sev-high   { background: #dc2626; box-shadow: 0 0 8px rgba(220,38,38,0.5); }
+  .ss-sev-medium { background: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.4); }
+  .ss-sev-low    { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.4); }
+  .ss-zone-text  { flex: 1; font-size: 0.85rem; color: var(--text-secondary, #ccc); }
+  .ss-zone-dist  { font-size: 0.75rem; color: var(--text-muted, #888); white-space: nowrap; }
+
+  /* Check another location */
+  .ss-location-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #e2e2e2;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .ss-location-input:focus { border-color: rgba(220,38,38,0.4); }
+  .ss-location-input::placeholder { color: rgba(255,255,255,0.25); }
+
+  .ss-btn {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s;
+  }
+  .ss-btn:hover { opacity: 0.85; }
+  .ss-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Advisory */
+  .ss-advisory {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: var(--text-secondary, #ccc);
+  }
+  .ss-advisory-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+  /* Loading skeleton */
+  .ss-skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+  }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* Grid layout */
+  .ss-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .ss-grid { grid-template-columns: 1fr; } }
+
+  /* Empty state */
+  .ss-empty { text-align: center; padding: 40px 20px; color: var(--text-muted, #888); }
+  .ss-empty i { font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.4; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ss-page">
+  <!-- Header -->
+  <div style="margin-bottom: 24px;">
+    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary, #fff); margin: 0 0 4px;">
+      <i class="bi bi-speedometer" style="color: var(--red-primary, #dc2626);"></i> Community Safety Score
+    </h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted, #888); margin: 0;">Real-time safety analysis for your location</p>
+  </div>
+
+  <!-- Getting Location state -->
+  <div id="ss-loading-state" class="ss-card" style="text-align:center;padding:60px 20px;">
+    <div class="spinner-border text-danger" role="status" style="width:2rem;height:2rem;"></div>
+    <div style="margin-top:16px;font-size:0.9rem;color:var(--text-secondary,#ccc);">Acquiring your location...</div>
+  </div>
+
+  <!-- Main content (hidden until data ready) -->
+  <div id="ss-main" style="display:none;">
+    <div class="ss-grid">
+      <!-- Left: Score Gauge -->
+      <div class="ss-card">
+        <div class="ss-card-title">Safety Score</div>
+        <div class="ss-gauge-wrap">
+          <svg class="ss-gauge-svg" viewBox="0 0 120 120">
+            <circle class="ss-gauge-bg" cx="60" cy="60" r="50"></circle>
+            <circle id="ss-gauge-ring" class="ss-gauge-fill" cx="60" cy="60" r="50"
+                    stroke-dasharray="314.16" stroke-dashoffset="314.16"
+                    transform="rotate(-90 60 60)"></circle>
+            <text id="ss-gauge-num" class="ss-gauge-text" x="60" y="56">--</text>
+            <text class="ss-gauge-label" x="60" y="78">SAFETY</text>
+          </svg>
+          <div id="ss-score-tag" class="ss-score-tag ss-score-green">SAFE</div>
+        </div>
+      </div>
+
+      <!-- Right: Breakdown -->
+      <div class="ss-card">
+        <div class="ss-card-title">Score Breakdown</div>
+        <div class="ss-breakdown-item">
+          <span class="ss-breakdown-label"><i class="bi bi-shield-check" style="color:#22c55e;margin-right:8px;"></i>Base Score</span>
+          <span class="ss-breakdown-value" style="color:#22c55e;">100</span>
+        </div>
+        <div class="ss-breakdown-item">
+          <span class="ss-breakdown-label"><i class="bi bi-geo-alt-fill" style="color:#f59e0b;margin-right:8px;"></i>Danger Zone Penalty</span>
+          <span class="ss-breakdown-value" style="color:#f59e0b;" id="ss-dz-penalty">-0</span>
+        </div>
+        <div class="ss-breakdown-item">
+          <span class="ss-breakdown-label"><i class="bi bi-exclamation-triangle-fill" style="color:#dc2626;margin-right:8px;"></i>Recent SOS Alerts</span>
+          <span class="ss-breakdown-value" style="color:#dc2626;" id="ss-sos-penalty">-0</span>
+        </div>
+        <div class="ss-breakdown-item">
+          <span class="ss-breakdown-label"><i class="bi bi-clock" style="color:#818cf8;margin-right:8px;"></i>Time Multiplier</span>
+          <span class="ss-breakdown-value" style="color:#818cf8;" id="ss-time-mult">x1.0</span>
+        </div>
+        <div class="ss-breakdown-item" style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;">
+          <span class="ss-breakdown-label" style="font-weight:700;color:#fff;">Final Score</span>
+          <span class="ss-breakdown-value" id="ss-final-score" style="font-size:1.2rem;">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Advisory -->
+    <div class="ss-card">
+      <div class="ss-card-title">Time-of-Day Advisory</div>
+      <div class="ss-advisory" id="ss-advisory">
+        <i class="bi bi-sun ss-advisory-icon" style="color:#f59e0b;"></i>
+        <span>Loading advisory...</span>
+      </div>
+    </div>
+
+    <!-- Nearby Danger Zones -->
+    <div class="ss-card">
+      <div class="ss-card-title">Nearby Danger Zones</div>
+      <div id="ss-zones-list">
+        <div class="ss-empty"><i class="bi bi-shield-check"></i>No danger zones nearby</div>
+      </div>
+    </div>
+
+    <!-- Check Another Location -->
+    <div class="ss-card">
+      <div class="ss-card-title">Check Another Location</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <input type="text" id="ss-lat-input" class="ss-location-input" style="flex:1;min-width:120px;" placeholder="Latitude (e.g. 28.6139)">
+        <input type="text" id="ss-lng-input" class="ss-location-input" style="flex:1;min-width:120px;" placeholder="Longitude (e.g. 77.2090)">
+        <button class="ss-btn" id="ss-check-btn" onclick="checkLocation()">
+          <i class="bi bi-search"></i> Check
+        </button>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="ss-btn" style="background:rgba(255,255,255,0.06);font-weight:500;font-size:0.8rem;" onclick="useMyLocation()">
+          <i class="bi bi-crosshair"></i> Use My Current Location
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  var currentLat = 0, currentLng = 0;
+  var gaugeRing = document.getElementById('ss-gauge-ring');
+  var gaugeNum  = document.getElementById('ss-gauge-num');
+  var scoreTag  = document.getElementById('ss-score-tag');
+  var CIRCUMFERENCE = 314.16; // 2 * PI * 50
+
+  function setGauge(score) {
+    var offset = CIRCUMFERENCE - (score / 100) * CIRCUMFERENCE;
+    gaugeRing.style.strokeDashoffset = offset;
+
+    // Color
+    var color;
+    if (score > 70) { color = '#22c55e'; }
+    else if (score >= 40) { color = '#f59e0b'; }
+    else { color = '#dc2626'; }
+    gaugeRing.setAttribute('stroke', color);
+    gaugeNum.textContent = score;
+    gaugeNum.setAttribute('fill', color);
+
+    // Tag
+    if (score > 70) {
+      scoreTag.textContent = 'SAFE';
+      scoreTag.className = 'ss-score-tag ss-score-green';
+    } else if (score >= 40) {
+      scoreTag.textContent = 'MODERATE RISK';
+      scoreTag.className = 'ss-score-tag ss-score-amber';
+    } else {
+      scoreTag.textContent = 'HIGH RISK';
+      scoreTag.className = 'ss-score-tag ss-score-red';
+    }
+  }
+
+  function renderData(data) {
+    document.getElementById('ss-loading-state').style.display = 'none';
+    document.getElementById('ss-main').style.display = 'block';
+
+    setGauge(data.score);
+
+    document.getElementById('ss-dz-penalty').textContent = '-' + data.danger_zone_penalty;
+    document.getElementById('ss-sos-penalty').textContent = '-' + data.recent_sos_penalty;
+    document.getElementById('ss-time-mult').textContent = 'x' + data.time_multiplier.toFixed(1);
+
+    var finalEl = document.getElementById('ss-final-score');
+    finalEl.textContent = data.score;
+    if (data.score > 70) finalEl.style.color = '#22c55e';
+    else if (data.score >= 40) finalEl.style.color = '#f59e0b';
+    else finalEl.style.color = '#dc2626';
+
+    // Advisory
+    var advEl = document.getElementById('ss-advisory');
+    var hour = new Date().getHours();
+    var icon = (hour >= 6 && hour < 18) ? 'bi-sun' : 'bi-moon-stars';
+    var iconColor = (hour >= 6 && hour < 18) ? '#f59e0b' : '#818cf8';
+    advEl.innerHTML = '<i class="bi ' + icon + ' ss-advisory-icon" style="color:' + iconColor + ';"></i>' +
+      '<div><div style="font-weight:600;color:#fff;margin-bottom:2px;">' + data.time_advisory + '</div>' +
+      '<div style="font-size:0.8rem;color:var(--text-muted,#888);">' + data.recent_sos_count + ' SOS alert' +
+      (data.recent_sos_count !== 1 ? 's' : '') + ' in this area (last 7 days)</div></div>';
+
+    // Zones
+    var zonesList = document.getElementById('ss-zones-list');
+    if (!data.nearby_zones || data.nearby_zones.length === 0) {
+      zonesList.innerHTML = '<div class="ss-empty"><i class="bi bi-shield-check"></i>No danger zones nearby — area looks clear!</div>';
+    } else {
+      zonesList.innerHTML = data.nearby_zones.map(function(z) {
+        var sevClass = 'ss-sev-' + z.severity;
+        return '<div class="ss-zone-item">' +
+          '<div class="ss-zone-severity ' + sevClass + '"></div>' +
+          '<div class="ss-zone-text">' +
+            '<div style="font-weight:600;color:#fff;font-size:0.85rem;margin-bottom:2px;">' +
+              z.zone_type.replace(/_/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); }) +
+              ' <span style="font-size:0.7rem;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,0.06);">' + z.severity.toUpperCase() + '</span>' +
+            '</div>' +
+            '<div style="font-size:0.78rem;color:var(--text-muted,#888);">' + (z.description || '').substring(0, 80) + '</div>' +
+          '</div>' +
+          '<div class="ss-zone-dist">' + z.distance_m + 'm</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+
+  function fetchScore(lat, lng) {
+    document.getElementById('ss-loading-state').style.display = 'block';
+    document.getElementById('ss-main').style.display = 'none';
+
+    postJSON('/safety-score/check', { latitude: lat, longitude: lng })
+      .then(function(data) {
+        if (data.success) {
+          renderData(data);
+        } else {
+          document.getElementById('ss-loading-state').innerHTML =
+            '<i class="bi bi-exclamation-triangle" style="font-size:2rem;color:#dc2626;"></i>' +
+            '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">' + (data.error || 'Failed to calculate score') + '</div>';
+        }
+      })
+      .catch(function() {
+        document.getElementById('ss-loading-state').innerHTML =
+          '<i class="bi bi-wifi-off" style="font-size:2rem;color:#dc2626;"></i>' +
+          '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">Network error</div>';
+      });
+  }
+
+  // Initial load — get user location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        currentLat = pos.coords.latitude;
+        currentLng = pos.coords.longitude;
+        fetchScore(currentLat, currentLng);
+      },
+      function() {
+        document.getElementById('ss-loading-state').innerHTML =
+          '<i class="bi bi-geo-alt" style="font-size:2rem;color:#f59e0b;"></i>' +
+          '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">Location access denied. Enter coordinates manually below.</div>' +
+          '<div style="margin-top:8px;font-size:0.8rem;color:var(--text-muted,#888);">Enable location in your browser settings for automatic detection.</div>';
+        document.getElementById('ss-main').style.display = 'block';
+        document.getElementById('ss-loading-state').style.display = 'block';
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  } else {
+    document.getElementById('ss-loading-state').innerHTML =
+      '<div style="color:var(--text-muted,#888);">Geolocation not supported. Enter coordinates manually.</div>';
+  }
+
+  // Expose for buttons
+  window.checkLocation = function() {
+    var lat = parseFloat(document.getElementById('ss-lat-input').value);
+    var lng = parseFloat(document.getElementById('ss-lng-input').value);
+    if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
+      if (typeof showToast === 'function') showToast('Enter valid latitude and longitude', 'warning');
+      return;
+    }
+    currentLat = lat;
+    currentLng = lng;
+    fetchScore(lat, lng);
+  };
+
+  window.useMyLocation = function() {
+    if (!navigator.geolocation) {
+      if (typeof showToast === 'function') showToast('Geolocation not available', 'error');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        currentLat = pos.coords.latitude;
+        currentLng = pos.coords.longitude;
+        document.getElementById('ss-lat-input').value = currentLat.toFixed(6);
+        document.getElementById('ss-lng-input').value = currentLng.toFixed(6);
+        fetchScore(currentLat, currentLng);
+      },
+      function() {
+        if (typeof showToast === 'function') showToast('Location access denied', 'error');
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  };
+})();
+</script>
+{% endblock %}
