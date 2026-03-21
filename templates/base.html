@@ -100,6 +100,9 @@
   <a class="sidebar-link {% if request.endpoint=='danger.map_view' %}active{% endif %}" href="{{ url_for('danger.map_view') }}">
     <i class="bi bi-map"></i> <span>Live Map</span>
   </a>
+  <a class="sidebar-link {% if request.endpoint=='ai.guardian_interface' %}active{% endif %}" href="{{ url_for('ai.guardian_interface') }}">
+    <i class="bi bi-robot" style="color:var(--accent-blue);"></i> <span style="color:var(--accent-blue);">PARK AI Guardian</span>
+  </a>
   {% else %}
   <a class="sidebar-link {% if request.endpoint=='dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
     <i class="bi bi-house"></i> <span>Dashboard</span>
@@ -109,6 +112,9 @@
   </a>
   <a class="sidebar-link {% if request.endpoint=='auth.profile' %}active{% endif %}" href="{{ url_for('auth.profile') }}">
     <i class="bi bi-person-circle"></i> <span>My Profile</span>
+  </a>
+  <a class="sidebar-link {% if request.endpoint=='ai.guardian_interface' %}active{% endif %}" href="{{ url_for('ai.guardian_interface') }}">
+    <i class="bi bi-robot" style="color:var(--accent-blue);"></i> <span style="color:var(--accent-blue);">PARK AI Guardian</span>
   </a>
   <a class="sidebar-link" href="{{ url_for('sos.history') }}" id="sidebar-history-link">
     <i class="bi bi-clock-history"></i> <span>Alert History</span>
