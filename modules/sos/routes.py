@@ -49,7 +49,7 @@ def index():
         (current_user.id,)
     )
     danger_zones = query_db(
-        'SELECT * FROM danger_zones WHERE status="approved" ORDER BY created_at DESC LIMIT 100'
+        "SELECT * FROM danger_zones WHERE status='approved' ORDER BY created_at DESC LIMIT 100"
     )
     def _safe(rows):
         from decimal import Decimal

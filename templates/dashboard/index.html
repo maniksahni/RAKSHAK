@@ -410,6 +410,37 @@ const DANGER_ZONES = {{ danger_zones | tojson | safe }};
 const USER_ALERTS = {{ alerts | tojson | safe }};
 initDashboard(DANGER_ZONES, USER_ALERTS);
 
+/* Safety Tips Carousel */
+const SAFETY_TIPS = [
+  { text: 'Share your live location with a trusted contact before walking alone at night.', icon: 'bi-geo-alt-fill' },
+  { text: 'Keep your phone charged above 20% when going out — your safety depends on connectivity.', icon: 'bi-battery-half' },
+  { text: 'Trust your instincts. If a situation feels wrong, leave immediately and alert someone.', icon: 'bi-shield-exclamation' },
+  { text: 'Save emergency numbers on speed dial and enable SOS shortcuts on your device.', icon: 'bi-telephone-fill' },
+  { text: 'Avoid wearing headphones in both ears while walking alone — stay aware of your surroundings.', icon: 'bi-earbuds' },
+  { text: 'Use well-lit, populated routes even if they take longer. Safety over speed, always.', icon: 'bi-lightbulb-fill' }
+];
+let currentTip = 0;
+function renderTip(idx) {
+  const el = document.getElementById('tip-text');
+  const counter = document.getElementById('tip-counter');
+  const iconWrap = document.getElementById('tip-icon');
+  const dotsWrap = document.getElementById('tip-dots');
+  if (!el) return;
+  el.style.opacity = 0;
+  setTimeout(() => {
+    el.textContent = SAFETY_TIPS[idx].text;
+    counter.textContent = (idx+1) + ' / ' + SAFETY_TIPS.length;
+    iconWrap.innerHTML = '<i class="bi '+SAFETY_TIPS[idx].icon+'" style="font-size:1.6rem;color:var(--accent-amber);"></i>';
+    dotsWrap.innerHTML = SAFETY_TIPS.map((_,i) =>
+      '<span style="width:6px;height:6px;border-radius:50%;background:'+(i===idx?'var(--accent-amber)':'rgba(255,255,255,0.15)')+';transition:background .3s;"></span>'
+    ).join('');
+    el.style.opacity = 1;
+  }, 200);
+}
+function nextTip() { currentTip = (currentTip + 1) % SAFETY_TIPS.length; renderTip(currentTip); }
+renderTip(0);
+setInterval(nextTip, 8000);
+
 /* 3D tilt tracking for dashboard cards */
 (function(){
   const cards = document.querySelectorAll('.tilt-card');

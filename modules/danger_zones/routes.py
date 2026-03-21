@@ -227,7 +227,7 @@ def upvote_zone(zone_id):
             ), 409
 
         query_db(
-            'UPDATE danger_zones SET upvotes=upvotes+1 WHERE id=%s AND status="approved"',
+            "UPDATE danger_zones SET upvotes=upvotes+1 WHERE id=%s AND status='approved'",
             (zone_id,), commit=True
         )
         log_audit(current_user.id, 'upvote_zone', 'danger_zones', zone_id,
