@@ -13,7 +13,47 @@ function initAdmin(recentAlerts, dangerZones) {
   loadAnalytics();
   loadUsers();
   loadPendingZones();
+  animateAdminCounters();
+  initAdminScrollReveal();
   setInterval(refreshAlertFeed, 30000); // auto-refresh feed every 30s
+}
+
+// ── Animated Counters ─────────────────────────────────────────────────────────
+function animateAdminCounters() {
+  document.querySelectorAll('.stat-number').forEach(el => {
+    const text = el.textContent.trim();
+    const val = parseInt(text);
+    if (isNaN(val) || val === 0) return;
+    el.textContent = '0';
+    const duration = 1000;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(val * ease);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+// ── Scroll Reveal ─────────────────────────────────────────────────────────────
+function initAdminScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.animate-in').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity .5s ${i * 0.05}s cubic-bezier(.22,1,.36,1), transform .5s ${i * 0.05}s cubic-bezier(.22,1,.36,1)`;
+    observer.observe(el);
+  });
 }
 
 // ── Admin Leaflet Map ─────────────────────────────────────────────────────────
@@ -252,7 +292,13 @@ async function approveZone(id) {
   const resp = await postJSON(`/admin/danger-zones/${id}/approve`);
   if (resp.success) {
     showToast('Danger zone approved!', 'success');
-    document.getElementById('zone-card-'+id)?.remove();
+    const card = document.getElementById('zone-card-'+id);
+    if (card) {
+      card.style.transition = 'all .4s cubic-bezier(.22,1,.36,1)';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.9) translateY(-10px)';
+      setTimeout(() => card.remove(), 400);
+    }
   } else showToast(resp.error||'Failed','error');
 }
 
@@ -260,7 +306,13 @@ async function rejectZone(id) {
   const resp = await postJSON(`/admin/danger-zones/${id}/reject`);
   if (resp.success) {
     showToast('Zone rejected.', 'info');
-    document.getElementById('zone-card-'+id)?.remove();
+    const card = document.getElementById('zone-card-'+id);
+    if (card) {
+      card.style.transition = 'all .4s cubic-bezier(.22,1,.36,1)';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(30px)';
+      setTimeout(() => card.remove(), 400);
+    }
   } else showToast(resp.error||'Failed','error');
 }
 

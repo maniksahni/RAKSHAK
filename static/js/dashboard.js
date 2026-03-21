@@ -13,6 +13,45 @@ function initDashboard(dangerZones, userAlerts) {
   initMap(dangerZones);
   startAIPing();
   loadRiskScore();
+  animateStatCounters();
+  initScrollReveal();
+}
+
+// ── Animated Counters ─────────────────────────────────────────────────────────
+function animateStatCounters() {
+  document.querySelectorAll('.stat-number').forEach(el => {
+    const val = parseInt(el.textContent);
+    if (isNaN(val) || val === 0) return;
+    el.textContent = '0';
+    const duration = 800;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3); // ease-out cubic
+      el.textContent = Math.round(val * ease);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+// ── Scroll Reveal ─────────────────────────────────────────────────────────────
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.animate-in').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity .5s ${i * 0.06}s cubic-bezier(.22,1,.36,1), transform .5s ${i * 0.06}s cubic-bezier(.22,1,.36,1)`;
+    observer.observe(el);
+  });
 }
 
 // ── Leaflet Map ─────────────────────────────────────────────────────────────
@@ -126,12 +165,21 @@ async function sendSOS(lat, lng, accuracy, battery) {
     const btn = document.getElementById('sos-btn');
     const statusText = document.getElementById('sos-status-text');
     if (resp.success) {
-      showToast('🚨 SOS Alert sent to your trusted contacts!', 'sos', 8000);
-      if (btn) { btn.style.opacity = '1'; btn.style.background = 'radial-gradient(circle at 35% 35%, #48bb78, #276749)'; }
-      if (statusText) statusText.textContent = `Alert #${resp.alert_id} sent! Contacts notified.`;
+      showToast('SOS Alert sent to your trusted contacts!', 'sos', 8000);
+      // Success ripple effect
+      if (btn) {
+        btn.style.opacity = '1';
+        btn.style.background = 'radial-gradient(circle at 35% 35%, #48bb78, #276749)';
+        btn.style.transform = 'scale(1.1)';
+        setTimeout(() => { btn.style.transform = ''; }, 300);
+      }
+      if (statusText) {
+        statusText.style.color = 'var(--accent-green)';
+        statusText.textContent = `Alert #${resp.alert_id} sent! Contacts notified.`;
+      }
       setTimeout(() => {
         if (btn) btn.style.background = '';
-        if (statusText) statusText.textContent = 'Ready — will capture GPS location automatically';
+        if (statusText) { statusText.textContent = 'Ready — will capture GPS location automatically'; statusText.style.color = ''; }
       }, 6000);
       // Refresh alert feed
       refreshAlertFeed();

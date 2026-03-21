@@ -1,12 +1,160 @@
 {% extends "base.html" %}
 {% block title %}500 — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+.err-bg {
+  min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:#0a0a0f;position:relative;overflow:hidden;
+}
+.err-bg::before {
+  content:'';position:absolute;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(220,38,38,0.12) 0%,transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
+  animation:errPulse 3s ease-in-out infinite;
+}
+@keyframes errPulse {
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.5}
+  50%{transform:translate(-50%,-50%) scale(1.4);opacity:1}
+}
+
+/* glitch code */
+.err-code {
+  font-family:var(--font-display);font-size:clamp(8rem,20vw,14rem);font-weight:900;
+  color:transparent;line-height:1;position:relative;
+  background:linear-gradient(180deg,rgba(220,38,38,0.95) 0%,rgba(220,38,38,0.1) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 0 80px rgba(220,38,38,0.5));
+  animation:codeIn .8s cubic-bezier(.22,1,.36,1) both, glitch 3s 1.5s ease-in-out infinite;
+}
+@keyframes codeIn {
+  from{opacity:0;transform:scale(0.7) translateY(30px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+@keyframes glitch {
+  0%,92%,100%{transform:translate(0)}
+  93%{transform:translate(-4px,2px)}
+  95%{transform:translate(3px,-1px)}
+  97%{transform:translate(-2px,-3px)}
+}
+
+.err-title {
+  font-family:var(--font-display);font-size:1.8rem;margin:0.5rem 0 0.8rem;
+  animation:fadeUp .6s .2s cubic-bezier(.22,1,.36,1) both;
+}
+.err-desc {
+  color:var(--text-secondary);margin-bottom:2rem;max-width:420px;margin-left:auto;margin-right:auto;
+  animation:fadeUp .6s .35s cubic-bezier(.22,1,.36,1) both;
+}
+.err-actions {
+  animation:fadeUp .6s .5s cubic-bezier(.22,1,.36,1) both;
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+}
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* grid overlay */
+.err-grid {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(220,38,38,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220,38,38,0.03) 1px, transparent 1px);
+  background-size:50px 50px;pointer-events:none;
+  mask-image:radial-gradient(ellipse at 50% 50%, black 20%, transparent 60%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 50%, black 20%, transparent 60%);
+}
+
+/* scan line */
+.scan-line {
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(220,38,38,0.4),transparent);
+  animation:scan 3s linear infinite;pointer-events:none;
+}
+@keyframes scan {
+  0%{top:-2px}100%{top:100%}
+}
+
+/* crash icon */
+.crash-icon {
+  width:80px;height:80px;border-radius:50%;margin:0 auto 1.5rem;
+  background:rgba(220,38,38,0.08);border:2px solid rgba(220,38,38,0.25);
+  display:flex;align-items:center;justify-content:center;
+  animation:fadeUp .6s .1s cubic-bezier(.22,1,.36,1) both, iconPulse 2s 1s ease-in-out infinite;
+}
+@keyframes iconPulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.3)}
+  50%{box-shadow:0 0 0 16px rgba(220,38,38,0)}
+}
+
+/* floating sparks */
+.spark {
+  position:absolute;width:2px;height:2px;border-radius:50%;
+  background:rgba(220,38,38,0.6);pointer-events:none;
+}
+.spark:nth-child(1){top:20%;left:15%;animation:sparkFloat 5s 0s ease-in-out infinite;}
+.spark:nth-child(2){top:70%;left:80%;animation:sparkFloat 4s .5s ease-in-out infinite;}
+.spark:nth-child(3){top:40%;left:90%;animation:sparkFloat 6s 1s ease-in-out infinite;}
+.spark:nth-child(4){top:80%;left:25%;animation:sparkFloat 4.5s 1.5s ease-in-out infinite;}
+.spark:nth-child(5){top:10%;left:60%;animation:sparkFloat 5.5s .8s ease-in-out infinite;}
+.spark:nth-child(6){top:55%;left:45%;animation:sparkFloat 3.5s 2s ease-in-out infinite;}
+@keyframes sparkFloat {
+  0%,100%{opacity:0;transform:translateY(0) scale(1)}
+  25%{opacity:1;transform:translateY(-20px) scale(1.5)}
+  75%{opacity:0.5;transform:translateY(-40px) scale(0.8)}
+}
+
+/* status log lines */
+.status-log {
+  font-family:'Courier New',monospace;font-size:0.72rem;color:var(--text-muted);
+  text-align:left;max-width:360px;margin:1.5rem auto 0;
+  animation:fadeUp .6s .65s cubic-bezier(.22,1,.36,1) both;
+}
+.status-log div {
+  padding:2px 0;opacity:0;animation:logLine .4s forwards;
+}
+.status-log div:nth-child(1){animation-delay:.8s}
+.status-log div:nth-child(2){animation-delay:1.2s}
+.status-log div:nth-child(3){animation-delay:1.6s}
+.status-log div:nth-child(4){animation-delay:2s;color:var(--red-primary);}
+@keyframes logLine {
+  from{opacity:0;transform:translateX(-8px)}
+  to{opacity:1;transform:translateX(0)}
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;">
-  <div>
-    <div style="font-family:var(--font-display);font-size:7rem;font-weight:900;color:var(--red-primary);line-height:1;">500</div>
-    <h2 style="font-family:var(--font-display);font-size:2rem;margin:1rem 0 0.5rem;">Server Error</h2>
-    <p style="color:var(--text-secondary);margin-bottom:2rem;">Something went wrong on our end. Please try again.</p>
-    <a href="/" class="btn-rakshak" style="text-decoration:none;">← Go Home</a>
+<div class="err-bg">
+  <div class="err-grid"></div>
+  <div class="scan-line"></div>
+  <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+  <div class="spark"></div><div class="spark"></div><div class="spark"></div>
+
+  <div style="position:relative;z-index:2;">
+    <div class="crash-icon">
+      <i class="bi bi-lightning-charge-fill" style="font-size:2rem;color:var(--red-primary);"></i>
+    </div>
+    <div class="err-code">500</div>
+    <h2 class="err-title">System Crash</h2>
+    <p class="err-desc">Our servers encountered a critical error. The safety team has been notified and is working on a fix.</p>
+
+    <div class="err-actions">
+      <a href="/" class="btn-rakshak" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
+        <i class="bi bi-shield-check"></i>Back to Safety
+      </a>
+      <button onclick="location.reload()" class="btn-glass" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+        <i class="bi bi-arrow-clockwise"></i>Retry
+      </button>
+    </div>
+
+    <div class="status-log">
+      <div><span style="color:var(--accent-green);">[OK]</span> Network connection stable</div>
+      <div><span style="color:var(--accent-green);">[OK]</span> Client authenticated</div>
+      <div><span style="color:var(--accent-amber);">[WARN]</span> Response timeout exceeded</div>
+      <div><span style="color:var(--red-primary);">[FAIL]</span> Internal server error — code 500</div>
+    </div>
   </div>
 </div>
 {% endblock %}
