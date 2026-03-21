@@ -132,9 +132,9 @@
   <div class="row g-4 mb-4">
 
     <!-- Giant SOS Button -->
-    <div class="col-md-4 animate-in">
-      <div class="glass-card sos-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
-        <p style="font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;">EMERGENCY TRIGGER</p>
+    <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="glass-card sos-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center" style="transform:translateZ(10px);">
+        <p style="font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;transform:translateZ(15px);">EMERGENCY TRIGGER</p>
 
         <div class="sos-btn-wrap">
           <div class="sonar-ring"></div>
@@ -170,9 +170,9 @@
     </div>
 
     <!-- Risk Level + AI Status -->
-    <div class="col-md-4 animate-in">
-      <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
-        <div>
+    <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between" style="transform:translateZ(10px);">
+        <div style="transform:translateZ(15px);">
           <p style="font-size:0.75rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">AI RISK LEVEL</p>
           <div id="risk-display">
             <span class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:1rem;">
@@ -204,26 +204,26 @@
     <!-- Quick Stats -->
     <div class="col-md-4 animate-in">
       <div class="row g-3 h-100">
-        <div class="col-6">
-          <div class="stat-card h-100">
+        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+          <div class="stat-card h-100" style="transform:translateZ(10px);">
             <div class="stat-number" id="total-alerts">{{ alerts|length }}</div>
             <div class="stat-label">Total Alerts</div>
           </div>
         </div>
-        <div class="col-6">
-          <div class="stat-card h-100">
+        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+          <div class="stat-card h-100" style="transform:translateZ(10px);">
             <div class="stat-number" id="active-alerts">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
             <div class="stat-label">Active Alerts</div>
           </div>
         </div>
-        <div class="col-6">
-          <div class="stat-card h-100">
+        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+          <div class="stat-card h-100" style="transform:translateZ(10px);">
             <div class="stat-number">{{ (current_user.consecutive_missed_pings or 0) }}</div>
             <div class="stat-label">Missed Pings</div>
           </div>
         </div>
-        <div class="col-6">
-          <div class="stat-card h-100 d-flex flex-column justify-content-between">
+        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+          <div class="stat-card h-100 d-flex flex-column justify-content-between" style="transform:translateZ(10px);">
             <div class="stat-number" style="color:var(--accent-green);">ON</div>
             <div class="stat-label">AI Monitor</div>
           </div>
@@ -407,5 +407,25 @@ window.currentUserId = {{ current_user.id | tojson }};
 const DANGER_ZONES = {{ danger_zones | tojson | safe }};
 const USER_ALERTS = {{ alerts | tojson | safe }};
 initDashboard(DANGER_ZONES, USER_ALERTS);
+
+/* 3D tilt tracking for dashboard cards */
+(function(){
+  const cards = document.querySelectorAll('.tilt-card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const deltaX = (x - centerX) / centerX;
+      const deltaY = (y - centerY) / centerY;
+      card.style.transform = `perspective(1000px) rotateX(${deltaY * -10}deg) rotateY(${deltaX * 10}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+    });
+  });
+})();
 </script>
 {% endblock %}
