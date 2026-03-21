@@ -67,7 +67,7 @@ def register():
             user_id = query_db(
                 """INSERT INTO users (full_name, email, phone, password_hash, role,
                    security_question, security_answer_hash)
-                   VALUES (%s, %s, %s, %s, 'user', %s, %s) RETURNING id""",
+                   VALUES (%s, %s, %s, %s, 'user', %s, %s)""",
                 (full_name, email, phone, pw_hash, security_question, ans_hash),
                 commit=True
             )
@@ -202,7 +202,7 @@ def add_contact():
 
         cid = query_db(
             """INSERT INTO trusted_contacts (user_id, contact_name, contact_email, contact_phone, relationship)
-               VALUES (%s, %s, %s, %s, %s) RETURNING id""",
+               VALUES (%s, %s, %s, %s, %s)""",
             (current_user.id, name, email, phone, relationship), commit=True
         )
         log_audit(current_user.id, 'add_contact', 'trusted_contacts', cid,

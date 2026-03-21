@@ -76,7 +76,7 @@ def report_zone():
                WHERE reported_by=%s
                  AND ABS(latitude-%s) < 0.001
                  AND ABS(longitude-%s) < 0.001
-                 AND created_at > NOW() - INTERVAL '24 hours'""",
+                 AND created_at > NOW() - INTERVAL 24 HOUR""",
             (current_user.id, lat, lng), one=True
         )
         if recent:
@@ -89,7 +89,7 @@ def report_zone():
             """INSERT INTO danger_zones
                (reported_by, latitude, longitude, radius_meters,
                 zone_type, description, severity)
-               VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+               VALUES (%s, %s, %s, %s, %s, %s, %s)""",
             (current_user.id, lat, lng, radius, zone_type, description, severity),
             commit=True
         )

@@ -99,7 +99,7 @@ def _trigger_auto_sos_bg(user_id):
             """INSERT INTO sos_alerts
                (user_id, latitude, longitude, trigger_type, message)
                VALUES (%s, %s, %s, 'auto_ai',
-                       'Auto-triggered: No heartbeat detected for 6+ minutes') RETURNING id""",
+                       'Auto-triggered: No heartbeat detected for 6+ minutes')""",
             (user_id, lat, lng), commit=True
         )
         query_db(
@@ -304,24 +304,18 @@ def _auto_init_db(app):
 
     log.info('Initialising database tables...')
     try:
-        import psycopg2
+        import mysql.connector
         cfg = app.config
-        url = cfg.get('DATABASE_URL', '')
-        if url:
-            if url.startswith('postgres://'):
-                url = url.replace('postgres://', 'postgresql://', 1)
-            conn = psycopg2.connect(url)
-        else:
-            conn = psycopg2.connect(
-                host=cfg['DB_HOST'], port=cfg['DB_PORT'],
-                user=cfg['DB_USER'], password=cfg['DB_PASSWORD'],
-                dbname=cfg['DB_NAME'],
-            )
+        conn = mysql.connector.connect(
+            host=cfg['DB_HOST'], port=cfg['DB_PORT'],
+            user=cfg['DB_USER'], password=cfg['DB_PASSWORD'],
+            database=cfg['DB_NAME'],
+        )
         conn.autocommit = True
         cursor = conn.cursor()
-        from init_db import SCHEMA_SQL, TRIGGER_SQL, SEEDS
-        cursor.execute(SCHEMA_SQL)
-        cursor.execute(TRIGGER_SQL)
+        from init_db import SCHEMA_SQL, SEEDS
+        for stmt in SCHEMA_SQL:
+            cursor.execute(stmt)
         for seed in SEEDS:
             try:
                 cursor.execute(seed)
