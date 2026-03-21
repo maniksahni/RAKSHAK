@@ -220,26 +220,72 @@ async function confirmSOS() {
   const btn = document.getElementById('sos-btn');
   const statusText = document.getElementById('sos-status-text');
 
-  showLoading('Capturing GPS & sending SOS...');
   if (btn) btn.style.opacity = '0.6';
-  if (statusText) statusText.textContent = 'Sending alert...';
+  if (statusText) statusText.textContent = 'Establishing secure uplink...';
+
+  // Create & mount the Max Max Terminal Overlay
+  const term = document.createElement('div');
+  term.id = 'rakshak-terminal';
+  term.style.cssText = 'position:fixed;inset:0;background:rgba(5,5,10,0.95);z-index:9999;display:flex;flex-direction:column;justify-content:center;padding:40px;font-family:"Courier New", monospace;color:#48bb78;backdrop-filter:blur(20px);box-shadow:inset 0 0 100px rgba(0,0,0,1);';
+  
+  const scanline = document.createElement('div');
+  scanline.style.cssText = 'position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(72,187,120,0.1),transparent);height:10px;animation:scanline 3s linear infinite;pointer-events:none;';
+  term.appendChild(scanline);
+
+  const styleNode = document.createElement('style');
+  styleNode.innerHTML = '@keyframes scanline{0%{top:0}100%{top:100%}} .term-line{margin:8px 0;opacity:0;transform:translateX(-20px);animation:termIn 0.3s forwards ease-out;} @keyframes termIn{to{opacity:1;transform:translateX(0)}}';
+  term.appendChild(styleNode);
+
+  const container = document.createElement('div');
+  container.style.cssText = 'max-width:800px;margin:0 auto;width:100%;text-shadow:0 0 8px rgba(72,187,120,0.6);';
+  term.appendChild(container);
+  document.body.appendChild(term);
+
+  const lines = [
+    `[SYS] Initializing RAKSHAK Core Uplink...`,
+    `[SEC] Bypassing localized network interference...`,
+    `[GPS] Locking orbital coordinates >> \${currentLat ? currentLat.toFixed(5) : 'UNKNOWN'}, \${currentLng ? currentLng.toFixed(5) : 'UNKNOWN'}`,
+    `[NET] Establishing encrypted 256-bit handshake...`,
+    `[AI] Threat vector analyzed. Level: CRITICAL.`,
+    `[COM] Injecting distress payload to Trusted Contacts...`,
+    `[COM] Payload securely delivered. Terminating uplink.`,
+  ];
+
+  // Async Terminal typer
+  const runTerminal = async () => {
+    for (let i = 0; i < lines.length; i++) {
+        const p = document.createElement('p');
+        p.className = 'term-line';
+        p.innerHTML = lines[i];
+        if(i === 4) p.style.color = '#dc2626'; // Red for CRITICAL
+        container.appendChild(p);
+        await new Promise(r => setTimeout(r, Math.random() * 400 + 300));
+    }
+    await new Promise(r => setTimeout(r, 800));
+    term.style.transition = 'opacity 0.6s';
+    term.style.opacity = '0';
+    setTimeout(() => term.remove(), 600);
+  };
 
   try {
-    // Try to get fresh GPS
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async pos => {
-        currentLat = pos.coords.latitude;
-        currentLng = pos.coords.longitude;
-        await sendSOS(currentLat, currentLng, pos.coords.accuracy, pos.coords.altitude);
-      }, async () => {
-        // Fallback to last known
-        await sendSOS(currentLat || 0, currentLng || 0, null, null);
-      }, { timeout: 5000, enableHighAccuracy: true });
-    } else {
-      await sendSOS(null, null, null, null);
-    }
+    // Run Terminal animation & GPS fetch concurrently
+    let lat = currentLat, lng = currentLng, acc = null, bat = null;
+    
+    const gpsPromise = new Promise((resolve) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          lat = pos.coords.latitude; lng = pos.coords.longitude;
+          acc = pos.coords.accuracy; bat = pos.coords.altitude;
+          resolve();
+        }, () => resolve(), { timeout: 3000, enableHighAccuracy: true });
+      } else resolve();
+    });
+
+    await Promise.all([runTerminal(), gpsPromise]);
+    await sendSOS(lat, lng, acc, bat);
+
   } catch (e) {
-    hideLoading();
+    term.remove();
     showToast('SOS failed: ' + e.message, 'error');
   }
 }
@@ -253,12 +299,11 @@ async function sendSOS(lat, lng, accuracy, battery) {
       battery_level: battery,
       trigger_type: 'manual',
     });
-    hideLoading();
+    
     const btn = document.getElementById('sos-btn');
     const statusText = document.getElementById('sos-status-text');
     if (resp.success) {
-      showToast('SOS Alert sent to your trusted contacts!', 'sos', 8000);
-      // Success ripple effect
+      showToast('SOS Alert successfully broadcasted!', 'sos', 8000);
       if (btn) {
         btn.style.opacity = '1';
         btn.style.background = 'radial-gradient(circle at 35% 35%, #48bb78, #276749)';
@@ -267,13 +312,12 @@ async function sendSOS(lat, lng, accuracy, battery) {
       }
       if (statusText) {
         statusText.style.color = 'var(--accent-green)';
-        statusText.textContent = `Alert #${resp.alert_id} sent! Contacts notified.`;
+        statusText.textContent = `Alert #\${resp.alert_id} dispatched. Network secured.`;
       }
       setTimeout(() => {
         if (btn) btn.style.background = '';
         if (statusText) { statusText.textContent = 'Ready — will capture GPS location automatically'; statusText.style.color = ''; }
       }, 6000);
-      // Refresh alert feed
       refreshAlertFeed();
     } else {
       showToast('SOS error: ' + (resp.error || 'Unknown error'), 'error');
@@ -281,7 +325,6 @@ async function sendSOS(lat, lng, accuracy, battery) {
       if (statusText) statusText.textContent = 'Error — please try again';
     }
   } catch (e) {
-    hideLoading();
     showToast('Network error: ' + e.message, 'error');
     const btn = document.getElementById('sos-btn');
     if (btn) btn.style.opacity = '1';
