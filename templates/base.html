@@ -15,6 +15,14 @@
   {% block extra_css %}{% endblock %}
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+
+  <!-- PWA Support -->
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <meta name="theme-color" content="#dc2626">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RAKSHAK">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23dc2626'/><text y='.9em' x='.1em' font-size='80'>🛡️</text></svg>">
 </head>
 <body>
 
@@ -97,6 +105,43 @@
 @keyframes spinBoot { 100% { transform: translate(-50%,-50%) rotate(360deg); } }
 @keyframes spinBootRev { 100% { transform: translate(-50%,-50%) rotate(-360deg); } }
 </style>
+  <!-- ── GLOBAL PANIC SOS LOGIC ─────────────────────────────────────────────── -->
+  <script>
+  window.triggerGlobalSOS = function() {
+    if(!confirm("ENGAGE GLOBAL S.O.S PROTOCOL? This will lock your GPS coordinates and broadcast to all trusted contacts.")) return;
+    if(typeof showLoading === 'function') showLoading("DEPLOYING EMERGENCY OVERRIDES...", ["VERIFYING CLEARANCE", "ACQUIRING SATELLITE LOCK", "BROADCASTING DISTRESS SIGNAL"]);
+    
+    // Quick fallback if audio exists
+    if(window.tacticalAnnounce) tacticalAnnounce("S O S Override Authorized. Broadcast transmitting.");
+
+    navigator.geolocation.getCurrentPosition(pos => {
+      fetch('/sos/trigger', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ 
+          latitude: pos.coords.latitude, 
+          longitude: pos.coords.longitude, 
+          trigger_type: 'navbar_panic', 
+          accuracy: pos.coords.accuracy 
+        })
+      }).then(r => r.json()).then(d => {
+        document.getElementById('loading-overlay').style.display = 'none';
+        if(d.success) {
+          if(typeof showToast === 'function') showToast("SOS ALERT BROADCASTED SECURELY", "sos");
+          // Optionally redirect to history if needed
+          // window.location.href = "{{ url_for('sos.history') if 'sos.history' else '#' }}";
+        } else {
+          if(typeof showToast === 'function') showToast(d.error || "SOS FAILED", "error");
+        }
+      }).catch(err => {
+        document.getElementById('loading-overlay').style.display = 'none';
+        if(typeof showToast === 'function') showToast("NETWORK FAILURE - RETRYING...", "error");
+      });
+    }, err => {
+      document.getElementById('loading-overlay').style.display = 'none';
+      if(typeof showToast === 'function') showToast("GPS ACCESS DENIED. LOCATION DATA LOST.", "error");
+    }, {enableHighAccuracy: true, timeout: 8000});
+  };
+  </script>
 <!-- ────────────────────────────────────────────────────────────────────────── -->
 {% if current_user.is_authenticated %}
 <nav class="navbar navbar-rakshak d-flex align-items-center px-4" style="position:fixed;top:0;left:240px;right:0;z-index:200;">
@@ -108,6 +153,14 @@
   <span class="navbar-brand-text me-auto">🛡 RAKSHAK</span>
 
   <div class="d-flex align-items-center gap-3">
+    <!-- Global Panic SOS -->
+    {% if not current_user.is_admin %}
+    <button id="global-nav-sos" class="btn-rakshak" style="padding: 4px 12px; font-size: 0.75rem; height: 28px; border-radius: 4px; box-shadow: 0 0 10px rgba(220,38,38,0.5); display: flex; align-items: center; gap: 6px; z-index: 100;" onclick="triggerGlobalSOS()">
+      <div style="width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1.5s infinite;"></div>
+      SOS OVERRIDE
+    </button>
+    {% endif %}
+
     <!-- Notifications -->
     <div class="position-relative notif-bell" id="notif-bell-wrap" onclick="toggleNotifDropdown()">
       <i class="bi bi-bell" style="font-size:1.2rem;color:var(--text-secondary);transition:color .2s;cursor:pointer;"></i>
