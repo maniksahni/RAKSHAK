@@ -108,19 +108,111 @@ function initMap(dangerZones) {
   }
 }
 
-// ── SOS Trigger ─────────────────────────────────────────────────────────────
+// ── SOS Hold-to-Activate ────────────────────────────────────────────────────
+let sosHoldTimer = null;
+let sosHoldStart = 0;
+let sosHoldRAF = null;
+const SOS_HOLD_DURATION = 2000; // 2 seconds
+let sosCountdownTimer = null;
+
+function startSOSHold(e) {
+  if (sosConfirmPending) return;
+  e.preventDefault();
+  sosHoldStart = Date.now();
+  const ring = document.getElementById('sos-progress-ring');
+  const holdStatus = document.getElementById('sos-hold-status');
+  const btn = document.getElementById('sos-btn');
+  if (holdStatus) { holdStatus.style.opacity = '1'; holdStatus.textContent = 'Keep holding...'; }
+  if (btn) btn.classList.add('sos-holding');
+
+  function animateRing() {
+    const elapsed = Date.now() - sosHoldStart;
+    const progress = Math.min(elapsed / SOS_HOLD_DURATION, 1);
+    if (ring) ring.setAttribute('stroke-dashoffset', 578 - (578 * progress));
+
+    if (progress < 1) {
+      sosHoldRAF = requestAnimationFrame(animateRing);
+    } else {
+      // Hold complete — trigger SOS
+      if (holdStatus) { holdStatus.textContent = 'ACTIVATING...'; holdStatus.style.color = '#dc2626'; }
+      if (btn) { btn.classList.remove('sos-holding'); btn.classList.add('sos-activated'); }
+      setTimeout(() => triggerSOS(), 200);
+    }
+  }
+  sosHoldRAF = requestAnimationFrame(animateRing);
+}
+
+function endSOSHold() {
+  if (sosHoldRAF) cancelAnimationFrame(sosHoldRAF);
+  sosHoldRAF = null;
+  const elapsed = Date.now() - sosHoldStart;
+  const ring = document.getElementById('sos-progress-ring');
+  const holdStatus = document.getElementById('sos-hold-status');
+  const btn = document.getElementById('sos-btn');
+  if (ring) ring.setAttribute('stroke-dashoffset', '578');
+  if (btn) { btn.classList.remove('sos-holding'); btn.classList.remove('sos-activated'); }
+
+  if (elapsed < SOS_HOLD_DURATION && sosHoldStart > 0) {
+    if (holdStatus) { holdStatus.textContent = 'Hold longer to activate'; holdStatus.style.color = 'var(--text-muted)'; }
+    setTimeout(() => { if (holdStatus) holdStatus.style.opacity = '0'; }, 1500);
+  }
+  sosHoldStart = 0;
+}
+
 function triggerSOS() {
   if (sosConfirmPending) return;
   sosConfirmPending = true;
 
   const modal = document.getElementById('sos-modal');
   if (modal) modal.style.display = 'flex';
+
+  // Update GPS status in modal
+  const gpsEl = document.getElementById('modal-gps-status');
+  if (gpsEl && currentLat && currentLng) {
+    gpsEl.textContent = `Location locked: ${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`;
+    gpsEl.style.color = 'var(--accent-green)';
+  }
+
+  // Auto-send countdown (5 seconds)
+  startSOSCountdown(5);
+}
+
+function startSOSCountdown(seconds) {
+  let remaining = seconds;
+  const numEl = document.getElementById('countdown-num');
+  const fillEl = document.getElementById('sos-countdown-fill');
+  if (fillEl) fillEl.style.width = '100%';
+
+  sosCountdownTimer = setInterval(() => {
+    remaining--;
+    if (numEl) numEl.textContent = remaining;
+    if (fillEl) fillEl.style.width = ((remaining / seconds) * 100) + '%';
+
+    if (remaining <= 0) {
+      clearInterval(sosCountdownTimer);
+      sosCountdownTimer = null;
+      confirmSOS();
+    }
+  }, 1000);
+}
+
+function clearSOSCountdown() {
+  if (sosCountdownTimer) {
+    clearInterval(sosCountdownTimer);
+    sosCountdownTimer = null;
+  }
 }
 
 function cancelSOS() {
   sosConfirmPending = false;
+  clearSOSCountdown();
   const modal = document.getElementById('sos-modal');
   if (modal) modal.style.display = 'none';
+  // Reset hold UI
+  const holdStatus = document.getElementById('sos-hold-status');
+  if (holdStatus) holdStatus.style.opacity = '0';
+  const ring = document.getElementById('sos-progress-ring');
+  if (ring) ring.setAttribute('stroke-dashoffset', '578');
 }
 
 async function confirmSOS() {
