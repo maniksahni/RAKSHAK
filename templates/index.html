@@ -149,31 +149,31 @@ body::before{
 /* Left Side: Action & Volume */
 .phone-frame::after{content:'';position:absolute;left:-3px;top:90px;width:3px;height:24px;background:#3a3a3e;border-radius:2px 0 0 2px;box-shadow:0 40px 0 #3a3a3e, 0 85px 0 #3a3a3e}
 
-/* Dynamic Island (iPhone 17 Pro) — Interactive */
+/* Dynamic Island (iPhone 17 Pro 'Metalens' Compact Design) */
 .dynamic-island {
-  width: 90px;
-  height: 24px;
+  width: 55px;
+  height: 18px;
   background: #000;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 20px;
   margin: 6px auto 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 8px;
+  padding: 0 6px;
   position: relative;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.04);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.06);
   animation: floatIsland 4s ease-in-out infinite;
   z-index: 50;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
 }
 
 .dynamic-island:hover {
-  width: 200px;
-  height: 54px;
+  width: 220px;
+  height: 56px;
   border-radius: 28px;
-  padding: 0 14px;
+  padding: 0 16px;
   background: #050510;
   box-shadow: 0 6px 24px rgba(220,38,38,0.2), inset 0 0 0 1px rgba(220,38,38,0.15);
   border-color: rgba(220,38,38,0.25);
@@ -187,16 +187,16 @@ body::before{
 .dynamic-island:hover .di-default { opacity: 0; position: absolute; pointer-events: none; }
 
 .di-cam {
-  width: 9px; height: 9px; border-radius: 50%;
+  width: 7px; height: 7px; border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, #444, #050505);
   box-shadow: inset 0 0 4px rgba(0,0,0,0.8);
 }
 .di-sensor {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #0a0a0a; border: 1px solid rgba(255,255,255,0.02);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #0a0a0a; border: 1px solid rgba(255,255,255,0.04);
 }
 .di-indicator {
-  position: absolute; right: 26px; top: 10px;
+  position: absolute; right: 18px; top: 7px;
   width: 4px; height: 4px; border-radius: 50%;
   background: #22c55e; box-shadow: 0 0 8px #22c55e;
   animation: blink 2s infinite;
@@ -236,14 +236,15 @@ body::before{
 
 @keyframes floatIsland { 0%,100%{transform:translateY(0)} 50%{transform:translateY(1px)} }
 
-/* screen */
+/* screen - Immersive Edge-to-Edge LTPO OLED */
 .phone-screen{
-  background:#05050a;
-  border-radius:44px;overflow:hidden;
-  padding:2px 14px 20px;
-  border:4px solid #000;
-  min-height:560px;
+  background:#030305;
+  border-radius: 50px; overflow:hidden;
+  padding: 2px;
+  border: 1.5px solid #000;
+  min-height: 580px;
   position:relative;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
 }
 /* dot grid inside screen */
 .phone-screen::before{
