@@ -18,11 +18,14 @@
 html{scroll-behavior:smooth}
 body{font-family:var(--sg);background:var(--bg);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-/* dot grid */
+/* dot grid & glow */
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:radial-gradient(rgba(255,255,255,0.055) 1px,transparent 1px);
-  background-size:28px 28px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(220,38,38,0.1) 0%, transparent 60%),
+    radial-gradient(circle at 0% 100%, rgba(153,27,27,0.05) 0%, transparent 50%),
+    radial-gradient(rgba(255,255,255,0.055) 1px,transparent 1px);
+  background-size:100% 100%, 100% 100%, 28px 28px;
   mask-image:radial-gradient(ellipse 90% 90% at 50% 0%,black 30%,transparent 80%);
   -webkit-mask-image:radial-gradient(ellipse 90% 90% at 50% 0%,black 30%,transparent 80%);
 }
@@ -72,10 +75,13 @@ body::before{
 .hero-p{font-family:var(--int);font-size:clamp(.9rem,1.3vw,1.02rem);color:rgba(255,255,255,.48);max-width:480px;line-height:1.9;margin-bottom:2.4rem;animation:slideUp .5s .16s ease both}
 
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:3rem;animation:slideUp .5s .24s ease both}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-family:var(--sg);font-weight:600;font-size:.93rem;background:var(--red);color:#fff;border:1px solid var(--red);text-decoration:none;cursor:pointer;box-shadow:0 0 30px rgba(220,38,38,.4);transition:transform .22s,box-shadow .22s}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 55px rgba(220,38,38,.6);color:#fff}
-.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:10px;font-family:var(--sg);font-weight:500;font-size:.93rem;background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);border:1px solid var(--bdr);text-decoration:none;cursor:pointer;transition:transform .22s,background .22s,border-color .22s,color .22s}
-.btn-outline:hover{transform:translateY(-2px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;font-family:var(--sg);font-weight:700;font-size:1rem;background:linear-gradient(135deg, var(--red) 0%, #991b1b 100%);color:#fff;border:none;text-decoration:none;cursor:pointer;box-shadow:0 10px 25px rgba(220,38,38,.4), inset 0 1px 0 rgba(255,255,255,0.2);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s, background .3s;position:relative;overflow:hidden;letter-spacing:0.05em;text-transform:uppercase;}
+.btn-primary:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 15px 35px rgba(220,38,38,.6);color:#fff}
+.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transform:skewX(-20deg);animation:btnSweep 3s infinite}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-family:var(--sg);font-weight:600;font-size:0.95rem;background:rgba(255,255,255,.03);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15);text-decoration:none;cursor:pointer;transition:all .3s cubic-bezier(.22,1,.36,1);backdrop-filter:blur(10px)}
+.btn-outline:hover{transform:translateY(-3px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.3);color:#fff;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
+
+@keyframes btnSweep { 0% { left: -100%; } 20%, 100% { left: 200%; } }
 
 .hero-trust{display:flex;align-items:center;gap:12px;font-family:var(--int);font-size:.75rem;color:rgba(255,255,255,.3);animation:slideUp .5s .32s ease both}
 .trust-avatars{display:flex}

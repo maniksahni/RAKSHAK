@@ -3,75 +3,154 @@
 
 {% block extra_css %}
 <style>
+/* ── Immersive Auth Background ── */
 .auth-bg {
-  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;
-  background:#0a0a0f;position:relative;overflow:hidden;
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
+  background: radial-gradient(circle at 50% 100%, rgba(220, 38, 38, 0.1) 0%, #050508 60%);
+  position: relative; overflow: hidden; perspective: 1000px;
+}
+.auth-bg::before, .auth-bg::after {
+  content: ''; position: absolute; border-radius: 50%;
+  pointer-events: none; mix-blend-mode: screen;
 }
 .auth-bg::before {
-  content:'';position:absolute;width:600px;height:600px;border-radius:50%;
-  background:radial-gradient(circle,rgba(220,38,38,0.12) 0%,transparent 70%);
-  top:-100px;left:-150px;pointer-events:none;animation:drift 12s ease-in-out infinite alternate;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.08) 0%, transparent 70%);
+  top: -200px; left: -200px; animation: drift 15s ease-in-out infinite alternate;
 }
 .auth-bg::after {
-  content:'';position:absolute;width:500px;height:500px;border-radius:50%;
-  background:radial-gradient(circle,rgba(220,38,38,0.06) 0%,transparent 70%);
-  bottom:-120px;right:-100px;pointer-events:none;animation:drift 15s ease-in-out 2s infinite alternate-reverse;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.04) 0%, transparent 60%);
+  bottom: -150px; right: -150px; animation: drift 20s ease-in-out 3s infinite alternate-reverse;
 }
+
 @keyframes drift {
-  0%{transform:translate(0,0) scale(1)}
-  100%{transform:translate(40px,30px) scale(1.15)}
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  100% { transform: translate(60px, 40px) scale(1.1) rotate(15deg); }
 }
-.grid-overlay {
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(220,38,38,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(220,38,38,0.03) 1px, transparent 1px);
-  background-size:60px 60px;pointer-events:none;
-  mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
-  -webkit-mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
+
+/* 3D Grid floor */
+.grid-floor {
+  position: absolute; inset: 0; top: 50%; bottom: -50%;
+  background-image: 
+    linear-gradient(rgba(220, 38, 38, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220, 38, 38, 0.08) 1px, transparent 1px);
+  background-size: 80px 80px;
+  transform-origin: center top;
+  transform: perspective(1000px) rotateX(75deg) translateY(0);
+  animation: gridMove 20s linear infinite;
+  mask-image: linear-gradient(to top, black, transparent 80%);
+  -webkit-mask-image: linear-gradient(to top, black, transparent 80%);
+  pointer-events: none;
 }
+@keyframes gridMove {
+  from { background-position: 0 0; }
+  to { background-position: 0 80px; }
+}
+
+/* Auth Card 3D Wrap */
 .auth-card-wrap {
-  width:100%;max-width:520px;position:relative;z-index:2;
-  animation:cardIn .7s cubic-bezier(.22,1,.36,1) both;
+  width: 100%; max-width: 520px; position: relative; z-index: 5;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out; /* For 3D tilt JS */
 }
-@keyframes cardIn {
-  from{opacity:0;transform:translateY(30px) scale(.97)}
-  to{opacity:1;transform:translateY(0) scale(1)}
+
+/* The actual glass card */
+.glass-card {
+  background: rgba(10, 10, 14, 0.7);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative; overflow: hidden;
 }
+
+/* Animated glow border inside card */
+.glass-card::before {
+  content:''; position: absolute; inset: -2px; z-index: -1;
+  background: conic-gradient(from 0deg, transparent 60%, var(--red-primary) 80%, transparent 100%);
+  border-radius: inherit;
+  animation: rotateGlow 4s linear infinite;
+  opacity: 0.5;
+}
+@keyframes rotateGlow {
+  to { transform: rotate(360deg); }
+}
+
+/* Logo Enhancements */
 .auth-logo {
-  font-family:var(--font-display);font-size:2.5rem;font-weight:800;
-  color:var(--red-primary);
-  text-shadow:0 0 30px rgba(220,38,38,0.5);
-  animation:logoPulse 3s ease-in-out infinite;
+  font-family: var(--font-display); font-size: 2.8rem; font-weight: 900;
+  color: #fff; letter-spacing: 1px;
+  background: linear-gradient(to bottom, #fff 20%, var(--red-primary) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 15px rgba(220,38,38,0.4));
+  animation: logoBreath 4s ease-in-out infinite alternate;
 }
-@keyframes logoPulse {
-  0%,100%{text-shadow:0 0 20px rgba(220,38,38,0.5)}
-  50%{text-shadow:0 0 40px rgba(220,38,38,0.8),0 0 80px rgba(220,38,38,0.3)}
+@keyframes logoBreath {
+  from { filter: drop-shadow(0 0 10px rgba(220,38,38,0.3)); }
+  to { filter: drop-shadow(0 0 25px rgba(220,38,38,0.7)); }
 }
 .shield-icon {
-  display:inline-flex;align-items:center;justify-content:center;
-  width:56px;height:56px;border-radius:16px;margin:0 auto 1rem;
-  background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.25);
-  font-size:1.5rem;animation:shieldBob 3s ease-in-out infinite;
+  width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 1.2rem;
+  background: linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(220,38,38,0.02) 100%);
+  border: 1px solid rgba(220,38,38,0.3);
+  box-shadow: inset 0 0 20px rgba(220,38,38,0.1), 0 0 30px rgba(220,38,38,0.2);
+  display: inline-flex; justify-content: center; align-items: center;
+  font-size: 1.8rem; animation: shieldHover 4s ease-in-out infinite;
 }
-@keyframes shieldBob {
-  0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}
+@keyframes shieldHover {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
 }
-.auth-particles {position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.auth-particle {
-  position:absolute;width:3px;height:3px;border-radius:50%;
-  background:rgba(220,38,38,0.3);animation:floatUp linear infinite;
+
+/* Input Focus Glow */
+.form-control-dark {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  transition: all 0.3s ease;
 }
-@keyframes floatUp {
-  0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:1}90%{opacity:1}
-  100%{transform:translateY(-100vh) scale(0.5);opacity:0}
+.form-control-dark:focus {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-color: var(--red-primary) !important;
+  box-shadow: 0 0 0 4px rgba(220,38,38,0.15), 0 0 20px rgba(220,38,38,0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Primary Button High-End */
+.btn-rakshak {
+  background: linear-gradient(135deg, var(--red-primary) 0%, #991b1b 100%);
+  border: none; position: relative; overflow: hidden;
+  box-shadow: 0 10px 20px -5px rgba(220,38,38,0.4);
+  transform: translateY(0); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  letter-spacing: 0.05em; font-weight: 600; text-transform: uppercase;
+}
+.btn-rakshak:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 30px -5px rgba(220,38,38,0.6);
 }
 .btn-rakshak::after {
-  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
-  animation:btnShine 3s ease-in-out infinite;
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: skewX(-20deg); animation: btnSweep 3s infinite;
 }
-@keyframes btnShine {0%{left:-100%}50%{left:120%}100%{left:120%}}
+@keyframes btnSweep {
+  0% { left: -100%; }
+  20%, 100% { left: 200%; }
+}
+
+/* floating ambient particles */
+.auth-particles { position: absolute; inset: 0; pointer-events: none; }
+.auth-particle {
+  position: absolute; border-radius: 50%;
+  background: var(--red-primary); filter: blur(1px);
+  animation: particleFloat linear infinite;
+}
+@keyframes particleFloat {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  20% { opacity: 0.5; }
+  80% { opacity: 0.5; transform: translateY(-20vh) scale(1.5); }
+  100% { transform: translateY(-50vh) scale(0); opacity: 0; }
+}
 @keyframes lockPulse {
   0%,100%{opacity:0.5;transform:scale(1)}
   50%{opacity:1;transform:scale(1.15)}
@@ -126,11 +205,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="auth-bg">
-  <div class="grid-overlay"></div>
+<div class="auth-bg" id="auth-bg">
+  <div class="grid-floor"></div>
   <div class="auth-particles" id="auth-particles"></div>
 
-  <div class="auth-card-wrap">
+  <div class="auth-card-wrap" id="auth-card">
     <div class="text-center mb-4">
       <div class="shield-icon">
         <i class="bi bi-person-plus-fill" style="color:var(--red-primary);"></i>
@@ -207,9 +286,9 @@
       </form>
 
       <div class="divider-or">OR</div>
-      <p class="text-center" style="color:var(--text-secondary);font-size:0.9rem;margin:0;">
+      <p class="text-center mt-3 mb-0" style="color:var(--text-secondary);font-size:0.95rem;">
         Already have an account?
-        <a href="{{ url_for('auth.login') }}" style="color:var(--red-primary);text-decoration:none;font-weight:600;transition:text-shadow .2s;" onmouseover="this.style.textShadow='0 0 12px rgba(220,38,38,0.5)'" onmouseout="this.style.textShadow='none'">Sign in</a>
+        <a href="{{ url_for('auth.login') }}" class="ms-1" style="color:var(--red-primary);text-decoration:none;font-weight:700;transition:all .2s;position:relative;" onmouseover="this.style.textShadow='0 0 15px rgba(220,38,38,0.8)';this.style.color='#fca5a5'" onmouseout="this.style.textShadow='none';this.style.color='var(--red-primary)'">Sign in</a>
       </p>
     </div>
 
@@ -252,18 +331,36 @@
   type();
 })();
 
-/* particles */
+/* floating immersive particles */
 (function(){
   const c = document.getElementById('auth-particles');
-  for(let i=0;i<20;i++){
+  for(let i=0;i<25;i++){
     const p = document.createElement('div');
     p.className='auth-particle';
     p.style.left = Math.random()*100+'%';
-    p.style.animationDuration = (8+Math.random()*12)+'s';
-    p.style.animationDelay = Math.random()*8+'s';
-    p.style.width = p.style.height = (2+Math.random()*3)+'px';
+    p.style.animationDuration = (10+Math.random()*15)+'s';
+    p.style.animationDelay = Math.random()*5+'s';
+    const size = (2+Math.random()*4);
+    p.style.width = p.style.height = size + 'px';
     c.appendChild(p);
   }
+})();
+
+/* 3D Tilt Effect on mousemove */
+(function() {
+  const bg = document.getElementById('auth-bg');
+  const card = document.getElementById('auth-card');
+  if(!bg || !card) return;
+  
+  bg.addEventListener('mousemove', (e) => {
+    const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+    const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+    card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+  });
+  
+  bg.addEventListener('mouseleave', () => {
+    card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+  });
 })();
 
 /* step progress tracker */
