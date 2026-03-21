@@ -111,15 +111,15 @@ SEEDS = [
     # Admin: Admin@123
     """INSERT IGNORE INTO users (full_name, email, phone, password_hash, role, security_question, security_answer_hash)
        VALUES ('System Admin','admin@rakshak.com','9999999999',
-       '$2b$12$eImiTXuWVxfM37uY4JANjQeOCwdQ1fPyFI2moxAmT6TPBVGB7dR3q',
+       '$2b$12$OJ/YZ5mnmP3GSdF8rou.iuq/7PmWIgUrQcB7uzE28GtIBZmh/f1pi',
        'admin','What is the system name?',
-       '$2b$12$eImiTXuWVxfM37uY4JANjQeOCwdQ1fPyFI2moxAmT6TPBVGB7dR3q')""",
+       '$2b$12$lCTx6wgXfHGyQxgDsEyBLOkAyZ/yJQJovUfYCKA.jogKyHiFozeAe')""",
     # User: User@123
     """INSERT IGNORE INTO users (full_name, email, phone, password_hash, role, security_question, security_answer_hash)
        VALUES ('Priya Sharma','priya@example.com','9876543210',
-       '$2b$12$eImiTXuWVxfM37uY4JANjQeOCwdQ1fPyFI2moxAmT6TPBVGB7dR3q',
+       '$2b$12$xIgo6mm/SnEmom75hQ.A3.4/FuIrGi9cdfNYemHRcFNgTTZPSeaQK',
        'user','What is your mother name?',
-       '$2b$12$eImiTXuWVxfM37uY4JANjQeOCwdQ1fPyFI2moxAmT6TPBVGB7dR3q')""",
+       '$2b$12$lCTx6wgXfHGyQxgDsEyBLOkAyZ/yJQJovUfYCKA.jogKyHiFozeAe')""",
 ]
 
 _host     = os.environ.get('MYSQLHOST')     or os.environ.get('DB_HOST', 'localhost')

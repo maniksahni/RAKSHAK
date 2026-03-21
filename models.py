@@ -130,7 +130,7 @@ class User(UserMixin):
         self.phone       = data['phone']
         self.role        = data['role']
         self.risk_level  = data.get('risk_level', 'low')
-        self.is_active   = data.get('is_active', True)
+        self._is_active  = data.get('is_active', True)
         self.last_ping   = data.get('last_ping')
         self.consecutive_missed_pings = data.get('consecutive_missed_pings', 0)
         self.address     = data.get('address', '')
@@ -139,6 +139,10 @@ class User(UserMixin):
 
     def get_id(self):
         return str(self.id)
+
+    @property
+    def is_active(self):
+        return self._is_active
 
     @property
     def is_admin(self):
