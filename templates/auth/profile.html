@@ -11,22 +11,35 @@
 
 /* profile avatar */
 .profile-avatar {
-  width:72px;height:72px;border-radius:50%;
+  width:90px;height:90px;border-radius:12px;
   background:linear-gradient(135deg, var(--red-primary), var(--red-dark));
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:2rem;font-weight:800;color:#fff;
-  box-shadow:0 0 24px rgba(220,38,38,0.3);
-  position:relative;
+  font-family:var(--font-display);font-size:2.5rem;font-weight:800;color:#fff;
+  box-shadow:inset 0 0 20px rgba(0,0,0,0.5), 0 0 24px rgba(220,38,38,0.4);
+  position:relative; overflow:hidden;
 }
 .profile-avatar::after {
-  content:'';position:absolute;inset:-3px;border-radius:50%;
-  border:2px solid rgba(220,38,38,0.3);
-  animation:avatarRing 3s ease-in-out infinite;
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom, transparent 48%, rgba(255,255,255,0.8) 50%, transparent 52%);
+  background-size:100% 200%;
+  animation:avatarScan 2.5s linear infinite;
+  mix-blend-mode:overlay;
 }
-@keyframes avatarRing {
-  0%,100%{transform:scale(1);opacity:0.5}
-  50%{transform:scale(1.08);opacity:1}
+@keyframes avatarScan {
+  0% { transform:translateY(-100%); opacity:0; }
+  20% { opacity:1; }
+  80% { opacity:1; }
+  100% { transform:translateY(100%); opacity:0; }
 }
+
+/* tactical barcode */
+.operative-barcode {
+  display:flex; gap:3px; height:24px; align-items:flex-end; opacity:0.6; mix-blend-mode:screen;
+}
+.bc-bar { background:var(--accent-blue); width:2px; height:100%; transition:height 0.2s; }
+.bc-bar:nth-child(even) { width:3px; }
+.bc-bar:nth-child(3n) { width:1px; }
+.bc-bar:nth-child(5n) { background:var(--red-primary); }
 
 /* section card */
 .profile-section {
@@ -151,34 +164,49 @@
 <div class="container-fluid py-4" style="max-width:900px;">
 
   <!-- Header -->
-  <div class="profile-header glass-card p-4 mb-4" style="border-radius:var(--radius-xl);">
+  <div class="profile-header glass-card p-4 mb-4" style="border-radius:var(--radius-md); border-top:4px solid var(--red-primary); position:relative; overflow:hidden;">
+    
+    <!-- Watermark text -->
+    <div style="position:absolute;bottom:-20%;right:-5%;font-family:var(--font-display);font-size:8rem;font-weight:900;color:rgba(255,255,255,0.02);pointer-events:none;transform:rotate(-5deg);">DOSSIER</div>
+    
     <div class="d-flex align-items-center gap-4">
       <div class="profile-avatar">
         {{ current_user.full_name[0].upper() }}
       </div>
       <div style="flex:1;">
-        <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;">{{ current_user.full_name }}</h2>
-        <p style="color:var(--text-muted);font-size:0.85rem;margin:0.25rem 0 0;">{{ current_user.email }}</p>
-        <div class="d-flex gap-2 mt-2 flex-wrap">
-          <span class="risk-badge risk-{{ current_user.risk_level }}">
+        <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+          <span>OPERATIVE ID: #{{ "%04d"|format(current_user.id) }}</span>
+          <span style="display:inline-block;width:4px;height:4px;background:var(--red-primary);border-radius:50%;"></span>
+          <span>CLEARANCE LEVEL: ALPHA</span>
+        </div>
+        <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin:0;letter-spacing:1px;text-transform:uppercase;">{{ current_user.full_name }}</h2>
+        <div class="d-flex align-items-center gap-3">
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin:0.25rem 0 0;font-family:monospace;letter-spacing:0.05em;">{{ current_user.email }}</p>
+          <div class="operative-barcode d-none d-sm-flex ms-3" id="fake-barcode">
+            <!-- pure JS generated barcode blocks -->
+          </div>
+        </div>
+        
+        <div class="d-flex gap-2 mt-3 flex-wrap align-items-center">
+          <span class="risk-badge risk-{{ current_user.risk_level }}" style="padding:6px 14px;font-size:0.75rem;letter-spacing:0.1em;border-radius:4px;text-transform:uppercase;">
             <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
-            {{ current_user.risk_level|upper }} RISK
+            {{ current_user.risk_level }} RISK PROFILE
           </span>
-          <span class="shield-badge" style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);color:var(--red-primary);">
-            <i class="bi bi-shield-fill-check"></i> PROTECTED
+          <span class="shield-badge" style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:var(--red-primary);border-radius:4px;font-family:var(--font-display);">
+            <i class="bi bi-shield-fill-check"></i> SHIELD SYSTEM ACTIVE
           </span>
         </div>
       </div>
       <!-- Security Score -->
-      <div class="security-ring-wrap d-none d-md-block" id="security-ring">
+      <div class="security-ring-wrap d-none d-md-block" id="security-ring" style="width:90px;height:90px;">
         <svg viewBox="0 0 36 36">
-          <circle class="security-ring-bg" cx="18" cy="18" r="15.9"/>
+          <circle class="security-ring-bg" cx="18" cy="18" r="15.9" style="stroke:rgba(66,153,225,0.1);"/>
           <circle class="security-ring-fill" id="score-ring" cx="18" cy="18" r="15.9"
-            stroke-dasharray="100" stroke-dashoffset="100"/>
+            stroke-dasharray="100" stroke-dashoffset="100" style="stroke:var(--accent-blue);"/>
         </svg>
         <div class="security-score-text">
-          <span class="security-score-num" id="score-num">0</span>
-          <span class="security-score-label">SCORE</span>
+          <span class="security-score-num" id="score-num" style="color:var(--accent-blue);">0</span>
+          <span class="security-score-label" style="color:var(--accent-blue);">SEC_SCORE</span>
         </div>
       </div>
     </div>
@@ -355,6 +383,17 @@
       card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
     });
   });
+
+  // Generate fake barcode bars
+  const bcContainer = document.getElementById('fake-barcode');
+  if(bcContainer) {
+    for(let i=0; i<30; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'bc-bar';
+        bar.style.height = (40 + Math.random() * 60) + '%';
+        bcContainer.appendChild(bar);
+    }
+  }
 })();
 
 document.getElementById('profile-form').addEventListener('submit', async function(e) {
