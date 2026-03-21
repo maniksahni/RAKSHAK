@@ -345,6 +345,40 @@ body::before{
 .rk-hr{border:none;height:1px;max-width:1380px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(220,38,38,.2) 30%,rgba(239,68,68,.18) 70%,transparent)}
 
 /* ═══════════════════════════════════════════
+   TESTIMONIALS
+═══════════════════════════════════════════*/
+.testi-section{padding:6rem clamp(2rem,6vw,6rem);max-width:1380px;margin:0 auto}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem}
+.testi-card{
+  background:rgba(255,255,255,.022);border:1px solid var(--bdr);border-radius:22px;
+  padding:32px 28px;position:relative;overflow:hidden;
+  transition:border-color .3s,box-shadow .3s,background .3s,transform .35s cubic-bezier(.22,1,.36,1);
+  will-change:transform;
+}
+.testi-card::before{
+  content:'❝';position:absolute;top:16px;right:20px;font-size:3rem;
+  color:rgba(220,38,38,.08);font-family:serif;line-height:1;
+}
+.testi-card:hover{
+  border-color:rgba(220,38,38,.28);box-shadow:0 0 48px rgba(220,38,38,.07);
+  background:rgba(255,255,255,.032);transform:translateY(-5px);
+}
+.testi-stars{display:flex;gap:2px;margin-bottom:1rem;color:rgba(220,38,38,.7);font-size:.75rem}
+.testi-text{font-family:var(--int);font-size:.88rem;color:rgba(255,255,255,.55);line-height:1.8;margin-bottom:1.5rem;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(220,38,38,.2),rgba(220,38,38,.08));
+  border:1px solid rgba(220,38,38,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);
+}
+.testi-name{font-size:.82rem;font-weight:600;color:var(--white)}
+.testi-role{font-family:var(--int);font-size:.68rem;color:rgba(255,255,255,.3)}
+
+@media(max-width:900px){.testi-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════
    TRUST BADGES
 ═══════════════════════════════════════════*/
 .trust-badges{
@@ -704,6 +738,51 @@ body::before{
   </div>
 </div>
 
+<!-- ══════════ TESTIMONIALS ══════════ -->
+<section class="testi-section">
+  <div class="sec-hd reveal">
+    <span class="eyebrow">Trusted by thousands</span>
+    <h2 class="sec-title">Real stories from<br>real users.</h2>
+    <p class="sec-sub">Hear from women who feel safer every day with RAKSHAK.</p>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="testi-stars">★ ★ ★ ★ ★</div>
+      <p class="testi-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">A</div>
+        <div>
+          <div class="testi-name">Ananya R.</div>
+          <div class="testi-role">College Student, Delhi</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">★ ★ ★ ★ ★</div>
+      <p class="testi-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">P</div>
+        <div>
+          <div class="testi-name">Priya M.</div>
+          <div class="testi-role">Software Engineer, Bangalore</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">★ ★ ★ ★ ★</div>
+      <p class="testi-text">"As a parent, knowing my daughter has RAKSHAK gives me peace of mind. The AI monitoring and auto-alerts are incredibly smart."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">S</div>
+        <div>
+          <div class="testi-name">Sunita K.</div>
+          <div class="testi-role">Parent, Mumbai</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="rk-hr">
+
 <!-- ══════════ CTA ══════════ -->
 <section class="cta-section">
   <div class="cta-glow"></div>
@@ -722,12 +801,26 @@ body::before{
 </section>
 
 <!-- ══════════ FOOTER ══════════ -->
-<footer class="rk-footer">
-  <div>
-    <div class="ft-logo"><span>🛡</span> RAKSHAK</div>
-    <div class="ft-sub">Real-time Alert &amp; Knowledge System for Hazard And Crisis</div>
+<footer class="rk-footer" style="flex-direction:column;gap:1.5rem;padding:3rem clamp(2rem,4vw,6rem) 2rem;">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:1rem;">
+    <div>
+      <div class="ft-logo"><span>🛡</span> RAKSHAK</div>
+      <div class="ft-sub">Real-time Alert &amp; Knowledge System for Hazard And Crisis</div>
+    </div>
+    <div style="display:flex;gap:1.5rem;align-items:center;">
+      <a href="{{ url_for('auth.login') }}" style="font-family:var(--int);font-size:.78rem;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Login</a>
+      <a href="{{ url_for('auth.register') }}" style="font-family:var(--int);font-size:.78rem;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Register</a>
+      <a href="#features" style="font-family:var(--int);font-size:.78rem;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Features</a>
+    </div>
   </div>
-  <span class="ft-copy">© 2025 &nbsp;·&nbsp; Designed for Safety</span>
+  <div style="width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--bdr),transparent);"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:.5rem;">
+    <span class="ft-copy">© 2025 RAKSHAK &nbsp;·&nbsp; Built for Safety &nbsp;·&nbsp; Made in India 🇮🇳</span>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:blink 1.5s infinite;"></div>
+      <span style="font-family:var(--int);font-size:.65rem;color:rgba(255,255,255,.2);letter-spacing:.1em;">ALL SYSTEMS OPERATIONAL</span>
+    </div>
+  </div>
 </footer>
 
 </div>
