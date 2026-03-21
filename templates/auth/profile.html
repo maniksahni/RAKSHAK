@@ -218,8 +218,8 @@
   <div class="row g-4">
     <!-- Profile Form -->
     <div class="col-lg-6 profile-col-left">
-      <div class="glass-card profile-section p-4">
-        <h5 style="font-family:var(--font-display);font-size:1.2rem;margin-bottom:1.2rem;">
+      <div class="glass-card profile-section p-4 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+        <h5 style="font-family:var(--font-display);font-size:1.2rem;margin-bottom:1.2rem;transform:translateZ(30px);">
           <i class="bi bi-person-circle me-2" style="color:var(--red-primary);"></i>Personal Information
         </h5>
         <form id="profile-form">
@@ -264,8 +264,8 @@
 
     <!-- Trusted Contacts -->
     <div class="col-lg-6 profile-col-right">
-      <div class="glass-card profile-section p-4 h-100 d-flex flex-column">
-        <div class="d-flex align-items-center justify-content-between mb-3">
+      <div class="glass-card profile-section p-4 h-100 d-flex flex-column tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+        <div class="d-flex align-items-center justify-content-between mb-3" style="transform:translateZ(30px);">
           <h5 style="font-family:var(--font-display);font-size:1.2rem;margin:0;">
             <i class="bi bi-people-fill me-2" style="color:var(--red-primary);"></i>Trusted Contacts
           </h5>
@@ -337,6 +337,26 @@
 </div>
 
 <script>
+/* 3D tilt tracking for cards */
+(function(){
+  const cards = document.querySelectorAll('.tilt-card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const deltaX = (x - centerX) / centerX;
+      const deltaY = (y - centerY) / centerY;
+      card.style.transform = `perspective(1000px) rotateX(${deltaY * -3}deg) rotateY(${deltaX * 3}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+    });
+  });
+})();
+
 document.getElementById('profile-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = document.getElementById('save-profile-btn');
