@@ -162,15 +162,29 @@ function reportZoneMode() {
   if (reportingMode) {
     showToast('Click on the map to select a danger location', 'info', 3000);
     heatMap.getContainer().style.cursor = 'crosshair';
+    // Pulse the map border to indicate active mode
+    heatMap.getContainer().style.boxShadow = '0 0 0 2px var(--red-primary), 0 0 20px rgba(220,38,38,0.2)';
   } else {
     heatMap.getContainer().style.cursor = '';
+    heatMap.getContainer().style.boxShadow = '';
   }
 }
 
 function closeReportModal() {
-  document.getElementById('report-modal').style.display = 'none';
+  const modal = document.getElementById('report-modal');
+  const card = modal?.querySelector('.report-modal-card');
+  if (card) {
+    card.style.transition = 'all .25s cubic-bezier(.22,1,.36,1)';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px) scale(.95)';
+  }
+  setTimeout(() => {
+    if (modal) modal.style.display = 'none';
+    if (card) { card.style.opacity = ''; card.style.transform = ''; card.style.transition = ''; }
+  }, 250);
   reportingMode = false;
   heatMap.getContainer().style.cursor = '';
+  heatMap.getContainer().style.boxShadow = '';
   if (window._tempMarker) { heatMap.removeLayer(window._tempMarker); window._tempMarker = null; }
   selectedLat = selectedLng = null;
   document.getElementById('loc-display').textContent = 'Click on the map to select location';

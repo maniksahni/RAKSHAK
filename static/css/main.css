@@ -786,3 +786,84 @@ h1,h2,h3,h4,h5,h6 {
 /* ── Scrollbar for notif dropdown ─────────────────────────────────────────── */
 .notif-dropdown-body::-webkit-scrollbar { width: 4px; }
 .notif-dropdown-body::-webkit-scrollbar-thumb { background: var(--red-primary); border-radius: 2px; }
+
+/* ── Toast slide-in animation ───────────────────────────────────────────── */
+.toast-notification {
+  animation: toastSlide .35s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes toastSlide {
+  from { opacity: 0; transform: translateX(40px) scale(.95); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+.toast-notification.toast-exit {
+  animation: toastOut .3s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(40px) scale(.9); }
+}
+
+/* ── Button press micro-interaction ─────────────────────────────────────── */
+.btn-rakshak:active,
+.btn-glass:active {
+  transform: scale(0.96);
+}
+
+/* ── Focus ring for accessibility ───────────────────────────────────────── */
+.btn-rakshak:focus-visible,
+.btn-glass:focus-visible,
+.form-control-dark:focus-visible {
+  outline: 2px solid var(--red-primary);
+  outline-offset: 2px;
+}
+
+/* ── Loading overlay text typing effect ─────────────────────────────────── */
+#loading-overlay p {
+  overflow: hidden;
+  border-right: 2px solid var(--red-primary);
+  animation: typingBlink .8s step-end infinite;
+}
+@keyframes typingBlink {
+  50% { border-color: transparent; }
+}
+
+/* ── Glow divider ─────────────────────────────────────────────────────── */
+.glow-line {
+  position: relative;
+}
+.glow-line::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--red-primary), transparent);
+}
+
+/* ── Table hover row highlight ──────────────────────────────────────────── */
+.table-dark-custom tbody tr {
+  transition: background .2s, transform .2s;
+}
+.table-dark-custom tbody tr:hover {
+  background: var(--bg-card-hover) !important;
+  transform: translateX(2px);
+}
+
+/* ── Risk badge pulse for high ───────────────────────────────────────────── */
+.risk-badge.risk-high {
+  animation: riskPulse 2s ease-in-out infinite;
+}
+@keyframes riskPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
+}
+
+/* ── Page transition fade ───────────────────────────────────────────────── */
+.main-content {
+  animation: pageIn .4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes pageIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
