@@ -30,7 +30,10 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    WTF_CSRF_SSL_STRICT = True
+    WTF_CSRF_SSL_STRICT   = False   # Railway proxy terminates SSL; strict check always fails
+    SESSION_COOKIE_SECURE   = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
 
 
 config = {

@@ -2,6 +2,7 @@ import os
 import logging
 
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_socketio import SocketIO
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
@@ -142,6 +143,32 @@ def _app_ctx():
     return _flask_app.app_context()
 
 
+# ── Auto-seed demo users on first boot ────────────────────────────────────
+def _auto_seed(app):
+    """Ensures demo users exist. INSERT IGNORE = idempotent, safe every boot."""
+    ADMIN_HASH = '$2b$12$OJ/YZ5mnmP3GSdF8rou.iuq/7PmWIgUrQcB7uzE28GtIBZmh/f1pi'
+    USER_HASH  = '$2b$12$xIgo6mm/SnEmom75hQ.A3.4/FuIrGi9cdfNYemHRcFNgTTZPSeaQK'
+    SEC_HASH   = '$2b$12$lCTx6wgXfHGyQxgDsEyBLOkAyZ/yJQJovUfYCKA.jogKyHiFozeAe'
+    seeds = [
+        ("INSERT IGNORE INTO users (full_name,email,phone,password_hash,role,"
+         "security_question,security_answer_hash) VALUES "
+         "('System Admin','admin@rakshak.com','9999999999',%s,'admin',"
+         "'What is the system name?',%s)", (ADMIN_HASH, SEC_HASH)),
+        ("INSERT IGNORE INTO users (full_name,email,phone,password_hash,role,"
+         "security_question,security_answer_hash) VALUES "
+         "('Priya Sharma','priya@example.com','9876543210',%s,'user',"
+         "'What is your mother name?',%s)", (USER_HASH, SEC_HASH)),
+    ]
+    try:
+        from models import query_db
+        with app.app_context():
+            for sql, params in seeds:
+                query_db(sql, params, commit=True)
+        log.info('Auto-seed: demo users ensured.')
+    except Exception as e:
+        log.error(f'Auto-seed failed: {e}')
+
+
 # ── App Factory ────────────────────────────────────────────────────────────
 def create_app(config_name=None):
     global _flask_app
@@ -150,6 +177,7 @@ def create_app(config_name=None):
         config_name = os.environ.get('FLASK_ENV', 'development')
 
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
     app.config.from_object(config[config_name])
     _flask_app = app
 
@@ -208,6 +236,9 @@ def create_app(config_name=None):
     # ── Socket events ─────────────────────────────────────────────────────
     from socket_events import register_socket_events
     register_socket_events(socketio)
+
+    # ── Ensure demo users exist on every cold start ───────────────────────
+    _auto_seed(app)
 
     # ── HTTP Error handlers ───────────────────────────────────────────────
     @app.errorhandler(404)
@@ -274,8 +305,12 @@ def _auto_init_db(app):
         from init_db import SCHEMA_SQL, SEEDS
         for stmt in SCHEMA_SQL.split(';'):
             stmt = stmt.strip()
-            if stmt:
-                cursor.execute(stmt)
+            if not stmt:
+                continue
+            low = stmt.lower()
+            if low.startswith('create database') or low.startswith('use '):
+                continue  # skip — DB already selected via connection
+            cursor.execute(stmt)
         conn.commit()
         for seed in SEEDS:
             try:
@@ -292,7 +327,6 @@ def _auto_init_db(app):
 
 if __name__ == '__main__':
     app = create_app()
-    _auto_init_db(app)
     port = int(os.environ.get('PORT', 5001))
     socketio.run(app, host='0.0.0.0', port=port, debug=False,
                  allow_unsafe_werkzeug=True)
