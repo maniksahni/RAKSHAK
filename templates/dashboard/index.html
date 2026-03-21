@@ -9,6 +9,32 @@
 .dash-greeting h4 { font-family:var(--font-display);font-weight:800;font-size:1.5rem;margin:0; }
 .dash-greeting p { color:var(--text-muted);font-size:0.82rem;margin:0; }
 
+/* status ticker */
+.dash-ticker {
+  overflow:hidden;white-space:nowrap;margin-top:6px;
+}
+.dash-ticker-track {
+  display:inline-flex;gap:2rem;animation:tickerScroll 30s linear infinite;
+}
+.dash-ticker-item {
+  display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;
+  color:var(--text-muted);letter-spacing:0.05em;
+}
+.dash-ticker-item .bi { color:var(--accent-green);font-size:0.6rem; }
+@keyframes tickerScroll {
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+
+/* time greeting icon */
+.greeting-icon {
+  width:42px;height:42px;border-radius:12px;
+  background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.15);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  animation:greetBob 3s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes greetBob {0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
 /* SOS card glow */
 .sos-card {
   position:relative;overflow:hidden;
@@ -39,6 +65,33 @@
   box-shadow:0 0 8px var(--accent-green);
   animation:statusBlink 2s ease-in-out infinite;
 }
+
+/* enhanced stat cards */
+.stat-card {
+  position:relative;overflow:hidden;
+}
+.stat-card::after {
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(220,38,38,0.4),transparent);
+  transform:scaleX(0);transition:transform .5s cubic-bezier(.22,1,.36,1);
+}
+.stat-card:hover::after {transform:scaleX(1);}
+
+/* map card glow pulse */
+.map-glow {position:relative;}
+.map-glow::after {
+  content:'';position:absolute;bottom:0;left:0;right:0;height:60px;
+  background:linear-gradient(180deg,transparent,rgba(220,38,38,0.03));
+  pointer-events:none;
+}
+
+/* alert feed item hover */
+.alert-feed-item {
+  transition:border-color .3s,transform .2s;
+}
+.alert-feed-item:hover {
+  border-color:rgba(220,38,38,0.2);transform:translateX(3px);
+}
 </style>
 {% endblock %}
 
@@ -46,10 +99,28 @@
 <div class="container-fluid py-3">
 
   <!-- Greeting bar -->
-  <div class="dash-greeting d-flex align-items-center justify-content-between mb-4">
-    <div>
-      <h4><i class="bi bi-shield-check me-2" style="color:var(--red-primary);"></i>Welcome, {{ current_user.full_name.split()[0] }}</h4>
-      <p>Your safety dashboard is active and monitoring</p>
+  <div class="dash-greeting glass-card p-3 d-flex align-items-center justify-content-between mb-4" style="border-radius:var(--radius-lg);">
+    <div class="d-flex align-items-center gap-3">
+      <div class="greeting-icon" id="greeting-icon">
+        <i class="bi bi-sun-fill" style="color:var(--red-primary);"></i>
+      </div>
+      <div>
+        <h4 id="greeting-text"><i class="bi bi-shield-check me-2" style="color:var(--red-primary);font-size:1.1rem;"></i>Welcome, {{ current_user.full_name.split()[0] }}</h4>
+        <div class="dash-ticker">
+          <div class="dash-ticker-track">
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> AI Engine Online</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> GPS Tracking Active</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Contacts Synced</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> WebSocket Connected</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Encryption Enabled</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> AI Engine Online</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> GPS Tracking Active</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Contacts Synced</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> WebSocket Connected</span>
+            <span class="dash-ticker-item"><i class="bi bi-check-circle-fill"></i> Encryption Enabled</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="d-flex align-items-center gap-2">
       <div class="live-dot"></div>
@@ -283,6 +354,22 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
+// Time-based greeting
+(function(){
+  const h = new Date().getHours();
+  const icon = document.getElementById('greeting-icon');
+  const text = document.getElementById('greeting-text');
+  const name = '{{ current_user.full_name.split()[0] }}';
+  let greeting, iconClass;
+  if (h < 6) { greeting = 'Night owl'; iconClass = 'bi-moon-stars-fill'; }
+  else if (h < 12) { greeting = 'Good morning'; iconClass = 'bi-sun-fill'; }
+  else if (h < 17) { greeting = 'Good afternoon'; iconClass = 'bi-brightness-high-fill'; }
+  else if (h < 21) { greeting = 'Good evening'; iconClass = 'bi-sunset-fill'; }
+  else { greeting = 'Good night'; iconClass = 'bi-moon-fill'; }
+  if (icon) icon.innerHTML = '<i class="bi '+iconClass+'" style="color:var(--red-primary);"></i>';
+  if (text) text.innerHTML = '<i class="bi bi-shield-check me-2" style="color:var(--red-primary);font-size:1.1rem;"></i>'+greeting+', '+name;
+})();
+
 // Pass server data to JS
 window.currentUserId = {{ current_user.id | tojson }};
 const DANGER_ZONES = {{ danger_zones | tojson | safe }};
