@@ -103,15 +103,30 @@
 
   <!-- Title bar -->
   <div class="map-title-bar">
-    <i class="bi bi-map-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
+    <div style="width:36px;height:36px;border-radius:10px;background:rgba(220,38,38,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <i class="bi bi-map-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
+    </div>
     <div>
-      <div style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;">Danger Zone Map</div>
-      <div style="font-size:0.68rem;color:var(--text-muted);letter-spacing:0.08em;">COMMUNITY-REPORTED UNSAFE AREAS</div>
+      <div style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;">Live Danger Map</div>
+      <div style="font-size:0.68rem;color:var(--text-muted);letter-spacing:0.08em;">
+        GLOBAL + COMMUNITY ZONES &bull;
+        <span id="global-zone-count" style="color:var(--red-primary);font-weight:600;">Loading...</span>
+      </div>
+    </div>
+    <div style="margin-left:12px;display:flex;align-items:center;gap:6px;">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-green);animation:statusBlink 2s ease-in-out infinite;"></div>
+      <span style="font-size:0.65rem;color:var(--accent-green);font-weight:600;letter-spacing:0.1em;">LIVE</span>
     </div>
   </div>
 
   <!-- Controls -->
   <div class="map-controls">
+    <button class="map-ctrl-btn" id="global-toggle-btn" onclick="toggleGlobalView()" style="border-color:rgba(66,153,225,0.3);">
+      <i class="bi bi-globe2 me-1" style="color:var(--accent-blue);"></i> Global View
+    </button>
+    <button class="map-ctrl-btn" onclick="toggleGlobalMarkers()">
+      <i class="bi bi-pin-map-fill me-1" style="color:var(--accent-amber);"></i> Global Zones
+    </button>
     <button class="map-ctrl-btn" onclick="reportZoneMode()">
       <i class="bi bi-plus-circle me-1" style="color:var(--red-primary);"></i> Report Zone
     </button>
@@ -125,15 +140,26 @@
 
   <!-- Legend -->
   <div class="legend">
-    <div style="font-family:var(--font-display);font-size:0.85rem;font-weight:700;margin-bottom:10px;color:var(--text-secondary);letter-spacing:0.08em;">LEGEND</div>
+    <div style="font-family:var(--font-display);font-size:0.85rem;font-weight:700;margin-bottom:10px;color:var(--text-secondary);letter-spacing:0.08em;">THREAT LEVELS</div>
     <div class="legend-item">
       <span class="legend-dot" style="background:#dc2626;box-shadow:0 0 6px #dc2626;color:#dc2626;"></span> High Risk
     </div>
     <div class="legend-item">
       <span class="legend-dot" style="background:#f6ad55;box-shadow:0 0 6px #f6ad55;color:#f6ad55;"></span> Medium
     </div>
-    <div class="legend-item" style="margin-bottom:0;">
+    <div class="legend-item">
       <span class="legend-dot" style="background:#48bb78;box-shadow:0 0 6px #48bb78;color:#48bb78;"></span> Low Risk
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.06);margin:10px 0;"></div>
+    <div style="font-family:var(--font-display);font-size:0.75rem;font-weight:600;margin-bottom:8px;color:var(--text-muted);letter-spacing:0.08em;">MARKERS</div>
+    <div class="legend-item">
+      <span style="width:10px;height:10px;border-radius:50%;background:#4299e1;box-shadow:0 0 8px #4299e1;display:inline-block;"></span> Your Location
+    </div>
+    <div class="legend-item">
+      <span style="width:10px;height:10px;border-radius:50%;background:#dc2626;box-shadow:0 0 8px #dc2626;display:inline-block;animation:hotspotPulse 2s infinite;"></span> Global Hotspot
+    </div>
+    <div class="legend-item" style="margin-bottom:0;">
+      <span style="width:10px;height:10px;border-radius:50%;background:rgba(220,38,38,0.5);border:2px solid #dc2626;display:inline-block;"></span> Community Report
     </div>
   </div>
 </div>
