@@ -3,17 +3,66 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+/* dashboard-specific overrides */
+.dash-greeting { animation: animateIn .6s cubic-bezier(.22,1,.36,1) both; }
+.dash-greeting h4 { font-family:var(--font-display);font-weight:800;font-size:1.5rem;margin:0; }
+.dash-greeting p { color:var(--text-muted);font-size:0.82rem;margin:0; }
+
+/* SOS card glow */
+.sos-card {
+  position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 80%, rgba(220,38,38,0.06) 0%, transparent 60%);
+}
+.sos-card::before {
+  content:'';position:absolute;inset:0;border-radius:var(--radius-lg);
+  background:radial-gradient(circle at 50% 100%, rgba(220,38,38,0.08) 0%, transparent 50%);
+  pointer-events:none;
+}
+
+/* AI engine card */
+.ai-card-glow {
+  background:linear-gradient(135deg, rgba(220,38,38,0.04), rgba(220,38,38,0.02));
+  border:1px solid rgba(220,38,38,0.12);border-radius:var(--radius-sm);
+  padding:12px;position:relative;overflow:hidden;
+}
+.ai-card-glow::before {
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(220,38,38,0.06),transparent);
+  animation:aiSweep 4s linear infinite;
+}
+@keyframes aiSweep {0%{left:-100%}100%{left:200%}}
+
+/* status indicator */
+.live-dot {
+  width:8px;height:8px;border-radius:50%;background:var(--accent-green);
+  box-shadow:0 0 8px var(--accent-green);
+  animation:statusBlink 2s ease-in-out infinite;
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid py-3">
 
+  <!-- Greeting bar -->
+  <div class="dash-greeting d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h4><i class="bi bi-shield-check me-2" style="color:var(--red-primary);"></i>Welcome, {{ current_user.full_name.split()[0] }}</h4>
+      <p>Your safety dashboard is active and monitoring</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <div class="live-dot"></div>
+      <span style="font-size:0.75rem;color:var(--accent-green);letter-spacing:0.1em;font-weight:600;">LIVE</span>
+    </div>
+  </div>
+
   <!-- Top row: SOS + Risk + Status -->
   <div class="row g-4 mb-4">
 
     <!-- Giant SOS Button -->
-    <div class="col-md-4">
-      <div class="glass-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+    <div class="col-md-4 animate-in">
+      <div class="glass-card sos-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
         <p style="font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;">EMERGENCY TRIGGER</p>
 
         <div class="sos-btn-wrap">
@@ -33,7 +82,7 @@
     </div>
 
     <!-- Risk Level + AI Status -->
-    <div class="col-md-4">
+    <div class="col-md-4 animate-in">
       <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
         <div>
           <p style="font-size:0.75rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">AI RISK LEVEL</p>
@@ -53,8 +102,11 @@
 
         <div>
           <div class="glow-line"></div>
-          <div style="background:var(--red-soft);border:1px solid var(--border-red);border-radius:var(--radius-sm);padding:12px;">
-            <p style="font-size:0.75rem;color:var(--red-primary);font-weight:600;margin:0 0 4px;">AI Engine Active</p>
+          <div class="ai-card-glow">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <div class="live-dot"></div>
+              <p style="font-size:0.75rem;color:var(--red-primary);font-weight:600;margin:0;">AI Engine Active</p>
+            </div>
             <p style="font-size:0.75rem;color:var(--text-muted);margin:0;">Pinging every 2 min — 3 missed = auto SOS</p>
           </div>
         </div>
@@ -62,7 +114,7 @@
     </div>
 
     <!-- Quick Stats -->
-    <div class="col-md-4">
+    <div class="col-md-4 animate-in">
       <div class="row g-3 h-100">
         <div class="col-6">
           <div class="stat-card h-100">
@@ -96,8 +148,8 @@
   <div class="row g-4">
 
     <!-- Leaflet Map -->
-    <div class="col-lg-7">
-      <div class="glass-card overflow-hidden">
+    <div class="col-lg-7 animate-in">
+      <div class="glass-card overflow-hidden map-glow">
         <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
           <h6 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin:0;"><i class="bi bi-map-fill me-2" style="color:var(--red-primary);"></i>Live Safety Map</h6>
           <a href="{{ url_for('danger.map_view') }}" class="btn-glass" style="font-size:0.78rem;padding:4px 12px;text-decoration:none;">Open Full Map →</a>
@@ -107,7 +159,7 @@
     </div>
 
     <!-- Alert History Feed -->
-    <div class="col-lg-5">
+    <div class="col-lg-5 animate-in">
       <div class="glass-card h-100 d-flex flex-column">
         <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
           <h6 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin:0;"><i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History</h6>
@@ -127,9 +179,9 @@
               <span style="font-size:0.75rem;color:var(--text-muted);">{{ a.created_at.strftime('%d %b %Y %H:%M') if a.created_at else '' }}</span>
               <div class="d-flex gap-1">
                 {% if a.status == 'active' %}
-                <button onclick="resolveAlert({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:4px;padding:2px 8px;font-size:0.72rem;cursor:pointer;">Resolve</button>
+                <button onclick="resolveAlert({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:4px;padding:2px 8px;font-size:0.72rem;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='rgba(72,187,120,0.15)'" onmouseout="this.style.background='none'">Resolve</button>
                 {% endif %}
-                <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" style="background:none;border:1px solid var(--accent-blue);color:var(--accent-blue);border-radius:4px;padding:2px 8px;font-size:0.72rem;text-decoration:none;">PDF</a>
+                <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" style="background:none;border:1px solid var(--accent-blue);color:var(--accent-blue);border-radius:4px;padding:2px 8px;font-size:0.72rem;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='rgba(66,153,225,0.15)'" onmouseout="this.style.background='none'">PDF</a>
               </div>
             </div>
           </div>
@@ -137,7 +189,7 @@
           {% else %}
           <div class="empty-state">
             <i class="bi bi-shield-check"></i>
-            <p>No alerts yet.<br>You're safe! 🛡</p>
+            <p>No alerts yet.<br>You're safe!</p>
           </div>
           {% endif %}
         </div>
@@ -147,7 +199,7 @@
 </div>
 
 <!-- Proximity Warning Banner -->
-<div id="proximity-warning" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:4000;background:rgba(246,173,85,0.15);border:1px solid #f6ad55;border-radius:8px;padding:12px 20px;max-width:500px;width:90%;align-items:center;gap:12px;">
+<div id="proximity-warning" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:4000;background:rgba(246,173,85,0.15);border:1px solid #f6ad55;border-radius:8px;padding:12px 20px;max-width:500px;width:90%;align-items:center;gap:12px;backdrop-filter:blur(12px);">
   <i class="bi bi-exclamation-triangle-fill" style="color:#f6ad55;font-size:1.2rem;flex-shrink:0;"></i>
   <span id="proximity-text" style="font-size:0.85rem;color:var(--text-secondary);flex:1;"></span>
   <button onclick="this.closest('#proximity-warning').style.display='none'" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:0 4px;">&times;</button>
@@ -155,8 +207,10 @@
 
 <!-- SOS Confirm Modal -->
 <div id="sos-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:5000;align-items:center;justify-content:center;">
-  <div class="glass-card-red p-5 text-center" style="max-width:400px;width:90%;border-radius:var(--radius-xl);">
-    <div style="font-size:3rem;margin-bottom:1rem;">🚨</div>
+  <div class="glass-card-red p-5 text-center" style="max-width:400px;width:90%;border-radius:var(--radius-xl);animation:cardIn .3s cubic-bezier(.22,1,.36,1);">
+    <div style="width:64px;height:64px;border-radius:50%;background:rgba(220,38,38,0.2);border:2px solid var(--red-primary);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;animation:sos-pulse 1.5s infinite;">
+      <i class="bi bi-exclamation-triangle-fill" style="color:var(--red-primary);font-size:1.8rem;"></i>
+    </div>
     <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--red-primary);margin-bottom:0.5rem;">SEND SOS ALERT?</h3>
     <p style="color:var(--text-secondary);margin-bottom:1.5rem;">This will immediately alert all your trusted contacts with your GPS location.</p>
     <div class="d-flex gap-3 justify-content-center">
@@ -165,6 +219,13 @@
     </div>
   </div>
 </div>
+
+<style>
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(20px) scale(.95); }
+  to { opacity:1; transform:translateY(0) scale(1); }
+}
+</style>
 {% endblock %}
 
 {% block extra_js %}
