@@ -169,7 +169,7 @@
                 {% if a.status == 'active' %}
                 <button onclick="adminResolve({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:4px;padding:2px 8px;font-size:0.7rem;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='rgba(72,187,120,0.15)'" onmouseout="this.style.background='none'">Resolve</button>
                 {% endif %}
-                <span style="font-size:0.7rem;color:var(--text-muted);">{{ a.created_at.strftime('%H:%M') if a.created_at else '' }}</span>
+                <span style="font-size:0.7rem;color:var(--text-muted);">{{ a.created_at[11:16] if a.created_at else '' }}</span>
               </div>
             </div>
           </div>
