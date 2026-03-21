@@ -1,16 +1,106 @@
 {% extends "base.html" %}
 {% block title %}Alert History — RAKSHAK{% endblock %}
 
+{% block extra_css %}
+<style>
+/* page entrance */
+.history-header { animation:animateIn .5s cubic-bezier(.22,1,.36,1) both; }
+.history-stats .col-6:nth-child(1) .stat-card { animation:animateIn .4s .05s cubic-bezier(.22,1,.36,1) both; }
+.history-stats .col-6:nth-child(2) .stat-card { animation:animateIn .4s .1s cubic-bezier(.22,1,.36,1) both; }
+.history-stats .col-6:nth-child(3) .stat-card { animation:animateIn .4s .15s cubic-bezier(.22,1,.36,1) both; }
+.history-stats .col-6:nth-child(4) .stat-card { animation:animateIn .4s .2s cubic-bezier(.22,1,.36,1) both; }
+@keyframes animateIn {
+  from { opacity:0; transform:translateY(16px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* stat variants */
+.stat-card-red .stat-number { color:var(--red-primary); }
+.stat-card-green .stat-number { color:var(--accent-green); }
+.stat-card-amber .stat-number { color:var(--accent-amber); }
+
+/* table rows */
+.alert-table-row {
+  border-bottom:1px solid var(--border-glass);
+  transition:background .2s, transform .2s;
+}
+.alert-table-row:hover {
+  background:var(--bg-card-hover) !important;
+  transform:translateX(2px);
+}
+
+/* search input */
+.history-search {
+  background:rgba(255,255,255,0.05);border:1px solid var(--border-glass);
+  border-radius:50px;color:var(--text-primary);padding:8px 16px 8px 36px;
+  font-size:0.82rem;transition:all .3s;width:200px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:12px center;
+}
+.history-search:focus {
+  border-color:var(--red-primary);outline:none;
+  box-shadow:0 0 0 3px rgba(220,38,38,0.12);width:260px;
+}
+.history-search::placeholder { color:var(--text-muted); }
+
+/* action buttons */
+.action-btn {
+  background:none;border-radius:6px;padding:4px 12px;font-size:0.75rem;
+  cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-flex;
+  align-items:center;gap:4px;
+}
+.action-btn-green { border:1px solid var(--accent-green);color:var(--accent-green); }
+.action-btn-green:hover { background:rgba(72,187,120,0.15); }
+.action-btn-blue { border:1px solid var(--accent-blue);color:var(--accent-blue); }
+.action-btn-blue:hover { background:rgba(66,153,225,0.15); }
+
+/* empty state enhanced */
+.empty-history {
+  padding:80px 20px;text-align:center;
+  animation:animateIn .6s .2s cubic-bezier(.22,1,.36,1) both;
+}
+.empty-history-icon {
+  width:80px;height:80px;border-radius:50%;margin:0 auto 1.5rem;
+  background:rgba(72,187,120,0.08);border:2px solid rgba(72,187,120,0.2);
+  display:flex;align-items:center;justify-content:center;
+  animation:iconFloat 3s ease-in-out infinite;
+}
+@keyframes iconFloat {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-8px); }
+}
+
+/* count badge */
+.count-badge {
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:50px;font-size:0.8rem;font-weight:700;
+  background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.25);
+  color:var(--red-primary);letter-spacing:0.05em;
+}
+
+/* table header */
+.th-cell {
+  padding:12px 16px;font-size:0.72rem;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;
+}
+.td-cell { padding:14px 16px; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid py-4">
 
   <!-- Page Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4">
+  <div class="history-header d-flex align-items-center justify-content-between mb-4">
     <div>
-      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;"><i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History</h2>
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;">
+        <i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History
+      </h2>
       <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Complete record of all your safety alerts</p>
     </div>
-    <span class="pill pill-active" style="font-size:0.8rem;">{{ alerts|length }} alert{{ 's' if alerts|length != 1 }}</span>
+    <span class="count-badge">
+      <i class="bi bi-shield-exclamation"></i> {{ alerts|length }} alert{{ 's' if alerts|length != 1 }}
+    </span>
   </div>
 
   <!-- Summary Stats Strip -->
@@ -18,7 +108,7 @@
   {% set resolved_count = alerts|selectattr('status','eq','resolved')|list|length %}
   {% set manual_count = alerts|selectattr('trigger_type','eq','manual')|list|length %}
   {% set auto_count = alerts|length - manual_count %}
-  <div class="row g-3 mb-4">
+  <div class="row g-3 mb-4 history-stats">
     <div class="col-6 col-md-3">
       <div class="stat-card text-center">
         <div class="stat-number">{{ alerts|length }}</div>
@@ -26,30 +116,32 @@
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="stat-card text-center">
-        <div class="stat-number" style="color:var(--red-primary);">{{ active_count }}</div>
+      <div class="stat-card stat-card-red text-center">
+        <div class="stat-number">{{ active_count }}</div>
         <div class="stat-label">Active</div>
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="stat-card text-center">
-        <div class="stat-number" style="color:var(--accent-green);">{{ resolved_count }}</div>
+      <div class="stat-card stat-card-green text-center">
+        <div class="stat-number">{{ resolved_count }}</div>
         <div class="stat-label">Resolved</div>
       </div>
     </div>
     <div class="col-6 col-md-3">
-      <div class="stat-card text-center">
-        <div class="stat-number" style="color:var(--accent-amber);">{{ auto_count }}</div>
+      <div class="stat-card stat-card-amber text-center">
+        <div class="stat-number">{{ auto_count }}</div>
         <div class="stat-label">Auto-triggered</div>
       </div>
     </div>
   </div>
 
   <!-- Alert Table -->
-  <div class="glass-card">
+  <div class="glass-card" style="animation:animateIn .5s .25s cubic-bezier(.22,1,.36,1) both;">
     <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
-      <span style="font-family:var(--font-display);font-size:1rem;font-weight:700;"><i class="bi bi-list-ul me-2" style="color:var(--red-primary);"></i>All Alerts</span>
-      <input type="text" id="alert-search" class="form-control form-control-dark" placeholder="Search alerts..." style="width:200px;padding:6px 12px;font-size:0.82rem;" oninput="filterAlerts(this.value)">
+      <span style="font-family:var(--font-display);font-size:1rem;font-weight:700;">
+        <i class="bi bi-list-ul me-2" style="color:var(--red-primary);"></i>All Alerts
+      </span>
+      <input type="text" id="alert-search" class="history-search" placeholder="Search alerts..." oninput="filterAlerts(this.value)">
     </div>
 
     {% if alerts %}
@@ -57,49 +149,49 @@
       <table style="width:100%;border-collapse:collapse;" id="alerts-table">
         <thead>
           <tr style="border-bottom:1px solid var(--border-glass);">
-            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">#</th>
-            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Status</th>
-            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Type</th>
-            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Location</th>
-            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Date</th>
-            <th style="padding:12px 16px;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;">Actions</th>
+            <th class="th-cell">#</th>
+            <th class="th-cell">Status</th>
+            <th class="th-cell">Type</th>
+            <th class="th-cell">Location</th>
+            <th class="th-cell">Date</th>
+            <th class="th-cell">Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for a in alerts %}
-          <tr style="border-bottom:1px solid var(--border-glass);transition:background 0.2s;" class="alert-table-row" id="alert-row-{{ a.id }}" onmouseover="this.style.background='var(--bg-card-hover)'" onmouseout="this.style.background=''">
-            <td style="padding:14px 16px;font-size:0.85rem;color:var(--text-muted);font-weight:600;">{{ a.id }}</td>
-            <td style="padding:14px 16px;">
+          <tr class="alert-table-row" id="alert-row-{{ a.id }}">
+            <td class="td-cell" style="color:var(--text-muted);font-weight:600;">{{ a.id }}</td>
+            <td class="td-cell">
               <span class="pill pill-{{ a.status }}">
                 {% if a.status == 'active' %}<i class="bi bi-exclamation-circle-fill" style="font-size:0.55rem;"></i> {% endif %}
                 {{ a.status }}
               </span>
             </td>
-            <td style="padding:14px 16px;">
+            <td class="td-cell">
               <span class="pill {% if a.trigger_type == 'manual' %}pill-active{% else %}pill-pending{% endif %}" style="font-size:0.7rem;">
                 {% if a.trigger_type == 'manual' %}<i class="bi bi-hand-index-thumb" style="font-size:0.55rem;"></i>{% else %}<i class="bi bi-cpu" style="font-size:0.55rem;"></i>{% endif %}
                 {{ a.trigger_type.replace('_',' ')|upper }}
               </span>
             </td>
-            <td style="padding:14px 16px;font-size:0.85rem;">
+            <td class="td-cell" style="font-size:0.85rem;">
               <i class="bi bi-geo-alt-fill me-1" style="color:var(--red-primary);font-size:0.75rem;"></i>
               {{ a.address or (a.latitude|string + ', ' + a.longitude|string) }}
             </td>
-            <td style="padding:14px 16px;font-size:0.82rem;color:var(--text-muted);">
+            <td class="td-cell" style="font-size:0.82rem;color:var(--text-muted);">
               {% if a.created_at %}
               <div>{{ a.created_at.strftime('%d %b %Y') }}</div>
-              <div style="font-size:0.72rem;color:var(--text-muted);opacity:0.7;">{{ a.created_at.strftime('%H:%M') }}</div>
+              <div style="font-size:0.72rem;opacity:0.7;">{{ a.created_at.strftime('%H:%M') }}</div>
               {% endif %}
             </td>
-            <td style="padding:14px 16px;">
+            <td class="td-cell">
               <div class="d-flex gap-2">
                 {% if a.status == 'active' %}
-                <button onclick="resolveAlert({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:6px;padding:4px 12px;font-size:0.75rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(72,187,120,0.15)'" onmouseout="this.style.background='none'">
-                  <i class="bi bi-check-circle me-1"></i>Resolve
+                <button onclick="resolveAlert({{ a.id }})" class="action-btn action-btn-green">
+                  <i class="bi bi-check-circle"></i>Resolve
                 </button>
                 {% endif %}
-                <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" style="background:none;border:1px solid var(--accent-blue);color:var(--accent-blue);border-radius:6px;padding:4px 12px;font-size:0.75rem;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(66,153,225,0.15)'" onmouseout="this.style.background='none'">
-                  <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+                <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" class="action-btn action-btn-blue">
+                  <i class="bi bi-file-earmark-pdf"></i>PDF
                 </a>
               </div>
             </td>
@@ -109,9 +201,12 @@
       </table>
     </div>
     {% else %}
-    <div class="empty-state" style="padding:80px 20px;">
-      <i class="bi bi-shield-check" style="font-size:4rem;color:var(--accent-green);opacity:0.5;"></i>
-      <p style="font-size:1.1rem;margin-top:1rem;">No alerts recorded yet.<br><span style="font-size:0.85rem;color:var(--text-muted);">Your safety record will appear here.</span></p>
+    <div class="empty-history">
+      <div class="empty-history-icon">
+        <i class="bi bi-shield-check" style="font-size:2rem;color:var(--accent-green);"></i>
+      </div>
+      <p style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;">No alerts recorded yet</p>
+      <p style="font-size:0.85rem;color:var(--text-muted);">Your safety record will appear here when you trigger an SOS.</p>
     </div>
     {% endif %}
   </div>
@@ -126,8 +221,12 @@ async function resolveAlert(alertId) {
     showToast('Alert marked as resolved.', 'success');
     const row = document.getElementById('alert-row-' + alertId);
     if (row) {
-      row.querySelector('.pill').className = 'pill pill-resolved';
-      row.querySelector('.pill').innerHTML = 'resolved';
+      const pill = row.querySelector('.pill');
+      pill.className = 'pill pill-resolved';
+      pill.innerHTML = 'resolved';
+      // Remove resolve button
+      const resolveBtn = row.querySelector('.action-btn-green');
+      if (resolveBtn) resolveBtn.remove();
     }
   } else showToast(resp.error || 'Failed', 'error');
 }

@@ -20,7 +20,7 @@
 
 <!-- ── Navbar ──────────────────────────────────────────────────────────────── -->
 {% if current_user.is_authenticated %}
-<nav class="navbar navbar-rakshak d-flex align-items-center px-4" style="position:fixed;top:0;left:{% if not current_user.is_admin %}240px{% else %}240px{% endif %};right:0;z-index:200;">
+<nav class="navbar navbar-rakshak d-flex align-items-center px-4" style="position:fixed;top:0;left:240px;right:0;z-index:200;">
   <!-- Mobile toggle -->
   <button class="btn-glass d-lg-none me-3" id="sidebar-toggle" style="padding:6px 10px;">
     <i class="bi bi-list"></i>
@@ -30,15 +30,25 @@
 
   <div class="d-flex align-items-center gap-3">
     <!-- Notifications -->
-    <div class="position-relative" id="notif-bell-wrap" style="cursor:pointer">
-      <i class="bi bi-bell text-secondary" style="font-size:1.2rem;"></i>
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+    <div class="position-relative notif-bell" id="notif-bell-wrap" onclick="toggleNotifDropdown()">
+      <i class="bi bi-bell" style="font-size:1.2rem;color:var(--text-secondary);transition:color .2s;cursor:pointer;"></i>
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill notif-badge"
             style="background:var(--red-primary);font-size:0.6rem;" id="notif-count">0</span>
+      <!-- Notification dropdown -->
+      <div class="notif-dropdown" id="notif-dropdown" style="display:none;">
+        <div class="notif-dropdown-header">
+          <span>Notifications</span>
+          <button onclick="event.stopPropagation();markAllReadBase()" style="background:none;border:none;color:var(--red-primary);font-size:0.75rem;cursor:pointer;">Mark all read</button>
+        </div>
+        <div class="notif-dropdown-body" id="notif-dropdown-body">
+          <div class="empty-state" style="padding:1.5rem;"><p style="font-size:0.82rem;">No notifications</p></div>
+        </div>
+      </div>
     </div>
 
     <!-- User Info -->
-    <div class="glass-card d-flex align-items-center gap-2 px-3 py-2" style="border-radius:50px;">
-      <div style="width:28px;height:28px;border-radius:50%;background:var(--red-soft);border:1px solid var(--border-red);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--red-primary);">
+    <div class="user-pill d-flex align-items-center gap-2 px-3 py-2">
+      <div class="user-avatar">
         {{ current_user.full_name[0].upper() }}
       </div>
       <span style="font-size:0.85rem;font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ current_user.full_name }}</span>
@@ -52,7 +62,7 @@
       {% endif %}
     </div>
 
-    <a href="{{ url_for('auth.logout') }}" class="btn-glass" style="padding:8px 16px;font-size:0.85rem;text-decoration:none;">
+    <a href="{{ url_for('auth.logout') }}" class="btn-glass logout-btn" style="padding:8px 16px;font-size:0.85rem;text-decoration:none;">
       <i class="bi bi-box-arrow-right"></i> Logout
     </a>
   </div>
@@ -61,47 +71,60 @@
 <!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
 <aside class="sidebar pt-4" id="sidebar">
   <div class="px-4 mb-4">
-    <div class="brand-text" style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--red-primary);text-shadow:0 0 20px rgba(220,38,38,0.5);">🛡 RAKSHAK</div>
-    <div style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;">Safety System</div>
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <i class="bi bi-shield-lock-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:800;color:var(--red-primary);letter-spacing:0.08em;">RAKSHAK</div>
+        <div style="font-size:0.62rem;color:var(--text-muted);letter-spacing:0.18em;text-transform:uppercase;">Safety System v2.0</div>
+      </div>
+    </div>
   </div>
 
   <hr class="glow-line mx-3">
 
   {% if current_user.is_admin %}
   <a class="sidebar-link {% if request.endpoint=='admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">
-    <i class="bi bi-speedometer2"></i> Dashboard
+    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
   </a>
   <a class="sidebar-link" href="{{ url_for('admin.dashboard') }}#users-section">
-    <i class="bi bi-people"></i> User Management
+    <i class="bi bi-people"></i> <span>User Management</span>
   </a>
   <a class="sidebar-link" href="{{ url_for('admin.dashboard') }}#zones-section">
-    <i class="bi bi-geo-alt"></i> Danger Zones
+    <i class="bi bi-geo-alt"></i> <span>Danger Zones</span>
   </a>
   <a class="sidebar-link" href="{{ url_for('admin.dashboard') }}#analytics-section">
-    <i class="bi bi-bar-chart"></i> Analytics
+    <i class="bi bi-bar-chart"></i> <span>Analytics</span>
   </a>
   <a class="sidebar-link {% if request.endpoint=='danger.map_view' %}active{% endif %}" href="{{ url_for('danger.map_view') }}">
-    <i class="bi bi-map"></i> Live Map
+    <i class="bi bi-map"></i> <span>Live Map</span>
   </a>
   {% else %}
   <a class="sidebar-link {% if request.endpoint=='dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
-    <i class="bi bi-house"></i> Dashboard
+    <i class="bi bi-house"></i> <span>Dashboard</span>
   </a>
   <a class="sidebar-link {% if request.endpoint=='danger.map_view' %}active{% endif %}" href="{{ url_for('danger.map_view') }}">
-    <i class="bi bi-map-fill"></i> Danger Map
+    <i class="bi bi-map-fill"></i> <span>Danger Map</span>
   </a>
   <a class="sidebar-link {% if request.endpoint=='auth.profile' %}active{% endif %}" href="{{ url_for('auth.profile') }}">
-    <i class="bi bi-person-circle"></i> My Profile
+    <i class="bi bi-person-circle"></i> <span>My Profile</span>
   </a>
   <a class="sidebar-link" href="{{ url_for('sos.history') }}" id="sidebar-history-link">
-    <i class="bi bi-clock-history"></i> Alert History
+    <i class="bi bi-clock-history"></i> <span>Alert History</span>
   </a>
   {% endif %}
 
   <hr class="glow-line mx-3">
   <a class="sidebar-link text-danger" href="{{ url_for('auth.logout') }}">
-    <i class="bi bi-box-arrow-right"></i> Logout
+    <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
   </a>
+
+  <!-- Sidebar footer -->
+  <div class="sidebar-footer">
+    <div class="sidebar-status-dot"></div>
+    <span>System Online</span>
+  </div>
 </aside>
 {% else %}
 <!-- Public Navbar -->
@@ -139,8 +162,11 @@
 <!-- ── Loading Overlay ─────────────────────────────────────────────────────── -->
 <div class="spinner-overlay" id="loading-overlay" style="display:none;">
   <div class="text-center">
-    <div class="spinner-ring"></div>
-    <div style="margin-top:16px;color:var(--text-secondary);font-size:0.85rem;" id="loading-msg"></div>
+    <div class="spinner-rakshak">
+      <div class="spinner-ring"></div>
+      <div class="spinner-inner-icon"><i class="bi bi-shield-lock-fill" style="color:var(--red-primary);font-size:1.2rem;"></i></div>
+    </div>
+    <div style="margin-top:16px;color:var(--text-secondary);font-size:0.85rem;letter-spacing:0.05em;" id="loading-msg"></div>
   </div>
 </div>
 
@@ -198,6 +224,45 @@ if (sidebarToggle) {
   });
 }
 
+// ── Notification Dropdown ────────────────────────────────────────────────────
+function toggleNotifDropdown() {
+  const dd = document.getElementById('notif-dropdown');
+  if (!dd) return;
+  const showing = dd.style.display !== 'none';
+  dd.style.display = showing ? 'none' : 'block';
+  if (!showing) loadNotifDropdown();
+}
+async function loadNotifDropdown() {
+  try {
+    const resp = await fetch('/sos/notifications').then(r=>r.json());
+    if (!resp.success) return;
+    const body = document.getElementById('notif-dropdown-body');
+    if (!resp.notifications.length) {
+      body.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><i class="bi bi-bell-slash" style="font-size:1.5rem;"></i><p style="font-size:0.82rem;">All clear!</p></div>';
+      return;
+    }
+    body.innerHTML = resp.notifications.slice(0,8).map(n => `
+      <div class="notif-item ${n.is_read?'':'notif-unread'}">
+        <i class="bi ${n.notification_type==='sos'?'bi-shield-exclamation':'bi-bell'}" style="color:${n.notification_type==='sos'?'var(--red-primary)':'var(--accent-blue)'};flex-shrink:0;"></i>
+        <div>
+          <div style="font-size:0.82rem;font-weight:${n.is_read?'400':'600'};">${n.title||'Notification'}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">${n.created_at||''}</div>
+        </div>
+      </div>`).join('');
+  } catch(e){}
+}
+async function markAllReadBase() {
+  await postJSON('/sos/notifications/read-all');
+  document.getElementById('notif-count').textContent = '0';
+  loadNotifDropdown();
+}
+// Close dropdown on outside click
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('notif-bell-wrap');
+  const dd = document.getElementById('notif-dropdown');
+  if (wrap && dd && !wrap.contains(e.target)) dd.style.display = 'none';
+});
+
 // ── SocketIO init (for authenticated users) ──────────────────────────────────
 {% if current_user.is_authenticated %}
 const socket = io({ transports: ['websocket'] });
@@ -210,12 +275,12 @@ socket.on('connected', (data) => {
 });
 
 socket.on('new_alert', (data) => {
-  showToast(`🚨 SOS Alert from ${data.alert.user_id}!`, 'sos', 8000);
+  showToast(`SOS Alert from ${data.alert.user_id}!`, 'sos', 8000);
   updateNotifCount(1);
 });
 
 socket.on('new_sos', (data) => {
-  showToast(`🚨 New SOS Alert received!`, 'sos', 8000);
+  showToast(`New SOS Alert received!`, 'sos', 8000);
   if (typeof onNewSos === 'function') onNewSos(data);
 });
 

@@ -5,23 +5,93 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 #map { height: calc(100vh - 130px); border-radius: var(--radius-md); }
+
+/* floating control panel */
 .map-controls {
   position: absolute; top: 80px; right: 20px; z-index: 1000;
   display: flex; flex-direction: column; gap: 8px;
+  animation: slideInRight .5s cubic-bezier(.22,1,.36,1) both;
 }
+@keyframes slideInRight {
+  from { opacity:0; transform:translateX(20px); }
+  to { opacity:1; transform:translateX(0); }
+}
+
 .map-ctrl-btn {
   background: rgba(15,15,26,0.95); backdrop-filter: blur(20px);
   border: 1px solid var(--border-glass); border-radius: var(--radius-sm);
   color: var(--text-primary); padding: 10px 16px; cursor: pointer;
-  font-size: 0.85rem; font-weight: 500; transition: var(--transition);
-  white-space: nowrap;
+  font-size: 0.85rem; font-weight: 500; transition: all .3s;
+  white-space: nowrap; position:relative; overflow:hidden;
 }
-.map-ctrl-btn:hover { border-color: var(--border-red); color: var(--red-primary); }
+.map-ctrl-btn::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(220,38,38,0.08), transparent);
+  opacity:0; transition:opacity .3s;
+}
+.map-ctrl-btn:hover {
+  border-color: var(--border-red); color: var(--red-primary);
+  transform: translateX(-3px);
+}
+.map-ctrl-btn:hover::before { opacity:1; }
+
+/* legend */
 .legend {
   background: rgba(15,15,26,0.95); backdrop-filter: blur(20px);
   border: 1px solid var(--border-glass); border-radius: var(--radius-md);
   padding: 16px; position: absolute; bottom: 30px; left: 20px; z-index: 1000;
-  min-width: 160px;
+  min-width: 180px;
+  animation: slideInLeft .5s .2s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes slideInLeft {
+  from { opacity:0; transform:translateX(-20px); }
+  to { opacity:1; transform:translateX(0); }
+}
+.legend-item {
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:0.78rem;
+  transition:transform .2s;
+}
+.legend-item:hover { transform:translateX(4px); }
+.legend-dot {
+  width:10px;height:10px;border-radius:50%;display:inline-block;
+  transition:box-shadow .3s;
+}
+.legend-item:hover .legend-dot { box-shadow:0 0 12px currentColor; }
+
+/* map title bar */
+.map-title-bar {
+  position:absolute;top:12px;left:20px;z-index:1000;
+  background:rgba(15,15,26,0.92);backdrop-filter:blur(20px);
+  border:1px solid var(--border-glass);border-radius:var(--radius-md);
+  padding:10px 18px;
+  animation:animateIn .5s cubic-bezier(.22,1,.36,1) both;
+  display:flex;align-items:center;gap:10px;
+}
+
+/* report modal enhance */
+.report-modal-bg {
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);
+  z-index:5000;align-items:center;justify-content:center;
+}
+.report-modal-bg.show { display:flex; }
+.report-modal-card {
+  animation:modalIn .3s cubic-bezier(.22,1,.36,1);
+}
+@keyframes modalIn {
+  from { opacity:0; transform:translateY(20px) scale(.95); }
+  to { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* proximity warning enhanced */
+.proximity-float {
+  display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);
+  z-index:4000;max-width:420px;width:90%;
+  animation:bounceIn .4s cubic-bezier(.22,1,.36,1);
+}
+@keyframes bounceIn {
+  from { opacity:0; transform:translateX(-50%) translateY(20px); }
+  to { opacity:1; transform:translateX(-50%) translateY(0); }
 }
 </style>
 {% endblock %}
@@ -30,6 +100,15 @@
 <div style="position:relative;">
   <!-- Map -->
   <div id="map"></div>
+
+  <!-- Title bar -->
+  <div class="map-title-bar">
+    <i class="bi bi-map-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
+    <div>
+      <div style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;">Danger Zone Map</div>
+      <div style="font-size:0.68rem;color:var(--text-muted);letter-spacing:0.08em;">COMMUNITY-REPORTED UNSAFE AREAS</div>
+    </div>
+  </div>
 
   <!-- Controls -->
   <div class="map-controls">
@@ -46,27 +125,29 @@
 
   <!-- Legend -->
   <div class="legend">
-    <div style="font-family:var(--font-display);font-size:0.85rem;font-weight:700;margin-bottom:8px;color:var(--text-secondary);">LEGEND</div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.78rem;">
-      <span style="width:10px;height:10px;border-radius:50%;background:#dc2626;display:inline-block;box-shadow:0 0 6px #dc2626;"></span> High Risk
+    <div style="font-family:var(--font-display);font-size:0.85rem;font-weight:700;margin-bottom:10px;color:var(--text-secondary);letter-spacing:0.08em;">LEGEND</div>
+    <div class="legend-item">
+      <span class="legend-dot" style="background:#dc2626;box-shadow:0 0 6px #dc2626;color:#dc2626;"></span> High Risk
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.78rem;">
-      <span style="width:10px;height:10px;border-radius:50%;background:#f6ad55;display:inline-block;box-shadow:0 0 6px #f6ad55;"></span> Medium
+    <div class="legend-item">
+      <span class="legend-dot" style="background:#f6ad55;box-shadow:0 0 6px #f6ad55;color:#f6ad55;"></span> Medium
     </div>
-    <div style="display:flex;align-items:center;gap:8px;font-size:0.78rem;">
-      <span style="width:10px;height:10px;border-radius:50%;background:#48bb78;display:inline-block;box-shadow:0 0 6px #48bb78;"></span> Low Risk
+    <div class="legend-item" style="margin-bottom:0;">
+      <span class="legend-dot" style="background:#48bb78;box-shadow:0 0 6px #48bb78;color:#48bb78;"></span> Low Risk
     </div>
   </div>
 </div>
 
 <!-- Report Zone Modal -->
-<div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:5000;align-items:center;justify-content:center;">
-  <div class="glass-card p-4" style="width:90%;max-width:480px;border-radius:var(--radius-xl);">
+<div id="report-modal" class="report-modal-bg">
+  <div class="glass-card report-modal-card p-4" style="width:90%;max-width:480px;border-radius:var(--radius-xl);">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin:0;">Report Danger Zone</h5>
-      <button onclick="closeReportModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;"><i class="bi bi-x-lg"></i></button>
+      <h5 style="font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin:0;">
+        <i class="bi bi-exclamation-triangle me-2" style="color:var(--red-primary);"></i>Report Danger Zone
+      </h5>
+      <button onclick="closeReportModal()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;transition:color .2s;" onmouseover="this.style.color='var(--red-primary)'" onmouseout="this.style.color='var(--text-muted)'"><i class="bi bi-x-lg"></i></button>
     </div>
-    <div id="selected-location" class="glass-card-red p-3 mb-3" style="font-size:0.85rem;">
+    <div id="selected-location" class="glass-card-red p-3 mb-3" style="font-size:0.85rem;border-radius:var(--radius-sm);">
       <i class="bi bi-geo-alt me-1"></i><span id="loc-display">Click on the map to select location</span>
     </div>
     <form id="report-form" onsubmit="submitReport(event)">
@@ -74,7 +155,7 @@
       <input type="hidden" id="report-lat" name="latitude">
       <input type="hidden" id="report-lng" name="longitude">
       <div class="mb-3">
-        <label class="form-label-dark">Zone Type</label>
+        <label class="form-label-dark"><i class="bi bi-tag me-1" style="color:var(--red-primary);font-size:0.8rem;"></i>Zone Type</label>
         <select name="zone_type" class="form-control form-control-dark form-select-dark" style="appearance:auto;">
           <option value="harassment">Harassment</option>
           <option value="theft">Theft</option>
@@ -83,7 +164,7 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label-dark">Severity</label>
+        <label class="form-label-dark"><i class="bi bi-speedometer me-1" style="color:var(--red-primary);font-size:0.8rem;"></i>Severity</label>
         <select name="severity" class="form-control form-control-dark form-select-dark" style="appearance:auto;">
           <option value="medium" selected>Medium</option>
           <option value="low">Low</option>
@@ -91,7 +172,7 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label-dark">Description *</label>
+        <label class="form-label-dark"><i class="bi bi-chat-left-text me-1" style="color:var(--red-primary);font-size:0.8rem;"></i>Description *</label>
         <textarea name="description" class="form-control form-control-dark" rows="3" placeholder="Describe what makes this area dangerous... (min 10 chars)" required minlength="10"></textarea>
       </div>
       <div class="d-flex gap-3">
@@ -102,15 +183,17 @@
   </div>
 </div>
 
-<!-- Proximity Warning Modal -->
-<div id="proximity-modal" style="display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:4000;max-width:400px;width:90%;">
-  <div class="glass-card-red p-3 d-flex align-items-center gap-3">
-    <div style="font-size:1.5rem;flex-shrink:0;">⚠️</div>
-    <div>
-      <div style="font-weight:700;color:var(--red-primary);font-size:0.9rem;">DANGER ZONE NEARBY</div>
-      <div id="proximity-text" style="font-size:0.8rem;color:var(--text-secondary);"></div>
+<!-- Proximity Warning -->
+<div id="proximity-modal" class="proximity-float">
+  <div class="glass-card-red p-3 d-flex align-items-center gap-3" style="border-radius:var(--radius-md);">
+    <div style="width:40px;height:40px;border-radius:10px;background:rgba(220,38,38,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <i class="bi bi-exclamation-triangle-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
     </div>
-    <button onclick="document.getElementById('proximity-modal').style.display='none'" style="background:none;border:none;color:var(--text-muted);cursor:pointer;margin-left:auto;"><i class="bi bi-x-lg"></i></button>
+    <div style="flex:1;">
+      <div style="font-weight:700;color:var(--red-primary);font-size:0.85rem;">DANGER ZONE NEARBY</div>
+      <div id="proximity-text" style="font-size:0.78rem;color:var(--text-secondary);"></div>
+    </div>
+    <button onclick="document.getElementById('proximity-modal').style.display='none'" style="background:none;border:none;color:var(--text-muted);cursor:pointer;"><i class="bi bi-x-lg"></i></button>
   </div>
 </div>
 {% endblock %}

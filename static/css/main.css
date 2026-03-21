@@ -559,16 +559,189 @@ h1,h2,h3,h4,h5,h6 {
   box-shadow: 0 0 20px rgba(220,38,38,0.3);
 }
 
+/* ── Sidebar Brand ─────────────────────────────────────────────────────────── */
+.sidebar-brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.sidebar-brand-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.25);
+  display: flex; align-items: center; justify-content: center;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+@keyframes iconPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.2); }
+  50% { box-shadow: 0 0 12px 4px rgba(220,38,38,0.15); }
+}
+
+.sidebar-footer {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-glass);
+  font-size: 0.72rem; color: var(--text-muted);
+  letter-spacing: 0.08em;
+  display: flex; align-items: center; gap: 8px;
+}
+.sidebar-status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+  animation: statusBlink 2s ease-in-out infinite;
+}
+@keyframes statusBlink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── User Pill (navbar) ───────────────────────────────────────────────────── */
+.user-pill {
+  background: var(--bg-card); backdrop-filter: blur(10px);
+  border: 1px solid var(--border-glass); border-radius: 50px;
+  transition: var(--transition);
+}
+.user-pill:hover { border-color: var(--border-red); }
+.user-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--red-soft); border: 1px solid var(--border-red);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700; color: var(--red-primary);
+  transition: var(--transition);
+}
+.user-pill:hover .user-avatar {
+  background: rgba(220,38,38,0.25);
+  box-shadow: 0 0 12px rgba(220,38,38,0.3);
+}
+.logout-btn:hover { color: var(--red-primary) !important; border-color: var(--border-red); }
+
+/* ── Notification Dropdown ─────────────────────────────────────────────────── */
+.notif-bell { cursor: pointer; transition: var(--transition); }
+.notif-bell:hover i { color: var(--red-primary) !important; }
+.notif-badge { transition: var(--transition); }
+
+.notif-dropdown {
+  position: absolute; top: 40px; right: -60px;
+  width: 320px; background: rgba(15,15,26,0.97);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass); border-radius: var(--radius-md);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 0 20px rgba(220,38,38,0.08);
+  z-index: 500; overflow: hidden;
+  animation: dropIn .25s cubic-bezier(.22,1,.36,1);
+}
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-8px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.notif-dropdown-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border-glass);
+  font-size: 0.85rem; font-weight: 600;
+}
+.notif-dropdown-body { max-height: 300px; overflow-y: auto; }
+.notif-item {
+  display: flex; gap: 10px; padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: background .2s;
+}
+.notif-item:hover { background: var(--bg-card); }
+.notif-unread { background: rgba(220,38,38,0.04); border-left: 2px solid var(--red-primary); }
+
+/* ── Enhanced Loading Spinner ──────────────────────────────────────────────── */
+.spinner-rakshak {
+  position: relative; width: 60px; height: 60px; margin: 0 auto;
+}
+.spinner-inner-icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  animation: spinnerPulse 1.5s ease-in-out infinite;
+}
+@keyframes spinnerPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* ── Section Headers (Dashboard) ──────────────────────────────────────────── */
+.section-title {
+  font-family: var(--font-display); font-weight: 800;
+  position: relative; display: inline-block;
+}
+.section-title::after {
+  content: ''; position: absolute; bottom: -4px; left: 0;
+  width: 40px; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--red-primary), transparent);
+}
+
+/* ── Card entrance animations ─────────────────────────────────────────────── */
+.animate-in {
+  animation: animateIn .5s cubic-bezier(.22,1,.36,1) both;
+}
+.animate-in:nth-child(1) { animation-delay: .05s; }
+.animate-in:nth-child(2) { animation-delay: .1s; }
+.animate-in:nth-child(3) { animation-delay: .15s; }
+.animate-in:nth-child(4) { animation-delay: .2s; }
+.animate-in:nth-child(5) { animation-delay: .25s; }
+.animate-in:nth-child(6) { animation-delay: .3s; }
+@keyframes animateIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Glass card hover effects (upgraded) ──────────────────────────────────── */
+.glass-card { position: relative; overflow: hidden; }
+.glass-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.3), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.glass-card:hover::before { opacity: 1; }
+
+/* ── Stat card number animation ───────────────────────────────────────────── */
+.stat-card {
+  position: relative; overflow: hidden;
+}
+.stat-card::after {
+  content: ''; position: absolute; top: -50%; right: -50%;
+  width: 100px; height: 100px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 70%);
+  transition: transform .4s;
+}
+.stat-card:hover::after { transform: scale(2); }
+
+/* ── Map glowing border ───────────────────────────────────────────────────── */
+.map-glow {
+  position: relative;
+}
+.map-glow::after {
+  content: ''; position: absolute; inset: -1px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(220,38,38,0.2), transparent, rgba(220,38,38,0.1));
+  z-index: -1;
+  opacity: 0; transition: opacity .3s;
+}
+.map-glow:hover::after { opacity: 1; }
+
+/* ── Danger zones map controls ────────────────────────────────────────────── */
+.map-ctrl-btn {
+  position: relative; overflow: hidden;
+}
+.map-ctrl-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(220,38,38,0.08), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.map-ctrl-btn:hover::before { opacity: 1; }
+
 /* ── Responsive ──────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
   .main-content { margin-left: 0; }
+  .navbar-rakshak { left: 0 !important; }
   .sos-btn-wrap { width: 200px; height: 200px; }
   .sos-btn { width: 150px; height: 150px; font-size: 1.8rem; }
   .sonar-ring:nth-child(1),
   .sonar-ring:nth-child(2),
   .sonar-ring:nth-child(3) { width: 200px; height: 200px; }
+  .notif-dropdown { right: -100px; width: 280px; }
 }
 
 /* ── Chart containers ──────────────────────────────────────────────────────── */
@@ -595,3 +768,21 @@ h1,h2,h3,h4,h5,h6 {
   color: var(--text-primary) !important;
   border-color: var(--border-glass) !important;
 }
+
+/* ── Alert feed enhanced ──────────────────────────────────────────────────── */
+.alert-feed-item {
+  position: relative; overflow: hidden;
+}
+.alert-feed-item::after {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 3px;
+  background: transparent; transition: background .3s;
+}
+.alert-feed-item:hover::after { background: var(--red-primary); }
+
+/* ── Pill hover ───────────────────────────────────────────────────────────── */
+.pill { transition: var(--transition); }
+.pill:hover { transform: scale(1.05); }
+
+/* ── Scrollbar for notif dropdown ─────────────────────────────────────────── */
+.notif-dropdown-body::-webkit-scrollbar { width: 4px; }
+.notif-dropdown-body::-webkit-scrollbar-thumb { background: var(--red-primary); border-radius: 2px; }
