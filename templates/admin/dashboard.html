@@ -172,26 +172,26 @@
 
   <!-- Stat Cards -->
   <div class="row g-3 mb-4">
-    <div class="col-6 col-md-4 col-lg-2 animate-in">
-      <div class="stat-card stat-card-blue">
+    <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card stat-card-blue" style="transform:translateZ(20px);">
         <div class="stat-number" style="color:var(--accent-blue);">{{ stats.total_users }}</div>
         <div class="stat-label">Total Users</div>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-2 animate-in">
-      <div class="stat-card">
+    <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card" style="transform:translateZ(20px);">
         <div class="stat-number">{{ stats.total_alerts }}</div>
         <div class="stat-label">Total Alerts</div>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-2 animate-in">
-      <div class="stat-card stat-card-danger">
+    <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card stat-card-danger" style="transform:translateZ(20px);">
         <div class="stat-number" style="color:var(--red-primary);">{{ stats.active_alerts }}</div>
         <div class="stat-label">Active SOS</div>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-2 animate-in">
-      <div class="stat-card stat-card-amber">
+    <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="stat-card stat-card-amber" style="transform:translateZ(20px);">
         <div class="stat-number" style="color:var(--accent-amber);">{{ stats.pending_zones }}</div>
         <div class="stat-label">Pending Zones</div>
       </div>
@@ -416,5 +416,26 @@
 const ADMIN_ALERTS = {{ recent_alerts | tojson | safe }};
 const ADMIN_ZONES  = {{ danger_zones  | tojson | safe }};
 initAdmin(ADMIN_ALERTS, ADMIN_ZONES);
+</script>
+<script>
+/* 3D tilt tracking for cards */
+(function(){
+  const cards = document.querySelectorAll('.tilt-card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const deltaX = (x - centerX) / centerX;
+      const deltaY = (y - centerY) / centerY;
+      card.style.transform = `perspective(1000px) rotateX(${deltaY * -10}deg) rotateY(${deltaX * 10}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+    });
+  });
+})();
 </script>
 {% endblock %}
