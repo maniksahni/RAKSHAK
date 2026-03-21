@@ -232,6 +232,38 @@
     </div>
   </div>
 
+  <!-- Safety Tips Carousel -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 animate-in">
+      <div class="glass-card tips-carousel p-0" style="border-radius:var(--radius-lg);overflow:hidden;position:relative;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,0.3),transparent);"></div>
+        <div class="d-flex align-items-stretch" style="min-height:100px;">
+          <!-- Icon column -->
+          <div class="tips-icon-col d-flex align-items-center justify-content-center" style="min-width:90px;background:rgba(220,38,38,0.04);border-right:1px solid var(--border-glass);">
+            <div class="tips-icon-wrap" id="tip-icon">
+              <i class="bi bi-lightbulb-fill" style="font-size:1.6rem;color:var(--accent-amber);"></i>
+            </div>
+          </div>
+          <!-- Content -->
+          <div class="p-3 flex-grow-1 d-flex flex-column justify-content-center" style="position:relative;">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span style="font-family:var(--font-display);font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent-amber);">SAFETY TIP</span>
+              <span id="tip-counter" style="font-size:0.6rem;color:var(--text-muted);background:rgba(255,255,255,0.04);padding:1px 8px;border-radius:50px;">1 / 6</span>
+            </div>
+            <p id="tip-text" style="font-size:0.88rem;color:var(--text-secondary);margin:0;line-height:1.6;transition:opacity .3s;"></p>
+          </div>
+          <!-- Progress dots + nav -->
+          <div class="d-flex align-items-center gap-2 pe-3">
+            <div id="tip-dots" class="d-flex gap-1"></div>
+            <button onclick="nextTip()" style="background:none;border:1px solid var(--border-glass);border-radius:8px;color:var(--text-muted);cursor:pointer;padding:6px 10px;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent-amber)';this.style.color='var(--accent-amber)'" onmouseout="this.style.borderColor='var(--border-glass)';this.style.color='var(--text-muted)'">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Map + Alert Feed -->
   <div class="row g-4">
 
