@@ -76,6 +76,22 @@
   transform:translateY(-3px);
   box-shadow:0 8px 32px rgba(0,0,0,0.3);
 }
+
+/* health sweep */
+@keyframes healthSweep {
+  0%{left:-30%} 100%{left:130%}
+}
+@keyframes barPulse {
+  0%,100%{opacity:0.8} 50%{opacity:1}
+}
+
+/* zone approve/reject animation */
+.zone-approve-out {
+  animation:zoneOut .4s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes zoneOut {
+  to { opacity:0; transform:scale(.9) translateY(-10px); }
+}
 </style>
 {% endblock %}
 
@@ -182,31 +198,98 @@
     </div>
   </div>
 
+  <!-- System Health Panel -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 animate-in">
+      <div class="glass-card p-4" style="position:relative;overflow:hidden;">
+        <!-- Sweep line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(72,187,120,0.4),transparent);animation:healthSweep 4s linear infinite;"></div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="section-header" style="font-size:1rem;"><i class="bi bi-activity me-2" style="color:var(--accent-green);"></i>System Health</h5>
+          <div class="d-flex gap-3 align-items-center">
+            <span style="font-size:0.7rem;color:var(--text-muted);">Uptime: <strong style="color:var(--accent-green);" id="uptime-val">99.9%</strong></span>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Latency: <strong style="color:var(--accent-blue);" id="latency-val">42ms</strong></span>
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <div style="text-align:center;">
+              <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">AI Engine</div>
+              <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
+                <div style="width:98%;height:100%;background:var(--accent-green);border-radius:4px;animation:barPulse 3s ease-in-out infinite;"></div>
+              </div>
+              <div style="font-size:0.72rem;color:var(--accent-green);font-weight:600;margin-top:4px;">OPERATIONAL</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div style="text-align:center;">
+              <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">Database</div>
+              <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
+                <div style="width:95%;height:100%;background:var(--accent-green);border-radius:4px;"></div>
+              </div>
+              <div style="font-size:0.72rem;color:var(--accent-green);font-weight:600;margin-top:4px;">HEALTHY</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div style="text-align:center;">
+              <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">WebSocket</div>
+              <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
+                <div style="width:100%;height:100%;background:var(--accent-green);border-radius:4px;"></div>
+              </div>
+              <div style="font-size:0.72rem;color:var(--accent-green);font-weight:600;margin-top:4px;">CONNECTED</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div style="text-align:center;">
+              <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">GPS Service</div>
+              <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
+                <div style="width:92%;height:100%;background:var(--accent-blue);border-radius:4px;"></div>
+              </div>
+              <div style="font-size:0.72rem;color:var(--accent-blue);font-weight:600;margin-top:4px;">ACTIVE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Analytics Charts -->
   <div id="analytics-section" class="mb-4">
     <h5 class="section-header mb-3"><i class="bi bi-bar-chart-fill me-2" style="color:var(--red-primary);"></i>Analytics</h5>
     <div class="row g-4">
       <div class="col-md-6 animate-in">
         <div class="glass-card chart-card p-4">
-          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Alerts Per Day (14 days)</p>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Alerts Per Day</p>
+            <span style="font-size:0.65rem;color:var(--text-muted);background:rgba(255,255,255,0.03);padding:2px 8px;border-radius:50px;">14 DAYS</span>
+          </div>
           <div class="chart-wrapper"><canvas id="chart-alerts-day"></canvas></div>
         </div>
       </div>
       <div class="col-md-6 animate-in">
         <div class="glass-card chart-card p-4">
-          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Peak Alert Hours</p>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Peak Alert Hours</p>
+            <span style="font-size:0.65rem;color:var(--accent-amber);background:rgba(246,173,85,0.08);padding:2px 8px;border-radius:50px;">24H PATTERN</span>
+          </div>
           <div class="chart-wrapper"><canvas id="chart-peak-hours"></canvas></div>
         </div>
       </div>
       <div class="col-md-6 animate-in">
         <div class="glass-card chart-card p-4">
-          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Risk Level Distribution</p>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Risk Distribution</p>
+            <span style="font-size:0.65rem;color:var(--text-muted);background:rgba(255,255,255,0.03);padding:2px 8px;border-radius:50px;">ALL USERS</span>
+          </div>
           <div class="chart-wrapper"><canvas id="chart-risk-dist"></canvas></div>
         </div>
       </div>
       <div class="col-md-6 animate-in">
         <div class="glass-card chart-card p-4">
-          <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Alert Status Breakdown</p>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Alert Status</p>
+            <span style="font-size:0.65rem;color:var(--text-muted);background:rgba(255,255,255,0.03);padding:2px 8px;border-radius:50px;">BREAKDOWN</span>
+          </div>
           <div class="chart-wrapper"><canvas id="chart-alert-status"></canvas></div>
         </div>
       </div>

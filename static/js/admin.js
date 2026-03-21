@@ -111,93 +111,144 @@ async function loadAnalytics() {
     const gridColor = 'rgba(255,255,255,0.05)';
     const tickColor = '#6b7280';
 
-    // 1. Alerts per day
+    // 1. Alerts per day — gradient bar chart
     const daysData = resp.alerts_per_day || [];
-    new Chart(document.getElementById('chart-alerts-day'), {
+    const alertsCtx = document.getElementById('chart-alerts-day').getContext('2d');
+    const alertGrad = alertsCtx.createLinearGradient(0, 0, 0, 200);
+    alertGrad.addColorStop(0, 'rgba(220,38,38,0.8)');
+    alertGrad.addColorStop(1, 'rgba(220,38,38,0.15)');
+    new Chart(alertsCtx, {
       type: 'bar',
       data: {
         labels: daysData.map(d => d.date),
         datasets: [{
           label: 'Alerts', data: daysData.map(d => d.count),
-          backgroundColor: 'rgba(220,38,38,0.6)',
-          borderColor: '#dc2626', borderWidth: 1, borderRadius: 4,
+          backgroundColor: alertGrad,
+          borderColor: '#dc2626', borderWidth: 1, borderRadius: 6,
+          hoverBackgroundColor: 'rgba(220,38,38,0.9)',
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        animation: { duration: 1200, easing: 'easeOutQuart' },
+        plugins: { legend: { display: false },
+          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#dc2626', borderWidth: 1,
+            titleFont: { family: 'Rajdhani', weight: '700' }, padding: 12, cornerRadius: 8 }
+        },
         scales: {
-          x: { grid: { color: gridColor }, ticks: { color: tickColor, maxRotation: 30 } },
-          y: { grid: { color: gridColor }, ticks: { color: tickColor } }
+          x: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor, maxRotation: 30 } },
+          y: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor } }
         }
       }
     });
 
-    // 2. Peak hours
+    // 2. Peak hours — area chart with gradient
     const hours = Array.from({length:24},(_,i)=>i);
     const hoursMap = Object.fromEntries((resp.peak_hours||[]).map(h=>[h.hour, h.count]));
-    new Chart(document.getElementById('chart-peak-hours'), {
+    const peakCtx = document.getElementById('chart-peak-hours').getContext('2d');
+    const peakGrad = peakCtx.createLinearGradient(0, 0, 0, 200);
+    peakGrad.addColorStop(0, 'rgba(246,173,85,0.3)');
+    peakGrad.addColorStop(1, 'rgba(246,173,85,0.02)');
+    new Chart(peakCtx, {
       type: 'line',
       data: {
         labels: hours.map(h => `${h}:00`),
         datasets: [{
           label: 'Alerts', data: hours.map(h => hoursMap[h]||0),
-          borderColor: '#f6ad55', backgroundColor: 'rgba(246,173,85,0.12)',
-          fill: true, tension: 0.4, pointRadius: 3, pointHoverRadius: 5,
-          pointBackgroundColor: '#f6ad55',
+          borderColor: '#f6ad55', backgroundColor: peakGrad,
+          fill: true, tension: 0.4, pointRadius: 2, pointHoverRadius: 6,
+          pointBackgroundColor: '#f6ad55', pointBorderColor: '#0a0a0f',
+          pointBorderWidth: 2, borderWidth: 2.5,
+          pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#f6ad55',
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        animation: { duration: 1500, easing: 'easeOutQuart' },
+        plugins: { legend: { display: false },
+          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#f6ad55', borderWidth: 1,
+            titleFont: { family: 'Rajdhani', weight: '700' }, padding: 12, cornerRadius: 8 }
+        },
         scales: {
-          x: { grid: { color: gridColor }, ticks: { color: tickColor, maxTicksLimit: 8 } },
-          y: { grid: { color: gridColor }, ticks: { color: tickColor } }
-        }
+          x: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor, maxTicksLimit: 8 } },
+          y: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor } }
+        },
+        interaction: { intersect: false, mode: 'index' },
       }
     });
 
-    // 3. Risk distribution (doughnut)
+    // 3. Risk distribution — enhanced doughnut with center text
     const riskData = resp.risk_dist || [];
     const riskMap = Object.fromEntries(riskData.map(r=>[r.risk_level, r.count]));
-    new Chart(document.getElementById('chart-risk-dist'), {
+    const totalRisk = (riskMap.low||0) + (riskMap.medium||0) + (riskMap.high||0);
+    const riskCanvas = document.getElementById('chart-risk-dist');
+    new Chart(riskCanvas, {
       type: 'doughnut',
       data: {
-        labels: ['Low','Medium','High'],
+        labels: ['Low Risk','Medium Risk','High Risk'],
         datasets: [{
           data: [riskMap.low||0, riskMap.medium||0, riskMap.high||0],
-          backgroundColor: ['rgba(72,187,120,0.7)','rgba(246,173,85,0.7)','rgba(220,38,38,0.7)'],
+          backgroundColor: ['rgba(72,187,120,0.8)','rgba(246,173,85,0.8)','rgba(220,38,38,0.8)'],
           borderColor: ['#48bb78','#f6ad55','#dc2626'],
-          borderWidth: 1.5, hoverOffset: 8,
+          borderWidth: 2, hoverOffset: 12,
+          hoverBorderWidth: 3,
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { padding: 16 } } },
-        cutout: '65%',
-      }
+        animation: { animateRotate: true, duration: 1200 },
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } },
+          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderWidth: 1, cornerRadius: 8, padding: 12 }
+        },
+        cutout: '70%',
+      },
+      plugins: [{
+        id: 'centerText',
+        beforeDraw: function(chart) {
+          const ctx = chart.ctx;
+          ctx.save();
+          const cx = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
+          const cy = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = '800 1.6rem Rajdhani, sans-serif';
+          ctx.fillStyle = '#f7fafc';
+          ctx.fillText(totalRisk, cx, cy - 8);
+          ctx.font = '500 0.65rem Inter, sans-serif';
+          ctx.fillStyle = '#4a5568';
+          ctx.fillText('USERS', cx, cy + 12);
+          ctx.restore();
+        }
+      }]
     });
 
-    // 4. Alert status breakdown
+    // 4. Alert status — horizontal bar with gradient
     const statusData = resp.alert_status || [];
     const statusMap = Object.fromEntries(statusData.map(s=>[s.status, s.count]));
-    new Chart(document.getElementById('chart-alert-status'), {
+    const statusCtx = document.getElementById('chart-alert-status').getContext('2d');
+    new Chart(statusCtx, {
       type: 'bar',
       data: {
         labels: ['Active','Resolved','False Alarm'],
         datasets: [{
           data: [statusMap.active||0, statusMap.resolved||0, statusMap.false_alarm||0],
-          backgroundColor: ['rgba(220,38,38,0.7)','rgba(72,187,120,0.7)','rgba(160,174,192,0.4)'],
+          backgroundColor: ['rgba(220,38,38,0.8)','rgba(72,187,120,0.8)','rgba(160,174,192,0.5)'],
           borderColor: ['#dc2626','#48bb78','#a0aec0'],
-          borderWidth: 1, borderRadius: 4,
+          borderWidth: 1.5, borderRadius: 6,
+          hoverBackgroundColor: ['rgba(220,38,38,1)','rgba(72,187,120,1)','rgba(160,174,192,0.7)'],
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        animation: { duration: 1000, easing: 'easeOutQuart' },
+        plugins: { legend: { display: false },
+          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderWidth: 1, cornerRadius: 8, padding: 12 }
+        },
         scales: {
-          x: { grid: { color: gridColor }, ticks: { color: tickColor } },
-          y: { grid: { color: gridColor }, ticks: { color: tickColor } }
+          x: { grid: { color: gridColor, drawBorder: false }, ticks: { color: tickColor } },
+          y: { grid: { display: false }, ticks: { color: '#f7fafc', font: { weight: '600', size: 12 } } }
         }
       }
     });

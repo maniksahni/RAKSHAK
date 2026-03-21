@@ -114,6 +114,19 @@
   content:'';flex:1;height:1px;
   background:linear-gradient(90deg,transparent,var(--border-glass),transparent);
 }
+@keyframes lockPulse {
+  0%,100%{opacity:0.5;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.15)}
+}
+/* input shake on error */
+@keyframes inputShake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(4px)}
+}
+.input-error { animation:inputShake .4s ease-in-out; border-color:var(--red-primary) !important; }
 </style>
 {% endblock %}
 
@@ -128,7 +141,7 @@
         <i class="bi bi-shield-lock-fill" style="color:var(--red-primary);"></i>
       </div>
       <div class="auth-logo">RAKSHAK</div>
-      <p style="color:var(--text-muted);font-size:0.88rem;margin-top:6px;letter-spacing:0.05em;">Sign in to your safety dashboard</p>
+      <p id="auth-typewriter" style="color:var(--text-muted);font-size:0.88rem;margin-top:6px;letter-spacing:0.05em;min-height:1.3em;"></p>
     </div>
 
     <div class="glass-card p-4 p-md-5" style="border-radius:var(--radius-xl);">
@@ -167,11 +180,54 @@
       </p>
     </div>
 
-    <p class="text-center mt-3" style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.08em;">SECURED WITH AES-256 ENCRYPTION</p>
+    <div class="text-center mt-3 d-flex align-items-center justify-content:center gap-2" style="justify-content:center;">
+      <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+        <i class="bi bi-lock-fill" style="color:rgba(72,187,120,0.6);font-size:0.7rem;animation:lockPulse 3s ease-in-out infinite;"></i>
+        <span style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.08em;">SECURED WITH AES-256 ENCRYPTION</span>
+        <span style="width:4px;height:4px;border-radius:50%;background:var(--accent-green);animation:statusBlink 2s infinite;"></span>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
+/* typewriter effect */
+(function(){
+  const el = document.getElementById('auth-typewriter');
+  if (!el) return;
+  const phrases = [
+    'Sign in to your safety dashboard',
+    'AI-powered protection at your fingertips',
+    'Real-time emergency response system',
+    'Protecting women across the globe'
+  ];
+  let phraseIdx = 0, charIdx = 0, deleting = false;
+  function type() {
+    const phrase = phrases[phraseIdx];
+    if (!deleting) {
+      el.textContent = phrase.substring(0, charIdx+1);
+      charIdx++;
+      if (charIdx === phrase.length) {
+        setTimeout(() => { deleting = true; type(); }, 2500);
+        return;
+      }
+      setTimeout(type, 45);
+    } else {
+      el.textContent = phrase.substring(0, charIdx);
+      charIdx--;
+      if (charIdx < 0) {
+        deleting = false;
+        phraseIdx = (phraseIdx+1) % phrases.length;
+        charIdx = 0;
+        setTimeout(type, 400);
+        return;
+      }
+      setTimeout(type, 25);
+    }
+  }
+  type();
+})();
+
 /* floating particles */
 (function(){
   const c = document.getElementById('auth-particles');
@@ -211,6 +267,11 @@ document.getElementById('login-form').addEventListener('submit', async function(
     } else {
       const errs = data.errors || [data.error || 'Login failed'];
       errs.forEach(e => showToast(e, 'error'));
+      // Shake inputs on error
+      document.querySelectorAll('.form-control-dark').forEach(inp => {
+        inp.classList.add('input-error');
+        setTimeout(() => inp.classList.remove('input-error'), 500);
+      });
       btn.disabled = false;
       btn.innerHTML = 'Sign In <i class="bi bi-arrow-right-circle ms-1"></i>';
     }
