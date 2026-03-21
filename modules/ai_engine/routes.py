@@ -4,6 +4,8 @@ from flask_login import login_required, current_user
 from models import query_db, log_audit
 from socket_events import emit_risk_update, emit_sos_alert
 from healer import validate_coords
+import os
+import google.generativeai as genai
 from datetime import datetime, timedelta
 
 log = logging.getLogger('rakshak')
@@ -213,3 +215,58 @@ def get_all_risk_scores():
         return jsonify(success=True, users=result)
     except Exception as e:
         return jsonify(success=False, error=str(e)), 500
+
+# ── PARK AI Guardian Chat API ──────────────────────────────────────────────────
+@ai_bp.route('/guardian')
+@login_required
+def guardian_interface():
+    """Serves the PARK AI Guardian frontend interface."""
+    from flask import render_template
+    # Pass whether API is config'd so frontend can adjust accordingly
+    api_ready = bool(os.getenv('GEMINI_API_KEY'))
+    return render_template('ai/guardian.html', api_ready=api_ready)
+
+@ai_bp.route('/guardian/chat', methods=['POST'])
+@login_required
+def guardian_chat():
+    """Processes an incoming chat message using the Gemini Generative AI API."""
+    data = request.get_json() or {}
+    user_msg = data.get('message', '').strip()
+    
+    if not user_msg:
+        return jsonify(success=False, error="Message cannot be empty."), 400
+
+    api_key = os.getenv('GEMINI_API_KEY')
+    if not api_key:
+        fallback = (
+            "[SYSTEM WARNING: AI CORE DISCONNECTED]\n\n"
+            "The PARK AI Guardian cannot process your logic. "
+            "Please paste your absolute **Google Gemini API Key** into the environment variables (`GEMINI_API_KEY`) "
+            "to bring the Intelligence matrix online."
+        )
+        return jsonify(success=True, response=fallback)
+
+    try:
+        # Initialize Gemini API
+        genai.configure(api_key=api_key)
+        
+        # Build context for the AI
+        system_prompt = (
+            f"You are the PARK AI Guardian, an elite tactical safety assistant built for the RAKSHAK Command Center. "
+            f"You are currently talking to {current_user.full_name} ({current_user.email}), whose active risk level is {current_user.risk_level.upper()}. "
+            f"Keep your responses hyper-concise, heavily stylized in a cyberpunk military/intelligence tone, and extremely helpful for personal safety, crisis management, or situational awareness. "
+            f"Never break character. Provide maximum output."
+        )
+
+        # We inject the prompt directly using a context string, as gemini-1.5-flash allows standard generation.
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        full_prompt = f"System Directives: {system_prompt}\n\nUser Threat Input: {user_msg}\n\nGuardian AI Response:"
+        
+        # Generate the content
+        chat_response = model.generate_content(full_prompt)
+        
+        return jsonify(success=True, response=chat_response.text)
+
+    except Exception as e:
+        log.error(f'Gemini API Error: {str(e)}')
+        return jsonify(success=False, error=f"AI CORE FAILURE: {str(e)}"), 500
