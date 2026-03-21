@@ -33,14 +33,30 @@
 }
 .view-toggle-btn:hover:not(.active) { color:var(--text-primary); }
 
-/* ── TABLE VIEW ── */
+/* ── CYBER TABLE VIEW ── */
 .alert-table-row {
-  border-bottom:1px solid var(--border-glass);
-  transition:background .2s, transform .2s;
+  border-bottom: 1px solid var(--border-glass);
+  background: rgba(10, 10, 14, 0.4);
+  transition: background .2s, transform .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
 }
+.alert-table-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: var(--red-primary); transition: width 0.3s cubic-bezier(.22,1,.36,1);
+  opacity: 0.8; z-index: 0; pointer-events: none;
+}
+.alert-table-row:hover::before { width: 4px; }
 .alert-table-row:hover {
-  background:var(--bg-card-hover) !important;
-  transform:translateX(2px);
+  background: var(--bg-card-hover) !important;
+  transform: translateX(4px);
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.1);
+}
+.cyber-hash {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.65rem; color: var(--accent-blue); opacity: 0.7;
+  letter-spacing: 0.05em; display: inline-block;
+  margin-top: 4px;
 }
 
 /* search input */
@@ -70,12 +86,18 @@
 
 /* ── TIMELINE VIEW ── */
 .timeline-wrap {
-  position:relative;padding-left:40px;
+  position:relative;padding-left:45px;
 }
 .timeline-wrap::before {
-  content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;
-  background:linear-gradient(180deg, var(--red-primary) 0%, rgba(220,38,38,0.1) 100%);
-  border-radius:2px;
+  content:'';position:absolute;left:21px;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg, var(--red-primary) 0%, rgba(220,38,38,0.2) 100%);
+  border-radius:3px;
+  box-shadow: 0 0 15px rgba(220,38,38,0.5);
+  animation: conduitPulse 2s infinite;
+}
+@keyframes conduitPulse {
+  0%, 100% {opacity: 0.7;}
+  50% {opacity: 1; box-shadow: 0 0 25px rgba(220,38,38,0.8);}
 }
 .timeline-item {
   position:relative;margin-bottom:24px;opacity:0;
@@ -201,12 +223,13 @@
 <div class="container-fluid py-4">
 
   <!-- Page Header -->
-  <div class="history-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+  <div class="history-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3" style="position:relative; z-index:1;">
+    <div style="position:absolute; right:-10%; top:-50%; font-family:var(--font-display); font-size:6rem; font-weight:900; color:rgba(255,255,255,0.015); pointer-events:none;">SYS.AUDIT</div>
     <div>
-      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;">
-        <i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History
+      <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin:0;letter-spacing:1px;text-transform:uppercase;">
+        <i class="bi bi-hdd-network-fill me-2" style="color:var(--red-primary);"></i>Forensic Ledger
       </h2>
-      <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Complete record of all your safety alerts</p>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin:0;font-family:monospace;">Encrypted databank of all registered tactical events</p>
     </div>
     <div class="d-flex align-items-center gap-3">
       <!-- View Toggle -->
@@ -292,7 +315,10 @@
         <tbody>
           {% for a in alerts %}
           <tr class="alert-table-row" id="alert-row-{{ a.id }}" data-status="{{ a.status }}" data-type="{{ a.trigger_type }}">
-            <td class="td-cell" style="color:var(--text-muted);font-weight:600;">{{ a.id }}</td>
+            <td class="td-cell" style="color:var(--text-muted);font-weight:600;position:relative;z-index:1;">
+              <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--text-primary);">{{ "%04d"|format(a.id) }}</div>
+              <div class="cyber-hash cyber-hash-gen" data-id="{{ a.id }}"></div>
+            </td>
             <td class="td-cell">
               <span class="pill pill-{{ a.status }}">
                 {% if a.status == 'active' %}<i class="bi bi-exclamation-circle-fill" style="font-size:0.55rem;"></i> {% endif %}
@@ -486,6 +512,17 @@ function filterAlerts(q) {
 }
 </script>
 <script>
+/* Generate fake Cyber Hashes for each row */
+(function(){
+  document.querySelectorAll('.cyber-hash-gen').forEach(el => {
+    const id = el.dataset.id;
+    // generate random looking hex string based on id
+    const salt = Math.floor(Math.random() * 999999).toString(16);
+    const hash = '0x' + btoa('AUDIT' + id + salt).substring(0, 12).toUpperCase();
+    el.textContent = hash;
+  });
+})();
+
 /* 3D tilt tracking for history stat cards */
 (function(){
   const cards = document.querySelectorAll('.tilt-card');
