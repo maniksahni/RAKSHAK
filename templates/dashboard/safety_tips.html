@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+{% block title %}Safety Tips — RAKSHAK{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+
+  <!-- ── Page Header ──────────────────────────────────────────────────────── -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+      <h2 style="font-family:var(--font-display,Inter,sans-serif);font-weight:800;color:#fff;margin:0;">
+        <i class="bi bi-shield-check" style="color:#dc2626;"></i> Safety Tips
+      </h2>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0.25rem 0 0;">Knowledge is your strongest shield. Stay prepared.</p>
+    </div>
+    <!-- Search -->
+    <div style="position:relative;min-width:260px;">
+      <i class="bi bi-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);font-size:0.85rem;"></i>
+      <input type="text" id="tip-search" placeholder="Search tips..."
+        style="width:100%;padding:10px 14px 10px 38px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:#fff;font-size:0.85rem;outline:none;transition:border-color 0.3s;"
+        onfocus="this.style.borderColor='rgba(220,38,38,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+    </div>
+  </div>
+
+  <!-- ── Tip of the Day ───────────────────────────────────────────────────── -->
+  <div class="tip-of-day-card mb-4" id="tip-of-day">
+    <div class="d-flex align-items-start gap-3">
+      <div class="totd-icon">{{ tip_of_day.icon }}</div>
+      <div style="flex:1;">
+        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+          <span class="totd-badge">Tip of the Day</span>
+          <span class="totd-category">{{ tip_of_day.category }}</span>
+        </div>
+        <h4 class="totd-title">{{ tip_of_day.title }}</h4>
+        <p class="totd-content">{{ tip_of_day.content }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Category Filter Tabs ─────────────────────────────────────────────── -->
+  <div class="category-tabs mb-4" id="category-tabs">
+    <button class="cat-tab active" data-category="all" onclick="filterCategory('all', this)">
+      <i class="bi bi-grid-3x3-gap-fill"></i> All
+    </button>
+    {% for cat in categories %}
+    <button class="cat-tab" data-category="{{ cat }}" onclick="filterCategory('{{ cat }}', this)">
+      {{ cat }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- ── Tip Cards Grid ───────────────────────────────────────────────────── -->
+  <div class="tips-grid" id="tips-grid">
+    {% for tip in tips %}
+    <div class="tip-card" data-category="{{ tip.category }}" data-priority="{{ tip.priority }}"
+         data-searchable="{{ tip.title|lower }} {{ tip.content|lower }} {{ tip.category|lower }}">
+
+      <div class="tip-card-header" onclick="toggleTip(this)">
+        <div class="d-flex align-items-center gap-3" style="flex:1;min-width:0;">
+          <span class="tip-icon">{{ tip.icon }}</span>
+          <div style="flex:1;min-width:0;">
+            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+              <span class="tip-priority priority-{{ tip.priority }}">
+                {% if tip.priority == 1 %}Critical{% elif tip.priority == 2 %}Important{% else %}General{% endif %}
+              </span>
+              <span class="tip-cat-label">{{ tip.category }}</span>
+            </div>
+            <h5 class="tip-title">{{ tip.title }}</h5>
+          </div>
+        </div>
+        <i class="bi bi-chevron-down tip-chevron"></i>
+      </div>
+
+      <div class="tip-card-body">
+        <p>{{ tip.content }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ── Empty State ──────────────────────────────────────────────────────── -->
+  <div id="no-results" style="display:none;text-align:center;padding:3rem 1rem;">
+    <div style="font-size:3rem;margin-bottom:1rem;opacity:0.3;">🔍</div>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.95rem;">No tips match your search.</p>
+  </div>
+
+</div>
+
+<style>
+/* ── Tip of the Day Card ──────────────────────────────────────────────────── */
+.tip-of-day-card {
+  background: linear-gradient(135deg, rgba(220,38,38,0.12) 0%, rgba(245,158,11,0.06) 100%);
+  border: 1px solid rgba(220,38,38,0.25);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+.tip-of-day-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,38,38,0.08), transparent 70%);
+  pointer-events: none;
+}
+.totd-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(220,38,38,0.12);
+  border-radius: 14px;
+  border: 1px solid rgba(220,38,38,0.2);
+}
+.totd-badge {
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.totd-category {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.75rem;
+}
+.totd-title {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin: 0.25rem 0 0.5rem;
+}
+.totd-content {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Category Tabs ────────────────────────────────────────────────────────── */
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(220,38,38,0.3) transparent;
+}
+.category-tabs::-webkit-scrollbar { height: 4px; }
+.category-tabs::-webkit-scrollbar-track { background: transparent; }
+.category-tabs::-webkit-scrollbar-thumb { background: rgba(220,38,38,0.3); border-radius: 4px; }
+
+.cat-tab {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.cat-tab:hover {
+  background: rgba(220,38,38,0.08);
+  border-color: rgba(220,38,38,0.2);
+  color: rgba(255,255,255,0.8);
+}
+.cat-tab.active {
+  background: rgba(220,38,38,0.15);
+  border-color: rgba(220,38,38,0.4);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(220,38,38,0.15);
+}
+
+/* ── Tips Grid ────────────────────────────────────────────────────────────── */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}
+@media (max-width: 480px) {
+  .tips-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Tip Card ─────────────────────────────────────────────────────────────── */
+.tip-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.tip-card:hover {
+  border-color: rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.tip-card.expanded {
+  border-color: rgba(220,38,38,0.3);
+  box-shadow: 0 8px 32px rgba(220,38,38,0.1);
+}
+
+.tip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  gap: 12px;
+}
+.tip-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+}
+.tip-title {
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.3;
+}
+.tip-chevron {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+.tip-card.expanded .tip-chevron {
+  transform: rotate(180deg);
+  color: #dc2626;
+}
+
+.tip-priority {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.priority-1 {
+  background: rgba(220,38,38,0.15);
+  color: #dc2626;
+  border: 1px solid rgba(220,38,38,0.3);
+}
+.priority-2 {
+  background: rgba(245,158,11,0.12);
+  color: #f59e0b;
+  border: 1px solid rgba(245,158,11,0.25);
+}
+.priority-3 {
+  background: rgba(34,197,94,0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.2);
+}
+
+.tip-cat-label {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.35);
+}
+
+/* ── Tip Body (collapsible) ───────────────────────────────────────────────── */
+.tip-card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+  padding: 0 1.25rem;
+}
+.tip-card.expanded .tip-card-body {
+  max-height: 300px;
+  padding: 0 1.25rem 1.25rem;
+}
+.tip-card-body p {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  margin: 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 1rem;
+}
+
+/* ── Hide filtered cards ──────────────────────────────────────────────────── */
+.tip-card.hidden {
+  display: none;
+}
+</style>
+
+<script>
+/* ── Toggle tip expand/collapse ───────────────────────────────────────────── */
+function toggleTip(header) {
+  const card = header.closest('.tip-card');
+  card.classList.toggle('expanded');
+}
+
+/* ── Category filter ──────────────────────────────────────────────────────── */
+function filterCategory(category, btn) {
+  // Update active tab
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  const cards = document.querySelectorAll('.tip-card');
+  let visible = 0;
+
+  cards.forEach(card => {
+    const matchCat = (category === 'all' || card.dataset.category === category);
+    const searchVal = document.getElementById('tip-search').value.toLowerCase().trim();
+    const matchSearch = !searchVal || card.dataset.searchable.includes(searchVal);
+
+    if (matchCat && matchSearch) {
+      card.classList.remove('hidden');
+      visible++;
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+}
+
+/* ── Search filter ────────────────────────────────────────────────────────── */
+document.getElementById('tip-search').addEventListener('input', function() {
+  const activeTab = document.querySelector('.cat-tab.active');
+  const activeCat = activeTab ? activeTab.dataset.category : 'all';
+  filterCategory(activeCat, activeTab || document.querySelector('.cat-tab'));
+});
+</script>
+{% endblock %}

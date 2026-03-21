@@ -1,0 +1,564 @@
+{% extends "base.html" %}
+{% block title %}Fake Call — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+.fc-container { max-width: 560px; margin: 0 auto; }
+
+.fc-card {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.fc-card h5 {
+  font-family: var(--font-display, 'Inter', sans-serif);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  color: #fff;
+}
+
+.fc-label {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* caller presets */
+.fc-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.fc-preset {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 18px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fc-preset:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+.fc-preset.active {
+  border-color: rgba(220,38,38,0.5);
+  background: rgba(220,38,38,0.1);
+  color: #fff;
+}
+
+/* custom name input */
+.fc-input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.fc-input:focus {
+  outline: none;
+  border-color: rgba(220,38,38,0.5);
+  background: rgba(255,255,255,0.06);
+}
+.fc-input::placeholder { color: rgba(255,255,255,0.25); }
+
+/* timer presets */
+.fc-timers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.fc-timer-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 16px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-timer-btn:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+.fc-timer-btn.active {
+  border-color: rgba(220,38,38,0.5);
+  background: rgba(220,38,38,0.1);
+  color: #fff;
+}
+
+/* schedule button */
+.fc-btn-schedule {
+  border: none;
+  border-radius: 12px;
+  padding: 14px 32px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(220,38,38,0.3);
+  transition: all 0.2s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.fc-btn-schedule:hover { box-shadow: 0 6px 28px rgba(220,38,38,0.5); transform: translateY(-1px); }
+
+/* pending indicator */
+.fc-pending {
+  text-align: center;
+  padding: 20px;
+  animation: pendingPulse 2s ease-in-out infinite;
+}
+.fc-pending .countdown {
+  font-family: 'Courier New', monospace;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #dc2626;
+}
+.fc-pending .pending-text {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+@keyframes pendingPulse { 50% { opacity: 0.7; } }
+
+.fc-cancel-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 10px 24px;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.82rem;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+.fc-cancel-btn:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+
+/* ── INCOMING CALL OVERLAY ──────────────────────────────────────────────── */
+.fc-call-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: linear-gradient(180deg, #0f0f1a 0%, #1a0a1e 50%, #0a0a14 100%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 24px 50px;
+}
+.fc-call-overlay.visible { display: flex; }
+
+.fc-caller-section {
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.fc-caller-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  color: #fff;
+  margin-bottom: 20px;
+  box-shadow: 0 0 40px rgba(124,58,237,0.3);
+}
+.fc-caller-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.fc-caller-label {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
+}
+
+/* call action buttons */
+.fc-call-actions {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+  padding-bottom: 20px;
+}
+.fc-call-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  transition: transform 0.15s;
+}
+.fc-call-btn:hover { transform: scale(1.1); }
+.fc-call-btn.decline {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  box-shadow: 0 0 24px rgba(220,38,38,0.4);
+}
+.fc-call-btn.answer {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  box-shadow: 0 0 24px rgba(22,163,74,0.4);
+  animation: answerRing 1.5s ease-in-out infinite;
+}
+@keyframes answerRing {
+  0%,100% { box-shadow: 0 0 24px rgba(22,163,74,0.4); }
+  50% { box-shadow: 0 0 44px rgba(22,163,74,0.6); }
+}
+
+/* ── ACTIVE CALL SCREEN ─────────────────────────────────────────────────── */
+.fc-active-call {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: linear-gradient(180deg, #0a1a0a 0%, #0f1a0f 50%, #0a0f0a 100%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 24px 50px;
+}
+.fc-active-call.visible { display: flex; }
+
+.fc-call-timer {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.6);
+  margin-top: 10px;
+  letter-spacing: 0.1em;
+}
+
+.fc-end-call-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  box-shadow: 0 0 24px rgba(220,38,38,0.4);
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+.fc-end-call-btn:hover { transform: scale(1.1); }
+
+.hidden { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fc-container">
+  <div class="d-flex align-items-center mb-3">
+    <div>
+      <h4 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;">
+        <i class="bi bi-telephone-fill me-2" style="color:#dc2626;"></i>Fake Call
+      </h4>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0;">Schedule a fake incoming call to escape uncomfortable situations</p>
+    </div>
+  </div>
+
+  <!-- ── SETUP ──────────────────────────────────────────────────────────── -->
+  <div id="fc-setup">
+    <div class="fc-card">
+      <h5><i class="bi bi-person-fill me-2" style="color:#dc2626;"></i>Caller Name</h5>
+      <div class="fc-presets" id="fc-caller-presets">
+        <div class="fc-preset active" data-name="Mom"><i class="bi bi-heart-fill"></i> Mom</div>
+        <div class="fc-preset" data-name="Dad"><i class="bi bi-person"></i> Dad</div>
+        <div class="fc-preset" data-name="Boss"><i class="bi bi-briefcase"></i> Boss</div>
+        <div class="fc-preset" data-name="Friend"><i class="bi bi-people"></i> Friend</div>
+      </div>
+      <input type="text" class="fc-input" id="fc-custom-name" placeholder="Or type a custom name...">
+    </div>
+
+    <div class="fc-card">
+      <h5><i class="bi bi-clock-fill me-2" style="color:#dc2626;"></i>Timer</h5>
+      <div class="fc-timers" id="fc-timer-presets">
+        <div class="fc-timer-btn active" data-delay="30">30s</div>
+        <div class="fc-timer-btn" data-delay="60">1 min</div>
+        <div class="fc-timer-btn" data-delay="120">2 min</div>
+        <div class="fc-timer-btn" data-delay="300">5 min</div>
+      </div>
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <input type="number" class="fc-input" id="fc-custom-delay" placeholder="Custom seconds" min="5" max="600" style="max-width:180px;">
+        <span style="color:rgba(255,255,255,0.35);font-size:0.78rem;">seconds</span>
+      </div>
+
+      <button class="fc-btn-schedule" id="fc-schedule-btn">
+        <i class="bi bi-telephone-plus-fill"></i> Schedule Fake Call
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PENDING ────────────────────────────────────────────────────────── -->
+  <div id="fc-pending" class="hidden">
+    <div class="fc-card">
+      <div class="fc-pending">
+        <div class="pending-text">Incoming call from</div>
+        <div style="color:#fff;font-size:1.2rem;font-weight:700;margin:8px 0;" id="fc-pending-name">Mom</div>
+        <div class="countdown" id="fc-pending-countdown">30</div>
+        <div class="pending-text">seconds</div>
+        <button class="fc-cancel-btn" id="fc-cancel-btn"><i class="bi bi-x-lg me-1"></i> Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── INCOMING CALL OVERLAY ────────────────────────────────────────────── -->
+<div class="fc-call-overlay" id="fc-incoming-overlay">
+  <div class="fc-caller-section">
+    <div class="fc-caller-avatar" id="fc-incoming-avatar">M</div>
+    <div class="fc-caller-name" id="fc-incoming-name">Mom</div>
+    <div class="fc-caller-label">Incoming call...</div>
+  </div>
+  <div class="fc-call-actions">
+    <button class="fc-call-btn decline" id="fc-decline-btn" title="Decline">
+      <i class="bi bi-telephone-x-fill"></i>
+    </button>
+    <button class="fc-call-btn answer" id="fc-answer-btn" title="Answer">
+      <i class="bi bi-telephone-fill"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ── ACTIVE CALL SCREEN ───────────────────────────────────────────────── -->
+<div class="fc-active-call" id="fc-active-overlay">
+  <div class="fc-caller-section">
+    <div class="fc-caller-avatar" id="fc-active-avatar">M</div>
+    <div class="fc-caller-name" id="fc-active-name">Mom</div>
+    <div class="fc-call-timer" id="fc-call-timer">00:00</div>
+  </div>
+  <button class="fc-end-call-btn" id="fc-end-btn" title="End Call">
+    <i class="bi bi-telephone-x-fill"></i>
+  </button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  const csrf = document.querySelector('meta[name=csrf-token]')?.content
+    || '{{ csrf_token() }}';
+  const headers = {'Content-Type':'application/json','X-CSRFToken': csrf};
+
+  let selectedCaller = 'Mom';
+  let selectedDelay = 30;
+  let pendingTimer = null;
+  let callTimer = null;
+  let callSeconds = 0;
+  let audioCtx = null;
+  let ringOsc = null;
+  let ringGain = null;
+  let ringInterval = null;
+
+  // ── Caller Presets ────────────────────────────────────────────────────────
+  document.querySelectorAll('.fc-preset').forEach(function(el) {
+    el.addEventListener('click', function() {
+      document.querySelectorAll('.fc-preset').forEach(function(p) { p.classList.remove('active'); });
+      el.classList.add('active');
+      selectedCaller = el.dataset.name;
+      document.getElementById('fc-custom-name').value = '';
+    });
+  });
+
+  document.getElementById('fc-custom-name').addEventListener('input', function() {
+    if (this.value.trim()) {
+      document.querySelectorAll('.fc-preset').forEach(function(p) { p.classList.remove('active'); });
+      selectedCaller = this.value.trim();
+    }
+  });
+
+  // ── Timer Presets ─────────────────────────────────────────────────────────
+  document.querySelectorAll('.fc-timer-btn').forEach(function(el) {
+    el.addEventListener('click', function() {
+      document.querySelectorAll('.fc-timer-btn').forEach(function(b) { b.classList.remove('active'); });
+      el.classList.add('active');
+      selectedDelay = parseInt(el.dataset.delay);
+      document.getElementById('fc-custom-delay').value = '';
+    });
+  });
+
+  document.getElementById('fc-custom-delay').addEventListener('input', function() {
+    if (this.value) {
+      document.querySelectorAll('.fc-timer-btn').forEach(function(b) { b.classList.remove('active'); });
+      selectedDelay = Math.max(5, Math.min(600, parseInt(this.value) || 30));
+    }
+  });
+
+  // ── Schedule ──────────────────────────────────────────────────────────────
+  document.getElementById('fc-schedule-btn').addEventListener('click', function() {
+    const customDelay = document.getElementById('fc-custom-delay').value;
+    if (customDelay) selectedDelay = Math.max(5, Math.min(600, parseInt(customDelay) || 30));
+
+    fetch('/fake-call/schedule', {
+      method: 'POST', headers,
+      body: JSON.stringify({delay: selectedDelay, caller: selectedCaller})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) {
+        startPending(d.delay, d.caller);
+      }
+    });
+  });
+
+  function startPending(delay, caller) {
+    document.getElementById('fc-setup').classList.add('hidden');
+    document.getElementById('fc-pending').classList.remove('hidden');
+    document.getElementById('fc-pending-name').textContent = caller;
+
+    let remaining = delay;
+    var countdownEl = document.getElementById('fc-pending-countdown');
+    countdownEl.textContent = remaining;
+
+    pendingTimer = setInterval(function() {
+      remaining--;
+      countdownEl.textContent = remaining;
+      if (remaining <= 0) {
+        clearInterval(pendingTimer);
+        showIncomingCall(caller);
+      }
+    }, 1000);
+  }
+
+  // ── Cancel ────────────────────────────────────────────────────────────────
+  document.getElementById('fc-cancel-btn').addEventListener('click', function() {
+    if (pendingTimer) clearInterval(pendingTimer);
+    document.getElementById('fc-pending').classList.add('hidden');
+    document.getElementById('fc-setup').classList.remove('hidden');
+  });
+
+  // ── Incoming Call ─────────────────────────────────────────────────────────
+  function showIncomingCall(caller) {
+    document.getElementById('fc-pending').classList.add('hidden');
+    var overlay = document.getElementById('fc-incoming-overlay');
+    overlay.classList.add('visible');
+
+    var initial = caller.charAt(0).toUpperCase();
+    document.getElementById('fc-incoming-avatar').textContent = initial;
+    document.getElementById('fc-incoming-name').textContent = caller;
+
+    // Vibration
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 200, 100, 200, 100, 200]);
+    }
+
+    // Ringtone using Web Audio API
+    startRingtone();
+  }
+
+  function startRingtone() {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      ringGain = audioCtx.createGain();
+      ringGain.connect(audioCtx.destination);
+      ringGain.gain.value = 0;
+
+      var playRing = function() {
+        // Two-tone ring pattern
+        var osc1 = audioCtx.createOscillator();
+        osc1.type = 'sine';
+        osc1.frequency.value = 440;
+        osc1.connect(ringGain);
+
+        var osc2 = audioCtx.createOscillator();
+        osc2.type = 'sine';
+        osc2.frequency.value = 480;
+        osc2.connect(ringGain);
+
+        var now = audioCtx.currentTime;
+        ringGain.gain.setValueAtTime(0, now);
+        ringGain.gain.linearRampToValueAtTime(0.15, now + 0.05);
+        ringGain.gain.setValueAtTime(0.15, now + 0.8);
+        ringGain.gain.linearRampToValueAtTime(0, now + 0.85);
+
+        osc1.start(now);
+        osc1.stop(now + 0.85);
+        osc2.start(now);
+        osc2.stop(now + 0.85);
+      };
+
+      playRing();
+      ringInterval = setInterval(playRing, 2000);
+    } catch (e) {
+      // Web Audio not supported — silent fallback
+    }
+  }
+
+  function stopRingtone() {
+    if (ringInterval) { clearInterval(ringInterval); ringInterval = null; }
+    if (audioCtx) { audioCtx.close().catch(function(){}); audioCtx = null; }
+    if (navigator.vibrate) navigator.vibrate(0);
+  }
+
+  // ── Answer ────────────────────────────────────────────────────────────────
+  document.getElementById('fc-answer-btn').addEventListener('click', function() {
+    stopRingtone();
+    document.getElementById('fc-incoming-overlay').classList.remove('visible');
+
+    var caller = document.getElementById('fc-incoming-name').textContent;
+    var activeOverlay = document.getElementById('fc-active-overlay');
+    activeOverlay.classList.add('visible');
+    document.getElementById('fc-active-avatar').textContent = caller.charAt(0).toUpperCase();
+    document.getElementById('fc-active-name').textContent = caller;
+
+    callSeconds = 0;
+    var timerEl = document.getElementById('fc-call-timer');
+    callTimer = setInterval(function() {
+      callSeconds++;
+      var m = Math.floor(callSeconds / 60);
+      var s = callSeconds % 60;
+      timerEl.textContent =
+        String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    }, 1000);
+  });
+
+  // ── Decline ───────────────────────────────────────────────────────────────
+  document.getElementById('fc-decline-btn').addEventListener('click', function() {
+    stopRingtone();
+    document.getElementById('fc-incoming-overlay').classList.remove('visible');
+    document.getElementById('fc-setup').classList.remove('hidden');
+  });
+
+  // ── End Call ──────────────────────────────────────────────────────────────
+  document.getElementById('fc-end-btn').addEventListener('click', function() {
+    if (callTimer) clearInterval(callTimer);
+    document.getElementById('fc-active-overlay').classList.remove('visible');
+    document.getElementById('fc-setup').classList.remove('hidden');
+  });
+
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Journey Tracking — RAKSHAK</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* header */
+    .track-header {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .track-header .logo {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #dc2626, #991b1b);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .track-header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      flex: 1;
+    }
+    .track-header h1 span {
+      color: #dc2626;
+    }
+    .track-header .person-name {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* status bar */
+    .track-status-bar {
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+    .status-dot.active { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+    .status-dot.completed { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+    .status-dot.overdue { background: #dc2626; box-shadow: 0 0 8px #dc2626; }
+    .status-dot.sos_triggered { background: #dc2626; box-shadow: 0 0 12px #dc2626; animation: sosBlink 0.5s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity: 0.4; } }
+    @keyframes sosBlink { 50% { opacity: 0.2; } }
+
+    .status-label { text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+    .status-label.active { color: #22c55e; }
+    .status-label.completed { color: #3b82f6; }
+    .status-label.overdue { color: #ef4444; }
+    .status-label.sos_triggered { color: #ef4444; }
+
+    .status-info { color: rgba(255,255,255,0.4); margin-left: auto; font-size: 0.75rem; }
+
+    /* map */
+    #track-map {
+      flex: 1;
+      min-height: 400px;
+    }
+
+    /* footer info card */
+    .track-footer {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .track-footer .info-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .track-footer .info-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.4);
+    }
+    .track-footer .info-value {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .track-footer .powered-by {
+      margin-left: auto;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.3);
+    }
+    .track-footer .powered-by span { color: #dc2626; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <div class="track-header">
+    <div class="logo"><i class="bi bi-shield-check"></i></div>
+    <div>
+      <h1><span>{{ person_name }}</span> is sharing their journey with you</h1>
+      <div class="person-name">Powered by RAKSHAK Women's Safety System</div>
+    </div>
+  </div>
+
+  <div class="track-status-bar">
+    <span id="status-dot" class="status-dot {{ journey.status }}"></span>
+    <span id="status-label" class="status-label {{ journey.status }}">{{ journey.status | upper }}</span>
+    <span class="status-info" id="track-updated">Connecting...</span>
+  </div>
+
+  <div id="track-map"></div>
+
+  <div class="track-footer">
+    <div class="info-block">
+      <span class="info-label">Started</span>
+      <span class="info-value" id="track-started">{{ journey.started_at[:16] if journey.started_at else '--' }}</span>
+    </div>
+    <div class="info-block">
+      <span class="info-label">ETA</span>
+      <span class="info-value" id="track-eta">{{ journey.eta_minutes }} min</span>
+    </div>
+    <div class="info-block">
+      <span class="info-label">Status</span>
+      <span class="info-value" id="track-status-text" style="text-transform:capitalize;">{{ journey.status }}</span>
+    </div>
+    <div class="powered-by">
+      <i class="bi bi-shield-fill-check"></i> Protected by <span>RAKSHAK</span>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  (function() {
+    const token = "{{ token }}";
+    const journey = {{ journey | tojson }};
+
+    const map = L.map('track-map', {attributionControl: false}).setView(
+      [journey.current_lat || journey.start_lat, journey.current_lng || journey.start_lng], 15
+    );
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Person marker (green pulsing dot)
+    const personMarker = L.circleMarker(
+      [journey.current_lat || journey.start_lat, journey.current_lng || journey.start_lng],
+      {radius: 9, fillColor: '#22c55e', fillOpacity: 1, color: '#fff', weight: 2}
+    ).addTo(map).bindPopup(journey.status === 'completed' ? 'Journey completed' : 'Current location');
+
+    // Destination marker
+    L.marker([journey.dest_lat, journey.dest_lng], {
+      icon: L.divIcon({
+        className: '',
+        html: '<div style="width:16px;height:16px;background:#dc2626;border:2px solid #fff;border-radius:50%;box-shadow:0 0 12px rgba(220,38,38,0.6);"></div>',
+        iconSize: [16, 16], iconAnchor: [8, 8]
+      })
+    }).addTo(map).bindPopup('Destination');
+
+    // Route line
+    const routeLine = L.polyline([
+      [journey.start_lat, journey.start_lng],
+      [journey.dest_lat, journey.dest_lng]
+    ], {color: '#dc2626', weight: 2, dashArray: '8 6', opacity: 0.5}).addTo(map);
+
+    map.fitBounds(routeLine.getBounds().pad(0.3));
+
+    // Poll for updates
+    function pollUpdate() {
+      fetch('/safe-walk/share/' + token + '/data')
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (!d.success) return;
+          const j = d.journey;
+
+          // Update marker
+          if (j.current_lat && j.current_lng) {
+            personMarker.setLatLng([j.current_lat, j.current_lng]);
+          }
+
+          // Update status UI
+          const dot = document.getElementById('status-dot');
+          const label = document.getElementById('status-label');
+          const statusText = document.getElementById('track-status-text');
+          dot.className = 'status-dot ' + j.status;
+          label.className = 'status-label ' + j.status;
+          label.textContent = j.status.toUpperCase().replace('_', ' ');
+          statusText.textContent = j.status.replace('_', ' ');
+
+          document.getElementById('track-updated').textContent =
+            'Updated ' + new Date().toLocaleTimeString();
+        })
+        .catch(function() {});
+    }
+
+    // Poll every 5 seconds for active journeys
+    if (journey.status === 'active' || journey.status === 'overdue') {
+      setInterval(pollUpdate, 5000);
+    }
+
+    // Initial
+    document.getElementById('track-updated').textContent =
+      'Connected at ' + new Date().toLocaleTimeString();
+  })();
+  </script>
+</body>
+</html>
