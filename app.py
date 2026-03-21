@@ -143,34 +143,7 @@ def _app_ctx():
     return _flask_app.app_context()
 
 
-# ── Auto-seed demo users on first boot ────────────────────────────────────
-def _auto_seed(app):
-    """Ensures demo users exist. INSERT IGNORE = idempotent, safe every boot."""
-    ADMIN_HASH = '$2b$12$OJ/YZ5mnmP3GSdF8rou.iuq/7PmWIgUrQcB7uzE28GtIBZmh/f1pi'
-    USER_HASH  = '$2b$12$xIgo6mm/SnEmom75hQ.A3.4/FuIrGi9cdfNYemHRcFNgTTZPSeaQK'
-    SEC_HASH   = '$2b$12$lCTx6wgXfHGyQxgDsEyBLOkAyZ/yJQJovUfYCKA.jogKyHiFozeAe'
-    seeds = [
-        ("INSERT INTO users (full_name,email,phone,password_hash,role,"
-         "security_question,security_answer_hash) VALUES "
-         "('System Admin','admin@rakshak.com','9999999999',%s,'admin',"
-         "'What is the system name?',%s) "
-         "ON DUPLICATE KEY UPDATE password_hash=%s",
-         (ADMIN_HASH, SEC_HASH, ADMIN_HASH)),
-        ("INSERT INTO users (full_name,email,phone,password_hash,role,"
-         "security_question,security_answer_hash) VALUES "
-         "('Priya Sharma','priya@example.com','9876543210',%s,'user',"
-         "'What is your mother name?',%s) "
-         "ON DUPLICATE KEY UPDATE password_hash=%s",
-         (USER_HASH, SEC_HASH, USER_HASH)),
-    ]
-    try:
-        from models import query_db
-        with app.app_context():
-            for sql, params in seeds:
-                query_db(sql, params, commit=True)
-        log.info('Auto-seed: demo users ensured.')
-    except Exception as e:
-        log.error(f'Auto-seed failed: {e}')
+
 
 
 # ── App Factory ────────────────────────────────────────────────────────────
@@ -246,8 +219,7 @@ def create_app(config_name=None):
     from socket_events import register_socket_events
     register_socket_events(socketio)
 
-    # ── Ensure demo users exist on every cold start ───────────────────────
-    _auto_seed(app)
+
 
     # ── Global Jinja2 helpers ─────────────────────────────────────────────────
     def _fmt_dt(value, fmt='%d %b %Y %H:%M'):
