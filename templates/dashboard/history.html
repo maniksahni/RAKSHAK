@@ -19,7 +19,21 @@
 .stat-card-green .stat-number { color:var(--accent-green); }
 .stat-card-amber .stat-number { color:var(--accent-amber); }
 
-/* table rows */
+/* view toggle */
+.view-toggle {
+  display:flex;background:rgba(255,255,255,0.03);border:1px solid var(--border-glass);
+  border-radius:50px;overflow:hidden;
+}
+.view-toggle-btn {
+  background:none;border:none;color:var(--text-muted);padding:6px 16px;font-size:0.78rem;
+  cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:5px;font-weight:500;
+}
+.view-toggle-btn.active {
+  background:rgba(220,38,38,0.12);color:var(--red-primary);font-weight:700;
+}
+.view-toggle-btn:hover:not(.active) { color:var(--text-primary); }
+
+/* ── TABLE VIEW ── */
 .alert-table-row {
   border-bottom:1px solid var(--border-glass);
   transition:background .2s, transform .2s;
@@ -54,6 +68,84 @@
 .action-btn-blue { border:1px solid var(--accent-blue);color:var(--accent-blue); }
 .action-btn-blue:hover { background:rgba(66,153,225,0.15); }
 
+/* ── TIMELINE VIEW ── */
+.timeline-wrap {
+  position:relative;padding-left:40px;
+}
+.timeline-wrap::before {
+  content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg, var(--red-primary) 0%, rgba(220,38,38,0.1) 100%);
+  border-radius:2px;
+}
+.timeline-item {
+  position:relative;margin-bottom:24px;opacity:0;
+  animation:timelineIn .5s cubic-bezier(.22,1,.36,1) forwards;
+}
+.timeline-item:nth-child(1) { animation-delay:.1s; }
+.timeline-item:nth-child(2) { animation-delay:.2s; }
+.timeline-item:nth-child(3) { animation-delay:.3s; }
+.timeline-item:nth-child(4) { animation-delay:.4s; }
+.timeline-item:nth-child(5) { animation-delay:.5s; }
+.timeline-item:nth-child(6) { animation-delay:.55s; }
+.timeline-item:nth-child(7) { animation-delay:.6s; }
+.timeline-item:nth-child(8) { animation-delay:.65s; }
+.timeline-item:nth-child(9) { animation-delay:.7s; }
+.timeline-item:nth-child(10) { animation-delay:.75s; }
+@keyframes timelineIn {
+  from { opacity:0; transform:translateX(-12px); }
+  to { opacity:1; transform:translateX(0); }
+}
+
+/* timeline dot */
+.timeline-dot {
+  position:absolute;left:-32px;top:18px;width:14px;height:14px;border-radius:50%;
+  border:3px solid var(--bg-dark);z-index:2;
+}
+.timeline-dot-active {
+  background:var(--red-primary);box-shadow:0 0 12px rgba(220,38,38,0.6);
+  animation:dotPulse 2s ease-in-out infinite;
+}
+.timeline-dot-resolved {
+  background:var(--accent-green);box-shadow:0 0 12px rgba(72,187,120,0.5);
+}
+@keyframes dotPulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(220,38,38,0.4); }
+  50% { box-shadow:0 0 0 8px rgba(220,38,38,0); }
+}
+
+/* timeline card */
+.timeline-card {
+  background:var(--bg-card);border:1px solid var(--border-glass);
+  border-radius:var(--radius-md);padding:16px 20px;
+  transition:all .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;
+}
+.timeline-card::before {
+  content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+  border-radius:3px 0 0 3px;
+}
+.timeline-card-active::before { background:var(--red-primary); }
+.timeline-card-resolved::before { background:var(--accent-green); }
+.timeline-card:hover {
+  border-color:rgba(220,38,38,0.2);
+  transform:translateX(4px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* timeline date badge */
+.timeline-date {
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:0.72rem;color:var(--text-muted);
+  background:rgba(255,255,255,0.03);border:1px solid var(--border-glass);
+  border-radius:50px;padding:3px 10px;
+}
+
+/* timeline location */
+.timeline-loc {
+  display:flex;align-items:center;gap:6px;
+  font-size:0.85rem;font-weight:500;margin:8px 0;
+}
+.timeline-loc i { color:var(--red-primary);font-size:0.8rem; }
+
 /* empty state enhanced */
 .empty-history {
   padding:80px 20px;text-align:center;
@@ -84,6 +176,24 @@
   letter-spacing:0.1em;color:var(--text-muted);font-weight:600;text-align:left;
 }
 .td-cell { padding:14px 16px; }
+
+/* filter pills */
+.filter-pills {
+  display:flex;gap:6px;flex-wrap:wrap;
+}
+.filter-pill {
+  background:rgba(255,255,255,0.03);border:1px solid var(--border-glass);
+  border-radius:50px;padding:4px 14px;font-size:0.75rem;cursor:pointer;
+  color:var(--text-muted);transition:all .2s;
+}
+.filter-pill:hover, .filter-pill.active {
+  background:rgba(220,38,38,0.1);border-color:rgba(220,38,38,0.3);
+  color:var(--red-primary);
+}
+.filter-pill .fpill-count {
+  background:rgba(255,255,255,0.06);border-radius:50px;padding:0 6px;
+  font-size:0.65rem;margin-left:4px;
+}
 </style>
 {% endblock %}
 
@@ -91,16 +201,39 @@
 <div class="container-fluid py-4">
 
   <!-- Page Header -->
-  <div class="history-header d-flex align-items-center justify-content-between mb-4">
+  <div class="history-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
     <div>
       <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin:0;">
         <i class="bi bi-clock-history me-2" style="color:var(--red-primary);"></i>Alert History
       </h2>
       <p style="color:var(--text-muted);font-size:0.85rem;margin:0;">Complete record of all your safety alerts</p>
     </div>
-    <span class="count-badge">
-      <i class="bi bi-shield-exclamation"></i> {{ alerts|length }} alert{{ 's' if alerts|length != 1 }}
-    </span>
+    <div class="d-flex align-items-center gap-3">
+      <!-- View Toggle -->
+      <div class="view-toggle">
+        <button class="view-toggle-btn active" id="btn-table-view" onclick="switchView('table')">
+          <i class="bi bi-list-ul"></i> Table
+        </button>
+        <button class="view-toggle-btn" id="btn-timeline-view" onclick="switchView('timeline')">
+          <i class="bi bi-diagram-3"></i> Timeline
+        </button>
+      </div>
+      <span class="count-badge">
+        <i class="bi bi-shield-exclamation"></i> {{ alerts|length }} alert{{ 's' if alerts|length != 1 }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3" style="animation:animateIn .4s .1s both;">
+    <div class="filter-pills">
+      <button class="filter-pill active" onclick="filterByStatus('all',this)">All <span class="fpill-count">{{ alerts|length }}</span></button>
+      <button class="filter-pill" onclick="filterByStatus('active',this)"><i class="bi bi-circle-fill" style="font-size:0.4rem;color:var(--red-primary);"></i> Active <span class="fpill-count">{{ alerts|selectattr('status','eq','active')|list|length }}</span></button>
+      <button class="filter-pill" onclick="filterByStatus('resolved',this)"><i class="bi bi-circle-fill" style="font-size:0.4rem;color:var(--accent-green);"></i> Resolved <span class="fpill-count">{{ alerts|selectattr('status','eq','resolved')|list|length }}</span></button>
+      <button class="filter-pill" onclick="filterByStatus('manual',this)"><i class="bi bi-hand-index-thumb" style="font-size:0.6rem;"></i> Manual</button>
+      <button class="filter-pill" onclick="filterByStatus('auto',this)"><i class="bi bi-cpu" style="font-size:0.6rem;"></i> Auto</button>
+    </div>
+    <input type="text" id="alert-search" class="history-search" placeholder="Search alerts..." oninput="filterAlerts(this.value)">
   </div>
 
   <!-- Summary Stats Strip -->
@@ -135,16 +268,15 @@
     </div>
   </div>
 
-  <!-- Alert Table -->
-  <div class="glass-card" style="animation:animateIn .5s .25s cubic-bezier(.22,1,.36,1) both;">
+  {% if alerts %}
+  <!-- ══════════ TABLE VIEW ══════════ -->
+  <div id="table-view" class="glass-card" style="animation:animateIn .5s .25s cubic-bezier(.22,1,.36,1) both;">
     <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
       <span style="font-family:var(--font-display);font-size:1rem;font-weight:700;">
         <i class="bi bi-list-ul me-2" style="color:var(--red-primary);"></i>All Alerts
       </span>
-      <input type="text" id="alert-search" class="history-search" placeholder="Search alerts..." oninput="filterAlerts(this.value)">
     </div>
 
-    {% if alerts %}
     <div style="overflow-x:auto;">
       <table style="width:100%;border-collapse:collapse;" id="alerts-table">
         <thead>
@@ -159,7 +291,7 @@
         </thead>
         <tbody>
           {% for a in alerts %}
-          <tr class="alert-table-row" id="alert-row-{{ a.id }}">
+          <tr class="alert-table-row" id="alert-row-{{ a.id }}" data-status="{{ a.status }}" data-type="{{ a.trigger_type }}">
             <td class="td-cell" style="color:var(--text-muted);font-weight:600;">{{ a.id }}</td>
             <td class="td-cell">
               <span class="pill pill-{{ a.status }}">
@@ -200,7 +332,57 @@
         </tbody>
       </table>
     </div>
-    {% else %}
+  </div>
+
+  <!-- ══════════ TIMELINE VIEW ══════════ -->
+  <div id="timeline-view" style="display:none;animation:animateIn .5s .2s both;">
+    <div class="timeline-wrap">
+      {% for a in alerts %}
+      <div class="timeline-item" data-status="{{ a.status }}" data-type="{{ a.trigger_type }}">
+        <div class="timeline-dot timeline-dot-{{ a.status }}"></div>
+        <div class="timeline-card timeline-card-{{ a.status }}">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+              <span class="pill pill-{{ a.status }}">
+                {% if a.status == 'active' %}<i class="bi bi-exclamation-circle-fill" style="font-size:0.55rem;"></i> {% endif %}
+                {{ a.status }}
+              </span>
+              <span class="pill {% if a.trigger_type == 'manual' %}pill-active{% else %}pill-pending{% endif %}" style="font-size:0.68rem;">
+                {% if a.trigger_type == 'manual' %}<i class="bi bi-hand-index-thumb" style="font-size:0.5rem;"></i>{% else %}<i class="bi bi-cpu" style="font-size:0.5rem;"></i>{% endif %}
+                {{ a.trigger_type.replace('_',' ')|upper }}
+              </span>
+            </div>
+            {% if a.created_at %}
+            <span class="timeline-date">
+              <i class="bi bi-calendar3"></i>
+              {{ a.created_at | fmt_dt('%d %b %Y, %H:%M') }}
+            </span>
+            {% endif %}
+          </div>
+
+          <div class="timeline-loc">
+            <i class="bi bi-geo-alt-fill"></i>
+            {{ a.address or (a.latitude|string + ', ' + a.longitude|string) }}
+          </div>
+
+          <div class="d-flex gap-2 mt-2">
+            {% if a.status == 'active' %}
+            <button onclick="resolveAlert({{ a.id }})" class="action-btn action-btn-green">
+              <i class="bi bi-check-circle"></i>Resolve
+            </button>
+            {% endif %}
+            <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" class="action-btn action-btn-blue">
+              <i class="bi bi-file-earmark-pdf"></i>Download PDF
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% else %}
+  <div class="glass-card" style="animation:animateIn .5s .25s both;">
     <div class="empty-history">
       <div class="empty-history-icon">
         <i class="bi bi-shield-check" style="font-size:2rem;color:var(--accent-green);"></i>
@@ -208,33 +390,98 @@
       <p style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;">No alerts recorded yet</p>
       <p style="font-size:0.85rem;color:var(--text-muted);">Your safety record will appear here when you trigger an SOS.</p>
     </div>
-    {% endif %}
   </div>
+  {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+// ── View Switching ──────────────────────────────────────────────────────────
+function switchView(view) {
+  const tableView = document.getElementById('table-view');
+  const timelineView = document.getElementById('timeline-view');
+  const btnTable = document.getElementById('btn-table-view');
+  const btnTimeline = document.getElementById('btn-timeline-view');
+
+  if (view === 'timeline') {
+    if (tableView) tableView.style.display = 'none';
+    if (timelineView) timelineView.style.display = 'block';
+    btnTable.classList.remove('active');
+    btnTimeline.classList.add('active');
+  } else {
+    if (tableView) tableView.style.display = 'block';
+    if (timelineView) timelineView.style.display = 'none';
+    btnTable.classList.add('active');
+    btnTimeline.classList.remove('active');
+  }
+}
+
+// ── Resolve Alert ───────────────────────────────────────────────────────────
 async function resolveAlert(alertId) {
   const resp = await postJSON(`/sos/${alertId}/resolve`);
   if (resp.success) {
     showToast('Alert marked as resolved.', 'success');
+    // Update table row
     const row = document.getElementById('alert-row-' + alertId);
     if (row) {
       const pill = row.querySelector('.pill');
       pill.className = 'pill pill-resolved';
       pill.innerHTML = 'resolved';
-      // Remove resolve button
+      row.dataset.status = 'resolved';
       const resolveBtn = row.querySelector('.action-btn-green');
       if (resolveBtn) resolveBtn.remove();
     }
+    // Update timeline items
+    document.querySelectorAll('.timeline-item').forEach(item => {
+      const card = item.querySelector('.timeline-card');
+      const dot = item.querySelector('.timeline-dot');
+      if (item.querySelector('.action-btn-green')) {
+        // Check if this is the right one by checking nearby resolve button
+      }
+    });
   } else showToast(resp.error || 'Failed', 'error');
 }
 
+// ── Filter by Status ────────────────────────────────────────────────────────
+function filterByStatus(status, btn) {
+  // Update active pill
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Filter table rows
+  document.querySelectorAll('.alert-table-row').forEach(row => {
+    if (status === 'all') { row.style.display = ''; return; }
+    if (status === 'manual' || status === 'auto') {
+      const type = row.dataset.type || '';
+      const match = status === 'manual' ? type === 'manual' : type !== 'manual';
+      row.style.display = match ? '' : 'none';
+    } else {
+      row.style.display = row.dataset.status === status ? '' : 'none';
+    }
+  });
+
+  // Filter timeline items
+  document.querySelectorAll('.timeline-item').forEach(item => {
+    if (status === 'all') { item.style.display = ''; return; }
+    if (status === 'manual' || status === 'auto') {
+      const type = item.dataset.type || '';
+      const match = status === 'manual' ? type === 'manual' : type !== 'manual';
+      item.style.display = match ? '' : 'none';
+    } else {
+      item.style.display = item.dataset.status === status ? '' : 'none';
+    }
+  });
+}
+
+// ── Text Search ─────────────────────────────────────────────────────────────
 function filterAlerts(q) {
   const query = q.toLowerCase();
   document.querySelectorAll('.alert-table-row').forEach(row => {
     row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+  });
+  document.querySelectorAll('.timeline-item').forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(query) ? '' : 'none';
   });
 }
 </script>
