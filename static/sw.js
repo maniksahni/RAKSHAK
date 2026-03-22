@@ -11,7 +11,6 @@ const PRECACHE_ASSETS = [
   '/static/js/dashboard.js',
   '/static/js/admin.js',
   '/static/js/heatmap.js',
-  '/static/js/three_shield.js',
   '/static/manifest.json',
   '/offline',
 ];

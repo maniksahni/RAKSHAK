@@ -141,14 +141,4 @@ VALUES (
     '$2b$12$rgywUnAd5WUKqFjZRKSaw.ynmlcHJTlnKuv7AOozwzPlOKVp0s436'
 ) ON DUPLICATE KEY UPDATE id=id;
 
--- Demo Regular User (password: User@123)
-INSERT INTO users (full_name, email, phone, password_hash, role, security_question, security_answer_hash)
-VALUES (
-    'Priya Sharma',
-    'priya@example.com',
-    '9876543210',
-    '$2b$12$pENR5GsVTvye66GYZ5YQlO8nPuVeajZxHdvDux/oWWUoTeellPLrq',
-    'user',
-    'What is your mother name?',
-    '$2b$12$pENR5GsVTvye66GYZ5YQlO8nPuVeajZxHdvDux/oWWUoTeellPLrq'
-) ON DUPLICATE KEY UPDATE id=id;
+-- NOTE: No demo user seed — RAKSHAK uses Google-only OAuth.

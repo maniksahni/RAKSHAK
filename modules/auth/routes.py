@@ -1,123 +1,32 @@
 from flask import (Blueprint, render_template, request, redirect,
-                   url_for, flash, jsonify, session)
-from flask_login import login_user, logout_user, login_required, current_user
-from models import User, query_db, log_audit
+                   url_for, flash, jsonify)
+from flask_login import logout_user, login_required, current_user
+from models import query_db, log_audit
 from app import limiter
-import bcrypt
 import re
 
 auth_bp = Blueprint('auth', __name__)
-
-
-def validate_password(p):
-    return (len(p) >= 8 and
-            re.search(r'[A-Z]', p) and
-            re.search(r'[a-z]', p) and
-            re.search(r'\d', p) and
-            re.search(r'[!@#$%^&*]', p))
 
 
 def validate_phone(p):
     return re.match(r'^\d{10}$', p.strip())
 
 
-# ── Register ──────────────────────────────────────────────────────────────────
-@auth_bp.route('/register', methods=['GET', 'POST'])
+# ── Register (Google-only — page renders OAuth prompt) ────────────────────────
+@auth_bp.route('/register')
 @limiter.limit('10 per hour')
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
-
-    if request.method == 'POST':
-        try:
-            full_name          = request.form.get('full_name', '').strip()
-            email              = request.form.get('email', '').strip().lower()
-            phone              = request.form.get('phone', '').strip()
-            password           = request.form.get('password', '')
-            confirm_password   = request.form.get('confirm_password', '')
-            security_question  = request.form.get('security_question', '').strip()
-            security_answer    = request.form.get('security_answer', '').strip().lower()
-
-            # Validations
-            errors = []
-            if not full_name or len(full_name) < 2:
-                errors.append('Full name must be at least 2 characters.')
-            if not re.match(r'^[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}$', email):
-                errors.append('Invalid email address.')
-            if not validate_phone(phone):
-                errors.append('Phone must be 10 digits.')
-            if password != confirm_password:
-                errors.append('Passwords do not match.')
-            if not validate_password(password):
-                errors.append('Password must be 8+ chars with uppercase, lowercase, digit, special char.')
-            if not security_question or not security_answer:
-                errors.append('Security question and answer are required.')
-
-            if errors:
-                return jsonify(success=False, errors=errors), 400
-
-            # Check duplicate email
-            existing = query_db('SELECT id FROM users WHERE email=%s', (email,), one=True)
-            if existing:
-                return jsonify(success=False, errors=['Email already registered.']), 409
-
-            pw_hash  = User.hash_password(password)
-            ans_hash = User.hash_password(security_answer)
-
-            user_id = query_db(
-                """INSERT INTO users (full_name, email, phone, password_hash, role,
-                   security_question, security_answer_hash)
-                   VALUES (%s, %s, %s, %s, 'user', %s, %s)""",
-                (full_name, email, phone, pw_hash, security_question, ans_hash),
-                commit=True
-            )
-            log_audit(user_id, 'register', 'users', user_id, ip_address=request.remote_addr)
-            flash('Account created successfully! Please log in.', 'success')
-            return jsonify(success=True, redirect=url_for('auth.login'))
-
-        except Exception as e:
-            return jsonify(success=False, errors=[f'Registration failed: {str(e)}']), 500
-
     return render_template('auth/register.html')
 
 
-# ── Login ─────────────────────────────────────────────────────────────────────
-@auth_bp.route('/login', methods=['GET', 'POST'])
+# ── Login (Google-only — page renders OAuth prompt) ───────────────────────────
+@auth_bp.route('/login')
 @limiter.limit('20 per hour')
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
-
-    if request.method == 'POST':
-        try:
-            email    = request.form.get('email', '').strip().lower()
-            password = request.form.get('password', '')
-
-            if not email or not password:
-                return jsonify(success=False, errors=['Email and password are required.']), 400
-
-            data = query_db('SELECT * FROM users WHERE email=%s', (email,), one=True)
-            if not data or not User.check_password(password, data['password_hash']):
-                return jsonify(success=False, errors=['Invalid email or password.']), 401
-
-            if not data['is_active']:
-                return jsonify(success=False, errors=['Your account has been deactivated.']), 403
-
-            user = User(data)
-            login_user(user, remember=True)
-            log_audit(user.id, 'login', ip_address=request.remote_addr)
-
-            next_url = request.args.get('next')
-            if user.is_admin:
-                dest = next_url or url_for('admin.dashboard')
-            else:
-                dest = next_url or url_for('dashboard.index')
-
-            return jsonify(success=True, redirect=dest)
-
-        except Exception as e:
-            return jsonify(success=False, errors=[f'Login error: {str(e)}']), 500
-
     return render_template('auth/login.html')
 
 
@@ -153,20 +62,6 @@ def profile():
                 'UPDATE users SET full_name=%s, phone=%s, address=%s WHERE id=%s',
                 (full_name, phone, address, current_user.id), commit=True
             )
-
-            # Password change (optional)
-            new_password = request.form.get('new_password', '')
-            if new_password:
-                curr_password = request.form.get('current_password', '')
-                data = query_db('SELECT password_hash FROM users WHERE id=%s',
-                                (current_user.id,), one=True)
-                if not User.check_password(curr_password, data['password_hash']):
-                    return jsonify(success=False, errors=['Current password is incorrect.']), 400
-                if not validate_password(new_password):
-                    return jsonify(success=False, errors=['New password does not meet requirements.']), 400
-                pw_hash = User.hash_password(new_password)
-                query_db('UPDATE users SET password_hash=%s WHERE id=%s',
-                         (pw_hash, current_user.id), commit=True)
 
             log_audit(current_user.id, 'profile_update', 'users', current_user.id,
                       ip_address=request.remote_addr)

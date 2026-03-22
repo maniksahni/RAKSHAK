@@ -3,12 +3,35 @@
 
 {% block extra_css %}
 <style>
-/* Tip of the Day — enhanced */
+/* ── Staggered entrance animations ── */
+@keyframes tipFadeUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes tipSlideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes spotlightPulse {
+  0%, 100% { box-shadow: 0 0 40px rgba(220,38,38,0.15), inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 0 80px rgba(220,38,38,0.25), inset 0 1px 0 rgba(255,255,255,0.15), 0 20px 50px rgba(0,0,0,0.4); }
+}
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Tip of the Day — spotlight featured card */
 .tip-of-day-card {
   background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
   border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
   padding: 2rem; backdrop-filter: blur(24px); position: relative; overflow: hidden;
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3);
+  animation: tipFadeUp 0.6s cubic-bezier(.22,1,.36,1) both, spotlightPulse 4s ease-in-out 1s infinite;
 }
 .tip-of-day-card::before {
   content: ''; position: absolute; inset: -1px; z-index: -1;
@@ -29,6 +52,7 @@
   background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05));
   border-radius: 18px; border: 1px solid rgba(220,38,38,0.3);
   box-shadow: 0 10px 30px rgba(220,38,38,0.2);
+  animation: floatIcon 3s ease-in-out infinite;
 }
 .totd-badge {
   background: linear-gradient(90deg, #fff, rgba(255,255,255,0.4));
@@ -38,11 +62,33 @@
 .totd-category { color: rgba(255,255,255,0.5); font-size: 0.8rem; font-family:var(--int); }
 .totd-title { color: #fff; font-weight: 800; font-family:var(--sg); font-size: 1.4rem; margin: 0.5rem 0 0.8rem; letter-spacing:-0.02em; }
 .totd-content { color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.7; margin: 0; font-weight:400; font-family:var(--int); }
+/* Spotlight effect: radial glow behind tip-of-day */
+.totd-spotlight {
+  position: absolute; top: -60%; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%);
+  pointer-events: none; z-index: -1; animation: spotlightBreathe 4s ease-in-out infinite;
+}
+@keyframes spotlightBreathe {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+}
 
-/* Category Tabs */
+/* Stats bar under tip of day */
+.totd-stats {
+  display: flex; gap: 16px; margin-top: 1.2rem; flex-wrap: wrap;
+}
+.totd-stat {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.72rem; color: rgba(255,255,255,0.45); font-family: var(--int);
+}
+.totd-stat i { color: rgba(220,38,38,0.6); }
+
+/* Category Tabs — with active indicator animation */
 .category-tabs {
   display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px;
   scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent;
+  animation: tipSlideIn 0.5s 0.2s cubic-bezier(.22,1,.36,1) both;
 }
 .category-tabs::-webkit-scrollbar { height: 4px; }
 .category-tabs::-webkit-scrollbar-track { background: transparent; }
@@ -53,23 +99,48 @@
   font-size: 0.85rem; font-family:var(--sg); font-weight: 600; cursor: pointer; white-space: nowrap;
   transition: all 0.3s ease; backdrop-filter: blur(10px); position: relative; overflow: hidden;
 }
+.cat-tab::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
+  background: var(--red-primary, #dc2626); transition: all 0.3s ease; transform: translateX(-50%);
+}
+.cat-tab.active::after { width: 60%; }
 .cat-tab:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.2); transform:translateY(-2px); }
 .cat-tab.active {
   background: rgba(220,38,38,0.15); border-color: rgba(220,38,38,0.3); color: #fff;
   box-shadow: 0 0 20px rgba(220,38,38,0.2);
 }
+/* Category count badge */
+.cat-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; border-radius: 10px; padding: 0 6px;
+  background: rgba(255,255,255,0.08); font-size: 0.65rem; font-weight: 700;
+  margin-left: 6px; color: rgba(255,255,255,0.5);
+}
+.cat-tab.active .cat-count { background: rgba(220,38,38,0.3); color: #fff; }
 
 /* Tips Grid */
 .tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
 @media (max-width: 480px) { .tips-grid { grid-template-columns: 1fr; } }
 
-/* Tip Card */
+/* Tip Card — with staggered entrance animation */
 .tip-card {
   background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 20px; overflow: hidden; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   backdrop-filter: blur(24px); position: relative;
+  opacity: 0; animation: tipFadeUp 0.5s cubic-bezier(.22,1,.36,1) both;
 }
+.tip-card:nth-child(1)  { animation-delay: 0.1s; }
+.tip-card:nth-child(2)  { animation-delay: 0.15s; }
+.tip-card:nth-child(3)  { animation-delay: 0.2s; }
+.tip-card:nth-child(4)  { animation-delay: 0.25s; }
+.tip-card:nth-child(5)  { animation-delay: 0.3s; }
+.tip-card:nth-child(6)  { animation-delay: 0.35s; }
+.tip-card:nth-child(7)  { animation-delay: 0.4s; }
+.tip-card:nth-child(8)  { animation-delay: 0.45s; }
+.tip-card:nth-child(9)  { animation-delay: 0.5s; }
+.tip-card:nth-child(10) { animation-delay: 0.55s; }
+.tip-card:nth-child(n+11) { animation-delay: 0.6s; }
 .tip-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, transparent, rgba(220,38,38,0.8), transparent); transform: scaleX(0);
@@ -79,6 +150,12 @@
 .tip-card:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
 .tip-card.expanded { border-color: rgba(220,38,38,0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
 .tip-card.expanded::before { transform: scaleX(1); }
+/* Colored left accent bar per category */
+.tip-card[data-category="Personal Safety"] { border-left: 3px solid rgba(220,38,38,0.4); }
+.tip-card[data-category="Travel Safety"]   { border-left: 3px solid rgba(66,153,225,0.4); }
+.tip-card[data-category="Digital Safety"]   { border-left: 3px solid rgba(159,122,234,0.4); }
+.tip-card[data-category="Home Safety"]      { border-left: 3px solid rgba(72,187,120,0.4); }
+.tip-card[data-category="Workplace Safety"] { border-left: 3px solid rgba(245,158,11,0.4); }
 .tip-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; cursor: pointer; gap: 14px; }
 .tip-icon { font-size: 1.4rem; flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 12px; transition: all .3s; border:1px solid rgba(255,255,255,0.05); }
 .tip-card:hover .tip-icon { box-shadow: 0 0 20px rgba(220,38,38,0.15); background:rgba(220,38,38,0.1); border-color:var(--red-primary); color:var(--red-primary); transform:scale(1.05) rotate(-5deg); }
@@ -94,7 +171,14 @@
 .tip-card.expanded .tip-card-body { max-height: 400px; padding: 0 1.5rem 1.5rem; }
 .tip-card-body p { color: rgba(255,255,255,0.65); font-size: 0.95rem; line-height: 1.7; margin: 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem; font-family:var(--int); font-weight:400; }
 .tip-card.hidden { display: none; }
-.tip-card.hidden { display: none; }
+
+/* Result count indicator */
+.tips-result-count {
+  font-size: 0.78rem; color: rgba(255,255,255,0.35); font-family: 'Courier New', monospace;
+  letter-spacing: 0.05em; margin-bottom: 12px;
+  animation: tipSlideIn 0.4s 0.3s cubic-bezier(.22,1,.36,1) both;
+}
+.tips-result-count span { color: var(--red-primary, #dc2626); font-weight: 700; }
 </style>
 {% endblock %}
 
@@ -129,17 +213,23 @@
     </div>
   </div>
 
-  <!-- ── Tip of the Day ── -->
+  <!-- ── Tip of the Day with Spotlight ── -->
   <div class="tip-of-day-card mb-4" id="tip-of-day">
+    <div class="totd-spotlight"></div>
     <div class="d-flex align-items-start gap-3">
       <div class="totd-icon">{{ tip_of_day.icon }}</div>
       <div style="flex:1;">
         <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-          <span class="totd-badge">Tip of the Day</span>
+          <span class="totd-badge"><i class="bi bi-star-fill" style="font-size:0.6rem;margin-right:4px;"></i> Tip of the Day</span>
           <span class="totd-category">{{ tip_of_day.category }}</span>
         </div>
         <h4 class="totd-title">{{ tip_of_day.title }}</h4>
         <p class="totd-content">{{ tip_of_day.content }}</p>
+        <div class="totd-stats">
+          <span class="totd-stat"><i class="bi bi-clock"></i> Updated daily</span>
+          <span class="totd-stat"><i class="bi bi-shield-check"></i> Verified protocol</span>
+          <span class="totd-stat"><i class="bi bi-bookmark-fill"></i> Priority intel</span>
+        </div>
       </div>
     </div>
   </div>
@@ -155,6 +245,9 @@
     </button>
     {% endfor %}
   </div>
+
+  <!-- ── Result Count ── -->
+  <div class="tips-result-count" id="tips-result-count"></div>
 
   <!-- ── Tip Cards Grid ── -->
   <div class="tips-grid" id="tips-grid">
@@ -194,6 +287,10 @@
 <script>
 function toggleTip(header) {
   const card = header.closest('.tip-card');
+  /* Close other expanded cards for cleaner UX */
+  document.querySelectorAll('.tip-card.expanded').forEach(c => {
+    if (c !== card) c.classList.remove('expanded');
+  });
   card.classList.toggle('expanded');
 }
 
@@ -202,20 +299,59 @@ function filterCategory(category, btn) {
   btn.classList.add('active');
   const cards = document.querySelectorAll('.tip-card');
   let visible = 0;
-  cards.forEach(card => {
+  let total = cards.length;
+  cards.forEach((card, i) => {
     const matchCat = (category === 'all' || card.dataset.category === category);
     const searchVal = document.getElementById('tip-search').value.toLowerCase().trim();
     const matchSearch = !searchVal || card.dataset.searchable.includes(searchVal);
-    if (matchCat && matchSearch) { card.classList.remove('hidden'); visible++; }
-    else { card.classList.add('hidden'); }
+    if (matchCat && matchSearch) {
+      card.classList.remove('hidden');
+      /* Re-trigger staggered animation */
+      card.style.animation = 'none';
+      card.offsetHeight; /* force reflow */
+      card.style.animation = 'tipFadeUp 0.4s ' + (visible * 0.04) + 's cubic-bezier(.22,1,.36,1) both';
+      visible++;
+    } else {
+      card.classList.add('hidden');
+    }
   });
   document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+  /* Update result count */
+  const countEl = document.getElementById('tips-result-count');
+  if (countEl) {
+    if (category === 'all' && !document.getElementById('tip-search').value.trim()) {
+      countEl.innerHTML = 'SHOWING <span>' + visible + '</span> / ' + total + ' PROTOCOLS';
+    } else {
+      countEl.innerHTML = 'FILTERED: <span>' + visible + '</span> RESULT' + (visible !== 1 ? 'S' : '') + ' / ' + total + ' TOTAL';
+    }
+  }
 }
 
 document.getElementById('tip-search').addEventListener('input', function() {
   const activeTab = document.querySelector('.cat-tab.active');
   const activeCat = activeTab ? activeTab.dataset.category : 'all';
   filterCategory(activeCat, activeTab || document.querySelector('.cat-tab'));
+});
+
+/* Initialize category counts and result count on load */
+document.addEventListener('DOMContentLoaded', function() {
+  const allCards = document.querySelectorAll('.tip-card');
+  const countEl = document.getElementById('tips-result-count');
+  if (countEl) countEl.innerHTML = 'SHOWING <span>' + allCards.length + '</span> / ' + allCards.length + ' PROTOCOLS';
+
+  /* Add counts to category tabs */
+  document.querySelectorAll('.cat-tab').forEach(tab => {
+    const cat = tab.dataset.category;
+    let count = 0;
+    if (cat === 'all') { count = allCards.length; }
+    else { allCards.forEach(c => { if (c.dataset.category === cat) count++; }); }
+    if (!tab.querySelector('.cat-count')) {
+      const badge = document.createElement('span');
+      badge.className = 'cat-count';
+      badge.textContent = count;
+      tab.appendChild(badge);
+    }
+  });
 });
 </script>
 {% endblock %}
