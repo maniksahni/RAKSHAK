@@ -40,8 +40,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/maniksahni/RAKSHAK?style=social&label=5000%2B%20Stars" alt="GitHub Stars"/>
-  <img src="https://img.shields.io/npm/dm/rakshak?style=social&label=1M%2B%20Downloads/month" alt="NPM Downloads"/>
+  <img src="https://img.shields.io/github/stars/maniksahni/RAKSHAK?style=social" alt="GitHub Stars"/>
+  <img src="https://img.shields.io/github/forks/maniksahni/RAKSHAK?style=social" alt="Forks"/>
+  <img src="https://img.shields.io/github/last-commit/maniksahni/RAKSHAK?style=flat-square&color=red" alt="Last Commit"/>
 </p>
 
 <p align="center">
@@ -66,12 +67,8 @@ Whether walking alone at night or navigating unfamiliar areas, RAKSHAK acts as a
     <td><a href="https://rakshak.up.railway.app">https://rakshak.up.railway.app</a></td>
   </tr>
   <tr>
-    <td align="center"><strong>👑 Admin Login</strong></td>
-    <td><code>manik@rakshak.com</code> / <code>Manik@123</code></td>
-  </tr>
-  <tr>
-    <td align="center"><strong>👤 User Login</strong></td>
-    <td><code>keshav@rakshak.com</code> / <code>Keshav@123</code></td>
+    <td align="center"><strong>🔐 Authentication</strong></td>
+    <td><strong>Google Sign-In only</strong> — click "Sign in with Google" to access the platform</td>
   </tr>
 </table>
 
