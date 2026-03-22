@@ -1204,6 +1204,28 @@
     </div>
   </div>
 
+  <!-- ══ Live Threat Intelligence Feed ══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 animate-in">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;border-left:3px solid var(--red-primary);">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,0.5),transparent);animation:secScan 3s linear infinite;"></div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-rss-fill" style="color:var(--red-primary);font-size:1.1rem;animation:blink 1.5s infinite;"></i>
+            <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">LIVE THREAT INTELLIGENCE FEED</h6>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--red-primary);animation:blink 1s infinite;box-shadow:0 0 8px var(--red-primary);"></div>
+            <span style="font-size:0.68rem;color:var(--red-primary);font-weight:700;letter-spacing:0.1em;">REAL-TIME</span>
+          </div>
+        </div>
+        <div id="threat-feed" style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;">
+          <!-- JS populated -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ Emergency Quick Dial Grid ══ -->
   <div class="row g-4 mb-4">
     <div class="col-12 animate-in">
@@ -1890,4 +1912,49 @@ if (typeof sendPing === 'function') {
 <style>
 @keyframes fadeSlideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
 </style>
+
+<script>
+/* ── Live Threat Intelligence Feed Simulator ── */
+(function(){
+  const feed = document.getElementById('threat-feed');
+  if (!feed) return;
+  const events = [
+    { sev:'HIGH',   color:'#dc2626', bg:'rgba(220,38,38,0.08)',   border:'rgba(220,38,38,0.2)',   icon:'bi-exclamation-octagon-fill', text:'Unverified assailant reported \u00b7 Connaught Place, Delhi' },
+    { sev:'MED',    color:'#f59e0b', bg:'rgba(245,158,11,0.07)',  border:'rgba(245,158,11,0.2)',  icon:'bi-eye-fill',                  text:'Suspicious activity logged \u00b7 Linking Road, Mumbai' },
+    { sev:'HIGH',   color:'#dc2626', bg:'rgba(220,38,38,0.08)',   border:'rgba(220,38,38,0.2)',   icon:'bi-shield-exclamation',        text:'SOS override triggered \u00b7 HSR Layout, Bangalore' },
+    { sev:'LOW',    color:'#48bb78', bg:'rgba(72,187,120,0.06)',  border:'rgba(72,187,120,0.15)', icon:'bi-check-circle-fill',         text:'Threat resolved \u00b7 Koregaon Park, Pune' },
+    { sev:'MED',    color:'#f59e0b', bg:'rgba(245,158,11,0.07)',  border:'rgba(245,158,11,0.2)',  icon:'bi-geo-alt-fill',              text:'Geofence breach detected \u00b7 Banjara Hills, Hyderabad' },
+    { sev:'CRIT',   color:'#ff3b3b', bg:'rgba(255,59,59,0.1)',    border:'rgba(255,59,59,0.3)',   icon:'bi-broadcast',                 text:'Cluster incident \u2014 3 SOS simultaneous \u00b7 Sector 18, Noida' },
+    { sev:'LOW',    color:'#48bb78', bg:'rgba(72,187,120,0.06)',  border:'rgba(72,187,120,0.15)', icon:'bi-person-check-fill',         text:'Safe Walk completed \u00b7 Indiranagar, Bangalore' },
+    { sev:'MED',    color:'#f59e0b', bg:'rgba(245,158,11,0.07)',  border:'rgba(245,158,11,0.2)',  icon:'bi-camera-video-fill',         text:'CCTV blackout zone entered \u00b7 CP Road, Kolkata' },
+    { sev:'HIGH',   color:'#dc2626', bg:'rgba(220,38,38,0.08)',   border:'rgba(220,38,38,0.2)',   icon:'bi-telephone-x-fill',          text:'Missed 3 check-ins \u00b7 Salt Lake, Kolkata' },
+    { sev:'INFO',   color:'#3b82f6', bg:'rgba(59,130,246,0.06)',  border:'rgba(59,130,246,0.15)', icon:'bi-info-circle-fill',          text:'New danger zone verified \u00b7 Sarojini Nagar Market, Delhi' },
+  ];
+  function pushEvent(evt) {
+    const now = new Date();
+    const ts = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 14px;background:' + evt.bg + ';border:1px solid ' + evt.border + ';border-radius:10px;animation:fadeSlideIn .3s ease-out;flex-shrink:0;';
+    row.innerHTML = '<i class="bi ' + evt.icon + '" style="color:' + evt.color + ';font-size:1rem;flex-shrink:0;"></i>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:0.82rem;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + evt.text + '</div>' +
+        '<div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-top:2px;font-family:\'Courier New\',monospace;">' + ts + ' \u00b7 AUTO-FLAGGED</div>' +
+      '</div>' +
+      '<span style="font-size:0.6rem;font-weight:800;padding:3px 8px;border-radius:6px;background:' + evt.color + '22;color:' + evt.color + ';border:1px solid ' + evt.color + '44;letter-spacing:0.08em;flex-shrink:0;">' + evt.sev + '</span>';
+    feed.prepend(row);
+    while (feed.children.length > 12) feed.lastChild.remove();
+  }
+  // Seed 3 events immediately
+  [events[5], events[0], events[2]].forEach(function(e, i){ setTimeout(function(){ pushEvent(e); }, i * 450); });
+  // Then drip randomly
+  function scheduleNext() {
+    var delay = 5000 + Math.random() * 7000;
+    setTimeout(function(){
+      pushEvent(events[Math.floor(Math.random() * events.length)]);
+      scheduleNext();
+    }, delay);
+  }
+  scheduleNext();
+})();
+</script>
 {% endblock %}
