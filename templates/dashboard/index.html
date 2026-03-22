@@ -115,6 +115,154 @@
   42% { transform:scale(1.05); }
   56% { transform:scale(1); }
 }
+
+/* ═══ Safety Checklist Widget ═══ */
+.safety-checklist-card {
+  position:relative;overflow:hidden;
+  border-left:3px solid var(--accent-purple);
+  background:linear-gradient(135deg, rgba(20,20,30,0.85), rgba(10,10,20,0.95));
+}
+.safety-checklist-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(159,122,234,0.3),transparent);
+}
+.checklist-item {
+  display:flex;align-items:center;gap:10px;padding:8px 12px;
+  border-radius:8px;background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.04);
+  transition:all .25s ease;margin-bottom:6px;cursor:default;
+}
+.checklist-item:hover {
+  border-color:rgba(159,122,234,0.2);background:rgba(159,122,234,0.04);
+  transform:translateX(3px);
+}
+.checklist-item input[type="checkbox"] {
+  appearance:none;-webkit-appearance:none;
+  width:18px;height:18px;border-radius:4px;flex-shrink:0;
+  border:2px solid rgba(255,255,255,0.15);background:transparent;
+  cursor:pointer;position:relative;transition:all .2s;
+}
+.checklist-item input[type="checkbox"]:checked {
+  background:var(--accent-green);border-color:var(--accent-green);
+}
+.checklist-item input[type="checkbox"]:checked::after {
+  content:'✓';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);color:#000;font-size:11px;font-weight:800;
+}
+.checklist-label { font-size:0.82rem;color:var(--text-secondary); }
+.checklist-label.checked { color:var(--accent-green);text-decoration:line-through;text-decoration-color:rgba(72,187,120,0.4); }
+.progress-ring-wrap {
+  width:80px;height:80px;position:relative;flex-shrink:0;
+}
+.progress-ring-text {
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:1.1rem;font-weight:800;color:var(--accent-purple);
+  font-family:var(--font-display);
+}
+
+/* ═══ Nearby Safe Places ═══ */
+.safe-places-card {
+  position:relative;overflow:hidden;
+  border-left:3px solid var(--accent-blue);
+  background:linear-gradient(135deg, rgba(20,20,30,0.85), rgba(10,10,20,0.95));
+}
+.safe-places-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(66,153,225,0.3),transparent);
+}
+.safe-place-item {
+  display:flex;align-items:center;gap:12px;padding:10px 12px;
+  border-radius:8px;border:1px solid rgba(255,255,255,0.04);
+  background:rgba(255,255,255,0.02);margin-bottom:6px;
+  transition:all .25s ease;
+}
+.safe-place-item:hover {
+  border-color:rgba(66,153,225,0.2);background:rgba(66,153,225,0.04);
+  transform:translateX(3px);
+}
+.safe-place-icon {
+  width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.safe-place-name { font-size:0.82rem;font-weight:600;color:var(--text-primary); }
+.safe-place-dist { font-size:0.68rem;color:var(--text-muted);font-family:'Courier New',monospace; }
+.safe-places-loading {
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:30px;color:var(--text-muted);font-size:0.8rem;
+}
+.safe-places-loading .spinner-dot {
+  width:6px;height:6px;border-radius:50%;background:var(--accent-blue);
+  animation:blink 1.2s infinite;
+}
+.safe-places-loading .spinner-dot:nth-child(2) { animation-delay:0.2s; }
+.safe-places-loading .spinner-dot:nth-child(3) { animation-delay:0.4s; }
+
+/* ═══ Emergency Quick Dial ═══ */
+.quick-dial-btn {
+  display:flex;align-items:center;gap:12px;
+  padding:16px;border-radius:var(--radius-lg);
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  text-decoration:none;transition:all .3s ease;
+  position:relative;overflow:hidden;
+}
+.quick-dial-btn::before {
+  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+  border-radius:3px 0 0 3px;
+}
+.quick-dial-btn:hover {
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.2);
+}
+.quick-dial-btn.dial-police { border-color:rgba(66,153,225,0.15); }
+.quick-dial-btn.dial-police::before { background:#4299e1; }
+.quick-dial-btn.dial-police:hover { border-color:rgba(66,153,225,0.3);background:rgba(66,153,225,0.06); }
+.quick-dial-btn.dial-ambulance { border-color:rgba(72,187,120,0.15); }
+.quick-dial-btn.dial-ambulance::before { background:#48bb78; }
+.quick-dial-btn.dial-ambulance:hover { border-color:rgba(72,187,120,0.3);background:rgba(72,187,120,0.06); }
+.quick-dial-btn.dial-women { border-color:rgba(220,38,38,0.15); }
+.quick-dial-btn.dial-women::before { background:#dc2626; }
+.quick-dial-btn.dial-women:hover { border-color:rgba(220,38,38,0.3);background:rgba(220,38,38,0.06); }
+.quick-dial-btn.dial-fire { border-color:rgba(246,173,85,0.15); }
+.quick-dial-btn.dial-fire::before { background:#f6ad55; }
+.quick-dial-btn.dial-fire:hover { border-color:rgba(246,173,85,0.3);background:rgba(246,173,85,0.06); }
+.quick-dial-icon {
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:1.2rem;
+}
+.quick-dial-name { font-size:0.85rem;font-weight:700;color:var(--text-primary); }
+.quick-dial-number { font-size:0.72rem;color:var(--text-muted);font-family:'Courier New',monospace;letter-spacing:0.1em; }
+
+/* ═══ Weekly Safety Summary ═══ */
+.weekly-summary-card {
+  position:relative;overflow:hidden;
+  border-left:3px solid var(--accent-amber);
+  background:linear-gradient(135deg, rgba(20,20,30,0.85), rgba(10,10,20,0.95));
+}
+.weekly-summary-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(246,173,85,0.3),transparent);
+}
+.summary-stat {
+  text-align:center;padding:14px 8px;border-radius:10px;
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);
+  transition:all .25s;
+}
+.summary-stat:hover {
+  border-color:rgba(246,173,85,0.15);background:rgba(246,173,85,0.03);
+  transform:translateY(-2px);
+}
+.summary-stat-value {
+  font-size:1.5rem;font-weight:800;font-family:var(--font-display);
+  line-height:1;margin-bottom:4px;
+}
+.summary-stat-label {
+  font-size:0.65rem;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;
+}
+.trend-up { color:var(--accent-green); }
+.trend-down { color:var(--red-primary); }
+.trend-neutral { color:var(--accent-amber); }
 </style>
 {% endblock %}
 
@@ -163,6 +311,9 @@
           <div class="sonar-ring"></div>
           <div class="sonar-ring"></div>
           <div class="sonar-ring"></div>
+          <!-- Rotating dots ring -->
+          <div class="sos-rotating-dots"></div>
+          <div class="sos-rotating-dots-inner"></div>
           <!-- Hold-progress SVG ring -->
           <svg class="sos-hold-ring" viewBox="0 0 200 200" style="position:absolute;width:200px;height:200px;z-index:11;pointer-events:none;transform:rotate(-90deg);">
             <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(220,38,38,0.15)" stroke-width="4"/>
@@ -563,6 +714,210 @@
       </div>
     </div>
   </div>
+
+  <!-- ══ Safety Checklist Widget ══ -->
+  <div class="row g-4 mt-2 mb-4">
+    <div class="col-lg-6 animate-in">
+      <div class="glass-card safety-checklist-card p-4" style="border-radius:var(--radius-lg);">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-clipboard2-check-fill" style="color:var(--accent-purple);font-size:1.1rem;"></i>
+            <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">SAFETY CHECKLIST</h6>
+          </div>
+          <div class="progress-ring-wrap">
+            <svg viewBox="0 0 80 80" width="80" height="80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="5"/>
+              <circle id="checklist-ring" cx="40" cy="40" r="34" fill="none" stroke="var(--accent-purple)" stroke-width="5"
+                stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .6s cubic-bezier(.22,1,.36,1);filter:drop-shadow(0 0 4px rgba(159,122,234,0.5));"/>
+            </svg>
+            <span class="progress-ring-text" id="checklist-pct">0%</span>
+          </div>
+        </div>
+        <div id="safety-checklist">
+          <div class="checklist-item">
+            <input type="checkbox" id="chk-location" disabled>
+            <label class="checklist-label" for="chk-location">Share location with trusted contact</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk-emergency" disabled>
+            <label class="checklist-label" for="chk-emergency">Emergency numbers saved</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk-shake" disabled>
+            <label class="checklist-label" for="chk-shake">Shake-to-SOS enabled</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk-battery" disabled>
+            <label class="checklist-label" for="chk-battery">Battery above 20%</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk-gps" disabled>
+            <label class="checklist-label" for="chk-gps">GPS enabled</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ Weekly Safety Summary ══ -->
+    <div class="col-lg-6 animate-in">
+      <div class="glass-card weekly-summary-card p-4 h-100" style="border-radius:var(--radius-lg);">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-graph-up-arrow" style="color:var(--accent-amber);font-size:1.1rem;"></i>
+          <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">WEEKLY SAFETY SUMMARY</h6>
+        </div>
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="summary-stat">
+              <div class="summary-stat-value" style="color:var(--red-primary);" id="weekly-alerts">0</div>
+              <div class="summary-stat-label">Alerts This Week</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="summary-stat">
+              <div class="summary-stat-value" id="avg-risk" style="color:var(--accent-amber);">LOW</div>
+              <div class="summary-stat-label">Avg Risk Level</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="summary-stat">
+              <div class="summary-stat-value" style="color:var(--accent-green);" id="days-since-sos">--</div>
+              <div class="summary-stat-label">Days Since Last SOS</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="summary-stat">
+              <div class="summary-stat-value" id="safety-trend">
+                <span id="trend-arrow" class="trend-up"><i class="bi bi-arrow-up-right"></i></span>
+              </div>
+              <div class="summary-stat-label">Safety Trend</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(246,173,85,0.04);border:1px solid rgba(246,173,85,0.1);border-radius:8px;">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-info-circle" style="color:var(--accent-amber);font-size:0.8rem;"></i>
+            <span style="font-size:0.72rem;color:var(--text-muted);" id="weekly-summary-text">Analyzing your safety data...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Nearby Safe Places ══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 animate-in">
+      <div class="glass-card safe-places-card p-4" style="border-radius:var(--radius-lg);">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-hospital-fill" style="color:var(--accent-blue);font-size:1.1rem;"></i>
+            <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">NEARBY SAFE PLACES</h6>
+          </div>
+          <button onclick="fetchNearbyPlaces()" class="btn-glass" style="font-size:0.72rem;padding:4px 12px;">
+            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+          </button>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-shield-fill" style="color:#4299e1;font-size:0.8rem;"></i>
+              <span style="font-size:0.72rem;font-weight:700;color:#4299e1;letter-spacing:0.1em;">POLICE STATIONS</span>
+            </div>
+            <div id="places-police">
+              <div class="safe-places-loading">
+                <span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
+                <span>Scanning...</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-heart-pulse-fill" style="color:#48bb78;font-size:0.8rem;"></i>
+              <span style="font-size:0.72rem;font-weight:700;color:#48bb78;letter-spacing:0.1em;">HOSPITALS</span>
+            </div>
+            <div id="places-hospital">
+              <div class="safe-places-loading">
+                <span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
+                <span>Scanning...</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-fire" style="color:#f6ad55;font-size:0.8rem;"></i>
+              <span style="font-size:0.72rem;font-weight:700;color:#f6ad55;letter-spacing:0.1em;">FIRE STATIONS</span>
+            </div>
+            <div id="places-fire">
+              <div class="safe-places-loading">
+                <span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
+                <span>Scanning...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Emergency Quick Dial Grid ══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 animate-in">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,0.3),transparent);"></div>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-telephone-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
+          <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">EMERGENCY QUICK DIAL</h6>
+        </div>
+        <div class="row g-3">
+          <div class="col-6">
+            <a href="tel:100" class="quick-dial-btn dial-police">
+              <div class="quick-dial-icon" style="background:rgba(66,153,225,0.12);border:1px solid rgba(66,153,225,0.2);">
+                <i class="bi bi-shield-fill" style="color:#4299e1;"></i>
+              </div>
+              <div>
+                <div class="quick-dial-name">Police</div>
+                <div class="quick-dial-number">100</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="tel:102" class="quick-dial-btn dial-ambulance">
+              <div class="quick-dial-icon" style="background:rgba(72,187,120,0.12);border:1px solid rgba(72,187,120,0.2);">
+                <i class="bi bi-heart-pulse-fill" style="color:#48bb78;"></i>
+              </div>
+              <div>
+                <div class="quick-dial-name">Ambulance</div>
+                <div class="quick-dial-number">102</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="tel:1091" class="quick-dial-btn dial-women">
+              <div class="quick-dial-icon" style="background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.2);">
+                <i class="bi bi-gender-female" style="color:#dc2626;"></i>
+              </div>
+              <div>
+                <div class="quick-dial-name">Women Helpline</div>
+                <div class="quick-dial-number">1091</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="tel:101" class="quick-dial-btn dial-fire">
+              <div class="quick-dial-icon" style="background:rgba(246,173,85,0.12);border:1px solid rgba(246,173,85,0.2);">
+                <i class="bi bi-fire" style="color:#f6ad55;"></i>
+              </div>
+              <div>
+                <div class="quick-dial-name">Fire Brigade</div>
+                <div class="quick-dial-number">101</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Proximity Warning Banner -->
@@ -801,6 +1156,240 @@ function addActivity(type, text, color) {
   // Keep max 8 items
   while (timeline.children.length > 8) timeline.lastChild.remove();
 }
+
+/* ══ Safety Checklist — auto-detect states ══ */
+(function(){
+  const checks = {
+    'chk-location': false,
+    'chk-emergency': true,   // we have emergency page, so consider saved
+    'chk-shake': false,
+    'chk-battery': false,
+    'chk-gps': false
+  };
+
+  // Check trusted contacts exist (location sharing proxy)
+  const contactCount = {{ trusted_contacts|length }};
+  if (contactCount > 0) checks['chk-location'] = true;
+
+  // Shake-to-SOS: check if DeviceMotion is available
+  if (window.DeviceMotionEvent) checks['chk-shake'] = true;
+
+  // Battery check
+  if (navigator.getBattery) {
+    navigator.getBattery().then(bat => {
+      if (bat.level > 0.2) {
+        checks['chk-battery'] = true;
+        applyChecks();
+      }
+    });
+  }
+
+  // GPS check
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      () => { checks['chk-gps'] = true; applyChecks(); },
+      () => { checks['chk-gps'] = false; applyChecks(); },
+      { timeout: 5000 }
+    );
+  }
+
+  function applyChecks() {
+    let total = 0, checked = 0;
+    Object.keys(checks).forEach(id => {
+      total++;
+      const el = document.getElementById(id);
+      const label = el ? el.nextElementSibling : null;
+      if (checks[id]) {
+        checked++;
+        if (el) el.checked = true;
+        if (label) label.classList.add('checked');
+      } else {
+        if (el) el.checked = false;
+        if (label) label.classList.remove('checked');
+      }
+    });
+    const pct = Math.round((checked / total) * 100);
+    const ring = document.getElementById('checklist-ring');
+    const pctEl = document.getElementById('checklist-pct');
+    if (ring) {
+      const circumference = 2 * Math.PI * 34; // r=34
+      ring.style.strokeDashoffset = circumference - (circumference * pct / 100);
+    }
+    if (pctEl) pctEl.textContent = pct + '%';
+  }
+
+  // Initial apply after a short delay for async checks
+  setTimeout(applyChecks, 500);
+  setTimeout(applyChecks, 3000); // re-apply after GPS/battery resolve
+})();
+
+/* ══ Nearby Safe Places — Overpass API ══ */
+function fetchNearbyPlaces() {
+  const lat = window.currentLat;
+  const lng = window.currentLng;
+  if (!lat || !lng) {
+    // Try getting location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        window.currentLat = pos.coords.latitude;
+        window.currentLng = pos.coords.longitude;
+        fetchNearbyPlaces();
+      }, () => {
+        ['places-police','places-hospital','places-fire'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.78rem;"><i class="bi bi-geo-alt-fill me-1" style="color:var(--red-primary);"></i>GPS required</div>';
+        });
+      });
+    }
+    return;
+  }
+
+  const radius = 3000; // 3km
+  const queries = {
+    police: `[out:json][timeout:10];node["amenity"="police"](around:${radius},${lat},${lng});out body 5;`,
+    hospital: `[out:json][timeout:10];node["amenity"="hospital"](around:${radius},${lat},${lng});out body 5;`,
+    fire: `[out:json][timeout:10];node["amenity"="fire_station"](around:${radius},${lat},${lng});out body 5;`
+  };
+
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function renderPlaces(containerId, data, icon, color) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    if (!data.elements || data.elements.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.78rem;">None found within 3km</div>';
+      return;
+    }
+    const sorted = data.elements
+      .map(el => ({ name: el.tags.name || 'Unnamed', lat: el.lat, lon: el.lon, dist: haversine(lat, lng, el.lat, el.lon) }))
+      .sort((a,b) => a.dist - b.dist)
+      .slice(0, 3);
+
+    container.innerHTML = sorted.map(p => {
+      const distStr = p.dist < 1000 ? Math.round(p.dist) + 'm' : (p.dist/1000).toFixed(1) + 'km';
+      return `<div class="safe-place-item">
+        <div class="safe-place-icon" style="background:rgba(${color},0.1);border:1px solid rgba(${color},0.2);">
+          <i class="bi ${icon}" style="color:rgb(${color});font-size:0.9rem;"></i>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div class="safe-place-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+          <div class="safe-place-dist">${distStr} away</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const overpassUrl = 'https://overpass-api.de/api/interpreter';
+
+  Object.entries(queries).forEach(([type, query]) => {
+    const containerId = 'places-' + type;
+    const el = document.getElementById(containerId);
+    if (el) el.innerHTML = '<div class="safe-places-loading"><span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span><span>Scanning...</span></div>';
+
+    fetch(overpassUrl, { method: 'POST', body: 'data=' + encodeURIComponent(query), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+      .then(r => r.json())
+      .then(data => {
+        const iconMap = { police: 'bi-shield-fill', hospital: 'bi-heart-pulse-fill', fire: 'bi-fire' };
+        const colorMap = { police: '66,153,225', hospital: '72,187,120', fire: '246,173,85' };
+        renderPlaces(containerId, data, iconMap[type], colorMap[type]);
+      })
+      .catch(() => {
+        const el = document.getElementById(containerId);
+        if (el) el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.78rem;"><i class="bi bi-exclamation-circle me-1"></i>Unable to fetch</div>';
+      });
+  });
+}
+
+// Auto-fetch nearby places when GPS is available
+(function(){
+  function tryFetch() {
+    if (window.currentLat && window.currentLng) {
+      fetchNearbyPlaces();
+    } else {
+      setTimeout(tryFetch, 2000);
+    }
+  }
+  setTimeout(tryFetch, 1500);
+})();
+
+/* ══ Weekly Safety Summary ══ */
+(function(){
+  const alerts = USER_ALERTS || [];
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  // Alerts this week
+  const weekAlerts = alerts.filter(a => new Date(a.created_at) >= weekAgo);
+  const weekCount = weekAlerts.length;
+  const weekEl = document.getElementById('weekly-alerts');
+  if (weekEl) weekEl.textContent = weekCount;
+
+  // Average risk — map risk levels to numbers
+  const riskMap = { low: 1, medium: 2, high: 3, critical: 4 };
+  const riskLabels = ['LOW', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+  const riskColors = ['var(--accent-green)', 'var(--accent-green)', 'var(--accent-amber)', 'var(--red-primary)', 'var(--red-primary)'];
+  let avgRiskNum = weekCount > 0 ? 0 : 0;
+  // Use current user risk level as baseline
+  const currentRisk = '{{ current_user.risk_level }}'.toLowerCase();
+  avgRiskNum = riskMap[currentRisk] || 1;
+  const avgEl = document.getElementById('avg-risk');
+  if (avgEl) {
+    avgEl.textContent = riskLabels[avgRiskNum];
+    avgEl.style.color = riskColors[avgRiskNum];
+  }
+
+  // Days since last SOS
+  const sosAlerts = alerts.filter(a => a.trigger_type === 'sos' || a.trigger_type === 'manual_sos');
+  const sosEl = document.getElementById('days-since-sos');
+  if (sosEl) {
+    if (sosAlerts.length > 0) {
+      const lastSOS = new Date(sosAlerts[0].created_at);
+      const daysSince = Math.floor((now - lastSOS) / (24*60*60*1000));
+      sosEl.textContent = daysSince;
+    } else {
+      sosEl.textContent = '∞';
+      sosEl.style.fontSize = '1.8rem';
+    }
+  }
+
+  // Safety trend
+  const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+  const prevWeekAlerts = alerts.filter(a => {
+    const d = new Date(a.created_at);
+    return d >= twoWeeksAgo && d < weekAgo;
+  });
+  const trendEl = document.getElementById('trend-arrow');
+  if (trendEl) {
+    if (weekCount < prevWeekAlerts.length) {
+      trendEl.className = 'trend-up';
+      trendEl.innerHTML = '<i class="bi bi-arrow-up-right"></i> Improving';
+    } else if (weekCount > prevWeekAlerts.length) {
+      trendEl.className = 'trend-down';
+      trendEl.innerHTML = '<i class="bi bi-arrow-down-right"></i> Declining';
+    } else {
+      trendEl.className = 'trend-neutral';
+      trendEl.innerHTML = '<i class="bi bi-dash-lg"></i> Stable';
+    }
+  }
+
+  // Summary text
+  const summaryEl = document.getElementById('weekly-summary-text');
+  if (summaryEl) {
+    if (weekCount === 0) {
+      summaryEl.textContent = 'No alerts this week — you are doing great! Stay vigilant.';
+    } else if (weekCount <= 2) {
+      summaryEl.textContent = weekCount + ' alert(s) this week. Risk level is manageable. Stay cautious.';
+    } else {
+      summaryEl.textContent = weekCount + ' alerts this week. Consider reviewing your safety routines.';
+    }
+  }
+})();
 
 // Hook into ping success
 const _origSendPing = window.sendPing;
