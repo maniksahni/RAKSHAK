@@ -403,6 +403,9 @@
             <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" class="action-btn action-btn-blue">
               <i class="bi bi-file-earmark-pdf"></i>Download PDF
             </a>
+            <button onclick="openVault({{ a.id }})" class="action-btn" style="border:1px solid var(--accent-amber);color:var(--accent-amber); background:none;">
+              <i class="bi bi-safe"></i>Vault
+            </button>
           </div>
         </div>
       </div>
