@@ -202,6 +202,8 @@ def resolve_alert(alert_id):
         )
         return jsonify(success=True, message='Alert marked as resolved.')
     except Exception as e:
+        return jsonify(success=False, error=str(e)), 500
+
 # ── Evidence Vault Endpoint ───────────────────────────────────────────────────
 @sos_bp.route('/<int:alert_id>/evidence', methods=['GET'])
 @login_required
