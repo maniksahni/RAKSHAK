@@ -30,8 +30,18 @@ body::before{
   -webkit-mask-image:radial-gradient(ellipse 90% 90% at 50% 0%,black 30%,transparent 80%);
 }
 
+/* ── Ticker ── */
+.public-ticker {
+  position: fixed; top: 0; left: 0; right: 0; height: 32px; z-index: 1001;
+  background: rgba(220,38,38,0.05); border-bottom: 1px solid rgba(220,38,38,0.1);
+  backdrop-filter: blur(10px); display: flex; align-items: center; overflow: hidden;
+  font-family: 'Courier New', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.6);
+}
+.pt-track { display: flex; gap: 3rem; white-space: nowrap; animation: tickerScroll 20s linear infinite; }
+
 /* ── Navbar ── */
-.rk-nav{position:fixed !important;inset:0 0 auto 0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:background .4s,border-color .4s,backdrop-filter .4s}
+.rk-nav{position:fixed !important;top:32px;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:background .4s,border-color .4s,backdrop-filter .4s}
 .rk-nav.scrolled{background:rgba(5,5,8,.93) !important;border-color:var(--bdr) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important}
 .rk-nav .navbar-brand-text{font-family:var(--sg) !important;font-size:1.1rem !important;font-weight:700 !important;letter-spacing:.2em !important;color:var(--white) !important;text-shadow:none !important}
 .rk-nav .btn-glass{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:500 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 18px !important}
@@ -1075,6 +1085,35 @@ body::before{
     <circle class="radar-ring" cx="450" cy="450" r="20"/>
     <circle class="radar-ring" cx="450" cy="450" r="20"/>
   </svg>
+  <!-- ── Global Public Threat Ticker ── -->
+<div class="public-ticker">
+  <div class="pt-track">
+    <span>SYSTEM STATUS: OPTIMAL</span>
+    <span>•</span>
+    <span style="color:var(--red);">THREAT ENGINE: ACTIVE</span>
+    <span>•</span>
+    <span>AI SENTINEL: ARMED</span>
+    <span>•</span>
+    <span>GLOBAL LATENCY: 42MS</span>
+    <span>•</span>
+    <span style="color:var(--accent-blue);">SSL ENCRYPTION: SECURE</span>
+    <span>•</span>
+    <span>SATELLITE UPLINK: LOCKED</span>
+    <span>•</span>
+    <span>SYSTEM STATUS: OPTIMAL</span>
+    <span>•</span>
+    <span style="color:var(--red);">THREAT ENGINE: ACTIVE</span>
+    <span>•</span>
+    <span>AI SENTINEL: ARMED</span>
+    <span>•</span>
+    <span>GLOBAL LATENCY: 42MS</span>
+    <span>•</span>
+    <span style="color:var(--accent-blue);">SSL ENCRYPTION: SECURE</span>
+    <span>•</span>
+    <span>SATELLITE UPLINK: LOCKED</span>
+  </div>
+</div>
+
   <!-- SCAN LINES -->
   <div class="hero-scanlines">
     <div class="scanline"></div>
