@@ -23,6 +23,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="RAKSHAK">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23dc2626'/><text y='.9em' x='.1em' font-size='80'>🛡️</text></svg>">
+  <style>
+    /* Global Page Fade Transition */
+    body { animation: pageFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
 
@@ -356,6 +364,33 @@ function initVoiceSOS() {
 
 // Initialize Voice SOS globally for logged in users
 document.addEventListener('DOMContentLoaded', () => { setTimeout(initVoiceSOS, 2000); });
+
+// PWA Installation Logic
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) {
+    installBtn.style.display = 'flex';
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        }
+        deferredPrompt = null;
+      });
+    });
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  console.log('PWA was installed');
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) installBtn.style.display = 'none';
+});
 </script>
   position: fixed; inset: 0; z-index: -2; top: 50%; bottom: -50%;
   pointer-events: none;
