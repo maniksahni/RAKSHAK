@@ -81,20 +81,23 @@ Whether walking alone at night or navigating unfamiliar areas, RAKSHAK acts as a
 
 | # | Feature | Description |
 |:-:|---------|-------------|
-| 🚨 | **SOS Emergency Alert** | Trigger via phone shake, volume button press, or triple-tap — sends instant alerts with GPS location |
-| 🗺️ | **Real-time Danger Zone Mapping** | Interactive heatmap of reported incidents and high-risk areas powered by live data |
-| 📊 | **AI Threat Engine & Risk Assessment** | Machine-learning-driven threat scoring that analyzes location, time, and historical data |
+| 🎙️ | **Voice-Activated SOS** | Background Web Speech API listener that triggers a silent SOS when you say "Help Rakshak" |
+| 📳 | **Shake-to-Trigger SOS** | Native DeviceMotion gyroscope integration firing emergency override upon violent phone shaking |
+| 💍 | **IoT Wearable Integration** | "Titan Ring" hardware sync simulation demonstrating Bluetooth Low Energy device triggers |
+| 📊 | **Command Center Analytics** | Advanced Admin Dashboard with Chart.js animated telemetry, real-time tracking, and system vitals |
+| 🚨 | **SOS Emergency Alert** | Trigger via physical actions, voice, or triple-tap — sends instant alerts with GPS location |
+| 🗺️ | **Real-time Live Tracking** | Interactive map with `requestAnimationFrame` simulated movement modeling real-time WebSockets |
+| 📈 | **AI Threat Engine & Risk** | Machine-learning-driven threat scoring that analyzes location, time, and historical data |
 | 🛡️ | **Safety Score Calculator** | Personalized safety score based on your route, time of day, and area risk profile |
-| 🚶 | **Safe Walk Journey Tracking** | Share live location with trusted contacts during walks; auto-alert if you deviate or stop |
-| 📞 | **Fake Call Generator** | Instantly simulate an incoming phone call to escape uncomfortable or dangerous situations |
+| 🚶 | **Safe Walk Security** | Share live location with trusted contacts during walks; auto-alert if you deviate or stop |
+| 📞 | **AI Voice Fake Call** | Synthesized incoming phone calls speaking scripted dialogue to escape dangerous situations |
+| 📋 | **Forensic PDF Dossiers** | Auto-generating cryptographically sealed incident reports (PDF) for law enforcement submission |
 | 🆘 | **Emergency Quick Dial** | One-tap access to Police (100), Women Helpline (1091), Ambulance (102), Fire (101) |
-| 💡 | **Safety Tips & Guidelines** | Curated, actionable safety advice for various scenarios |
-| 👥 | **Trusted Contacts Management** | Add, manage, and instantly notify your emergency contacts |
+| 💎 | **Premium Glassmorphism UX** | Deep-dark frosted glass aesthetic, custom smooth scrollbars, and 3D Particle Mesh networking |
+| 👥 | **Trusted Contacts** | Add, manage, and instantly notify your emergency contacts via SMS & Push |
 | 🔐 | **Google OAuth + Secure Auth** | Passwordless Google sign-in alongside bcrypt-hashed credentials |
-| 📱 | **PWA Support** | Install as a native app on any device — works offline with service worker caching |
-| 🔔 | **Real-time Notifications** | WebSocket-powered instant alerts for SOS events and zone warnings |
-| 📋 | **Evidence Vault** | Document incidents and export detailed PDF reports via ReportLab |
-| 🎯 | **Admin Command Center** | Full admin dashboard — manage users, zones, incidents, and system health |
+| 📱 | **PWA Offline Standby** | Installable Native App with fallback Service Workers cached for No-Signal zones |
+| 🔔 | **Real-time WebSockets** | SocketIO-powered instant global system broadcasts and dashboard synchronization |
 
 ---
 
