@@ -246,6 +246,22 @@
       </div>
     </div>
   </div>
+
+  <!-- ── JOURNEY HISTORY ─────────────────────────────────────────────────── -->
+  <div class="sw-card mt-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h5 style="margin:0;"><i class="bi bi-clock-history me-2" style="color:var(--accent-blue);"></i>Journey History</h5>
+      <button onclick="loadJourneyHistory()" class="btn-glass" style="font-size:0.75rem;padding:4px 12px;">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+    </div>
+    <div id="sw-history-list" style="max-height:300px;overflow-y:auto;">
+      <div class="empty-state" style="padding:1.5rem;">
+        <i class="bi bi-geo" style="font-size:1.5rem;color:var(--text-muted);"></i>
+        <p style="font-size:0.82rem;color:var(--text-muted);">Loading history...</p>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
@@ -272,6 +288,7 @@
   function init() {
     initSetupMap();
     checkActiveJourney();
+    loadJourneyHistory();
     document.getElementById('sw-eta').addEventListener('input', function() {
       document.getElementById('sw-eta-val').textContent = this.value;
     });
@@ -528,6 +545,34 @@
     if (routeLine && setupMap) setupMap.removeLayer(routeLine);
     setTimeout(function(){ if(setupMap) setupMap.invalidateSize(); }, 200);
   }
+
+  // ── Journey History ──────────────────────────────────────────────────────
+  window.loadJourneyHistory = function() {
+    fetch('/safe-walk/history', {headers})
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        var list = document.getElementById('sw-history-list');
+        if (!d.success || !d.journeys || d.journeys.length === 0) {
+          list.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><i class="bi bi-shield-check" style="font-size:1.5rem;color:var(--accent-green);"></i><p style="font-size:0.82rem;color:var(--text-muted);">No past journeys yet.</p></div>';
+          return;
+        }
+        var statusColors = {completed:'#48bb78', overdue:'#f6ad55', active:'#4299e1', cancelled:'#718096'};
+        list.innerHTML = d.journeys.map(function(j) {
+          var dt = j.started_at ? new Date(j.started_at).toLocaleString() : '';
+          var sc = statusColors[j.status] || '#718096';
+          var dur = '';
+          if (j.started_at && j.ended_at) {
+            var ms = new Date(j.ended_at) - new Date(j.started_at);
+            dur = Math.round(ms / 60000) + ' min';
+          }
+          return '<div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+            '<div><div style="font-size:0.82rem;font-weight:500;">' + dt + '</div>' +
+            '<div style="font-size:0.7rem;color:var(--text-muted);">ETA: ' + (j.eta_minutes||'?') + ' min' + (dur ? ' · Duration: ' + dur : '') + '</div></div>' +
+            '<span style="font-size:0.68rem;padding:2px 8px;border-radius:4px;background:' + sc + '20;color:' + sc + ';border:1px solid ' + sc + '30;font-weight:600;text-transform:uppercase;">' + (j.status||'?') + '</span>' +
+          '</div>';
+        }).join('');
+      });
+  };
 
   // ── Boot ──────────────────────────────────────────────────────────────────
   if (document.readyState === 'loading') {
