@@ -226,53 +226,8 @@ def delete_contact(cid):
         return jsonify(success=False, error=str(e)), 500
 
 
-# ── Forgot Password ───────────────────────────────────────────────────────────
-@auth_bp.route('/forgot-password', methods=['GET', 'POST'])
-@limiter.limit('5 per hour')
+# ── Forgot Password (disabled — Google-only auth) ────────────────────────────
+@auth_bp.route('/forgot-password')
 def forgot_password():
-    if request.method == 'POST':
-        step = request.form.get('step', '1')
-        try:
-            if step == '1':
-                email = request.form.get('email', '').strip().lower()
-                data  = query_db('SELECT id, security_question FROM users WHERE email=%s',
-                                 (email,), one=True)
-                if not data:
-                    return jsonify(success=False, error='Email not found.'), 404
-                session['reset_email'] = email
-                return jsonify(success=True,
-                               question=data['security_question'],
-                               user_id=data['id'])
-
-            elif step == '2':
-                email  = session.get('reset_email')
-                answer = request.form.get('security_answer', '').strip().lower()
-                if not email:
-                    return jsonify(success=False, error='Session expired.'), 400
-                data = query_db('SELECT security_answer_hash FROM users WHERE email=%s',
-                                (email,), one=True)
-                if not data or not User.check_password(answer, data['security_answer_hash']):
-                    return jsonify(success=False, error='Incorrect answer.'), 401
-                session['reset_verified'] = True
-                return jsonify(success=True, message='Verified!')
-
-            elif step == '3':
-                email = session.get('reset_email')
-                if not session.get('reset_verified') or not email:
-                    return jsonify(success=False, error='Session expired.'), 400
-                new_password = request.form.get('new_password', '')
-                if not validate_password(new_password):
-                    return jsonify(success=False,
-                                   error='Password must be 8+ chars with uppercase, lowercase, digit, special char.'), 400
-                pw_hash = User.hash_password(new_password)
-                query_db('UPDATE users SET password_hash=%s WHERE email=%s',
-                         (pw_hash, email), commit=True)
-                session.pop('reset_email', None)
-                session.pop('reset_verified', None)
-                log_audit(None, 'password_reset', 'users', ip_address=request.remote_addr)
-                return jsonify(success=True, redirect=url_for('auth.login'))
-
-        except Exception as e:
-            return jsonify(success=False, error=str(e)), 500
-
-    return render_template('auth/forgot_password.html')
+    flash('RAKSHAK uses Google Sign-In only. No password to reset!', 'info')
+    return redirect(url_for('auth.login'))
