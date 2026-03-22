@@ -556,6 +556,22 @@
       timerEl.textContent =
         String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
     }, 1000);
+
+    // Speak using built-in Text-to-Speech
+    if ('speechSynthesis' in window) {
+      let script = [
+        "Hello? Yes, I'm heading there right now.",
+        "Can you hear me? The connection might be bad.",
+        "Just give me a couple of minutes.",
+        "Yeah, I have the location pulled up.",
+        "Okay, stay on the line, I'll see you shortly."
+      ];
+      let msg = new SpeechSynthesisUtterance(script.join(" "));
+      msg.lang = "en-US";
+      msg.rate = 0.9;
+      msg.pitch = 1.1; // Try to make it sound conversational
+      window.speechSynthesis.speak(msg);
+    }
   });
 
   // ── Decline ───────────────────────────────────────────────────────────────
@@ -568,6 +584,7 @@
   // ── End Call ──────────────────────────────────────────────────────────────
   document.getElementById('fc-end-btn').addEventListener('click', function() {
     if (callTimer) clearInterval(callTimer);
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     document.getElementById('fc-active-overlay').classList.remove('visible');
     document.getElementById('fc-setup').classList.remove('hidden');
   });
