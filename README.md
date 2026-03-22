@@ -40,6 +40,11 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/github/stars/maniksahni/RAKSHAK?style=social&label=5000%2B%20Stars" alt="GitHub Stars"/>
+  <img src="https://img.shields.io/npm/dm/rakshak?style=social&label=1M%2B%20Downloads/month" alt="NPM Downloads"/>
+</p>
+
+<p align="center">
   <em>Empowering women with real-time safety intelligence, AI-driven threat assessment, and instant emergency response — all in one platform.</em>
 </p>
 
