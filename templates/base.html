@@ -74,8 +74,13 @@
   <span class="navbar-brand-text me-auto">🛡 RAKSHAK</span>
 
   <div class="d-flex align-items-center gap-3">
-    <!-- Global Panic SOS -->
+    <!-- Hardware Dev Link -->
     {% if not current_user.is_admin %}
+    <button id="hardware-link-btn" class="btn-glass" style="padding: 4px 12px; font-size: 0.75rem; height: 28px; border-radius: 4px; display: flex; align-items: center; gap: 6px; z-index: 100;" onclick="startHardwareLink()">
+      <i class="bi bi-bluetooth"></i> Link Ring
+    </button>
+
+    <!-- Global Panic SOS -->
     <button id="global-nav-sos" class="btn-rakshak" style="padding: 4px 12px; font-size: 0.75rem; height: 28px; border-radius: 4px; box-shadow: 0 0 10px rgba(220,38,38,0.5); display: flex; align-items: center; gap: 6px; z-index: 100;" onclick="triggerGlobalSOS()">
       <div style="width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1.5s infinite;"></div>
       SOS OVERRIDE
@@ -246,8 +251,112 @@
 <!-- ── Ambient Background ──────────────────────────────────────────────────── -->
 {% if current_user.is_authenticated %}
 <div class="global-3d-grid"></div>
-<style>
 .global-3d-grid {
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:-1;
+  background:var(--bg-dark);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:100px 100px;
+  perspective:1000px;transform-style:preserve-3d;
+  opacity:0.6;
+}
+.global-3d-grid::after {
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, transparent 20%, var(--bg-dark) 80%);
+}
+
+/* Voice Link UI */
+.voice-listener-badge {
+  position: fixed; bottom: 20px; left: 260px; z-index: 1000;
+  background: rgba(10,10,14,0.8); border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 16px; border-radius: 50px; display: flex; align-items: center; gap: 10px;
+  font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500;
+  backdrop-filter: blur(10px); display: none;
+}
+.voice-listener-badge.active { display: flex; animation: slideUp 0.3s ease-out forwards; }
+.voice-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulseRing 1.5s infinite; }
+</style>
+</div>
+
+<!-- Hardware Link Modal -->
+<div class="modal fade" id="hardwareModal" tabindex="-1" aria-hidden="true" style="backdrop-filter: blur(10px);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:linear-gradient(135deg, rgba(15,15,20,0.95), rgba(5,5,10,0.98)); border:1px solid rgba(255,255,255,0.1); border-radius:16px;">
+      <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+        <h5 class="modal-title" style="font-family:var(--sg);font-weight:700;"><i class="bi bi-bluetooth me-2" style="color:#3b82f6;"></i>Hardware Sync</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center py-5" id="hardware-modal-body">
+        <div style="width:80px;height:80px;border-radius:50%;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#3b82f6;animation:pulse .5s infinite alternate;">
+          <i class="bi bi-smartwatch"></i>
+        </div>
+        <h6 style="color:#fff;font-weight:600;margin-bottom:10px;">Searching for Rakshak Devices...</h6>
+        <p style="font-size:0.85rem;color:rgba(255,255,255,0.5);">Bring your Rakshak Smart Ring or Watch near the device.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function startHardwareLink() {
+  const modal = new bootstrap.Modal(document.getElementById('hardwareModal'));
+  modal.show();
+  const body = document.getElementById('hardware-modal-body');
+  
+  // Simulate WebBluetooth API flow
+  setTimeout(() => {
+    body.innerHTML = `
+      <div style="width:80px;height:80px;border-radius:50%;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#22c55e;">
+        <i class="bi bi-check-lg"></i>
+      </div>
+      <h6 style="color:#fff;font-weight:600;margin-bottom:10px;">Rakshak Titan Ring Connected</h6>
+      <p style="font-size:0.85rem;color:rgba(255,255,255,0.5);">Biometrics & SOS hardware trigger linked.</p>
+    `;
+    const btn = document.getElementById('hardware-link-btn');
+    btn.innerHTML = '<i class="bi bi-bluetooth"></i> Titan Ring';
+    btn.style.borderColor = 'rgba(34,197,94,0.5)';
+    btn.style.color = '#22c55e';
+    setTimeout(() => modal.hide(), 2000);
+  }, 3000);
+}
+
+// Voice-Activated SOS (Web Speech API)
+function initVoiceSOS() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return; // Not supported
+  
+  const recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+  
+  // Add badge
+  const badge = document.createElement('div');
+  badge.className = 'voice-listener-badge active';
+  badge.innerHTML = '<div class="voice-dot"></div><span>Voice SOS Active ("Help Rakshak")</span>';
+  document.body.appendChild(badge);
+  
+  recognition.onresult = (event) => {
+    const lastResult = event.results[event.results.length - 1];
+    const transcript = lastResult[0].transcript.toLowerCase();
+    console.log("Heard:", transcript);
+    if (transcript.includes("help") || transcript.includes("rakshak") || transcript.includes("emergency")) {
+      recognition.stop();
+      if(typeof showToast === 'function') showToast("VOICE COMMAND DETECTED. TRIGGERING SOS.", "sos");
+      window.triggerGlobalSOS();
+    }
+  };
+  
+  recognition.onerror = (e) => console.log('Speech recognition error', e);
+  recognition.onend = () => { if(document.querySelector('.voice-listener-badge')) recognition.start(); };
+  
+  recognition.start();
+}
+
+// Initialize Voice SOS globally for logged in users
+document.addEventListener('DOMContentLoaded', () => { setTimeout(initVoiceSOS, 2000); });
+</script>
   position: fixed; inset: 0; z-index: -2; top: 50%; bottom: -50%;
   pointer-events: none;
   background-image: 
