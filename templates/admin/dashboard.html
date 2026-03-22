@@ -263,6 +263,21 @@
     </div>
   </div>
 
+  <!-- Telemetry Chart -->
+  <div class="row mb-4">
+    <div class="col-12 animate-in">
+      <div class="glass-card overflow-hidden" style="padding:1.5rem;">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="section-header" style="font-size:1rem;"><i class="bi bi-graph-up-arrow me-2" style="color:var(--accent-blue);"></i>Incident Telemetry (Past 7 Days)</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);padding:4px 10px;border-radius:20px;">Global Data</span>
+        </div>
+        <div style="height:300px;width:100%;position:relative;">
+          <canvas id="telemetryChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Map + Live Alert Feed -->
   <div class="row g-4 mb-4">
     <div class="col-lg-7 animate-in">
@@ -506,6 +521,7 @@
 
 {% block extra_js %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 <script>
@@ -560,11 +576,100 @@ initAdmin(ADMIN_ALERTS, ADMIN_ZONES);
   }, 600);
 })();
 
+/* Initialise Chart.js Telemetry Graph */
+(function(){
+  const ctx = document.getElementById('telemetryChart');
+  if(!ctx) return;
+  
+  // Fake telemetry data that looks realistic for a hackathon demo
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  
+  // Create gradient
+  const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue fading out
+  gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+  
+  // Second gradient for active SOS line
+  const redGradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+  redGradient.addColorStop(0, 'rgba(220, 38, 38, 0.4)');
+  redGradient.addColorStop(1, 'rgba(220, 38, 38, 0.0)');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [
+        {
+          label: 'System Access / Logins',
+          data: [120, 150, 180, 140, 210, 310, 280],
+          borderColor: '#3b82f6',
+          backgroundColor: gradient,
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#1e3a8a',
+          pointBorderColor: '#3b82f6',
+          pointRadius: 4,
+          pointBorderWidth: 2
+        },
+        {
+          label: 'SOS Alerts Triggered',
+          data: [12, 19, 15, 8, 22, 45, 30],
+          borderColor: '#dc2626',
+          backgroundColor: redGradient,
+          borderWidth: 3,
+          borderDash: [5, 5],
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#7f1d1d',
+          pointBorderColor: '#dc2626',
+          pointRadius: 4,
+          pointBorderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'Inter', size: 12 } }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          titleFont: { size: 14, family: 'Inter' },
+          bodyFont: { size: 13, family: 'Inter' },
+          padding: 12,
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+          ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Inter' } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
+          ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Inter' } },
+          beginAtZero: true
+        }
+      },
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      }
+    }
+  });
+})();
+
 /* Auto-refresh 30s countdown */
 (function(){
   const el = document.getElementById('next-refresh');
   if (!el) return;
-  let secs = 30;
+  let secs = 60; // Upgraded to 60s so it doesn't interrupt charts too often
   const interval = setInterval(() => {
     secs--;
     if (secs <= 0) {
