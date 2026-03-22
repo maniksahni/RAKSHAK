@@ -1,18 +1,244 @@
 {% extends "base.html" %}
-{% block title %}Emergency Quick-Dial — RAKSHAK{% endblock %}
+{% block title %}Emergency Command — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Emergency Command HUD ── */
+.emg-header {
+  position: relative; overflow: hidden; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(220,38,38,0.12), rgba(5,5,10,0.9));
+  border: 1px solid rgba(220,38,38,0.3);
+  padding: 24px 28px; margin-bottom: 24px;
+  animation: animateIn .5s cubic-bezier(.22,1,.36,1) both;
+}
+.emg-header::before {
+  content: 'EMERGENCY'; position: absolute; right: -20px; top: -20px;
+  font-size: 6rem; font-weight: 900; letter-spacing: -2px;
+  color: rgba(220,38,38,0.04); pointer-events: none; transform: rotate(-5deg);
+  font-family: var(--font-display);
+}
+.emg-scanline {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+  border-radius: 16px;
+}
+/* Threat level blink indicator */
+.threat-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px; border-radius: 3px;
+  background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.4);
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em;
+  color: var(--red-primary); font-family: 'Courier New', monospace;
+}
+.threat-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--red-primary);
+  animation: threatBlink .8s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(220,38,38,0.7);
+}
+@keyframes threatBlink { 50% { opacity: 0.2; box-shadow: none; } }
+
+/* HUD stat chips */
+.emg-stat-strip {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px;
+}
+.emg-chip {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-left: 3px solid var(--red-primary);
+  padding: 6px 14px; border-radius: 3px; font-family: 'Courier New', monospace;
+  font-size: 0.7rem; color: var(--text-secondary);
+}
+.emg-chip.green { border-left-color: var(--accent-green); color: var(--accent-green); }
+.emg-chip.blue  { border-left-color: var(--accent-blue); color: var(--accent-blue); }
+
+/* Location Card */
+.location-card {
+  background: rgba(5,5,10,0.8); border: 1px solid rgba(220,38,38,0.2);
+  border-radius: 14px; padding: 1.25rem; backdrop-filter: blur(20px);
+  position: relative; overflow: hidden;
+}
+.location-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.5), transparent);
+}
+.loc-icon-wrap {
+  position: relative; width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(220,38,38,0.1); border-radius: 12px; flex-shrink: 0;
+}
+.loc-pulse {
+  position: absolute; inset: -4px; border-radius: 14px;
+  border: 2px solid rgba(220,38,38,0.3); animation: locPulse 2s ease-in-out infinite;
+}
+@keyframes locPulse { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.08)} }
+.loc-refresh-btn {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5); width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s;
+}
+.loc-refresh-btn:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.3); color: #dc2626; }
+
+/* Police Card */
+.police-card {
+  display: block; text-decoration: none;
+  background: linear-gradient(135deg, rgba(220,38,38,0.22) 0%, rgba(220,38,38,0.06) 100%);
+  border: 2px solid rgba(220,38,38,0.45); border-radius: 18px;
+  padding: 1.5rem; transition: all 0.35s cubic-bezier(.22,1,.36,1);
+  position: relative; overflow: hidden;
+  box-shadow: 0 4px 30px rgba(220,38,38,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+  transform-style: preserve-3d;
+  animation: animateIn .4s .1s cubic-bezier(.22,1,.36,1) both;
+}
+.police-card::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.08), transparent);
+  transform: skewX(-20deg); animation: cardSweep 4s linear infinite;
+}
+@keyframes cardSweep { 0%{left:-100%} 100%{left:200%} }
+.police-card:hover {
+  transform: translateY(-4px) perspective(1000px) rotateX(2deg);
+  box-shadow: 0 12px 50px rgba(220,38,38,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+  border-color: rgba(220,38,38,0.7);
+}
+.police-card:active { transform: scale(0.98); }
+.police-icon {
+  width: 68px; height: 68px; background: rgba(220,38,38,0.2);
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; border: 1px solid rgba(220,38,38,0.3);
+  box-shadow: 0 0 20px rgba(220,38,38,0.15), inset 0 0 15px rgba(220,38,38,0.08);
+}
+.police-call-icon {
+  width: 64px; height: 64px; background: linear-gradient(135deg, #dc2626, #991b1b);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: #fff; flex-shrink: 0;
+  animation: callPulse 1.8s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(220,38,38,0.6), 0 0 60px rgba(220,38,38,0.2);
+}
+@keyframes callPulse {
+  0%,100% { box-shadow: 0 0 20px rgba(220,38,38,0.5), 0 0 0 0 rgba(220,38,38,0.3); }
+  50% { box-shadow: 0 0 40px rgba(220,38,38,0.8), 0 0 0 12px rgba(220,38,38,0); }
+}
+.police-desc { color: rgba(255,255,255,0.45); font-size: 0.78rem; margin: 0.75rem 0 0; line-height: 1.5; }
+
+/* Women Helpline */
+.women-card {
+  display: block; text-decoration: none;
+  background: linear-gradient(135deg, rgba(225,29,72,0.13) 0%, rgba(225,29,72,0.04) 100%);
+  border: 1px solid rgba(225,29,72,0.35); border-radius: 16px; padding: 1.25rem;
+  transition: all 0.35s cubic-bezier(.22,1,.36,1); position: relative; overflow: hidden;
+  animation: animateIn .4s .2s cubic-bezier(.22,1,.36,1) both;
+}
+.women-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(225,29,72,0.25); border-color: rgba(225,29,72,0.6);
+}
+.women-card:active { transform: scale(0.98); }
+.women-icon {
+  width: 56px; height: 56px; background: rgba(225,29,72,0.12);
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; border: 1px solid rgba(225,29,72,0.25);
+}
+.women-call-icon {
+  width: 50px; height: 50px; background: linear-gradient(135deg, #e11d48, #9f1239);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: #fff; flex-shrink: 0;
+  box-shadow: 0 0 25px rgba(225,29,72,0.5);
+  animation: callPulse 2.2s 0.3s ease-in-out infinite;
+}
+.women-desc { color: rgba(255,255,255,0.4); font-size: 0.75rem; margin: 0.75rem 0 0; line-height: 1.4; }
+
+/* Emergency Grid */
+.emergency-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px;
+}
+@media (max-width: 480px) { .emergency-grid { grid-template-columns: 1fr; } }
+.em-card {
+  background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px; padding: 1.15rem; transition: all 0.3s ease;
+  backdrop-filter: blur(20px); position: relative; overflow: hidden;
+  animation: animateIn .4s cubic-bezier(.22,1,.36,1) both;
+}
+.em-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--card-color, #dc2626); transform: scaleX(0); transform-origin: left;
+  transition: transform .35s cubic-bezier(.22,1,.36,1);
+}
+.em-card:hover::before { transform: scaleX(1); }
+.em-card:hover {
+  border-color: color-mix(in srgb, var(--card-color, #dc2626) 35%, transparent);
+  background: rgba(255,255,255,0.04); transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 0 0 1px color-mix(in srgb, var(--card-color, #dc2626) 15%, transparent);
+}
+.em-icon {
+  font-size: 1.6rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--card-color,#dc2626) 12%, transparent);
+  border-radius: 12px; flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--card-color,#dc2626) 20%, transparent);
+  transition: box-shadow .3s;
+}
+.em-card:hover .em-icon { box-shadow: 0 0 15px color-mix(in srgb, var(--card-color,#dc2626) 40%, transparent); }
+.em-name { color: #fff; font-size: 0.95rem; font-weight: 700; line-height: 1.2; }
+.em-number { color: var(--card-color,#dc2626); font-size: 1rem; font-weight: 800; font-family: monospace; margin-top: 1px; }
+.em-desc { color: rgba(255,255,255,0.4); font-size: 0.78rem; line-height: 1.5; margin: 0 0 0.75rem; }
+.em-copy-btn {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.4); width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s; font-size: 0.85rem; flex-shrink: 0;
+}
+.em-copy-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.em-copy-btn.copied { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.3); color: #22c55e; }
+.em-call-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 10px;
+  background: color-mix(in srgb, var(--btn-color,#dc2626) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn-color,#dc2626) 30%, transparent);
+  border-radius: 10px; color: var(--btn-color,#dc2626); font-size: 0.85rem;
+  font-weight: 700; text-decoration: none; transition: all 0.3s;
+}
+.em-call-btn:hover {
+  background: color-mix(in srgb, var(--btn-color,#dc2626) 25%, transparent);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--btn-color,#dc2626) 25%, transparent);
+  color: #fff;
+}
+.em-call-btn:active { transform: scale(0.97); }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4 py-4">
 
-  <!-- ── Page Header ──────────────────────────────────────────────────────── -->
-  <div class="mb-4">
-    <h2 style="font-family:var(--font-display,Inter,sans-serif);font-weight:800;color:#fff;margin:0;">
-      <i class="bi bi-telephone-fill" style="color:#dc2626;"></i> Emergency Quick-Dial
-    </h2>
-    <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0.25rem 0 0;">One tap to call. Stay calm, help is always available.</p>
+  <!-- ─── Immersive Command Header ───────────────────────────────────── -->
+  <div class="emg-header mb-4">
+    <div class="emg-scanline"></div>
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-3" style="position:relative;z-index:2;">
+      <div>
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.35);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+            <i class="bi bi-telephone-fill" style="color:var(--red-primary);"></i>
+          </div>
+          <div>
+            <div class="threat-badge"><div class="threat-dot"></div> EMERGENCY COMMAND CENTER</div>
+          </div>
+        </div>
+        <h2 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0 0 4px;font-size:1.6rem;">Quick-Dial Response</h2>
+        <p style="color:var(--text-muted);font-size:0.82rem;margin:0;">One tap to call. Stay calm, help is always available 24/7.</p>
+      </div>
+      <div style="font-family:'Courier New',monospace;font-size:0.65rem;color:var(--text-muted);text-align:right;line-height:2em;">
+        <div style="color:var(--accent-green);">● LINES ACTIVE</div>
+        <div id="emg-time">--:--:--</div>
+        <div>INDIA EMERGENCY NETWORK</div>
+      </div>
+    </div>
+    <div class="emg-stat-strip" style="position:relative;z-index:2;">
+      <div class="emg-chip">📡 NETWORK: PSTN</div>
+      <div class="emg-chip green">✔ CALL ROUTING: LIVE</div>
+      <div class="emg-chip blue">🔒 CALL ENCRYPTED</div>
+      <div class="emg-chip">📍 GPS: ACTIVE</div>
+    </div>
   </div>
 
-  <!-- ── Your Location Card ───────────────────────────────────────────────── -->
+  <!-- ── Your Location Card ─────────────────────────── -->
   <div class="location-card mb-4" id="location-card">
     <div class="d-flex align-items-center gap-3 flex-wrap">
       <div class="loc-icon-wrap">
@@ -94,290 +320,28 @@
     {% endfor %}
   </div>
 
-  <!-- ── Disclaimer ───────────────────────────────────────────────────────── -->
+  <!-- ── Disclaimer ─────────────────────────────────── -->
   <div style="text-align:center;padding:2rem 1rem 1rem;color:rgba(255,255,255,0.25);font-size:0.72rem;">
     <i class="bi bi-info-circle"></i> These are official Indian emergency numbers. Calling is free from any phone. In an emergency, stay calm and provide your location clearly.
   </div>
 </div>
 
-<style>
-/* ── Location Card ────────────────────────────────────────────────────────── */
-.location-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  padding: 1.25rem;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-.loc-icon-wrap {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(220,38,38,0.1);
-  border-radius: 12px;
-  flex-shrink: 0;
-}
-.loc-pulse {
-  position: absolute;
-  inset: -4px;
-  border-radius: 14px;
-  border: 2px solid rgba(220,38,38,0.3);
-  animation: locPulse 2s ease-in-out infinite;
-}
-@keyframes locPulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.08); }
-}
-.loc-refresh-btn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.5);
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 1rem;
-}
-.loc-refresh-btn:hover {
-  background: rgba(220,38,38,0.1);
-  border-color: rgba(220,38,38,0.3);
-  color: #dc2626;
-}
-
-/* ── Police Card (Primary) ────────────────────────────────────────────────── */
-.police-card {
-  display: block;
-  text-decoration: none;
-  background: linear-gradient(135deg, rgba(220,38,38,0.25) 0%, rgba(220,38,38,0.08) 100%);
-  border: 2px solid rgba(220,38,38,0.4);
-  border-radius: 18px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 30px rgba(220,38,38,0.15);
-}
-.police-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -30%;
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(220,38,38,0.12), transparent 70%);
-  pointer-events: none;
-}
-.police-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 40px rgba(220,38,38,0.3);
-  border-color: rgba(220,38,38,0.6);
-}
-.police-card:active {
-  transform: scale(0.98);
-}
-.police-icon {
-  width: 68px;
-  height: 68px;
-  background: rgba(220,38,38,0.2);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid rgba(220,38,38,0.3);
-}
-.police-call-icon {
-  width: 60px;
-  height: 60px;
-  background: #dc2626;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  flex-shrink: 0;
-  animation: callPulse 2s ease-in-out infinite;
-  box-shadow: 0 0 25px rgba(220,38,38,0.5);
-}
-@keyframes callPulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(220,38,38,0.4); }
-  50% { box-shadow: 0 0 35px rgba(220,38,38,0.7); }
-}
-.police-desc {
-  color: rgba(255,255,255,0.45);
-  font-size: 0.78rem;
-  margin: 0.75rem 0 0;
-  line-height: 1.5;
-}
-
-/* ── Women Helpline Card (Secondary) ──────────────────────────────────────── */
-.women-card {
-  display: block;
-  text-decoration: none;
-  background: linear-gradient(135deg, rgba(225,29,72,0.15) 0%, rgba(225,29,72,0.04) 100%);
-  border: 1px solid rgba(225,29,72,0.3);
-  border-radius: 16px;
-  padding: 1.25rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-.women-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(225,29,72,0.2);
-  border-color: rgba(225,29,72,0.5);
-}
-.women-card:active {
-  transform: scale(0.98);
-}
-.women-icon {
-  width: 56px;
-  height: 56px;
-  background: rgba(225,29,72,0.12);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid rgba(225,29,72,0.2);
-}
-.women-call-icon {
-  width: 50px;
-  height: 50px;
-  background: #e11d48;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  flex-shrink: 0;
-  box-shadow: 0 0 20px rgba(225,29,72,0.4);
-}
-.women-desc {
-  color: rgba(255,255,255,0.4);
-  font-size: 0.75rem;
-  margin: 0.75rem 0 0;
-  line-height: 1.4;
-}
-
-/* ── Emergency Numbers Grid ───────────────────────────────────────────────── */
-.emergency-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
-}
-@media (max-width: 480px) {
-  .emergency-grid { grid-template-columns: 1fr; }
-}
-
-.em-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  padding: 1.15rem;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-.em-card:hover {
-  border-color: color-mix(in srgb, var(--card-color) 40%, transparent);
-  background: rgba(255,255,255,0.05);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
-}
-.em-icon {
-  font-size: 1.6rem;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--card-color) 12%, transparent);
-  border-radius: 12px;
-  flex-shrink: 0;
-  border: 1px solid color-mix(in srgb, var(--card-color) 20%, transparent);
-}
-.em-name {
-  color: #fff;
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-.em-number {
-  color: var(--card-color);
-  font-size: 1rem;
-  font-weight: 800;
-  font-family: monospace;
-  margin-top: 1px;
-}
-.em-desc {
-  color: rgba(255,255,255,0.4);
-  font-size: 0.78rem;
-  line-height: 1.5;
-  margin: 0 0 0.75rem;
-}
-.em-copy-btn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.4);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 0.85rem;
-  flex-shrink: 0;
-}
-.em-copy-btn:hover {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
-.em-copy-btn.copied {
-  background: rgba(34,197,94,0.15);
-  border-color: rgba(34,197,94,0.3);
-  color: #22c55e;
-}
-
-.em-call-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px;
-  background: color-mix(in srgb, var(--btn-color) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--btn-color) 30%, transparent);
-  border-radius: 10px;
-  color: var(--btn-color);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-.em-call-btn:hover {
-  background: color-mix(in srgb, var(--btn-color) 25%, transparent);
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--btn-color) 25%, transparent);
-  color: #fff;
-}
-.em-call-btn:active {
-  transform: scale(0.97);
-}
-</style>
+<script>
+/* Live clock for HUD */
+(function(){
+  const el = document.getElementById('emg-time');
+  if (!el) return;
+  function tick() {
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('en-IN', {hour12: false});
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
 
 <script>
-/* ── Geolocation Detection ────────────────────────────────────────────────── */
+/* ── Geolocation Detection ──────────────────────────────────────────────── */
 function refreshLocation() {
   const textEl = document.getElementById('location-text');
   const coordsEl = document.getElementById('location-coords');
@@ -410,7 +374,7 @@ function refreshLocation() {
   );
 }
 
-/* ── Copy to Clipboard ────────────────────────────────────────────────────── */
+/* ── Copy to Clipboard ──────────────────────────────────────────────────── */
 function copyNumber(number, btn) {
   navigator.clipboard.writeText(number).then(function() {
     btn.classList.add('copied');
@@ -420,7 +384,6 @@ function copyNumber(number, btn) {
       btn.innerHTML = '<i class="bi bi-clipboard"></i>';
     }, 2000);
   }).catch(function() {
-    /* Fallback for older browsers */
     const ta = document.createElement('textarea');
     ta.value = number;
     ta.style.position = 'fixed';

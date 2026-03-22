@@ -171,12 +171,35 @@
 
 {% block content %}
 <div class="sw-container">
-  <div class="d-flex align-items-center justify-content-between mb-3">
-    <div>
-      <h4 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;">
-        <i class="bi bi-signpost-2 me-2" style="color:#dc2626;"></i>Safe Walk
-      </h4>
-      <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0;">Track your journey and share with trusted contacts</p>
+  <!-- ── Route Monitoring Command Header ── -->
+  <div style="background:linear-gradient(135deg,rgba(72,187,120,0.08),rgba(5,5,10,0.92));border:1px solid rgba(72,187,120,0.2);border-radius:16px;padding:22px 26px;margin-bottom:20px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(72,187,120,0.5),transparent);"></div>
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;border-radius:16px;"></div>
+    <div style="position:relative;z-index:2;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(72,187,120,0.12);border:1px solid rgba(72,187,120,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+            <i class="bi bi-signpost-2-fill" style="color:var(--accent-green);"></i>
+          </div>
+          <div>
+            <div style="font-size:0.65rem;color:var(--accent-green);letter-spacing:0.15em;font-family:'Courier New',monospace;font-weight:700;">
+              <span style="animation:blink 1.5s infinite;">●</span> ROUTE MONITORING ACTIVE
+            </div>
+            <h4 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;font-size:1.4rem;">Safe Walk</h4>
+          </div>
+        </div>
+        <div style="font-family:'Courier New',monospace;font-size:0.65rem;color:var(--text-muted);text-align:right;line-height:1.9em;">
+          <div style="color:var(--accent-green);">GPS UPLINK: LOCKED</div>
+          <div>CONTACTS: STANDING BY</div>
+        </div>
+      </div>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0 0 12px;">Track your journey — contacts are notified if you don't check in on time.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;font-family:'Courier New',monospace;font-size:0.68rem;">
+        <span style="padding:4px 10px;background:rgba(72,187,120,0.08);border:1px solid rgba(72,187,120,0.2);border-radius:3px;color:var(--accent-green);">📡 GPS TRACKING: ON</span>
+        <span style="padding:4px 10px;background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:3px;color:var(--accent-blue);">🛡 SHIELD: ARMED</span>
+        <span style="padding:4px 10px;background:rgba(246,173,85,0.08);border:1px solid rgba(246,173,85,0.2);border-radius:3px;color:var(--accent-amber);">🔔 AUTO-ALERT: ENABLED</span>
+        <span style="padding:4px 10px;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:3px;color:var(--red-primary);">⚡ SOS: ARMED</span>
+      </div>
     </div>
   </div>
 
