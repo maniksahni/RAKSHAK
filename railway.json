@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python init_db.py && gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT wsgi:app",
+    "startCommand": "python init_db.py && gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT --timeout 120 wsgi:app",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
