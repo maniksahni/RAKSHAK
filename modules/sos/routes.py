@@ -256,3 +256,53 @@ def mark_all_read():
         return jsonify(success=True)
     except Exception as e:
         return jsonify(success=False, error=str(e)), 500
+
+
+# ── Community Nearby Alerts ──────────────────────────────────────────────────
+@sos_bp.route('/nearby', methods=['POST'])
+@login_required
+def nearby_alerts():
+    """Return anonymized recent SOS alerts within a radius (km)."""
+    try:
+        data = request.get_json() or {}
+        lat = float(data.get('latitude', 0))
+        lng = float(data.get('longitude', 0))
+        radius_km = min(float(data.get('radius', 5)), 50)
+
+        if lat == 0 and lng == 0:
+            return jsonify(success=False, error='Location required'), 400
+
+        # Bounding box approximation
+        dlat = radius_km / 111.0
+        dlng = radius_km / (111.0 * abs(max(0.01, __import__('math').cos(__import__('math').radians(lat)))))
+
+        alerts = query_db(
+            """SELECT id, latitude, longitude, trigger_type, status,
+                      created_at, address
+               FROM sos_alerts
+               WHERE created_at >= NOW() - INTERVAL 7 DAY
+                 AND latitude BETWEEN %s AND %s
+                 AND longitude BETWEEN %s AND %s
+               ORDER BY created_at DESC LIMIT 30""",
+            (lat - dlat, lat + dlat, lng - dlng, lng + dlng)
+        )
+
+        result = []
+        for a in alerts:
+            d = {}
+            for k, v in dict(a).items():
+                if hasattr(v, 'isoformat'):
+                    d[k] = v.isoformat()
+                elif hasattr(v, '__float__'):
+                    d[k] = float(v)
+                else:
+                    d[k] = v
+            # Remove exact address for privacy — keep only area
+            d.pop('address', None)
+            result.append(d)
+
+        return jsonify(success=True, alerts=result, count=len(result))
+
+    except Exception as e:
+        log.error(f'Nearby alerts failed: {e}')
+        return jsonify(success=False, error='Failed to fetch nearby alerts.'), 500

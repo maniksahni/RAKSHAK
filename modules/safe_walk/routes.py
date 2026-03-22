@@ -234,6 +234,24 @@ def active_journey():
         return jsonify(success=False, error='Failed to fetch journey.'), 500
 
 
+# ── Journey History ──────────────────────────────────────────────────────────
+@safe_walk_bp.route('/history')
+@login_required
+def journey_history():
+    """Return past journeys for the current user."""
+    try:
+        journeys = query_db(
+            """SELECT * FROM journeys WHERE user_id=%s
+               ORDER BY created_at DESC LIMIT 20""",
+            (current_user.id,)
+        )
+        return jsonify(success=True,
+                       journeys=[_safe_journey(j) for j in journeys])
+    except Exception as e:
+        log.error(f'Journey history failed: {e}')
+        return jsonify(success=False, error='Failed to load history.'), 500
+
+
 # ── Public Share Tracking ─────────────────────────────────────────────────────
 @safe_walk_bp.route('/share/<token>')
 def track_journey(token):
