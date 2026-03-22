@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}RAKSHAK — Every Second Counts{% endblock %}
+{% block title %}RAKSHAK — Your Safety, Our Mission{% endblock %}
 
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -613,9 +613,7 @@ body::before{
 /* ═══════════════════════════════════════════
    TYPING EFFECT SUBTITLE
 ═══════════════════════════════════════════*/
-.hero-typing-wrap{height:2.2rem;margin-bottom:1.8rem;overflow:hidden;animation:slideUp .5s .12s ease both}
-.hero-typing{font-family:var(--sg);font-size:clamp(1rem,1.8vw,1.3rem);font-weight:500;color:rgba(255,255,255,.55);position:relative;display:inline-block}
-.hero-typing::after{content:'|';color:var(--red);font-weight:300;animation:cursorBlink .7s step-end infinite;margin-left:2px}
+/* typing removed */
 @keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ═══════════════════════════════════════════
@@ -773,13 +771,9 @@ body::before{
     </div>
 
     <h1 class="hero-h1">
-      <span class="h1-white">Every Second</span>
-      <span class="h1-grad">Counts.</span>
+      <span class="h1-white">Your Safety,</span>
+      <span class="h1-grad">Our Mission.</span>
     </h1>
-
-    <div class="hero-typing-wrap">
-      <span class="hero-typing" id="heroTyping"></span>
-    </div>
 
     <p class="hero-p">
       RAKSHAK detects danger in real time, silently alerts your trusted circle,
@@ -1345,31 +1339,7 @@ if (pillEl) {
   setTimeout(type, 700);
 }
 
-/* ═══════════════════════════════════════════
-   HERO TYPING EFFECT — Cycling subtitles
-═══════════════════════════════════════════*/
-(function(){
-  const el = document.getElementById('heroTyping');
-  if (!el) return;
-  const phrases = ['Every Second Counts', 'Protection Never Sleeps', 'Your Guardian Angel'];
-  let pIdx = 0, cIdx = 0, deleting = false, pauseMs = 0;
-  function tick() {
-    const current = phrases[pIdx];
-    if (!deleting) {
-      el.textContent = current.substring(0, cIdx + 1);
-      cIdx++;
-      if (cIdx === current.length) { deleting = true; pauseMs = 2000; }
-      else { pauseMs = 60 + Math.random() * 40; }
-    } else {
-      el.textContent = current.substring(0, cIdx - 1);
-      cIdx--;
-      if (cIdx === 0) { deleting = false; pIdx = (pIdx + 1) % phrases.length; pauseMs = 400; }
-      else { pauseMs = 30; }
-    }
-    setTimeout(tick, pauseMs);
-  }
-  setTimeout(tick, 1200);
-})();
+/* typing effect removed */
 
 /* ═══════════════════════════════════════════
    SCROLL PROGRESS BAR
