@@ -45,11 +45,11 @@ function initScrollReveal() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.02, rootMargin: '0px 0px 50px 0px' });
   document.querySelectorAll('.animate-in').forEach((el, i) => {
     el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = `opacity .5s ${i * 0.06}s cubic-bezier(.22,1,.36,1), transform .5s ${i * 0.06}s cubic-bezier(.22,1,.36,1)`;
+    el.style.transform = 'translateY(12px)';
+    el.style.transition = `opacity .25s ${i * 0.03}s ease-out, transform .25s ${i * 0.03}s ease-out`;
     observer.observe(el);
   });
 }
