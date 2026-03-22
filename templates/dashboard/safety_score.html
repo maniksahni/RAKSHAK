@@ -163,6 +163,104 @@
 
   /* Spinner ring */
   @keyframes spinRing { 100% { transform: rotate(360deg); } }
+
+  /* ── Entrance animations ── */
+  @keyframes ssFadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ssBarGrow {
+    from { height: 0; }
+  }
+  @keyframes ssGaugePulse {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(34,197,94,0.2)); }
+    50% { filter: drop-shadow(0 0 16px rgba(34,197,94,0.4)); }
+  }
+  .ss-card { animation: ssFadeUp 0.5s cubic-bezier(.22,1,.36,1) both; }
+  .ss-card:nth-child(2) { animation-delay: 0.1s; }
+  .ss-card:nth-child(3) { animation-delay: 0.15s; }
+  .ss-card:nth-child(4) { animation-delay: 0.2s; }
+  .ss-card:nth-child(5) { animation-delay: 0.25s; }
+  .ss-card:nth-child(6) { animation-delay: 0.3s; }
+
+  /* Gauge animation */
+  .ss-gauge-svg { animation: ssGaugePulse 3s ease-in-out infinite; }
+
+  /* ── Historical Trend Chart ── */
+  .ss-trend-wrap {
+    display: flex; align-items: flex-end; gap: 6px;
+    height: 120px; padding: 12px 0;
+  }
+  .ss-trend-bar-col {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .ss-trend-bar {
+    width: 100%; min-width: 20px; max-width: 36px;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.6s cubic-bezier(.22,1,.36,1);
+    animation: ssBarGrow 0.8s cubic-bezier(.22,1,.36,1) both;
+    position: relative;
+    cursor: pointer;
+  }
+  .ss-trend-bar:hover { opacity: 0.85; }
+  .ss-trend-bar::after {
+    content: attr(data-value);
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    font-size: 0.6rem; color: rgba(255,255,255,0.5);
+    font-family: monospace; font-weight: 700;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .ss-trend-bar:hover::after { opacity: 1; }
+  .ss-trend-bar-col:nth-child(1) .ss-trend-bar { animation-delay: 0.1s; }
+  .ss-trend-bar-col:nth-child(2) .ss-trend-bar { animation-delay: 0.15s; }
+  .ss-trend-bar-col:nth-child(3) .ss-trend-bar { animation-delay: 0.2s; }
+  .ss-trend-bar-col:nth-child(4) .ss-trend-bar { animation-delay: 0.25s; }
+  .ss-trend-bar-col:nth-child(5) .ss-trend-bar { animation-delay: 0.3s; }
+  .ss-trend-bar-col:nth-child(6) .ss-trend-bar { animation-delay: 0.35s; }
+  .ss-trend-bar-col:nth-child(7) .ss-trend-bar { animation-delay: 0.4s; }
+  .ss-trend-label {
+    font-size: 0.6rem; color: rgba(255,255,255,0.3);
+    text-align: center; font-family: monospace;
+  }
+
+  /* ── Improvement Suggestions ── */
+  .ss-suggestion {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px; margin-bottom: 10px;
+    transition: all 0.2s;
+  }
+  .ss-suggestion:hover {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.1);
+    transform: translateX(4px);
+  }
+  .ss-suggestion-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 1rem;
+  }
+  .ss-suggestion-title {
+    font-size: 0.85rem; color: #fff; font-weight: 600; margin-bottom: 2px;
+  }
+  .ss-suggestion-desc {
+    font-size: 0.75rem; color: rgba(255,255,255,0.45); line-height: 1.5;
+  }
+  .ss-suggestion-impact {
+    font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 4px; margin-top: 4px; display: inline-block;
+  }
+
+  /* Breakdown progress bar */
+  .ss-breakdown-bar-wrap {
+    width: 80px; height: 4px; background: rgba(255,255,255,0.06);
+    border-radius: 2px; overflow: hidden; margin-left: 8px;
+  }
+  .ss-breakdown-bar-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 1s cubic-bezier(.22,1,.36,1);
+  }
 </style>
 {% endblock %}
 
@@ -225,24 +323,56 @@
         <div class="ss-card-title">Score Breakdown</div>
         <div class="ss-breakdown-item">
           <span class="ss-breakdown-label"><i class="bi bi-shield-check" style="color:#22c55e;margin-right:8px;"></i>Base Score</span>
-          <span class="ss-breakdown-value" style="color:#22c55e;">100</span>
+          <div class="d-flex align-items-center">
+            <span class="ss-breakdown-value" style="color:#22c55e;">100</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" style="width:100%;background:#22c55e;"></div></div>
+          </div>
         </div>
         <div class="ss-breakdown-item">
           <span class="ss-breakdown-label"><i class="bi bi-geo-alt-fill" style="color:#f59e0b;margin-right:8px;"></i>Danger Zone Penalty</span>
-          <span class="ss-breakdown-value" style="color:#f59e0b;" id="ss-dz-penalty">-0</span>
+          <div class="d-flex align-items-center">
+            <span class="ss-breakdown-value" style="color:#f59e0b;" id="ss-dz-penalty">-0</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-dz-bar" style="width:0%;background:#f59e0b;"></div></div>
+          </div>
         </div>
         <div class="ss-breakdown-item">
           <span class="ss-breakdown-label"><i class="bi bi-exclamation-triangle-fill" style="color:#dc2626;margin-right:8px;"></i>Recent SOS Alerts</span>
-          <span class="ss-breakdown-value" style="color:#dc2626;" id="ss-sos-penalty">-0</span>
+          <div class="d-flex align-items-center">
+            <span class="ss-breakdown-value" style="color:#dc2626;" id="ss-sos-penalty">-0</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-sos-bar" style="width:0%;background:#dc2626;"></div></div>
+          </div>
         </div>
         <div class="ss-breakdown-item">
           <span class="ss-breakdown-label"><i class="bi bi-clock" style="color:#818cf8;margin-right:8px;"></i>Time Multiplier</span>
-          <span class="ss-breakdown-value" style="color:#818cf8;" id="ss-time-mult">x1.0</span>
+          <div class="d-flex align-items-center">
+            <span class="ss-breakdown-value" style="color:#818cf8;" id="ss-time-mult">x1.0</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-time-bar" style="width:0%;background:#818cf8;"></div></div>
+          </div>
         </div>
         <div class="ss-breakdown-item" style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;">
           <span class="ss-breakdown-label" style="font-weight:700;color:#fff;">Final Score</span>
           <span class="ss-breakdown-value" id="ss-final-score" style="font-size:1.2rem;">--</span>
         </div>
+      </div>
+    </div>
+
+    <!-- Historical Trend Chart -->
+    <div class="ss-card">
+      <div class="ss-card-title"><i class="bi bi-graph-up me-2" style="color:var(--accent-blue);"></i>Score Trend (Last 7 Checks)</div>
+      <div class="ss-trend-wrap" id="ss-trend-chart">
+        <!-- Bars populated by JS -->
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:rgba(255,255,255,0.25);padding:0 4px;">
+        <span>Oldest</span>
+        <span>Latest</span>
+      </div>
+    </div>
+
+    <!-- Improvement Suggestions -->
+    <div class="ss-card">
+      <div class="ss-card-title"><i class="bi bi-lightbulb me-2" style="color:#f59e0b;"></i>Improvement Suggestions</div>
+      <div id="ss-suggestions">
+        <!-- Populated by JS based on score -->
       </div>
     </div>
 
@@ -326,15 +456,113 @@
     }
   }
 
+  /* Score history for trend chart */
+  var scoreHistory = JSON.parse(localStorage.getItem('rakshak_score_history') || '[]');
+
+  function saveScoreToHistory(score) {
+    scoreHistory.push({ score: score, time: Date.now() });
+    if (scoreHistory.length > 7) scoreHistory = scoreHistory.slice(-7);
+    localStorage.setItem('rakshak_score_history', JSON.stringify(scoreHistory));
+  }
+
+  function renderTrendChart() {
+    var chart = document.getElementById('ss-trend-chart');
+    if (!chart) return;
+    var history = scoreHistory.length > 0 ? scoreHistory : [{ score: 75 }];
+    /* Pad to at least 7 entries for visual consistency */
+    while (history.length < 7) {
+      history.unshift({ score: null });
+    }
+    chart.innerHTML = history.map(function(entry, i) {
+      if (entry.score === null) {
+        return '<div class="ss-trend-bar-col"><div class="ss-trend-bar" style="height:4px;background:rgba(255,255,255,0.04);" data-value="--"></div><div class="ss-trend-label">--</div></div>';
+      }
+      var h = Math.max(8, (entry.score / 100) * 100);
+      var color = entry.score > 70 ? '#22c55e' : (entry.score >= 40 ? '#f59e0b' : '#dc2626');
+      var label = entry.time ? new Date(entry.time).toLocaleDateString([], {month:'short', day:'numeric'}) : '';
+      return '<div class="ss-trend-bar-col">' +
+        '<div class="ss-trend-bar" style="height:' + h + 'px;background:' + color + ';" data-value="' + entry.score + '"></div>' +
+        '<div class="ss-trend-label">' + label + '</div></div>';
+    }).join('');
+  }
+
+  function renderSuggestions(data) {
+    var el = document.getElementById('ss-suggestions');
+    if (!el) return;
+    var suggestions = [];
+
+    if (data.danger_zone_penalty > 0) {
+      suggestions.push({
+        icon: 'bi-geo-alt', iconBg: 'rgba(220,38,38,0.12)', iconColor: '#dc2626',
+        title: 'Avoid Nearby Danger Zones',
+        desc: 'Your location is near reported danger zones. Consider moving to well-lit, populated areas.',
+        impact: '+' + Math.min(20, data.danger_zone_penalty) + ' pts', impactBg: 'rgba(220,38,38,0.1)', impactColor: '#dc2626'
+      });
+    }
+    if (data.recent_sos_penalty > 0) {
+      suggestions.push({
+        icon: 'bi-exclamation-triangle', iconBg: 'rgba(245,158,11,0.12)', iconColor: '#f59e0b',
+        title: 'Be Alert — Recent SOS Activity',
+        desc: data.recent_sos_count + ' SOS alert(s) were triggered nearby. Stay aware of your surroundings.',
+        impact: '+' + Math.min(15, data.recent_sos_penalty) + ' pts', impactBg: 'rgba(245,158,11,0.1)', impactColor: '#f59e0b'
+      });
+    }
+    if (data.time_multiplier > 1.0) {
+      suggestions.push({
+        icon: 'bi-moon-stars', iconBg: 'rgba(129,140,248,0.12)', iconColor: '#818cf8',
+        title: 'Late Night — Extra Caution',
+        desc: 'Safety risk is elevated during nighttime hours. Share your live location with trusted contacts.',
+        impact: 'Night risk', impactBg: 'rgba(129,140,248,0.1)', impactColor: '#818cf8'
+      });
+    }
+
+    /* Always show these general suggestions */
+    suggestions.push({
+      icon: 'bi-people', iconBg: 'rgba(34,197,94,0.12)', iconColor: '#22c55e',
+      title: 'Add Emergency Contacts',
+      desc: 'More contacts means faster response in emergencies. Add at least 3 trusted contacts.',
+      impact: '+10 pts', impactBg: 'rgba(34,197,94,0.1)', impactColor: '#22c55e'
+    });
+    suggestions.push({
+      icon: 'bi-phone', iconBg: 'rgba(66,153,225,0.12)', iconColor: '#4299e1',
+      title: 'Keep Phone Charged',
+      desc: 'Ensure your phone battery stays above 20% when traveling. Carry a power bank.',
+      impact: 'General', impactBg: 'rgba(66,153,225,0.1)', impactColor: '#4299e1'
+    });
+
+    el.innerHTML = suggestions.slice(0, 4).map(function(s) {
+      return '<div class="ss-suggestion">' +
+        '<div class="ss-suggestion-icon" style="background:' + s.iconBg + ';"><i class="bi ' + s.icon + '" style="color:' + s.iconColor + ';"></i></div>' +
+        '<div><div class="ss-suggestion-title">' + s.title + '</div>' +
+        '<div class="ss-suggestion-desc">' + s.desc + '</div>' +
+        '<span class="ss-suggestion-impact" style="background:' + s.impactBg + ';color:' + s.impactColor + ';">' + s.impact + '</span></div></div>';
+    }).join('');
+  }
+
   function renderData(data) {
     document.getElementById('ss-loading-state').style.display = 'none';
     document.getElementById('ss-main').style.display = 'block';
 
     setGauge(data.score);
 
+    /* Save score to history and render trend chart */
+    saveScoreToHistory(data.score);
+    renderTrendChart();
+
+    /* Render improvement suggestions */
+    renderSuggestions(data);
+
     document.getElementById('ss-dz-penalty').textContent = '-' + data.danger_zone_penalty;
     document.getElementById('ss-sos-penalty').textContent = '-' + data.recent_sos_penalty;
     document.getElementById('ss-time-mult').textContent = 'x' + data.time_multiplier.toFixed(1);
+
+    /* Update breakdown bars */
+    var dzBar = document.getElementById('ss-dz-bar');
+    var sosBar = document.getElementById('ss-sos-bar');
+    var timeBar = document.getElementById('ss-time-bar');
+    if (dzBar) dzBar.style.width = Math.min(100, data.danger_zone_penalty * 2) + '%';
+    if (sosBar) sosBar.style.width = Math.min(100, data.recent_sos_penalty * 3) + '%';
+    if (timeBar) timeBar.style.width = Math.min(100, (data.time_multiplier - 1) * 100) + '%';
 
     var finalEl = document.getElementById('ss-final-score');
     finalEl.textContent = data.score;

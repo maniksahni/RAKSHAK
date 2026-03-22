@@ -3,13 +3,35 @@
 
 {% block extra_css %}
 <style>
+/* ── Staggered entrance for cards ── */
+@keyframes emgSlideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes emgPulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(220,38,38,0.3); }
+  70%  { box-shadow: 0 0 0 12px rgba(220,38,38,0); }
+  100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+}
+@keyframes emgScanline {
+  0%   { top: -100%; }
+  100% { top: 200%; }
+}
+@keyframes emgShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-2px) rotate(-0.5deg); }
+  40% { transform: translateX(2px) rotate(0.5deg); }
+  60% { transform: translateX(-1px); }
+  80% { transform: translateX(1px); }
+}
+
 /* ── Emergency Command HUD ── */
 .emg-header {
   position: relative; overflow: hidden; border-radius: 20px;
   background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
   border: 1px solid rgba(255,255,255,0.08); backdrop-filter:blur(30px);
   padding: 24px 32px; margin-bottom: 24px;
-  animation: animateIn .5s cubic-bezier(.22,1,.36,1) both;
+  animation: emgSlideUp .5s cubic-bezier(.22,1,.36,1) both;
   box-shadow: 0 10px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .emg-header::before {
@@ -151,8 +173,17 @@
   background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
   border-radius: 14px; padding: 1.15rem; transition: all 0.3s ease;
   backdrop-filter: blur(20px); position: relative; overflow: hidden;
-  animation: animateIn .4s cubic-bezier(.22,1,.36,1) both;
+  animation: emgSlideUp .4s cubic-bezier(.22,1,.36,1) both;
 }
+.em-card:nth-child(1) { animation-delay: 0.1s; }
+.em-card:nth-child(2) { animation-delay: 0.15s; }
+.em-card:nth-child(3) { animation-delay: 0.2s; }
+.em-card:nth-child(4) { animation-delay: 0.25s; }
+.em-card:nth-child(5) { animation-delay: 0.3s; }
+.em-card:nth-child(6) { animation-delay: 0.35s; }
+.em-card:nth-child(7) { animation-delay: 0.4s; }
+.em-card:nth-child(8) { animation-delay: 0.45s; }
+.em-card:nth-child(n+9) { animation-delay: 0.5s; }
 .em-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: var(--card-color, #dc2626); transform: scaleX(0); transform-origin: left;
@@ -234,7 +265,7 @@
   </div>
 
   <!-- ── Your Location Card ─────────────────────────── -->
-  <div class="location-card mb-4" id="location-card">
+  <div class="location-card mb-4" id="location-card" style="animation: emgSlideUp 0.4s 0.05s cubic-bezier(.22,1,.36,1) both;">
     <div class="d-flex align-items-center gap-3 flex-wrap">
       <div class="loc-icon-wrap">
         <i class="bi bi-geo-alt-fill" style="color:#dc2626;font-size:1.3rem;"></i>
@@ -245,9 +276,27 @@
         <div id="location-text" style="color:#fff;font-size:0.95rem;font-weight:600;margin-top:2px;">Detecting location...</div>
         <div id="location-coords" style="color:rgba(255,255,255,0.35);font-size:0.75rem;margin-top:2px;font-family:monospace;"></div>
       </div>
-      <button onclick="refreshLocation()" class="loc-refresh-btn" title="Refresh location">
-        <i class="bi bi-arrow-clockwise"></i>
-      </button>
+      <div class="d-flex gap-2">
+        <button onclick="copyCoordinates()" class="loc-refresh-btn" title="Copy coordinates" id="loc-copy-btn">
+          <i class="bi bi-clipboard"></i>
+        </button>
+        <button onclick="openInMaps()" class="loc-refresh-btn" title="Open in Maps" id="loc-maps-btn">
+          <i class="bi bi-map"></i>
+        </button>
+        <button onclick="refreshLocation()" class="loc-refresh-btn" title="Refresh location">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Location accuracy bar -->
+    <div id="loc-accuracy-bar" style="margin-top:10px;display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:0.65rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;">GPS Accuracy</span>
+        <span id="loc-accuracy-text" style="font-size:0.65rem;color:rgba(255,255,255,0.4);font-family:monospace;"></span>
+      </div>
+      <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;">
+        <div id="loc-accuracy-fill" style="height:100%;border-radius:2px;transition:width 0.5s ease, background 0.5s;"></div>
+      </div>
     </div>
   </div>
 
@@ -395,6 +444,82 @@ function copyNumber(number, btn) {
     }, 2000);
   });
 }
+
+/* ── Copy GPS Coordinates ──────────────────────────────────────────────── */
+var detectedLat = null, detectedLng = null;
+function copyCoordinates() {
+  var coords = document.getElementById('location-coords').textContent;
+  if (!coords) { if (typeof showToast === 'function') showToast('No coordinates detected yet', 'warning'); return; }
+  navigator.clipboard.writeText(coords).then(function() {
+    var btn = document.getElementById('loc-copy-btn');
+    btn.innerHTML = '<i class="bi bi-check-lg" style="color:#22c55e;"></i>';
+    setTimeout(function() { btn.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000);
+    if (typeof showToast === 'function') showToast('Coordinates copied!', 'success');
+  });
+}
+
+/* ── Open in Google Maps ──────────────────────────────────────────────── */
+function openInMaps() {
+  if (detectedLat !== null && detectedLng !== null) {
+    window.open('https://www.google.com/maps?q=' + detectedLat + ',' + detectedLng, '_blank');
+  } else {
+    if (typeof showToast === 'function') showToast('Location not detected yet', 'warning');
+  }
+}
+
+/* ── Enhanced location detection with accuracy bar ──────────────────── */
+var origRefreshLocation = refreshLocation;
+var _origGeoSuccess = null;
+(function patchRefresh() {
+  var origFunc = refreshLocation;
+  window.refreshLocation = function() {
+    var textEl = document.getElementById('location-text');
+    var coordsEl = document.getElementById('location-coords');
+    textEl.textContent = 'Detecting location...';
+    textEl.style.color = '#fff';
+    coordsEl.textContent = '';
+    document.getElementById('loc-accuracy-bar').style.display = 'none';
+
+    if (!navigator.geolocation) {
+      textEl.textContent = 'Geolocation not supported by your browser';
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        var lat = pos.coords.latitude.toFixed(6);
+        var lng = pos.coords.longitude.toFixed(6);
+        var acc = Math.round(pos.coords.accuracy);
+        detectedLat = pos.coords.latitude;
+        detectedLng = pos.coords.longitude;
+        coordsEl.textContent = lat + ', ' + lng + ' (accuracy: ~' + acc + 'm)';
+        textEl.textContent = 'Location detected — share coordinates with emergency services';
+        textEl.style.color = '#22c55e';
+
+        /* Show accuracy bar */
+        var accBar = document.getElementById('loc-accuracy-bar');
+        accBar.style.display = 'block';
+        var accFill = document.getElementById('loc-accuracy-fill');
+        var accText = document.getElementById('loc-accuracy-text');
+        var pct = Math.max(5, Math.min(100, 100 - (acc / 10)));
+        accFill.style.width = pct + '%';
+        accText.textContent = '~' + acc + 'm';
+        if (acc < 20) { accFill.style.background = '#22c55e'; }
+        else if (acc < 100) { accFill.style.background = '#f59e0b'; }
+        else { accFill.style.background = '#dc2626'; }
+      },
+      function(err) {
+        if (err.code === 1) {
+          textEl.textContent = 'Location access denied — enable GPS for emergency reporting';
+        } else {
+          textEl.textContent = 'Unable to detect location. Please share manually.';
+        }
+        textEl.style.color = '#f59e0b';
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+})();
 
 /* Auto-detect location on page load */
 document.addEventListener('DOMContentLoaded', refreshLocation);

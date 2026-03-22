@@ -4,6 +4,30 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
+/* ── Entrance & walking animations ── */
+@keyframes swFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes swWalk {
+  0%   { transform: translateX(0) translateY(0); }
+  25%  { transform: translateX(2px) translateY(-3px); }
+  50%  { transform: translateX(0) translateY(0); }
+  75%  { transform: translateX(-2px) translateY(-3px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+@keyframes swPulseGreen {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+}
+@keyframes swCheckpointPop {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes swProgressBar {
+  from { width: 0%; }
+}
+
 .sw-container { max-width: 900px; margin: 0 auto; }
 
 /* glassmorphism card */
@@ -15,13 +39,29 @@
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 20px;
+  animation: swFadeUp 0.5s cubic-bezier(.22,1,.36,1) both;
 }
+.sw-card:nth-of-type(2) { animation-delay: 0.1s; }
+.sw-card:nth-of-type(3) { animation-delay: 0.15s; }
 .sw-card h5 {
   font-family: var(--font-display, 'Inter', sans-serif);
   font-weight: 700;
   font-size: 1.1rem;
   margin-bottom: 16px;
   color: #fff;
+}
+
+/* Walking person indicator */
+.sw-walking-icon {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 1.4rem; animation: swWalk 0.6s ease-in-out infinite;
+}
+.sw-walking-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 20px;
+  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
+  font-size: 0.72rem; color: #22c55e; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
 }
 
 /* map */
@@ -31,6 +71,78 @@
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.06);
   background: #0a0a0f;
+}
+
+/* Journey timeline */
+.sw-timeline {
+  position: relative; padding-left: 28px; margin: 16px 0;
+}
+.sw-timeline::before {
+  content: ''; position: absolute; left: 10px; top: 8px; bottom: 8px;
+  width: 2px; background: rgba(255,255,255,0.08);
+}
+.sw-timeline-item {
+  position: relative; padding: 10px 0 10px 16px;
+  animation: swCheckpointPop 0.4s cubic-bezier(.22,1,.36,1) both;
+}
+.sw-timeline-item::before {
+  content: ''; position: absolute; left: -22px; top: 14px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.2);
+}
+.sw-timeline-item.active::before {
+  background: #22c55e; border-color: #22c55e;
+  animation: swPulseGreen 2s ease-in-out infinite;
+}
+.sw-timeline-item.completed::before {
+  background: #22c55e; border-color: #22c55e;
+}
+.sw-timeline-item.upcoming::before {
+  background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12);
+}
+.sw-timeline-label {
+  font-size: 0.82rem; color: #fff; font-weight: 600;
+}
+.sw-timeline-sublabel {
+  font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-top: 2px;
+}
+/* Journey progress bar */
+.sw-progress-wrap {
+  background: rgba(255,255,255,0.04); border-radius: 6px; height: 6px;
+  overflow: hidden; margin: 12px 0 8px;
+}
+.sw-progress-fill {
+  height: 100%; border-radius: 6px;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  transition: width 1s ease;
+  animation: swProgressBar 1s ease both;
+}
+/* ETA display */
+.sw-eta-display {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+  margin-bottom: 12px;
+}
+.sw-eta-label {
+  font-size: 0.7rem; color: rgba(255,255,255,0.4);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.sw-eta-value {
+  font-family: 'Courier New', monospace; font-size: 1.1rem;
+  color: #22c55e; font-weight: 700;
+}
+/* Share location button */
+.sw-share-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 10px;
+  background: rgba(66,153,225,0.1); border: 1px solid rgba(66,153,225,0.25);
+  color: #4299e1; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.sw-share-btn:hover {
+  background: rgba(66,153,225,0.2); border-color: rgba(66,153,225,0.4);
+  transform: translateY(-1px); box-shadow: 0 4px 15px rgba(66,153,225,0.2);
 }
 
 /* form inputs */
@@ -236,25 +348,75 @@
 
   <!-- ── ACTIVE JOURNEY VIEW ─────────────────────────────────────────────── -->
   <div id="sw-active-section" class="hidden">
-    <div class="sw-card">
-      <div class="d-flex align-items-center justify-content-between mb-3">
-        <h5 style="margin:0;"><i class="bi bi-broadcast me-2" style="color:#22c55e;"></i>Journey in Progress</h5>
-        <span id="sw-active-status" class="sw-status active">
-          <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> ACTIVE
-        </span>
+    <div class="sw-card" style="animation-delay:0;">
+      <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <h5 style="margin:0;">
+          <span class="sw-walking-icon">🚶‍♀️</span>
+          Journey in Progress
+        </h5>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <span id="sw-active-status" class="sw-status active">
+            <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> ACTIVE
+          </span>
+          <div class="sw-walking-badge">
+            <i class="bi bi-broadcast"></i> TRACKING LIVE
+          </div>
+        </div>
       </div>
 
       <div id="sw-active-map" style="height:300px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:16px;background:#0a0a0f;"></div>
 
-      <div class="text-center mb-3">
-        <div class="sw-label">Time Remaining</div>
-        <div id="sw-countdown" class="sw-countdown">--:--:--</div>
+      <!-- Journey progress bar -->
+      <div style="margin-bottom:16px;">
+        <div class="d-flex align-items-center justify-content-between" style="margin-bottom:4px;">
+          <span style="font-size:0.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Journey Progress</span>
+          <span id="sw-progress-pct" style="font-size:0.68rem;color:#22c55e;font-weight:700;font-family:monospace;">0%</span>
+        </div>
+        <div class="sw-progress-wrap">
+          <div class="sw-progress-fill" id="sw-progress-bar" style="width:0%;"></div>
+        </div>
       </div>
 
-      <!-- Share link -->
+      <!-- ETA countdown -->
+      <div class="sw-eta-display">
+        <div>
+          <div class="sw-eta-label">Time Remaining</div>
+          <div id="sw-countdown" class="sw-eta-value">--:--:--</div>
+        </div>
+        <div style="flex:1;"></div>
+        <div style="text-align:right;">
+          <div class="sw-eta-label">ETA Arrival</div>
+          <div id="sw-eta-time" style="font-size:0.9rem;color:rgba(255,255,255,0.7);font-weight:600;font-family:monospace;">--:--</div>
+        </div>
+      </div>
+
+      <!-- Journey Timeline Checkpoints -->
+      <div class="sw-timeline" id="sw-timeline">
+        <div class="sw-timeline-item completed">
+          <div class="sw-timeline-label">Journey Started</div>
+          <div class="sw-timeline-sublabel" id="sw-start-time">--:--</div>
+        </div>
+        <div class="sw-timeline-item active" id="sw-checkpoint-current">
+          <div class="sw-timeline-label">In Transit</div>
+          <div class="sw-timeline-sublabel">Real-time tracking active</div>
+        </div>
+        <div class="sw-timeline-item upcoming">
+          <div class="sw-timeline-label">Destination</div>
+          <div class="sw-timeline-sublabel" id="sw-dest-label">Awaiting arrival</div>
+        </div>
+      </div>
+
+      <!-- Share link & button -->
       <div id="sw-share-section" class="mb-3">
-        <div class="sw-label">Share tracking link with contacts</div>
-        <div id="sw-share-link" class="sw-share-box" onclick="copyShareLink()">
+        <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+          <button class="sw-share-btn" onclick="copyShareLink()">
+            <i class="bi bi-share"></i> Share Live Location
+          </button>
+          <button class="sw-share-btn" onclick="shareViaWhatsApp()" style="background:rgba(37,211,102,0.1);border-color:rgba(37,211,102,0.25);color:#25d366;">
+            <i class="bi bi-whatsapp"></i> WhatsApp
+          </button>
+        </div>
+        <div id="sw-share-link" class="sw-share-box" onclick="copyShareLink()" style="font-size:0.72rem;">
           Click to copy tracking link
         </div>
       </div>
@@ -424,6 +586,22 @@
     const shareUrl = window.location.origin + '/safe-walk/share/' + shareToken;
     document.getElementById('sw-share-link').textContent = shareUrl;
 
+    // Timeline: set start time
+    var startTime = activeJourney.started_at ? new Date(activeJourney.started_at) : new Date();
+    document.getElementById('sw-start-time').textContent = startTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+    // ETA arrival time
+    if (activeJourney.expected_end) {
+      var etaTime = new Date(activeJourney.expected_end);
+      document.getElementById('sw-eta-time').textContent = etaTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+
+    // Destination label
+    if (activeJourney.dest_lat && activeJourney.dest_lng) {
+      document.getElementById('sw-dest-label').textContent =
+        parseFloat(activeJourney.dest_lat).toFixed(4) + ', ' + parseFloat(activeJourney.dest_lng).toFixed(4);
+    }
+
     // Init active map
     setTimeout(function() {
       if (activeMap) activeMap.remove();
@@ -465,9 +643,11 @@
     startLocationTracking();
   }
 
-  // ── Countdown Timer ───────────────────────────────────────────────────────
+  // ── Countdown Timer with Progress Bar ────────────────────────────────────
   function startCountdown() {
     if (countdownTimer) clearInterval(countdownTimer);
+    var journeyStart = activeJourney.started_at ? new Date(activeJourney.started_at).getTime() : Date.now();
+
     countdownTimer = setInterval(function() {
       if (!activeJourney || !activeJourney.expected_end) return;
       const end = new Date(activeJourney.expected_end);
@@ -475,12 +655,34 @@
       const diff = end - now;
       const el = document.getElementById('sw-countdown');
       const statusEl = document.getElementById('sw-active-status');
+      const progressBar = document.getElementById('sw-progress-bar');
+      const progressPct = document.getElementById('sw-progress-pct');
+      const checkpointEl = document.getElementById('sw-checkpoint-current');
+
+      /* Calculate progress percentage */
+      var totalDuration = end.getTime() - journeyStart;
+      var elapsed = Date.now() - journeyStart;
+      var pct = Math.min(100, Math.max(0, Math.round((elapsed / totalDuration) * 100)));
+      if (progressBar) progressBar.style.width = pct + '%';
+      if (progressPct) progressPct.textContent = pct + '%';
+
+      /* Update progress bar color based on time */
+      if (pct > 85) {
+        if (progressBar) progressBar.style.background = 'linear-gradient(90deg, #f59e0b, #dc2626)';
+      }
 
       if (diff <= 0) {
         el.textContent = 'OVERDUE';
-        el.classList.add('overdue');
+        el.style.color = '#dc2626';
         statusEl.className = 'sw-status overdue';
         statusEl.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> OVERDUE';
+        if (progressBar) { progressBar.style.width = '100%'; progressBar.style.background = '#dc2626'; }
+        if (progressPct) progressPct.textContent = 'OVERDUE';
+        if (checkpointEl) {
+          checkpointEl.querySelector('.sw-timeline-label').textContent = 'Overdue — Check In Required';
+          checkpointEl.classList.remove('active'); checkpointEl.classList.add('upcoming');
+          checkpointEl.querySelector('.sw-timeline-label').style.color = '#dc2626';
+        }
         // Check ETA on server
         fetch('/safe-walk/check-eta', {method: 'POST', headers})
           .then(r => r.json())
@@ -504,6 +706,11 @@
         String(h).padStart(2,'0') + ':' +
         String(m).padStart(2,'0') + ':' +
         String(s).padStart(2,'0');
+
+      /* Update checkpoint sublabel */
+      if (checkpointEl) {
+        checkpointEl.querySelector('.sw-timeline-sublabel').textContent = pct + '% complete — tracking active';
+      }
     }, 1000);
   }
 
@@ -552,6 +759,13 @@
     navigator.clipboard.writeText(link).then(function() {
       if (typeof showToast === 'function') showToast('Tracking link copied!', 'success');
     });
+  };
+
+  // ── Share via WhatsApp ───────────────────────────────────────────────────
+  window.shareViaWhatsApp = function() {
+    const link = document.getElementById('sw-share-link').textContent;
+    const msg = encodeURIComponent('Track my live journey on RAKSHAK: ' + link);
+    window.open('https://wa.me/?text=' + msg, '_blank');
   };
 
   // ── Reset to start view ───────────────────────────────────────────────────

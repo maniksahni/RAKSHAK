@@ -344,13 +344,79 @@
   color:var(--accent-blue);
 }
 
-/* ── PASSWORD SECTION ── */
-.pwd-section {
-  background:rgba(255,255,255,0.015);border-radius:var(--radius-sm);
-  padding:16px;border:1px solid var(--border-glass);margin-top:1rem;
-  transition:border-color .3s;
+/* ── GOOGLE AUTH BADGE ── */
+.google-auth-badge {
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 20px;border-radius:8px;
+  background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.25);
+  color:#8ab4f8;font-size:0.82rem;font-weight:600;
+  transition:all .3s;position:relative;overflow:hidden;
 }
-.pwd-section:hover { border-color:rgba(220,38,38,0.1); }
+.google-auth-badge::before {
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg, transparent, rgba(66,133,244,0.1), transparent);
+  animation:googleSweep 4s ease-in-out infinite;
+}
+@keyframes googleSweep { 0%{left:-100%}50%{left:100%}100%{left:100%} }
+.google-auth-badge:hover {
+  border-color:rgba(66,133,244,0.5);
+  box-shadow:0 0 20px rgba(66,133,244,0.15);
+}
+.google-auth-badge svg { width:18px;height:18px; }
+
+/* ── NOTIFICATION TOGGLES ── */
+.notif-toggle-row {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);
+  transition:all .3s;margin-bottom:8px;
+}
+.notif-toggle-row:hover {
+  border-color:rgba(220,38,38,0.15);
+  background:rgba(255,255,255,0.03);
+}
+.notif-toggle-label {
+  display:flex;align-items:center;gap:10px;
+  font-size:0.82rem;color:var(--text-secondary);
+}
+.notif-toggle-label i { color:var(--red-primary);font-size:0.85rem;opacity:0.8; }
+.notif-toggle-label .notif-sub {
+  font-size:0.68rem;color:var(--text-muted);margin-top:2px;
+}
+.cyber-toggle {
+  position:relative;width:44px;height:24px;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border-glass);
+  border-radius:50px;cursor:pointer;transition:all .3s;flex-shrink:0;
+}
+.cyber-toggle::after {
+  content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;
+  border-radius:50%;background:var(--text-muted);transition:all .3s;
+}
+.cyber-toggle.active {
+  background:rgba(72,187,120,0.15);border-color:rgba(72,187,120,0.4);
+}
+.cyber-toggle.active::after {
+  left:23px;background:var(--accent-green);
+  box-shadow:0 0 8px rgba(72,187,120,0.5);
+}
+
+/* ── DOWNLOAD DATA BUTTON ── */
+.btn-download-data {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:6px;font-size:0.82rem;font-weight:600;
+  background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.3);
+  color:#a78bfa;cursor:pointer;transition:all .3s;
+  letter-spacing:0.03em;text-decoration:none;
+}
+.btn-download-data:hover {
+  background:rgba(139,92,246,0.15);border-color:rgba(139,92,246,0.5);
+  box-shadow:0 0 16px rgba(139,92,246,0.15);color:#c4b5fd;
+  transform:translateY(-1px);
+}
+.btn-download-data i { font-size:0.95rem; }
+
+/* ── ACCOUNT SETTINGS SECTION ── */
+.settings-section { animation:profIn .5s .35s cubic-bezier(.22,1,.36,1) both; }
 
 /* ── SHIELD BADGE (header) ── */
 .shield-badge {
@@ -445,19 +511,31 @@
 
     <!-- Stats Row -->
     <div class="row g-2 mt-3">
-      <div class="col-3">
+      <div class="col-4 col-md-2">
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="stat-alerts">0</div>
+          <div class="profile-stat-label">Total Alerts</div>
+        </div>
+      </div>
+      <div class="col-4 col-md-2">
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="stat-days" style="color:var(--accent-amber);">--</div>
+          <div class="profile-stat-label">Days Active</div>
+        </div>
+      </div>
+      <div class="col-4 col-md-2">
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="stat-score" style="color:var(--accent-blue);">0</div>
+          <div class="profile-stat-label">Safety Score</div>
+        </div>
+      </div>
+      <div class="col-4 col-md-2">
         <div class="profile-stat">
           <div class="profile-stat-num" id="stat-contacts">{{ contacts|length }}</div>
           <div class="profile-stat-label">Contacts</div>
         </div>
       </div>
-      <div class="col-3">
-        <div class="profile-stat">
-          <div class="profile-stat-num" id="stat-alerts">0</div>
-          <div class="profile-stat-label">Alerts</div>
-        </div>
-      </div>
-      <div class="col-3">
+      <div class="col-4 col-md-2">
         <div class="profile-stat">
           <div class="d-flex align-items-center justify-content-center gap-1">
             <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(72,187,120,0.5);animation:dotBlink 2s infinite;"></div>
@@ -466,10 +544,10 @@
           <div class="profile-stat-label">Shield</div>
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-4 col-md-2">
         <div class="profile-stat">
           <div class="profile-stat-num" style="font-size:1.1rem;">{{ current_user.risk_level|upper }}</div>
-          <div class="profile-stat-label">Risk</div>
+          <div class="profile-stat-label">Risk Level</div>
         </div>
       </div>
     </div>
@@ -539,17 +617,19 @@
             <textarea name="address" class="form-control form-control-dark" rows="2" placeholder="Your home address...">{{ current_user.address or '' }}</textarea>
           </div>
 
-          <div class="pwd-section">
-            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;font-weight:600;">
-              <i class="bi bi-key me-1" style="color:var(--red-primary);"></i>Change Password <span style="font-weight:400;color:var(--text-muted);">(optional)</span>
-            </p>
-            <div class="mb-3">
-              <label class="form-label-dark">Current Password</label>
-              <input type="password" name="current_password" class="form-control form-control-dark" placeholder="Leave blank to keep current">
-            </div>
-            <div class="mb-0">
-              <label class="form-label-dark">New Password</label>
-              <input type="password" name="new_password" class="form-control form-control-dark" placeholder="8+ chars, uppercase, digit, special">
+          <!-- Google Auth Badge -->
+          <div style="margin-top:1rem;padding:14px 16px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.015);border:1px solid var(--border-glass);">
+            <p style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Authentication Method</p>
+            <div class="google-auth-badge">
+              <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              <div>
+                <div>Connected with Google</div>
+                <div style="font-size:0.68rem;color:var(--text-muted);font-weight:400;margin-top:1px;">{{ current_user.email }}</div>
+              </div>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:#34A853;box-shadow:0 0 6px rgba(52,168,83,0.5);animation:dotBlink 2s infinite;"></div>
+                <span style="font-size:0.65rem;color:var(--accent-green);">VERIFIED</span>
+              </div>
             </div>
           </div>
 
@@ -649,6 +729,132 @@
       </div>
       <div class="activity-timeline" id="activity-timeline">
         <!-- Populated by JS with simulated recent activity -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ NOTIFICATION PREFERENCES + DATA EXPORT ════════════ -->
+  <div class="row g-4 mt-0 settings-section">
+    <!-- Notification Preferences -->
+    <div class="col-lg-7">
+      <div class="glass-section p-4 h-100">
+        <div class="glass-section-title">
+          <i class="bi bi-bell-fill"></i>
+          <span>Notification Preferences</span>
+          <div class="section-line"></div>
+        </div>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">Configure how RAKSHAK keeps you informed about safety events.</p>
+
+        <div class="notif-toggle-row">
+          <div class="notif-toggle-label">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div>
+              <div>SOS Alert Notifications</div>
+              <div class="notif-sub">Get notified when an SOS is triggered</div>
+            </div>
+          </div>
+          <div class="cyber-toggle active" data-pref="sos_alerts" onclick="toggleNotif(this)"></div>
+        </div>
+
+        <div class="notif-toggle-row">
+          <div class="notif-toggle-label">
+            <i class="bi bi-people-fill"></i>
+            <div>
+              <div>Contact Activity</div>
+              <div class="notif-sub">Alerts when trusted contacts are modified</div>
+            </div>
+          </div>
+          <div class="cyber-toggle active" data-pref="contact_activity" onclick="toggleNotif(this)"></div>
+        </div>
+
+        <div class="notif-toggle-row">
+          <div class="notif-toggle-label">
+            <i class="bi bi-geo-alt-fill"></i>
+            <div>
+              <div>Location Tracking Updates</div>
+              <div class="notif-sub">GPS and safe walk route monitoring</div>
+            </div>
+          </div>
+          <div class="cyber-toggle active" data-pref="location_updates" onclick="toggleNotif(this)"></div>
+        </div>
+
+        <div class="notif-toggle-row">
+          <div class="notif-toggle-label">
+            <i class="bi bi-shield-fill-check"></i>
+            <div>
+              <div>Security Digest</div>
+              <div class="notif-sub">Weekly safety score and account summary</div>
+            </div>
+          </div>
+          <div class="cyber-toggle" data-pref="security_digest" onclick="toggleNotif(this)"></div>
+        </div>
+
+        <div class="notif-toggle-row">
+          <div class="notif-toggle-label">
+            <i class="bi bi-phone-vibrate-fill"></i>
+            <div>
+              <div>Fake Call Alerts</div>
+              <div class="notif-sub">Receive confirmation after fake call activation</div>
+            </div>
+          </div>
+          <div class="cyber-toggle active" data-pref="fake_call" onclick="toggleNotif(this)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Export + Account Actions -->
+    <div class="col-lg-5">
+      <div class="glass-section p-4 h-100 d-flex flex-column">
+        <div class="glass-section-title">
+          <i class="bi bi-database-fill-gear"></i>
+          <span>Data & Export</span>
+          <div class="section-line"></div>
+        </div>
+
+        <!-- Download My Data -->
+        <div style="padding:20px;border-radius:var(--radius-sm);background:rgba(139,92,246,0.04);border:1px solid rgba(139,92,246,0.15);margin-bottom:16px;">
+          <div style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">
+            <i class="bi bi-cloud-arrow-down me-1" style="color:#a78bfa;"></i>Download My Data
+          </div>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:12px;">Export your alerts, contacts, and evidence vault records as a comprehensive PDF report.</p>
+          <a href="{{ url_for('sos.history') }}" class="btn-download-data">
+            <i class="bi bi-file-earmark-zip"></i> Open Evidence Vault
+          </a>
+        </div>
+
+        <!-- Account Info Cards -->
+        <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);">
+            <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Account Created</div>
+            <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);font-family:var(--font-display);">
+              <i class="bi bi-calendar3 me-1" style="color:var(--accent-blue);font-size:0.75rem;"></i>
+              {% if current_user.created_at %}{{ current_user.created_at.strftime('%d %B %Y') }}{% else %}N/A{% endif %}
+            </div>
+          </div>
+
+          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);">
+            <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Days Active</div>
+            <div style="font-size:0.9rem;font-weight:600;color:var(--text-primary);font-family:var(--font-display);" id="days-active-display">
+              <i class="bi bi-lightning-charge-fill me-1" style="color:var(--accent-amber);font-size:0.75rem;"></i>
+              <span id="days-active-num">--</span> days
+            </div>
+          </div>
+
+          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(72,187,120,0.04);border:1px solid rgba(72,187,120,0.15);">
+            <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Account Status</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(72,187,120,0.5);animation:dotBlink 2s infinite;"></div>
+              <span style="font-size:0.85rem;font-weight:700;color:var(--accent-green);letter-spacing:0.05em;">OPERATIONAL</span>
+            </div>
+          </div>
+
+          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(220,38,38,0.04);border:1px solid rgba(220,38,38,0.12);margin-top:auto;">
+            <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Encryption</div>
+            <div style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);font-family:'Courier New',monospace;letter-spacing:0.05em;">
+              <i class="bi bi-lock-fill me-1" style="color:var(--red-primary);font-size:0.7rem;"></i>AES-256-GCM / TLS 1.3
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -768,6 +974,37 @@ async function deleteContact(id) {
     if (current >= score) { current = score; clearInterval(counter); }
     num.textContent = current;
   }, 35);
+
+  // Also animate the stat-score in the stats row
+  const statScore = document.getElementById('stat-score');
+  if (statScore) {
+    let sc = 0;
+    const sStep = Math.max(1, Math.floor(score / 30));
+    const sCounter = setInterval(() => {
+      sc += sStep;
+      if (sc >= score) { sc = score; clearInterval(sCounter); }
+      statScore.textContent = sc;
+    }, 40);
+  }
+
+  // Animate days active stat
+  {% if current_user.created_at %}
+  const statDays = document.getElementById('stat-days');
+  if (statDays) {
+    const cDate = new Date('{{ current_user.created_at.strftime("%Y-%m-%d") }}');
+    const daysVal = Math.max(1, Math.floor((new Date() - cDate) / (1000*60*60*24)));
+    let dc = 0;
+    const dStep = Math.max(1, Math.floor(daysVal / 25));
+    const dCounter = setInterval(() => {
+      dc += dStep;
+      if (dc >= daysVal) { dc = daysVal; clearInterval(dCounter); }
+      statDays.textContent = dc;
+    }, 35);
+  }
+  {% else %}
+  const statDays = document.getElementById('stat-days');
+  if (statDays) statDays.textContent = '1';
+  {% endif %}
 })();
 
 /* ── Security Shield Progress ── */
@@ -836,6 +1073,34 @@ async function deleteContact(id) {
     if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
     return Math.floor(diff / 86400) + ' days ago';
   }
+})();
+
+/* ── Notification Toggle ── */
+function toggleNotif(el) {
+  el.classList.toggle('active');
+  const pref = el.dataset.pref;
+  const enabled = el.classList.contains('active');
+  showToast(`${pref.replace(/_/g,' ')} notifications ${enabled ? 'enabled' : 'disabled'}`, enabled ? 'success' : 'info');
+}
+
+/* ── Days Active Counter ── */
+(function(){
+  const el = document.getElementById('days-active-num');
+  if (!el) return;
+  {% if current_user.created_at %}
+  const created = new Date('{{ current_user.created_at.strftime("%Y-%m-%d") }}');
+  const now = new Date();
+  const days = Math.max(1, Math.floor((now - created) / (1000 * 60 * 60 * 24)));
+  let current = 0;
+  const step = Math.max(1, Math.floor(days / 30));
+  const counter = setInterval(() => {
+    current += step;
+    if (current >= days) { current = days; clearInterval(counter); }
+    el.textContent = current;
+  }, 30);
+  {% else %}
+  el.textContent = '1';
+  {% endif %}
 })();
 </script>
 {% endblock %}
