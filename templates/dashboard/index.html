@@ -295,7 +295,7 @@
           <h5 style="margin:0; font-family:'Courier New', monospace; font-weight:700; color:var(--white); letter-spacing:0.05em;">
             <i class="bi bi-people-fill me-2" style="color:var(--accent-green);"></i>TRUSTED OPERATIVES
           </h5>
-          <a href="{{ url_for('main.settings') }}" class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:var(--text-muted); font-size:0.7rem;">Manage</a>
+          <a href="{{ url_for('auth.profile') }}" class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:var(--text-muted); font-size:0.7rem;">Manage</a>
         </div>
         
         <div class="d-flex overflow-auto pb-2" style="gap:15px; scrollbar-width:thin;">
@@ -310,10 +310,10 @@
                 <div style="font-size:0.65rem; color:var(--text-muted); font-family:'Courier New', monospace;">{{ contact.contact_email }}</div>
               </div>
             </div>
-            {% endendfor %}
+            {% endfor %}
           {% else %}
             <div class="text-muted w-100 text-center py-3" style="font-family:'Courier New', monospace; font-size:0.8rem;">
-              [ NO OPERATIVES REGISTERED — <a href="{{ url_for('main.settings') }}" style="color:var(--red);">ADD CONTACTS</a> ]
+              [ NO OPERATIVES REGISTERED — <a href="{{ url_for('auth.profile') }}" style="color:var(--red);">ADD CONTACTS</a> ]
             </div>
           {% endif %}
         </div>
