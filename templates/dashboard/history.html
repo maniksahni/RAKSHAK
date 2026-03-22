@@ -25,37 +25,38 @@
   border-radius:50px;overflow:hidden;
 }
 .view-toggle-btn {
-  background:none;border:none;color:var(--text-muted);padding:6px 16px;font-size:0.78rem;
-  cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:5px;font-weight:500;
+  background:none;border:none;color:var(--text-muted);padding:8px 20px;font-size:0.85rem;
+  cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:6px;font-weight:600;
 }
 .view-toggle-btn.active {
-  background:rgba(220,38,38,0.12);color:var(--red-primary);font-weight:700;
+  background:rgba(255,255,255,0.1);color:#fff;
 }
-.view-toggle-btn:hover:not(.active) { color:var(--text-primary); }
+.view-toggle-btn:hover:not(.active) { color:rgba(255,255,255,0.8); }
 
-/* ── CYBER TABLE VIEW ── */
+/* ── PREMIUM TABLE VIEW ── */
 .alert-table-row {
-  border-bottom: 1px solid var(--border-glass);
-  background: rgba(10, 10, 14, 0.4);
-  transition: background .2s, transform .2s, box-shadow .2s;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: transparent;
+  transition: background .3s, transform .3s;
   position: relative;
   overflow: hidden;
 }
 .alert-table-row::before {
   content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
-  background: var(--red-primary); transition: width 0.3s cubic-bezier(.22,1,.36,1);
+  background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(139,92,246,0.3));
+  transition: width 0.3s cubic-bezier(.22,1,.36,1);
   opacity: 0.8; z-index: 0; pointer-events: none;
 }
-.alert-table-row:hover::before { width: 4px; }
+.alert-table-row:hover::before { width: 3px; }
 .alert-table-row:hover {
-  background: var(--bg-card-hover) !important;
+  background: rgba(255,255,255,0.02) !important;
   transform: translateX(4px);
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.1);
 }
 .cyber-hash {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.65rem; color: var(--accent-blue); opacity: 0.7;
-  letter-spacing: 0.05em; display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem; color: rgba(255,255,255,0.4);
+  font-weight: 500;
+  letter-spacing: 0.02em; display: inline-block;
   margin-top: 4px;
 }
 
@@ -224,12 +225,12 @@
 
   <!-- Page Header -->
   <div class="history-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3" style="position:relative; z-index:1;">
-    <div style="position:absolute; right:-10%; top:-50%; font-family:var(--font-display); font-size:6rem; font-weight:900; color:rgba(255,255,255,0.015); pointer-events:none;">SYS.AUDIT</div>
+    <div style="position:absolute; right:-10%; top:-50%; font-family:var(--sg); font-size:6rem; font-weight:900; color:rgba(255,255,255,0.015); pointer-events:none;">HISTORY</div>
     <div>
-      <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin:0;letter-spacing:1px;text-transform:uppercase;">
-        <i class="bi bi-hdd-network-fill me-2" style="color:var(--red-primary);"></i>Forensic Ledger
+      <h2 style="font-family:var(--sg);font-size:2rem;font-weight:800;margin:0;letter-spacing:-0.02em;">
+        <i class="bi bi-clock-history me-2" style="color:var(--text-primary); opacity:0.8;"></i>Activity Ledger
       </h2>
-      <p style="color:var(--text-muted);font-size:0.85rem;margin:0;font-family:monospace;">Encrypted databank of all registered tactical events</p>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin:4px 0 0;font-family:var(--int);">Comprehensive log of system alerts and status updates</p>
     </div>
     <div class="d-flex align-items-center gap-3">
       <!-- View Toggle -->
