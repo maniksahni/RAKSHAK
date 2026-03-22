@@ -5,22 +5,23 @@
 <style>
 /* ── Emergency Command HUD ── */
 .emg-header {
-  position: relative; overflow: hidden; border-radius: 16px;
-  background: linear-gradient(135deg, rgba(220,38,38,0.12), rgba(5,5,10,0.9));
-  border: 1px solid rgba(220,38,38,0.3);
-  padding: 24px 28px; margin-bottom: 24px;
+  position: relative; overflow: hidden; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08); backdrop-filter:blur(30px);
+  padding: 24px 32px; margin-bottom: 24px;
   animation: animateIn .5s cubic-bezier(.22,1,.36,1) both;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 .emg-header::before {
-  content: 'EMERGENCY'; position: absolute; right: -20px; top: -20px;
-  font-size: 6rem; font-weight: 900; letter-spacing: -2px;
-  color: rgba(220,38,38,0.04); pointer-events: none; transform: rotate(-5deg);
-  font-family: var(--font-display);
+  content: 'SOS DIAL'; position: absolute; right: -15px; top: -15px;
+  font-size: 5rem; font-weight: 900; letter-spacing: -2px;
+  color: rgba(255,255,255,0.02); pointer-events: none;
+  font-family: var(--sg);
 }
 .emg-scanline {
   position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
-  border-radius: 16px;
+  background: radial-gradient(circle at top right, rgba(220,38,38,0.15), transparent 50%);
+  border-radius: 20px;
 }
 /* Threat level blink indicator */
 .threat-badge {
@@ -81,42 +82,36 @@
 /* Police Card */
 .police-card {
   display: block; text-decoration: none;
-  background: linear-gradient(135deg, rgba(220,38,38,0.22) 0%, rgba(220,38,38,0.06) 100%);
-  border: 2px solid rgba(220,38,38,0.45); border-radius: 18px;
+  background: linear-gradient(135deg, rgba(220,38,38,0.1) 0%, rgba(220,38,38,0.02) 100%);
+  border: 1px solid rgba(220,38,38,0.3); border-radius: 20px; backdrop-filter:blur(20px);
   padding: 1.5rem; transition: all 0.35s cubic-bezier(.22,1,.36,1);
   position: relative; overflow: hidden;
-  box-shadow: 0 4px 30px rgba(220,38,38,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
   transform-style: preserve-3d;
   animation: animateIn .4s .1s cubic-bezier(.22,1,.36,1) both;
 }
-.police-card::after {
-  content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.08), transparent);
-  transform: skewX(-20deg); animation: cardSweep 4s linear infinite;
-}
-@keyframes cardSweep { 0%{left:-100%} 100%{left:200%} }
+.police-card::after { display:none; }
 .police-card:hover {
-  transform: translateY(-4px) perspective(1000px) rotateX(2deg);
-  box-shadow: 0 12px 50px rgba(220,38,38,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
-  border-color: rgba(220,38,38,0.7);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 50px rgba(220,38,38,0.2), inset 0 1px 0 rgba(220,38,38,0.2);
+  border-color: rgba(220,38,38,0.5); background: rgba(220,38,38,0.08);
 }
 .police-card:active { transform: scale(0.98); }
 .police-icon {
-  width: 68px; height: 68px; background: rgba(220,38,38,0.2);
+  width: 60px; height: 60px; background: rgba(255,255,255,0.05);
   border-radius: 16px; display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; border: 1px solid rgba(220,38,38,0.3);
-  box-shadow: 0 0 20px rgba(220,38,38,0.15), inset 0 0 15px rgba(220,38,38,0.08);
+  flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);
 }
 .police-call-icon {
-  width: 64px; height: 64px; background: linear-gradient(135deg, #dc2626, #991b1b);
+  width: 56px; height: 56px; background: linear-gradient(135deg, #dc2626, #991b1b);
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
   color: #fff; flex-shrink: 0;
   animation: callPulse 1.8s ease-in-out infinite;
-  box-shadow: 0 0 30px rgba(220,38,38,0.6), 0 0 60px rgba(220,38,38,0.2);
+  box-shadow: 0 0 20px rgba(220,38,38,0.4);
 }
 @keyframes callPulse {
-  0%,100% { box-shadow: 0 0 20px rgba(220,38,38,0.5), 0 0 0 0 rgba(220,38,38,0.3); }
-  50% { box-shadow: 0 0 40px rgba(220,38,38,0.8), 0 0 0 12px rgba(220,38,38,0); }
+  0%,100% { box-shadow: 0 0 15px rgba(220,38,38,0.4), 0 0 0 0 rgba(220,38,38,0.2); }
+  50% { box-shadow: 0 0 30px rgba(220,38,38,0.6), 0 0 0 10px rgba(220,38,38,0); }
 }
 .police-desc { color: rgba(255,255,255,0.45); font-size: 0.78rem; margin: 0.75rem 0 0; line-height: 1.5; }
 
