@@ -921,6 +921,128 @@ body::before{
 /* ── Hero depth shift on mouse ── */
 .hero-content,.hero-visual{transition:transform .08s linear}
 
+/* ═══════════════════════════════════════════
+   V7 EXPLOSIVE UPGRADES
+═══════════════════════════════════════════*/
+
+/* ── 1. RADAR/SONAR SVG BACKGROUND ── */
+.hero-radar-svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:900px;pointer-events:none;z-index:0;opacity:.12}
+.radar-ring{fill:none;stroke:var(--red);stroke-width:.5;opacity:0;transform-origin:center;animation:radarExpand 4s ease-out infinite}
+.radar-ring:nth-child(2){animation-delay:.8s}
+.radar-ring:nth-child(3){animation-delay:1.6s}
+.radar-ring:nth-child(4){animation-delay:2.4s}
+.radar-ring:nth-child(5){animation-delay:3.2s}
+@keyframes radarExpand{0%{r:20;opacity:.8;stroke-width:2}70%{opacity:.2}100%{r:420;opacity:0;stroke-width:.2}}
+
+/* ── SCAN LINES ── */
+.hero-scanlines{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;opacity:.06}
+.scanline{position:absolute;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(220,38,38,.6) 20%,rgba(220,38,38,.9) 50%,rgba(220,38,38,.6) 80%,transparent 100%);animation:scanDown 6s linear infinite;opacity:0}
+.scanline:nth-child(1){animation-delay:0s}
+.scanline:nth-child(2){animation-delay:2s}
+.scanline:nth-child(3){animation-delay:4s}
+@keyframes scanDown{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100%;opacity:0}}
+
+/* ── BIGGER HERO HEADING + STRONGER NEON ── */
+.hero-h1{font-size:clamp(3.5rem,6.5vw,7rem) !important;text-shadow:0 0 20px rgba(220,38,38,.15),0 0 60px rgba(220,38,38,.08),0 0 120px rgba(220,38,38,.04) !important}
+.h1-grad{filter:drop-shadow(0 0 30px rgba(220,38,38,.25)) drop-shadow(0 0 60px rgba(220,38,38,.1)) !important}
+
+/* ── GLITCH TEXT on "Our Mission" ── */
+.h1-grad{position:relative}
+@keyframes glitchShift{0%,92%,100%{transform:translateX(0)}93%{transform:translateX(-3px)}94%{transform:translateX(5px)}95%{transform:translateX(-2px)}96%{transform:translateX(4px)}97%{transform:translateX(0)}98%{transform:translateX(-6px)}99%{transform:translateX(2px)}}
+.glitch-text{animation:glitchShift 4s ease-in-out infinite !important}
+
+/* ── 2. FULL-SCREEN CONSTELLATION CANVAS ── */
+#constellationCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+
+/* ── 3. PHONE HOLOGRAPHIC STRIPS ── */
+.phone-holo-strip{position:absolute;z-index:3;pointer-events:none;border-radius:54px;overflow:hidden}
+.phone-holo-strip::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(255,0,100,.08),rgba(0,200,255,.08),rgba(255,200,0,.06),transparent);background-size:100% 300%;animation:holoShimmer 3s linear infinite}
+@keyframes holoShimmer{0%{background-position:0 0}100%{background-position:0 300%}}
+.phone-holo-left{left:-2px;top:40px;bottom:40px;width:4px}
+.phone-holo-right{right:-2px;top:40px;bottom:40px;width:4px}
+
+/* signal wave from phone */
+.phone-signal-wave{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;pointer-events:none;z-index:0}
+.signal-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(220,38,38,.15);animation:signalPulse 3s ease-out infinite;opacity:0}
+.signal-ring:nth-child(2){animation-delay:1s}
+.signal-ring:nth-child(3){animation-delay:2s}
+@keyframes signalPulse{0%{transform:scale(.3);opacity:.6}100%{transform:scale(1);opacity:0}}
+
+/* floating cards stronger 3D + bounce */
+.f-card{box-shadow:0 25px 60px rgba(0,0,0,.95),0 0 30px rgba(220,38,38,.15),inset 0 0 20px rgba(220,38,38,.08) !important;border:1px solid rgba(220,38,38,.5) !important}
+.fc1{animation:floatBounceA 3s cubic-bezier(.36,.07,.19,.97) infinite,fadeIn .6s .8s both !important}
+.fc2{animation:floatBounceB 3.8s cubic-bezier(.36,.07,.19,.97) infinite,fadeIn .6s 1.2s both !important}
+@keyframes floatBounceA{0%,100%{transform:translateY(0)}40%{transform:translateY(-12px)}60%{transform:translateY(-10px)}80%{transform:translateY(-11px)}}
+@keyframes floatBounceB{0%,100%{transform:translateY(0)}40%{transform:translateY(10px)}60%{transform:translateY(8px)}80%{transform:translateY(9px)}}
+
+/* ── 4. MARQUEE ENHANCEMENTS ── */
+.m-item{font-size:1.1rem !important;text-shadow:0 0 15px rgba(220,38,38,.6),0 0 30px rgba(220,38,38,.3) !important;color:#ef4444 !important}
+.m-sep{display:inline-flex;align-items:center;padding:0 1rem;opacity:.4}
+.m-sep svg{width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px var(--red))}
+
+/* ── 5. STATS WATERMARK + ACCENT STRIPS ── */
+.stat-cell{overflow:hidden !important}
+.stat-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Rajdhani',sans-serif;font-size:8rem;font-weight:900;color:rgba(220,38,38,.04);pointer-events:none;line-height:1;z-index:0;white-space:nowrap}
+.stat-cell .stat-num{position:relative;z-index:2}
+.stat-cell .stat-lbl{position:relative;z-index:2}
+.stat-cell .stat-micro-icon{position:relative;z-index:2}
+.stat-accent-strip{position:absolute;top:0;left:0;right:0;height:3px;z-index:3}
+.stat-cell:nth-child(1) .stat-accent-strip{background:linear-gradient(90deg,#dc2626,#ef4444);box-shadow:0 0 10px rgba(220,38,38,.5)}
+.stat-cell:nth-child(2) .stat-accent-strip{background:linear-gradient(90deg,#f59e0b,#fbbf24);box-shadow:0 0 10px rgba(245,158,11,.5)}
+.stat-cell:nth-child(3) .stat-accent-strip{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 10px rgba(59,130,246,.5)}
+.stat-cell:nth-child(4) .stat-accent-strip{background:linear-gradient(90deg,#22c55e,#4ade80);box-shadow:0 0 10px rgba(34,197,94,.5)}
+/* typewriter cursor */
+.stat-cursor{display:inline-block;width:2px;height:1em;background:var(--red);margin-left:4px;vertical-align:middle;animation:cursorBlink .8s step-end infinite}
+
+/* ── 6. BENTO GLASSMORPHISM + ANIMATED BORDER ── */
+.bc{background:rgba(15,15,20,.6) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important}
+.bc-icon{width:65px !important;height:65px !important}
+.bc-icon svg{width:2.5rem !important;height:2.5rem !important}
+.bc-icon{background:radial-gradient(circle,rgba(220,38,38,.12),rgba(220,38,38,.03)) !important;box-shadow:0 0 20px rgba(220,38,38,.1)}
+.bc-threat .bc-icon{background:radial-gradient(circle,rgba(245,158,11,.12),rgba(245,158,11,.03)) !important;box-shadow:0 0 20px rgba(245,158,11,.1)}
+.bc-map .bc-icon{background:radial-gradient(circle,rgba(59,130,246,.12),rgba(59,130,246,.03)) !important;box-shadow:0 0 20px rgba(59,130,246,.1)}
+.bc-hud .bc-icon{background:radial-gradient(circle,rgba(34,197,94,.12),rgba(34,197,94,.03)) !important;box-shadow:0 0 20px rgba(34,197,94,.1)}
+.bc-vault .bc-icon{background:radial-gradient(circle,rgba(168,85,247,.12),rgba(168,85,247,.03)) !important;box-shadow:0 0 20px rgba(168,85,247,.1)}
+.bc-auth .bc-icon{background:radial-gradient(circle,rgba(6,182,212,.12),rgba(6,182,212,.03)) !important;box-shadow:0 0 20px rgba(6,182,212,.1)}
+
+/* animated tracing border on hover */
+.bc .trace-border{position:absolute;inset:-1px;border-radius:6px;pointer-events:none;z-index:10;opacity:0;transition:opacity .3s}
+.bc:hover .trace-border{opacity:1}
+.trace-border svg{width:100%;height:100%}
+.trace-border rect{fill:none;stroke:var(--red);stroke-width:2;stroke-dasharray:200 800;stroke-dashoffset:0;animation:traceBorder 3s linear infinite}
+@keyframes traceBorder{to{stroke-dashoffset:-1000}}
+
+/* ── 7. LIVE THREAT MAP SECTION ── */
+.threat-map-section{padding:6rem clamp(2rem,6vw,6rem);max-width:1380px;margin:0 auto;position:relative;overflow:hidden}
+.threat-map-container{position:relative;display:flex;align-items:center;gap:3rem;margin-top:3rem}
+.threat-map-svg-wrap{flex:1;position:relative;min-height:500px}
+.threat-map-svg-wrap svg{width:100%;height:100%}
+.threat-map-stats{display:flex;flex-direction:column;gap:1.5rem;min-width:280px}
+.tm-stat-card{background:rgba(10,10,15,.8);border:1px solid rgba(220,38,38,.2);border-left:3px solid var(--red);padding:20px 24px;position:relative;overflow:hidden}
+.tm-stat-card::before{content:'';position:absolute;top:0;right:0;width:15px;height:15px;border-top:2px solid var(--red);border-right:2px solid var(--red)}
+.tm-stat-num{font-family:'Rajdhani',sans-serif;font-size:2.5rem;font-weight:800;color:var(--white);line-height:1}
+.tm-stat-lbl{font-family:'Courier New',monospace;font-size:.75rem;color:var(--red);text-transform:uppercase;letter-spacing:.15em;margin-top:4px}
+.tm-stat-bar{height:3px;background:rgba(255,255,255,.05);margin-top:10px;border-radius:2px;overflow:hidden}
+.tm-stat-bar-fill{height:100%;border-radius:2px;animation:tmBarFill 2s ease forwards}
+@keyframes tmBarFill{from{width:0}}
+
+/* map dot pulsing */
+.map-dot{animation:mapDotPulse 2s ease-in-out infinite}
+@keyframes mapDotPulse{0%,100%{opacity:.7;r:4}50%{opacity:1;r:6}}
+.map-dot-ring{animation:mapDotRingPulse 2s ease-out infinite}
+@keyframes mapDotRingPulse{0%{r:4;opacity:.5}100%{r:18;opacity:0}}
+
+@media(max-width:900px){.threat-map-container{flex-direction:column}.threat-map-stats{flex-direction:row;flex-wrap:wrap;min-width:auto}.tm-stat-card{flex:1;min-width:200px}}
+
+/* ── 8. CTA SECTION UPGRADES ── */
+.cta-section{background:linear-gradient(180deg,var(--bg) 0%,rgba(220,38,38,.03) 40%,rgba(220,38,38,.06) 60%,var(--bg) 100%) !important;position:relative}
+#ctaParticleCanvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+.cta-inner{position:relative;z-index:2 !important}
+.cta-shield-holo{animation:holoShieldShimmer 3s ease-in-out infinite !important}
+@keyframes holoShieldShimmer{0%,100%{filter:hue-rotate(0deg) drop-shadow(0 0 15px rgba(220,38,38,.3))}33%{filter:hue-rotate(15deg) drop-shadow(0 0 25px rgba(220,38,38,.5))}66%{filter:hue-rotate(-10deg) drop-shadow(0 0 20px rgba(220,38,38,.4))}}
+.btn-primary-glow{box-shadow:0 0 30px rgba(220,38,38,.5),0 0 60px rgba(220,38,38,.25),0 10px 25px rgba(220,38,38,.4),inset 0 1px 0 rgba(255,255,255,.2) !important}
+.btn-primary-glow:hover{box-shadow:0 0 50px rgba(220,38,38,.7),0 0 100px rgba(220,38,38,.35),0 15px 35px rgba(220,38,38,.6) !important}
+
 </style>
 {% endblock %}
 
@@ -944,8 +1066,25 @@ body::before{
   <div class="floating-shape fs-triangle" style="top:70%;right:40%;animation:floatDrift4 18s infinite;opacity:.025"></div>
 </div>
 
+<!-- ══════════ FULL-SCREEN CONSTELLATION CANVAS ══════════ -->
+<canvas id="constellationCanvas"></canvas>
+
 <!-- ══════════ HERO ══════════ -->
 <section class="hero-section">
+  <!-- RADAR/SONAR EXPANDING RINGS -->
+  <svg class="hero-radar-svg" viewBox="0 0 900 900">
+    <circle class="radar-ring" cx="450" cy="450" r="20"/>
+    <circle class="radar-ring" cx="450" cy="450" r="20"/>
+    <circle class="radar-ring" cx="450" cy="450" r="20"/>
+    <circle class="radar-ring" cx="450" cy="450" r="20"/>
+    <circle class="radar-ring" cx="450" cy="450" r="20"/>
+  </svg>
+  <!-- SCAN LINES -->
+  <div class="hero-scanlines">
+    <div class="scanline"></div>
+    <div class="scanline"></div>
+    <div class="scanline"></div>
+  </div>
   <!-- Morphing Blob Background -->
   <div class="hero-morph-blob"></div>
   <!-- Perspective Grid Floor -->
@@ -976,7 +1115,7 @@ body::before{
 
     <h1 class="hero-h1">
       <span class="h1-white">Your Safety,</span>
-      <span class="h1-grad">Our Mission.</span>
+      <span class="h1-grad glitch-text">Our Mission.</span>
     </h1>
 
     <p class="hero-p">
@@ -1020,8 +1159,17 @@ body::before{
 
       <div class="phone-glow"></div>
       <div class="phone-glow2"></div>
+      <!-- Signal Wave Emanation -->
+      <div class="phone-signal-wave">
+        <div class="signal-ring"></div>
+        <div class="signal-ring"></div>
+        <div class="signal-ring"></div>
+      </div>
 
       <div class="phone-frame">
+        <!-- Holographic Rainbow Strips -->
+        <div class="phone-holo-strip phone-holo-left"></div>
+        <div class="phone-holo-strip phone-holo-right"></div>
         <div class="phone-cam-ctrl"></div>
         <div class="phone-screen">
           <div class="dynamic-island">
@@ -1139,8 +1287,8 @@ body::before{
 <!-- ══════════ MARQUEE ══════════ -->
 <div class="marquee-wrap">
   <div class="marquee-track">
-    <span class="m-item">Instant SOS</span><span class="m-item">Threat Risk Engine</span><span class="m-item">Live Heatmap</span><span class="m-item">Danger Zones</span><span class="m-item">Evidence Vault</span><span class="m-item">Command Center</span><span class="m-item">Secure Auth</span><span class="m-item">Real-time Alerts</span><span class="m-item">RAKSHAK</span>
-    <span class="m-item">Instant SOS</span><span class="m-item">Threat Risk Engine</span><span class="m-item">Live Heatmap</span><span class="m-item">Danger Zones</span><span class="m-item">Evidence Vault</span><span class="m-item">Command Center</span><span class="m-item">Secure Auth</span><span class="m-item">Real-time Alerts</span><span class="m-item">RAKSHAK</span>
+    <span class="m-item">Instant SOS</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Threat Risk Engine</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Live Heatmap</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Danger Zones</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Evidence Vault</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Command Center</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Secure Auth</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Real-time Alerts</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">RAKSHAK</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+    <span class="m-item">Instant SOS</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Threat Risk Engine</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Live Heatmap</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Danger Zones</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Evidence Vault</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Command Center</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Secure Auth</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Real-time Alerts</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">RAKSHAK</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
   </div>
 </div>
 

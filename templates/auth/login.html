@@ -29,10 +29,23 @@
   100% { transform: translate(60px, 40px) scale(1.1) rotate(15deg); }
 }
 
+/* ── Floating Hexagonal Grid ── */
+.hex-grid {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.12;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34L28 66zm0 34L0 84V50l28-16 28 16v34l-28 16z' fill='none' stroke='%23dc2626' stroke-width='0.5'/%3E%3C/svg%3E");
+  background-size: 56px 100px;
+  animation: hexFloat 30s linear infinite;
+}
+@keyframes hexFloat {
+  from { background-position: 0 0; }
+  to { background-position: 56px 100px; }
+}
+
 /* 3D Grid floor */
 .grid-floor {
   position: absolute; inset: 0; top: 50%; bottom: -50%;
-  background-image: 
+  background-image:
     linear-gradient(rgba(220, 38, 38, 0.08) 1px, transparent 1px),
     linear-gradient(90deg, rgba(220, 38, 38, 0.08) 1px, transparent 1px);
   background-size: 80px 80px;
@@ -52,13 +65,13 @@
 .auth-card-wrap {
   width: 100%; max-width: 440px; position: relative; z-index: 5;
   transform-style: preserve-3d;
-  transition: transform 0.1s ease-out; /* For 3D tilt JS */
+  transition: transform 0.1s ease-out;
 }
 
 /* The actual glass card */
 .glass-card {
-  background: rgba(10, 10, 14, 0.7);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  background: rgba(10, 10, 14, 0.75);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
@@ -77,16 +90,99 @@
   to { transform: rotate(360deg); }
 }
 
-/* Input Focus Glow */
+/* Pulsing red border on the card */
+.glass-card {
+  animation: cardPulse 3s ease-in-out infinite;
+}
+@keyframes cardPulse {
+  0%, 100% { box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1px rgba(220,38,38,0.1); }
+  50% { box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 20px rgba(220,38,38,0.3), 0 0 0 2px rgba(220,38,38,0.4); }
+}
+
+/* Scan line across card */
+.glass-card::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 2px; z-index: 10;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.6), rgba(255,100,100,0.8), rgba(220,38,38,0.6), transparent);
+  box-shadow: 0 0 15px rgba(220,38,38,0.4), 0 0 30px rgba(220,38,38,0.2);
+  animation: scanLine 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes scanLine {
+  0% { top: -2px; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── Secure Access Terminal Title ── */
+.terminal-title {
+  font-family: 'Courier New', monospace; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.25em; text-transform: uppercase; color: var(--red-primary);
+  text-align: center; margin-bottom: 0.8rem; position: relative;
+  overflow: hidden; white-space: nowrap;
+  border-right: 2px solid var(--red-primary);
+  animation: termType 2.5s steps(24, end) forwards, termBlink 0.7s step-end infinite;
+  width: 0; max-width: fit-content; margin-left: auto; margin-right: auto;
+  text-shadow: 0 0 10px rgba(220,38,38,0.6);
+}
+@keyframes termType {
+  from { width: 0; }
+  to { width: 22ch; }
+}
+@keyframes termBlink {
+  50% { border-color: transparent; }
+}
+
+/* ── Large Glowing Shield Icon ── */
+.shield-icon-lg {
+  width: 90px; height: 90px; border-radius: 24px; margin: 0 auto 1rem;
+  background: linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(220,38,38,0.03) 100%);
+  border: 2px solid rgba(220,38,38,0.4);
+  box-shadow: inset 0 0 30px rgba(220,38,38,0.15), 0 0 40px rgba(220,38,38,0.3), 0 0 80px rgba(220,38,38,0.1);
+  display: inline-flex; justify-content: center; align-items: center;
+  font-size: 2.4rem; animation: shieldGlow 4s ease-in-out infinite;
+  position: relative;
+}
+.shield-icon-lg::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 28px;
+  border: 1px solid rgba(220,38,38,0.15);
+  animation: shieldRing 3s ease-in-out infinite;
+}
+@keyframes shieldGlow {
+  0%,100% { transform: translateY(0) scale(1); box-shadow: inset 0 0 30px rgba(220,38,38,0.15), 0 0 40px rgba(220,38,38,0.3), 0 0 80px rgba(220,38,38,0.1); }
+  50% { transform: translateY(-8px) scale(1.05); box-shadow: inset 0 0 40px rgba(220,38,38,0.25), 0 0 60px rgba(220,38,38,0.5), 0 0 120px rgba(220,38,38,0.15); }
+}
+@keyframes shieldRing {
+  0%,100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 0; }
+}
+
+/* Input Focus Glow + Red Underline Slide */
+.input-wrap {
+  position: relative;
+}
+.input-wrap::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red-primary), transparent);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+.input-wrap:focus-within::after {
+  width: 100%; left: 0; transform: translateX(0);
+  box-shadow: 0 2px 12px rgba(220,38,38,0.3);
+}
 .form-control-dark {
   background: rgba(255, 255, 255, 0.03) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.06) !important;
   transition: all 0.3s ease;
 }
 .form-control-dark:focus {
-  background: rgba(0, 0, 0, 0.4) !important;
-  border-color: var(--red-primary) !important;
-  box-shadow: 0 0 0 4px rgba(220,38,38,0.15), 0 0 20px rgba(220,38,38,0.1) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border-color: rgba(220,38,38,0.4) !important;
+  border-bottom-color: var(--red-primary) !important;
+  box-shadow: 0 0 0 4px rgba(220,38,38,0.1), 0 0 20px rgba(220,38,38,0.08) !important;
   transform: translateY(-2px);
 }
 
@@ -99,8 +195,13 @@
   letter-spacing: 0.05em; font-weight: 600; text-transform: uppercase;
 }
 .btn-rakshak:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 15px 30px -5px rgba(220,38,38,0.6);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 15px 35px -5px rgba(220,38,38,0.6), 0 0 20px rgba(220,38,38,0.3);
+  filter: brightness(1.1);
+}
+.btn-rakshak:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 5px 15px -5px rgba(220,38,38,0.4);
 }
 .btn-rakshak::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -112,25 +213,33 @@
   20%, 100% { left: 200%; }
 }
 
-/* Google Button Immersive */
+/* ── Google Button — Prominent with brand colors ── */
 .btn-google {
   display: flex; align-items: center; justify-content: center; gap: 12px;
-  width: 100%; padding: 12px 20px; border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-primary); font-size: 0.95rem; font-weight: 500;
-  cursor: pointer; transition: all 0.3s; text-decoration: none;
+  width: 100%; padding: 14px 24px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(66,133,244,0.08) 0%, rgba(234,67,53,0.08) 25%, rgba(251,188,5,0.08) 50%, rgba(52,168,83,0.08) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary); font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); text-decoration: none;
   backdrop-filter: blur(10px); position: relative; overflow: hidden;
 }
 .btn-google::before {
-  content:''; position: absolute; inset:0; background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
-  opacity: 0; transition: opacity 0.3s;
+  content:''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(66,133,244,0.15) 0%, rgba(234,67,53,0.15) 25%, rgba(251,188,5,0.15) 50%, rgba(52,168,83,0.15) 100%);
+  opacity: 0; transition: opacity 0.4s;
 }
 .btn-google:hover {
-  background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(66,133,244,0.15), 0 10px 30px rgba(234,67,53,0.1), 0 10px 30px rgba(52,168,83,0.1);
 }
 .btn-google:hover::before { opacity: 1; }
-.btn-google:active { transform: translateY(1px); }
+.btn-google:active { transform: translateY(1px) scale(0.98); }
+.btn-google .google-text {
+  background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
 
 /* Logo & Icon Enhancements */
 .auth-logo {
@@ -144,18 +253,6 @@
 @keyframes logoBreath {
   from { filter: drop-shadow(0 0 10px rgba(220,38,38,0.3)); }
   to { filter: drop-shadow(0 0 25px rgba(220,38,38,0.7)); }
-}
-.shield-icon {
-  width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 1.2rem;
-  background: linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(220,38,38,0.02) 100%);
-  border: 1px solid rgba(220,38,38,0.3);
-  box-shadow: inset 0 0 20px rgba(220,38,38,0.1), 0 0 30px rgba(220,38,38,0.2);
-  display: inline-flex; justify-content: center; align-items: center;
-  font-size: 1.8rem; animation: shieldHover 4s ease-in-out infinite;
-}
-@keyframes shieldHover {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.05); }
 }
 
 /* Matrix Rain Canvas */
@@ -173,6 +270,42 @@
 .divider-or::before, .divider-or::after {
   content: ''; flex: 1; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+
+/* ── Connection Secure Indicator ── */
+.secure-indicator {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+  padding: 8px 16px; border-radius: 20px; margin-top: 1rem;
+  background: rgba(72,187,120,0.06); border: 1px solid rgba(72,187,120,0.15);
+  transition: all 0.3s;
+}
+.secure-indicator:hover {
+  background: rgba(72,187,120,0.1); border-color: rgba(72,187,120,0.3);
+}
+.secure-indicator .lock-icon {
+  color: rgba(72,187,120,0.8); font-size: 0.75rem;
+  animation: lockPulse 3s ease-in-out infinite;
+}
+.secure-indicator .secure-text {
+  color: rgba(72,187,120,0.7); font-size: 0.7rem; letter-spacing: 0.1em; font-weight: 600;
+}
+.secure-indicator .status-dot {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green);
+  animation: statusBlink 2s infinite;
+  box-shadow: 0 0 6px rgba(72,187,120,0.6);
+}
+@keyframes lockPulse {
+  0%,100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* ── Error slide-in animation ── */
+.toast-slide-in {
+  animation: slideInRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 /* Input error shake */

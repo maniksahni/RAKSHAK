@@ -70,7 +70,8 @@ def dashboard():
     }
     return render_template('admin/dashboard.html', stats=stats,
                            recent_alerts=_safe_rows(recent_alerts),
-                           danger_zones=_safe_rows(danger_zones))
+                           danger_zones=_safe_rows(danger_zones),
+                           now=datetime.utcnow().strftime('%Y-%m-%d %H:%M'))
 
 
 # ── Analytics ─────────────────────────────────────────────────────────────────

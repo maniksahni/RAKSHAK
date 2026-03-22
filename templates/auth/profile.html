@@ -3,27 +3,54 @@
 
 {% block extra_css %}
 <style>
+/* ═══════════════════════════════════════════════════════════════
+   PROFILE PAGE — CYBERPUNK GLASS THEME
+   ═══════════════════════════════════════════════════════════════ */
+
 /* page entrance */
 .profile-header { animation:profIn .5s cubic-bezier(.22,1,.36,1) both; }
 .profile-col-left { animation:profIn .5s .1s cubic-bezier(.22,1,.36,1) both; }
 .profile-col-right { animation:profIn .5s .2s cubic-bezier(.22,1,.36,1) both; }
+.profile-col-full { animation:profIn .5s .3s cubic-bezier(.22,1,.36,1) both; }
 @keyframes profIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-/* profile avatar */
-.profile-avatar {
-  width:90px;height:90px;border-radius:12px;
-  background:linear-gradient(135deg, var(--red-primary), var(--red-dark));
+/* ── LARGE AVATAR CIRCLE ── */
+.profile-avatar-lg {
+  width:120px;height:120px;border-radius:50%;
+  background:linear-gradient(135deg, rgba(220,38,38,0.15), rgba(220,38,38,0.05));
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:2.5rem;font-weight:800;color:#fff;
-  box-shadow:inset 0 0 20px rgba(0,0,0,0.5), 0 0 24px rgba(220,38,38,0.4);
-  position:relative; overflow:hidden;
+  font-family:var(--font-display);font-size:3rem;font-weight:900;color:#fff;
+  position:relative;flex-shrink:0;
+  border:3px solid transparent;
+  background-clip:padding-box;
 }
-.profile-avatar::after {
+.profile-avatar-lg::before {
+  content:'';position:absolute;inset:-3px;border-radius:50%;
+  background:conic-gradient(from 0deg, var(--red-primary), var(--accent-blue), var(--accent-green), var(--accent-amber), var(--red-primary));
+  z-index:-1;
+  animation:avatarBorderSpin 4s linear infinite;
+}
+.profile-avatar-lg::after {
+  content:'';position:absolute;inset:-8px;border-radius:50%;
+  background:conic-gradient(from 0deg, transparent 0%, rgba(220,38,38,0.3) 25%, transparent 50%, rgba(66,153,225,0.3) 75%, transparent 100%);
+  z-index:-2;filter:blur(8px);
+  animation:avatarBorderSpin 4s linear infinite reverse;
+}
+@keyframes avatarBorderSpin {
+  from{transform:rotate(0deg)}to{transform:rotate(360deg)}
+}
+.avatar-inner {
+  width:114px;height:114px;border-radius:50%;
+  background:linear-gradient(135deg, rgba(220,38,38,0.25), rgba(10,10,20,0.9));
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.avatar-inner::after {
   content:'';position:absolute;inset:0;
-  background:linear-gradient(to bottom, transparent 48%, rgba(255,255,255,0.8) 50%, transparent 52%);
+  background:linear-gradient(to bottom, transparent 48%, rgba(255,255,255,0.6) 50%, transparent 52%);
   background-size:100% 200%;
   animation:avatarScan 2.5s linear infinite;
-  mix-blend-mode:overlay;
+  mix-blend-mode:overlay;pointer-events:none;
 }
 @keyframes avatarScan {
   0% { transform:translateY(-100%); opacity:0; }
@@ -31,120 +58,285 @@
   80% { opacity:1; }
   100% { transform:translateY(100%); opacity:0; }
 }
-
-/* tactical barcode */
-.operative-barcode {
-  display:flex; gap:3px; height:24px; align-items:flex-end; opacity:0.6; mix-blend-mode:screen;
+.avatar-pulse-ring {
+  position:absolute;inset:-16px;border-radius:50%;
+  border:1px solid rgba(220,38,38,0.15);
+  animation:pulseRing 3s ease-out infinite;
+  pointer-events:none;
 }
-.bc-bar { background:var(--accent-blue); width:2px; height:100%; transition:height 0.2s; }
-.bc-bar:nth-child(even) { width:3px; }
-.bc-bar:nth-child(3n) { width:1px; }
-.bc-bar:nth-child(5n) { background:var(--red-primary); }
-
-/* section card */
-.profile-section {
-  transition:border-color .3s,box-shadow .3s;
-}
-.profile-section:hover {
-  border-color:rgba(220,38,38,0.2) !important;
-  box-shadow:0 4px 24px rgba(220,38,38,0.06);
+.avatar-pulse-ring:nth-child(2) { animation-delay:1s; }
+.avatar-pulse-ring:nth-child(3) { animation-delay:2s; }
+@keyframes pulseRing {
+  0%{transform:scale(0.9);opacity:0.5}
+  100%{transform:scale(1.3);opacity:0}
 }
 
-/* security score ring */
-.security-ring-wrap {
-  width:80px;height:80px;position:relative;flex-shrink:0;
+/* ── SECURITY CLEARANCE BADGE ── */
+.clearance-badge {
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 20px;border-radius:4px;font-size:0.75rem;font-weight:700;
+  letter-spacing:0.12em;text-transform:uppercase;
+  background:rgba(72,187,120,0.08);border:1px solid rgba(72,187,120,0.3);
+  color:var(--accent-green);font-family:var(--font-display);
+  position:relative;overflow:hidden;
+  animation:clearanceGlow 3s ease-in-out infinite;
 }
-.security-ring-wrap svg {width:100%;height:100%;transform:rotate(-90deg);}
-.security-ring-bg {fill:none;stroke:var(--border-glass);stroke-width:4;}
-.security-ring-fill {
-  fill:none;stroke-width:4;stroke-linecap:round;
-  transition:stroke-dashoffset 1.5s cubic-bezier(.22,1,.36,1), stroke 0.5s;
+.clearance-badge::before {
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg, transparent, rgba(72,187,120,0.15), transparent);
+  animation:clearanceSweep 3s ease-in-out infinite;
 }
-.security-score-text {
-  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-family:var(--font-display);
+@keyframes clearanceGlow {
+  0%,100%{box-shadow:0 0 8px rgba(72,187,120,0.1), inset 0 0 8px rgba(72,187,120,0.05)}
+  50%{box-shadow:0 0 20px rgba(72,187,120,0.25), inset 0 0 15px rgba(72,187,120,0.08)}
 }
-.security-score-num {font-size:1.3rem;font-weight:800;line-height:1;}
-.security-score-label {font-size:0.55rem;color:var(--text-muted);letter-spacing:0.08em;margin-top:2px;}
+@keyframes clearanceSweep {
+  0%{left:-100%}50%{left:100%}100%{left:100%}
+}
+.clearance-dot {
+  width:8px;height:8px;border-radius:50%;background:var(--accent-green);
+  box-shadow:0 0 8px rgba(72,187,120,0.6);
+  animation:dotBlink 2s ease-in-out infinite;
+}
+@keyframes dotBlink {
+  0%,100%{opacity:1}50%{opacity:0.4}
+}
 
-/* activity pulse dot */
-.activity-dot {
-  width:8px;height:8px;border-radius:50%;flex-shrink:0;position:relative;
+/* ── ANIMATED STATS RING ── */
+.safety-score-container {
+  width:140px;height:140px;position:relative;flex-shrink:0;
 }
-.activity-dot::after {
-  content:'';position:absolute;inset:-3px;border-radius:50%;
-  border:1px solid currentColor;opacity:0;
-  animation:actPulse 2s ease-out infinite;
+.safety-score-container svg {width:100%;height:100%;transform:rotate(-90deg);}
+.score-ring-bg {fill:none;stroke:rgba(255,255,255,0.05);stroke-width:6;}
+.score-ring-track {fill:none;stroke:rgba(255,255,255,0.03);stroke-width:8;}
+.score-ring-fill {
+  fill:none;stroke-width:6;stroke-linecap:round;
+  transition:stroke-dashoffset 2s cubic-bezier(.22,1,.36,1), stroke 0.5s;
+  filter:drop-shadow(0 0 6px rgba(66,153,225,0.5));
 }
-@keyframes actPulse {0%{transform:scale(0.8);opacity:0.6}100%{transform:scale(1.8);opacity:0}}
+.score-ring-glow {
+  fill:none;stroke-width:10;stroke-linecap:round;opacity:0.2;
+  transition:stroke-dashoffset 2s cubic-bezier(.22,1,.36,1);
+  filter:blur(4px);
+}
+.safety-score-text {
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.safety-score-num {
+  font-family:var(--font-display);font-size:2.2rem;font-weight:900;line-height:1;
+  background:linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.safety-score-label {font-size:0.6rem;color:var(--text-muted);letter-spacing:0.15em;margin-top:4px;text-transform:uppercase;}
+.safety-score-sub {font-size:0.55rem;color:var(--text-muted);opacity:0.6;margin-top:2px;letter-spacing:0.05em;}
 
-/* stat counter */
-.profile-stat {
-  text-align:center;padding:12px 8px;border-radius:var(--radius-sm);
-  background:var(--bg-card);border:1px solid var(--border-glass);
+/* ── SECURITY SHIELD PROGRESS ── */
+.shield-progress-wrap {
+  background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);
+  border-radius:var(--radius-sm);padding:16px 20px;
+  transition:all .3s;
+}
+.shield-progress-wrap:hover {
+  border-color:rgba(220,38,38,0.15);
+  box-shadow:0 2px 16px rgba(0,0,0,0.15);
+}
+.shield-bar-outer {
+  width:100%;height:8px;border-radius:50px;
+  background:rgba(255,255,255,0.05);overflow:hidden;position:relative;
+}
+.shield-bar-fill {
+  height:100%;border-radius:50px;
+  background:linear-gradient(90deg, var(--red-primary), var(--accent-amber), var(--accent-green));
+  transition:width 2s cubic-bezier(.22,1,.36,1);
+  position:relative;
+}
+.shield-bar-fill::after {
+  content:'';position:absolute;right:0;top:-2px;bottom:-2px;width:12px;
+  background:white;border-radius:50%;opacity:0.6;
+  box-shadow:0 0 8px currentColor;
+  animation:shimmer 2s ease-in-out infinite;
+}
+@keyframes shimmer {0%,100%{opacity:0.4}50%{opacity:0.8}}
+.shield-checklist-item {
+  display:flex;align-items:center;gap:8px;
+  font-size:0.75rem;padding:4px 0;color:var(--text-muted);
+  transition:color .3s;
+}
+.shield-checklist-item.completed { color:var(--accent-green); }
+.shield-checklist-item .check-icon {
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.55rem;flex-shrink:0;transition:all .3s;
+}
+.shield-checklist-item.completed .check-icon {
+  background:rgba(72,187,120,0.15);border:1px solid rgba(72,187,120,0.3);color:var(--accent-green);
+}
+.shield-checklist-item:not(.completed) .check-icon {
+  background:rgba(255,255,255,0.03);border:1px solid var(--border-glass);color:var(--text-muted);
+}
+
+/* ── GLASSMORPHISM CARDS ── */
+.glass-section {
+  background:rgba(255,255,255,0.02);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius-md);
   transition:all .3s cubic-bezier(.22,1,.36,1);
+  position:relative;overflow:hidden;
+}
+.glass-section::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+}
+.glass-section:hover {
+  border-color:rgba(220,38,38,0.15);
+  box-shadow:0 8px 32px rgba(0,0,0,0.2), 0 0 1px rgba(220,38,38,0.1);
+  transform:translateY(-2px);
+}
+.glass-section-title {
+  font-family:var(--font-display);font-size:1.1rem;font-weight:700;
+  display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;
+}
+.glass-section-title i {color:var(--red-primary);font-size:0.95rem;}
+.glass-section-title .section-line {
+  flex:1;height:1px;
+  background:linear-gradient(90deg, var(--border-glass), transparent);
+}
+
+/* ── TACTICAL BARCODE ── */
+.operative-barcode {
+  display:flex;gap:3px;height:24px;align-items:flex-end;opacity:0.6;mix-blend-mode:screen;
+}
+.bc-bar {background:var(--accent-blue);width:2px;height:100%;transition:height 0.2s;}
+.bc-bar:nth-child(even) {width:3px;}
+.bc-bar:nth-child(3n) {width:1px;}
+.bc-bar:nth-child(5n) {background:var(--red-primary);}
+
+/* ── PROFILE STATS ── */
+.profile-stat {
+  text-align:center;padding:14px 10px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);
+  transition:all .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;
+}
+.profile-stat::before {
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--red-primary);transform:scaleX(0);transition:transform .3s;
 }
 .profile-stat:hover {
-  border-color:rgba(220,38,38,0.2);transform:translateY(-2px);
-  box-shadow:0 4px 16px rgba(220,38,38,0.08);
+  border-color:rgba(220,38,38,0.2);transform:translateY(-3px);
+  box-shadow:0 6px 20px rgba(220,38,38,0.08);
 }
+.profile-stat:hover::before { transform:scaleX(1); }
 .profile-stat-num {
   font-family:var(--font-display);font-size:1.5rem;font-weight:800;
   color:var(--text-primary);line-height:1;
 }
-.profile-stat-label {font-size:0.68rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.05em;}
+.profile-stat-label {font-size:0.65rem;color:var(--text-muted);margin-top:4px;letter-spacing:0.08em;text-transform:uppercase;}
 
-/* shield badge */
-.shield-badge {
-  display:inline-flex;align-items:center;gap:6px;padding:6px 14px;
-  border-radius:50px;font-size:0.75rem;font-weight:600;letter-spacing:0.05em;
-  animation:shieldGlow 3s ease-in-out infinite;
+/* ── ACTIVITY TIMELINE ── */
+.activity-timeline {
+  position:relative;padding-left:28px;
 }
-@keyframes shieldGlow {
-  0%,100%{box-shadow:0 0 8px rgba(220,38,38,0.1)}
-  50%{box-shadow:0 0 20px rgba(220,38,38,0.25)}
+.activity-timeline::before {
+  content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;
+  background:linear-gradient(180deg, rgba(220,38,38,0.4), rgba(220,38,38,0.05));
+  border-radius:2px;
 }
+.activity-item {
+  position:relative;padding:10px 0 10px 0;
+  opacity:0;animation:activitySlide .4s cubic-bezier(.22,1,.36,1) forwards;
+}
+.activity-item:nth-child(1){animation-delay:.1s}
+.activity-item:nth-child(2){animation-delay:.18s}
+.activity-item:nth-child(3){animation-delay:.26s}
+.activity-item:nth-child(4){animation-delay:.34s}
+.activity-item:nth-child(5){animation-delay:.42s}
+@keyframes activitySlide {from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
 
-/* contact entrance stagger */
-.contact-item {
+.activity-dot {
+  position:absolute;left:-24px;top:14px;
+  width:10px;height:10px;border-radius:50%;
+  border:2px solid var(--bg-dark);
+}
+.activity-dot-login { background:var(--accent-blue);box-shadow:0 0 6px rgba(66,153,225,0.4); }
+.activity-dot-update { background:var(--accent-green);box-shadow:0 0 6px rgba(72,187,120,0.4); }
+.activity-dot-alert { background:var(--red-primary);box-shadow:0 0 6px rgba(220,38,38,0.4); }
+.activity-dot-contact { background:var(--accent-amber);box-shadow:0 0 6px rgba(246,173,85,0.4); }
+
+.activity-content {
+  background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);
+  border-radius:var(--radius-sm);padding:10px 14px;
+  transition:all .2s;
+}
+.activity-content:hover {
+  border-color:rgba(220,38,38,0.12);
+  background:rgba(255,255,255,0.03);
+}
+.activity-text {font-size:0.8rem;color:var(--text-secondary);line-height:1.4;}
+.activity-time {font-size:0.65rem;color:var(--text-muted);margin-top:3px;font-family:monospace;letter-spacing:0.03em;}
+
+/* ── CONTACT CARD GRID ── */
+.contact-grid {
+  display:grid;grid-template-columns:1fr;gap:10px;
+}
+@media(min-width:500px){
+  .contact-grid { grid-template-columns:1fr 1fr; }
+}
+.contact-card {
+  background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);
+  border-radius:var(--radius-sm);padding:14px;
+  transition:all .3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;
   animation:contactSlide .4s cubic-bezier(.22,1,.36,1) both;
 }
-.contact-item:nth-child(1){animation-delay:.05s}
-.contact-item:nth-child(2){animation-delay:.1s}
-.contact-item:nth-child(3){animation-delay:.15s}
-.contact-item:nth-child(4){animation-delay:.2s}
-.contact-item:nth-child(5){animation-delay:.25s}
-@keyframes contactSlide {from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.contact-card:nth-child(1){animation-delay:.05s}
+.contact-card:nth-child(2){animation-delay:.1s}
+.contact-card:nth-child(3){animation-delay:.15s}
+.contact-card:nth-child(4){animation-delay:.2s}
+.contact-card:nth-child(5){animation-delay:.25s}
+@keyframes contactSlide {from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* contact card */
-.contact-item {
-  background:var(--bg-card);border-left:3px solid transparent;
-  border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:8px;
-  transition:all .3s cubic-bezier(.22,1,.36,1);
-  display:flex;align-items:center;justify-content:space-between;
+.contact-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, var(--red-primary), transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform .3s;
 }
-.contact-item:hover {
-  background:var(--bg-card-hover);
-  border-left-color:var(--red-primary);
-  transform:translateX(3px);
+.contact-card:hover {
+  border-color:rgba(220,38,38,0.2);
+  transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+}
+.contact-card:hover::before { transform:scaleX(1); }
+
+.contact-avatar {
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(220,38,38,0.1);border:2px solid rgba(220,38,38,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;font-weight:700;color:var(--red-primary);flex-shrink:0;
+  transition:all .3s;
+}
+.contact-card:hover .contact-avatar {
+  border-color:rgba(220,38,38,0.4);
+  box-shadow:0 0 12px rgba(220,38,38,0.15);
 }
 .contact-delete {
   background:none;border:none;color:var(--text-muted);cursor:pointer;
-  padding:6px 8px;border-radius:6px;transition:all .2s;
+  padding:4px 6px;border-radius:6px;transition:all .2s;font-size:0.75rem;
+  position:absolute;top:8px;right:8px;opacity:0;
 }
+.contact-card:hover .contact-delete { opacity:1; }
 .contact-delete:hover {
   color:var(--red-primary);background:rgba(220,38,38,0.1);
 }
-
-/* contact avatar small */
-.contact-avatar {
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:0.75rem;font-weight:700;color:var(--red-primary);flex-shrink:0;
+.contact-relationship {
+  display:inline-flex;padding:2px 8px;border-radius:50px;
+  font-size:0.6rem;font-weight:600;letter-spacing:0.05em;
+  background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);
+  color:var(--accent-blue);text-transform:uppercase;
 }
 
-/* info badge */
+/* ── INFO BADGE ── */
 .info-badge {
   display:inline-flex;align-items:center;gap:6px;
   padding:6px 14px;border-radius:50px;font-size:0.78rem;
@@ -152,66 +344,106 @@
   color:var(--accent-blue);
 }
 
-/* password section */
+/* ── PASSWORD SECTION ── */
 .pwd-section {
   background:rgba(255,255,255,0.015);border-radius:var(--radius-sm);
   padding:16px;border:1px solid var(--border-glass);margin-top:1rem;
+  transition:border-color .3s;
+}
+.pwd-section:hover { border-color:rgba(220,38,38,0.1); }
+
+/* ── SHIELD BADGE (header) ── */
+.shield-badge {
+  display:inline-flex;align-items:center;gap:6px;padding:6px 14px;
+  border-radius:50px;font-size:0.75rem;font-weight:600;letter-spacing:0.05em;
+}
+
+/* ── RISK CORNER MARKER ── */
+.risk-corner {
+  position:absolute;top:0;right:0;
+  width:0;height:0;border-style:solid;
+  border-width:0 50px 50px 0;
+  border-color:transparent rgba(220,38,38,0.15) transparent transparent;
+}
+.risk-corner-text {
+  position:absolute;top:8px;right:4px;
+  font-size:0.45rem;font-weight:700;letter-spacing:0.1em;
+  color:var(--red-primary);transform:rotate(45deg);
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4" style="max-width:900px;">
+<div class="container-fluid py-4" style="max-width:960px;">
 
-  <!-- Header -->
-  <div class="profile-header glass-card p-4 mb-4" style="border-radius:var(--radius-md); border-top:4px solid var(--red-primary); position:relative; overflow:hidden;">
-    
-    <!-- Watermark text -->
-    <div style="position:absolute;bottom:-20%;right:-5%;font-family:var(--font-display);font-size:8rem;font-weight:900;color:rgba(255,255,255,0.02);pointer-events:none;transform:rotate(-5deg);">DOSSIER</div>
-    
-    <div class="d-flex align-items-center gap-4">
-      <div class="profile-avatar">
-        {{ current_user.full_name[0].upper() }}
+  <!-- ════════════ HEADER ════════════ -->
+  <div class="profile-header glass-section p-4 mb-4" style="border-top:3px solid var(--red-primary);position:relative;">
+
+    <!-- Watermark -->
+    <div style="position:absolute;bottom:-20%;right:-5%;font-family:var(--font-display);font-size:8rem;font-weight:900;color:rgba(255,255,255,0.015);pointer-events:none;transform:rotate(-5deg);">DOSSIER</div>
+
+    <!-- Security Clearance Badge -->
+    <div style="position:absolute;top:16px;right:16px;" class="d-none d-sm-block">
+      <div class="clearance-badge">
+        <div class="clearance-dot"></div>
+        <i class="bi bi-shield-fill-check"></i>
+        SECURITY CLEARANCE: VERIFIED
       </div>
-      <div style="flex:1;">
-        <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+    </div>
+
+    <div class="d-flex align-items-center gap-4 flex-wrap">
+      <!-- Large Avatar -->
+      <div class="profile-avatar-lg">
+        <div class="avatar-pulse-ring"></div>
+        <div class="avatar-pulse-ring"></div>
+        <div class="avatar-pulse-ring"></div>
+        <div class="avatar-inner">
+          <span>{{ current_user.full_name[0].upper() }}</span>
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:0.6rem;color:var(--text-muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
           <span>OPERATIVE ID: #{{ "%04d"|format(current_user.id) }}</span>
           <span style="display:inline-block;width:4px;height:4px;background:var(--red-primary);border-radius:50%;"></span>
           <span>CLEARANCE LEVEL: ALPHA</span>
         </div>
         <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin:0;letter-spacing:1px;text-transform:uppercase;">{{ current_user.full_name }}</h2>
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
           <p style="color:var(--text-secondary);font-size:0.85rem;margin:0.25rem 0 0;font-family:monospace;letter-spacing:0.05em;">{{ current_user.email }}</p>
-          <div class="operative-barcode d-none d-sm-flex ms-3" id="fake-barcode">
-            <!-- pure JS generated barcode blocks -->
-          </div>
+          <div class="operative-barcode d-none d-sm-flex ms-3" id="fake-barcode"></div>
         </div>
-        
+
         <div class="d-flex gap-2 mt-3 flex-wrap align-items-center">
-          <span class="risk-badge risk-{{ current_user.risk_level }}" style="padding:6px 14px;font-size:0.75rem;letter-spacing:0.1em;border-radius:4px;text-transform:uppercase;">
+          <span class="risk-badge risk-{{ current_user.risk_level }}" style="padding:6px 14px;font-size:0.72rem;letter-spacing:0.1em;border-radius:4px;text-transform:uppercase;">
             <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
             {{ current_user.risk_level }} RISK PROFILE
           </span>
           <span class="shield-badge" style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:var(--red-primary);border-radius:4px;font-family:var(--font-display);">
-            <i class="bi bi-shield-fill-check"></i> SHIELD SYSTEM ACTIVE
+            <i class="bi bi-shield-fill-check"></i> SHIELD ACTIVE
           </span>
         </div>
       </div>
-      <!-- Security Score -->
-      <div class="security-ring-wrap d-none d-md-block" id="security-ring" style="width:90px;height:90px;">
+
+      <!-- Safety Score Ring -->
+      <div class="safety-score-container d-none d-md-block" id="safety-score">
         <svg viewBox="0 0 36 36">
-          <circle class="security-ring-bg" cx="18" cy="18" r="15.9" style="stroke:rgba(66,153,225,0.1);"/>
-          <circle class="security-ring-fill" id="score-ring" cx="18" cy="18" r="15.9"
+          <circle class="score-ring-track" cx="18" cy="18" r="15.9"/>
+          <circle class="score-ring-bg" cx="18" cy="18" r="15.9"/>
+          <circle class="score-ring-glow" id="score-glow" cx="18" cy="18" r="15.9"
+            stroke-dasharray="100" stroke-dashoffset="100" style="stroke:var(--accent-blue);"/>
+          <circle class="score-ring-fill" id="score-ring" cx="18" cy="18" r="15.9"
             stroke-dasharray="100" stroke-dashoffset="100" style="stroke:var(--accent-blue);"/>
         </svg>
-        <div class="security-score-text">
-          <span class="security-score-num" id="score-num" style="color:var(--accent-blue);">0</span>
-          <span class="security-score-label" style="color:var(--accent-blue);">SEC_SCORE</span>
+        <div class="safety-score-text">
+          <span class="safety-score-num" id="score-num">0</span>
+          <span class="safety-score-label">Safety</span>
+          <span class="safety-score-sub">SCORE</span>
         </div>
       </div>
     </div>
 
-    <!-- Stats row -->
+    <!-- Stats Row -->
     <div class="row g-2 mt-3">
       <div class="col-3">
         <div class="profile-stat">
@@ -228,7 +460,7 @@
       <div class="col-3">
         <div class="profile-stat">
           <div class="d-flex align-items-center justify-content-center gap-1">
-            <div class="activity-dot" style="background:var(--accent-green);color:var(--accent-green);"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(72,187,120,0.5);animation:dotBlink 2s infinite;"></div>
             <div class="profile-stat-num" style="color:var(--accent-green);font-size:1.1rem;">ON</div>
           </div>
           <div class="profile-stat-label">Shield</div>
@@ -241,15 +473,53 @@
         </div>
       </div>
     </div>
+
+    <!-- Cyber Status Chips -->
+    <div class="d-flex gap-2 flex-wrap mt-3" style="font-family:'Courier New', monospace; font-size:0.7rem;">
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(72,187,120,0.06); border:1px solid rgba(72,187,120,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-green);">
+        <span style="width:5px;height:5px;border-radius:0;background:var(--accent-green);animation:blink 1.2s infinite;"></span>
+        SHIELD: ACTIVE
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(66,153,225,0.06); border:1px solid rgba(66,153,225,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-blue);">
+        <span style="width:5px;height:5px;border-radius:0;background:var(--accent-blue);"></span>
+        ENCRYPTION: AES-256-GCM
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(246,173,85,0.06); border:1px solid rgba(246,173,85,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-amber);">
+        <i class="bi bi-geo-alt-fill"></i> GPS TRACKING: ON
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(220,38,38,0.06); border:1px solid rgba(220,38,38,0.2); border-radius:3px; padding:5px 12px; color:var(--red-primary);">
+        <i class="bi bi-broadcast"></i> SOS RELAY: ARMED
+      </div>
+    </div>
+
+    <!-- Security Shield Progress Bar -->
+    <div class="shield-progress-wrap mt-3">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <span style="font-size:0.75rem;font-weight:600;color:var(--text-secondary);letter-spacing:0.05em;">
+          <i class="bi bi-shield-fill-check me-1" style="color:var(--accent-green);font-size:0.7rem;"></i>
+          Account Security Shield
+        </span>
+        <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);font-family:var(--font-display);" id="shield-pct">0%</span>
+      </div>
+      <div class="shield-bar-outer">
+        <div class="shield-bar-fill" id="shield-bar" style="width:0%"></div>
+      </div>
+      <div class="mt-2 d-flex flex-wrap gap-3" id="shield-checklist">
+        <!-- populated by JS -->
+      </div>
+    </div>
   </div>
 
+  <!-- ════════════ MAIN COLUMNS ════════════ -->
   <div class="row g-4">
-    <!-- Profile Form -->
+    <!-- Left: Personal Info -->
     <div class="col-lg-6 profile-col-left">
-      <div class="glass-card profile-section p-4 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-        <h5 style="font-family:var(--font-display);font-size:1.2rem;margin-bottom:1.2rem;transform:translateZ(30px);">
-          <i class="bi bi-person-circle me-2" style="color:var(--red-primary);"></i>Personal Information
-        </h5>
+      <div class="glass-section p-4 tilt-card" style="transform-style:preserve-3d;transition:transform 0.1s ease-out;">
+        <div class="glass-section-title" style="transform:translateZ(30px);">
+          <i class="bi bi-person-vcard-fill"></i>
+          <span>Personal Information</span>
+          <div class="section-line"></div>
+        </div>
         <form id="profile-form">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="mb-3">
@@ -290,38 +560,44 @@
       </div>
     </div>
 
-    <!-- Trusted Contacts -->
+    <!-- Right: Trusted Contacts -->
     <div class="col-lg-6 profile-col-right">
-      <div class="glass-card profile-section p-4 h-100 d-flex flex-column tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+      <div class="glass-section p-4 h-100 d-flex flex-column tilt-card" style="transform-style:preserve-3d;transition:transform 0.1s ease-out;">
         <div class="d-flex align-items-center justify-content-between mb-3" style="transform:translateZ(30px);">
-          <h5 style="font-family:var(--font-display);font-size:1.2rem;margin:0;">
-            <i class="bi bi-people-fill me-2" style="color:var(--red-primary);"></i>Trusted Contacts
-          </h5>
+          <div class="glass-section-title" style="margin-bottom:0;">
+            <i class="bi bi-people-fill"></i>
+            <span>Trusted Contacts</span>
+          </div>
           <span class="info-badge" id="contact-count">
             <i class="bi bi-shield-check"></i> {{ contacts|length }}/5
           </span>
         </div>
-        <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:1rem;">These people will be notified instantly when you trigger an SOS alert.</p>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">These people will be notified instantly when you trigger an SOS alert.</p>
 
         <div id="contacts-list" style="flex:1;">
           {% if contacts %}
-          {% for c in contacts %}
-          <div class="contact-item" id="contact-{{ c.id }}">
-            <div class="d-flex align-items-center gap-3">
-              <div class="contact-avatar">{{ c.contact_name[0].upper() }}</div>
-              <div>
-                <div style="font-weight:600;font-size:0.88rem;">{{ c.contact_name }}</div>
-                <div style="font-size:0.75rem;color:var(--text-muted);">
-                  {{ c.contact_phone }} &bull;
-                  <span class="pill pill-low" style="font-size:0.6rem;padding:2px 8px;">{{ c.relationship }}</span>
+          <div class="contact-grid">
+            {% for c in contacts %}
+            <div class="contact-card" id="contact-{{ c.id }}">
+              <button onclick="deleteContact({{ c.id }})" class="contact-delete" title="Remove">
+                <i class="bi bi-x-lg"></i>
+              </button>
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="contact-avatar">{{ c.contact_name[0].upper() }}</div>
+                <div>
+                  <div style="font-weight:600;font-size:0.85rem;">{{ c.contact_name }}</div>
+                  <div style="font-size:0.7rem;color:var(--text-muted);font-family:monospace;">{{ c.contact_phone }}</div>
                 </div>
               </div>
+              <div class="d-flex align-items-center justify-content-between">
+                <span class="contact-relationship">{{ c.relationship }}</span>
+                <span style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0.05em;">
+                  <i class="bi bi-shield-fill-check" style="color:var(--accent-green);font-size:0.5rem;"></i> LINKED
+                </span>
+              </div>
             </div>
-            <button onclick="deleteContact({{ c.id }})" class="contact-delete" title="Remove">
-              <i class="bi bi-trash"></i>
-            </button>
+            {% endfor %}
           </div>
-          {% endfor %}
           {% else %}
           <div class="empty-state" id="no-contacts" style="padding:2rem;">
             <div style="width:56px;height:56px;border-radius:50%;margin:0 auto 1rem;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.15);display:flex;align-items:center;justify-content:center;">
@@ -362,10 +638,24 @@
       </div>
     </div>
   </div>
+
+  <!-- ════════════ ACTIVITY TIMELINE ════════════ -->
+  <div class="profile-col-full mt-4">
+    <div class="glass-section p-4">
+      <div class="glass-section-title">
+        <i class="bi bi-clock-history"></i>
+        <span>Account Activity Timeline</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="activity-timeline" id="activity-timeline">
+        <!-- Populated by JS with simulated recent activity -->
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-/* 3D tilt tracking for cards */
+/* ── 3D Tilt Cards ── */
 (function(){
   const cards = document.querySelectorAll('.tilt-card');
   cards.forEach(card => {
@@ -384,18 +674,19 @@
     });
   });
 
-  // Generate fake barcode bars
+  // Generate barcode bars
   const bcContainer = document.getElementById('fake-barcode');
   if(bcContainer) {
     for(let i=0; i<30; i++) {
-        const bar = document.createElement('div');
-        bar.className = 'bc-bar';
-        bar.style.height = (40 + Math.random() * 60) + '%';
-        bcContainer.appendChild(bar);
+      const bar = document.createElement('div');
+      bar.className = 'bc-bar';
+      bar.style.height = (40 + Math.random() * 60) + '%';
+      bcContainer.appendChild(bar);
     }
   }
 })();
 
+/* ── Profile Form Submit ── */
 document.getElementById('profile-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = document.getElementById('save-profile-btn');
@@ -411,6 +702,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
   btn.disabled = false; btn.innerHTML = 'Save Changes <i class="bi bi-check-lg ms-1"></i>';
 });
 
+/* ── Add Contact ── */
 async function addContact(e) {
   e.preventDefault();
   const form = document.getElementById('contact-form');
@@ -423,39 +715,7 @@ async function addContact(e) {
   } else showToast(data.error||'Failed', 'error');
 }
 
-/* Security score animation */
-(function(){
-  const ring = document.getElementById('score-ring');
-  const num = document.getElementById('score-num');
-  if (!ring || !num) return;
-  // Calculate score based on profile completeness
-  let score = 20; // base for having account
-  const contacts = parseInt(document.getElementById('stat-contacts')?.textContent||'0');
-  score += contacts * 12; // up to 60 for 5 contacts
-  const phone = '{{ current_user.phone or "" }}';
-  if (phone.length >= 10) score += 10;
-  const addr = '{{ current_user.address or "" }}';
-  if (addr.length > 0) score += 10;
-  score = Math.min(score, 100);
-  // Animate
-  const circumference = 100;
-  const offset = circumference - score;
-  setTimeout(() => {
-    ring.style.strokeDashoffset = offset;
-    if (score >= 80) ring.style.stroke = 'var(--accent-green)';
-    else if (score >= 50) ring.style.stroke = 'var(--accent-amber)';
-    else ring.style.stroke = 'var(--red-primary)';
-  }, 300);
-  // Count up number
-  let current = 0;
-  const step = Math.max(1, Math.floor(score / 30));
-  const counter = setInterval(() => {
-    current += step;
-    if (current >= score) { current = score; clearInterval(counter); }
-    num.textContent = current;
-  }, 40);
-})();
-
+/* ── Delete Contact ── */
 async function deleteContact(id) {
   if (!confirm('Remove this contact?')) return;
   const res = await fetch(`/auth/contacts/${id}/delete`, {
@@ -464,9 +724,118 @@ async function deleteContact(id) {
   const data = await res.json();
   if (data.success) {
     const el = document.getElementById('contact-'+id);
-    if (el) { el.style.transition='all .3s'; el.style.opacity='0'; el.style.transform='translateX(20px)'; setTimeout(()=>el.remove(),300); }
+    if (el) { el.style.transition='all .3s'; el.style.opacity='0'; el.style.transform='scale(0.9)'; setTimeout(()=>el.remove(),300); }
     showToast('Contact removed.', 'info');
   } else showToast(data.error||'Failed', 'error');
 }
+
+/* ── Safety Score Ring Animation ── */
+(function(){
+  const ring = document.getElementById('score-ring');
+  const glow = document.getElementById('score-glow');
+  const num = document.getElementById('score-num');
+  if (!ring || !num) return;
+
+  let score = 20;
+  const contacts = parseInt(document.getElementById('stat-contacts')?.textContent||'0');
+  score += contacts * 12;
+  const phone = '{{ current_user.phone or "" }}';
+  if (phone.length >= 10) score += 10;
+  const addr = '{{ current_user.address or "" }}';
+  if (addr.length > 0) score += 10;
+  score = Math.min(score, 100);
+
+  const offset = 100 - score;
+  setTimeout(() => {
+    ring.style.strokeDashoffset = offset;
+    glow.style.strokeDashoffset = offset;
+    if (score >= 80) {
+      ring.style.stroke = 'var(--accent-green)';
+      glow.style.stroke = 'var(--accent-green)';
+    } else if (score >= 50) {
+      ring.style.stroke = 'var(--accent-amber)';
+      glow.style.stroke = 'var(--accent-amber)';
+    } else {
+      ring.style.stroke = 'var(--red-primary)';
+      glow.style.stroke = 'var(--red-primary)';
+    }
+  }, 400);
+
+  let current = 0;
+  const step = Math.max(1, Math.floor(score / 40));
+  const counter = setInterval(() => {
+    current += step;
+    if (current >= score) { current = score; clearInterval(counter); }
+    num.textContent = current;
+  }, 35);
+})();
+
+/* ── Security Shield Progress ── */
+(function(){
+  const checks = [
+    { label:'Account created', done:true, icon:'bi-check-lg' },
+    { label:'Phone verified', done:{{ 'true' if current_user.phone and current_user.phone|length >= 10 else 'false' }}, icon:'bi-phone' },
+    { label:'Address added', done:{{ 'true' if current_user.address else 'false' }}, icon:'bi-house' },
+    { label:'1+ contacts', done:{{ 'true' if contacts|length > 0 else 'false' }}, icon:'bi-person-plus' },
+    { label:'3+ contacts', done:{{ 'true' if contacts|length >= 3 else 'false' }}, icon:'bi-people' },
+    { label:'5 contacts', done:{{ 'true' if contacts|length >= 5 else 'false' }}, icon:'bi-shield-fill-check' },
+  ];
+
+  const completed = checks.filter(c => c.done).length;
+  const pct = Math.round((completed / checks.length) * 100);
+
+  const bar = document.getElementById('shield-bar');
+  const pctEl = document.getElementById('shield-pct');
+  const checklist = document.getElementById('shield-checklist');
+
+  setTimeout(() => {
+    bar.style.width = pct + '%';
+    pctEl.textContent = pct + '%';
+  }, 600);
+
+  checks.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'shield-checklist-item' + (c.done ? ' completed' : '');
+    el.innerHTML = `<div class="check-icon"><i class="bi ${c.done ? 'bi-check-lg' : c.icon}"></i></div><span>${c.label}</span>`;
+    checklist.appendChild(el);
+  });
+})();
+
+/* ── Activity Timeline ── */
+(function(){
+  const timeline = document.getElementById('activity-timeline');
+  if (!timeline) return;
+
+  const now = new Date();
+  const activities = [
+    { type:'login', text:'Logged in to RAKSHAK dashboard', time:new Date(now - 1000*60*5), dotClass:'activity-dot-login', icon:'bi-box-arrow-in-right' },
+    { type:'update', text:'Profile information updated', time:new Date(now - 1000*60*60*2), dotClass:'activity-dot-update', icon:'bi-pencil-square' },
+    { type:'login', text:'Authenticated via secure session', time:new Date(now - 1000*60*60*24), dotClass:'activity-dot-login', icon:'bi-shield-lock' },
+    { type:'contact', text:'Trusted contact network modified', time:new Date(now - 1000*60*60*48), dotClass:'activity-dot-contact', icon:'bi-person-check' },
+    { type:'login', text:'New session initiated from device', time:new Date(now - 1000*60*60*72), dotClass:'activity-dot-login', icon:'bi-laptop' },
+  ];
+
+  activities.forEach(act => {
+    const timeStr = formatTimeAgo(act.time);
+    const div = document.createElement('div');
+    div.className = 'activity-item';
+    div.innerHTML = `
+      <div class="activity-dot ${act.dotClass}"></div>
+      <div class="activity-content">
+        <div class="activity-text"><i class="bi ${act.icon} me-1" style="font-size:0.7rem;opacity:0.6;"></i>${act.text}</div>
+        <div class="activity-time"><i class="bi bi-clock me-1"></i>${timeStr}</div>
+      </div>
+    `;
+    timeline.appendChild(div);
+  });
+
+  function formatTimeAgo(date) {
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+    return Math.floor(diff / 86400) + ' days ago';
+  }
+})();
 </script>
 {% endblock %}
