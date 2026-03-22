@@ -1071,8 +1071,10 @@ body::before{
         <div class="bc-h">CLASSIFIED VAULT</div>
         <p class="bc-p">Auto-generated legal-grade PDF dossiers containing forensic timelines and immutable incident hashes.</p>
       </div>
-      <div class="bc reveal d3">
+      <div class="bc bc-auth reveal d3">
+        <div class="rotating-border"></div>
         <div class="bc-holo"></div>
+        <div class="bc-mini-anim" style="color:#06b6d4"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <span class="bc-num">SEC.06</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
         <div class="bc-h">ZERO-TRUST AUTH</div>
@@ -1117,37 +1119,117 @@ body::before{
     <h2 class="sec-title">Real stories from<br>real users.</h2>
     <p class="sec-sub">Hear from women who feel safer every day with RAKSHAK.</p>
   </div>
-  <div class="testi-grid">
-    <div class="testi-card reveal">
-      <div class="testi-stars">★ ★ ★ ★ ★</div>
-      <p class="testi-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">A</div>
-        <div>
-          <div class="testi-name">Ananya R.</div>
-          <div class="testi-role">College Student, Delhi</div>
+  <div class="testi-track-wrap">
+    <div class="testi-track" id="testiTrack">
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">A</div>
+          <div>
+            <div class="testi-name">Ananya R. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">College Student, Delhi</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="testi-card reveal">
-      <div class="testi-stars">★ ★ ★ ★ ★</div>
-      <p class="testi-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">P</div>
-        <div>
-          <div class="testi-name">Priya M.</div>
-          <div class="testi-role">Software Engineer, Bangalore</div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">P</div>
+          <div>
+            <div class="testi-name">Priya M. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Software Engineer, Bangalore</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="testi-card reveal">
-      <div class="testi-stars">★ ★ ★ ★ ★</div>
-      <p class="testi-text">"As a parent, knowing my daughter has RAKSHAK gives me peace of mind. The threat monitoring and auto-alerts are incredibly smart."</p>
-      <div class="testi-author">
-        <div class="testi-avatar">S</div>
-        <div>
-          <div class="testi-name">Sunita K.</div>
-          <div class="testi-role">Parent, Mumbai</div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"As a parent, knowing my daughter has RAKSHAK gives me peace of mind. The threat monitoring and auto-alerts are incredibly smart."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">S</div>
+          <div>
+            <div class="testi-name">Sunita K. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Parent, Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9734;</div>
+        <p class="testi-text">"I travel alone for work often. RAKSHAK's auto-ping system and danger zone alerts have become essential tools. Truly life-changing technology."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">R</div>
+          <div>
+            <div class="testi-name">Ritu S. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Business Consultant, Pune</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"We deployed RAKSHAK across our university campus. The admin dashboard and real-time monitoring give us unparalleled safety oversight."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">D</div>
+          <div>
+            <div class="testi-name">Dr. Meera J. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Dean of Students, Chennai</div>
+          </div>
+        </div>
+      </div>
+      <!-- Duplicate set for seamless loop -->
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">A</div>
+          <div>
+            <div class="testi-name">Ananya R. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">College Student, Delhi</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">P</div>
+          <div>
+            <div class="testi-name">Priya M. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Software Engineer, Bangalore</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"As a parent, knowing my daughter has RAKSHAK gives me peace of mind. The threat monitoring and auto-alerts are incredibly smart."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">S</div>
+          <div>
+            <div class="testi-name">Sunita K. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Parent, Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9734;</div>
+        <p class="testi-text">"I travel alone for work often. RAKSHAK's auto-ping system and danger zone alerts have become essential tools. Truly life-changing technology."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">R</div>
+          <div>
+            <div class="testi-name">Ritu S. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Business Consultant, Pune</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <p class="testi-text">"We deployed RAKSHAK across our university campus. The admin dashboard and real-time monitoring give us unparalleled safety oversight."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">D</div>
+          <div>
+            <div class="testi-name">Dr. Meera J. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
+            <div class="testi-role">Dean of Students, Chennai</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1158,9 +1240,23 @@ body::before{
 <!-- ══════════ CTA ══════════ -->
 <section class="cta-section">
   <div class="cta-glow"></div>
+  <!-- Floating 3D Shields -->
+  <div class="cta-3d-shield">
+    <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#dc2626" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#ef4444" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M80 110 L95 125 L125 95" stroke="#dc2626" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+    </svg>
+  </div>
+  <div class="cta-3d-shield cta-3d-shield-left">
+    <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#dc2626" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#ef4444" stroke-width="1" fill="none" opacity="0.3"/>
+    </svg>
+  </div>
   <div class="cta-inner reveal">
     <span class="cta-eyebrow">Start today · It's free</span>
-    <h2 class="cta-h2">Protection that<br>never <em>sleeps.</em></h2>
+    <h2 class="cta-h2">Protection that<br>never <em class="cta-h2-gradient">sleeps.</em></h2>
     <p class="cta-p">Join RAKSHAK and stay protected — every second, everywhere.</p>
     <div class="cta-btns">
       <a href="{{ url_for('auth.register') }}" class="btn-primary" style="font-size:1rem;padding:15px 38px;">
@@ -1174,6 +1270,13 @@ body::before{
 
 <!-- ══════════ FOOTER ══════════ -->
 <footer class="rk-footer" style="flex-direction:column;gap:1.5rem;padding:3rem clamp(2rem,4vw,6rem) 2rem;">
+  <!-- Heartbeat Line Animation -->
+  <div class="footer-heartbeat">
+    <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+      <path class="heartbeat-line" d="M0,20 L200,20 L220,20 L240,5 L260,35 L280,10 L300,30 L320,20 L500,20 L520,20 L540,5 L560,35 L580,10 L600,30 L620,20 L800,20 L820,20 L840,5 L860,35 L880,10 L900,30 L920,20 L1200,20"/>
+    </svg>
+  </div>
+
   <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:1rem;">
     <div>
       <div class="ft-logo"><span>🛡</span> RAKSHAK</div>
@@ -1185,9 +1288,29 @@ body::before{
       <a href="#features" style="font-family:var(--int);font-size:.78rem;color:rgba(255,255,255,.3);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">Features</a>
     </div>
   </div>
+
+  <!-- Social Media Icons -->
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:1rem;">
+    <div class="footer-social">
+      <div class="social-icon" title="Twitter / X">
+        <svg viewBox="0 0 24 24"><path d="M4 4l11.733 16H20L8.267 4H4z"/><path d="M4 20l6.768-6.768M20 4l-6.768 6.768"/></svg>
+      </div>
+      <div class="social-icon" title="GitHub">
+        <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+      </div>
+      <div class="social-icon" title="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </div>
+      <div class="social-icon" title="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </div>
+    </div>
+    <span class="footer-tagline">Made with &#10084;&#65039; for safety</span>
+  </div>
+
   <div style="width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--bdr),transparent);"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:.5rem;">
-    <span class="ft-copy">© 2025 RAKSHAK &nbsp;·&nbsp; Built for Safety &nbsp;·&nbsp; Made in India 🇮🇳</span>
+    <span class="ft-copy">&copy; 2025 RAKSHAK &nbsp;&middot;&nbsp; Built for Safety &nbsp;&middot;&nbsp; Made in India &#127470;&#127475;</span>
     <div style="display:flex;align-items:center;gap:6px;">
       <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:blink 1.5s infinite;"></div>
       <span style="font-family:var(--int);font-size:.65rem;color:rgba(255,255,255,.2);letter-spacing:.1em;">ALL SYSTEMS OPERATIONAL</span>
