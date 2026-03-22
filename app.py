@@ -204,6 +204,9 @@ def create_app(config_name=None):
     from modules.main.routes          import main_bp
     from modules.safety_tips.routes   import safety_tips_bp
     from modules.emergency.routes     import emergency_bp
+    from modules.safe_walk.routes     import safe_walk_bp
+    from modules.fake_call.routes     import fake_call_bp
+    from modules.safety_score.routes  import safety_score_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp,      url_prefix='/auth')
@@ -215,6 +218,9 @@ def create_app(config_name=None):
     app.register_blueprint(admin_bp,     url_prefix='/admin')
     app.register_blueprint(safety_tips_bp, url_prefix='/safety-tips')
     app.register_blueprint(emergency_bp,   url_prefix='/emergency')
+    app.register_blueprint(safe_walk_bp,   url_prefix='/safe-walk')
+    app.register_blueprint(fake_call_bp,   url_prefix='/fake-call')
+    app.register_blueprint(safety_score_bp, url_prefix='/safety-score')
 
     # ── Google OAuth ──────────────────────────────────────────────────────
     register_google_oauth(app)
