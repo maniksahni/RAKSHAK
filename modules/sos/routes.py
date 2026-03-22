@@ -22,9 +22,6 @@ def get_socketio():
 @sos_bp.route('/dashboard')
 @login_required
 def dashboard_index():
-    if current_user.is_admin:
-        from flask import redirect, url_for
-        return redirect(url_for('admin.dashboard'))
     return render_template('dashboard/index.html')
 
 
@@ -35,9 +32,6 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 @dashboard_bp.route('/')
 @login_required
 def index():
-    if current_user.is_admin:
-        from flask import redirect, url_for
-        return redirect(url_for('admin.dashboard'))
     # Fetch recent alerts
     alerts = query_db(
         'SELECT * FROM sos_alerts WHERE user_id=%s ORDER BY created_at DESC LIMIT 10',

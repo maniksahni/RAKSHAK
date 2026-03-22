@@ -127,18 +127,18 @@ SCHEMA_SQL = [
 
 # Seed data (passwords pre-hashed with bcrypt cost 12)
 SEEDS = [
-    # Admin: Admin@123
+    # Admin: Manik — Password: Manik@123
     """INSERT IGNORE INTO users (full_name, email, phone, password_hash, role, security_question, security_answer_hash)
-       VALUES ('System Admin','admin@rakshak.com','9999999999',
-       '$2b$12$OJ/YZ5mnmP3GSdF8rou.iuq/7PmWIgUrQcB7uzE28GtIBZmh/f1pi',
+       VALUES ('Manik Sahni','manik@rakshak.com','9999999999',
+       '$2b$12$T4ttwopBuO1wR0ws/2wLge7NcQtKnu65WCL/Eb3rTqTMNGZsPUWp6',
        'admin','What is the system name?',
-       '$2b$12$lCTx6wgXfHGyQxgDsEyBLOkAyZ/yJQJovUfYCKA.jogKyHiFozeAe')""",
-    # User: User@123
+       '$2b$12$PB0tITPBC385UyYcri/8keGQQ4rkV5vNf9P8w/nS/NvIQcBVYDS1u')""",
+    # User: Keshav — Password: Keshav@123
     """INSERT IGNORE INTO users (full_name, email, phone, password_hash, role, security_question, security_answer_hash)
-       VALUES ('Priya Sharma','priya@example.com','9876543210',
-       '$2b$12$xIgo6mm/SnEmom75hQ.A3.4/FuIrGi9cdfNYemHRcFNgTTZPSeaQK',
-       'user','What is your mother name?',
-       '$2b$12$lCTx6wgXfHGyQxgDsEyBLOkAyZ/yJQJovUfYCKA.jogKyHiFozeAe')""",
+       VALUES ('Keshav','keshav@rakshak.com','9876543210',
+       '$2b$12$9rWBSAdoP4./sqE3m.MCVecIg.e4nIbsjhu80yIQSdTGvJCoREqIC',
+       'user','What is the system name?',
+       '$2b$12$PB0tITPBC385UyYcri/8keGQQ4rkV5vNf9P8w/nS/NvIQcBVYDS1u')""",
 ]
 
 
@@ -160,6 +160,13 @@ try:
     for stmt in SCHEMA_SQL:
         cursor.execute(stmt)
     print("✅ All tables created successfully.")
+
+    # Clean old seed users (Priya, System Admin) if they exist
+    try:
+        cursor.execute("DELETE FROM users WHERE email IN ('priya@example.com', 'admin@rakshak.com') AND full_name IN ('Priya Sharma', 'System Admin')")
+        print("  🧹 Cleaned old seed users.")
+    except Exception as e:
+        print(f"  ℹ️  Cleanup note: {e}")
 
     # Seed
     for seed in SEEDS:
