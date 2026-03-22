@@ -98,6 +98,23 @@
   transform:translateY(-2px);
   box-shadow:0 8px 24px rgba(0,0,0,0.15);
 }
+
+/* Security scan bar */
+@keyframes secScan { 0%{left:-30%} 100%{left:100%} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* Activity item hover */
+.activity-item { transition:transform .2s, border-color .2s; cursor:default; }
+.activity-item:hover { transform:translateY(-2px); border-color:rgba(255,255,255,0.15) !important; }
+
+/* Heartbeat animation for SOS */
+@keyframes heartbeat {
+  0%,100% { transform:scale(1); }
+  14% { transform:scale(1.08); }
+  28% { transform:scale(1); }
+  42% { transform:scale(1.05); }
+  56% { transform:scale(1); }
+}
 </style>
 {% endblock %}
 
@@ -321,6 +338,147 @@
     </div>
   </div>
 
+  <!-- ══ Security Shield Status Panel ══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8 animate-in">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent-green),transparent);"></div>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-shield-fill-check" style="color:var(--accent-green);font-size:1.2rem;"></i>
+          <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">SECURITY SHIELD STATUS</h6>
+        </div>
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <div style="background:rgba(72,187,120,0.06);border:1px solid rgba(72,187,120,0.15);border-radius:12px;padding:14px;text-align:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:rgba(72,187,120,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+                <i class="bi bi-broadcast" style="color:var(--accent-green);"></i>
+              </div>
+              <div style="font-size:0.7rem;color:var(--accent-green);font-weight:700;letter-spacing:0.1em;">LIVE PING</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;" id="shield-ping-status">Active</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div style="background:rgba(66,153,225,0.06);border:1px solid rgba(66,153,225,0.15);border-radius:12px;padding:14px;text-align:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:rgba(66,153,225,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+                <i class="bi bi-geo-alt-fill" style="color:var(--accent-blue);"></i>
+              </div>
+              <div style="font-size:0.7rem;color:var(--accent-blue);font-weight:700;letter-spacing:0.1em;">GPS LOCK</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;" id="shield-gps-status">Acquiring...</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div style="background:rgba(159,122,234,0.06);border:1px solid rgba(159,122,234,0.15);border-radius:12px;padding:14px;text-align:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:rgba(159,122,234,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+                <i class="bi bi-lock-fill" style="color:var(--accent-purple);"></i>
+              </div>
+              <div style="font-size:0.7rem;color:var(--accent-purple);font-weight:700;letter-spacing:0.1em;">ENCRYPTION</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;">AES-256</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div style="background:rgba(246,173,85,0.06);border:1px solid rgba(246,173,85,0.15);border-radius:12px;padding:14px;text-align:center;">
+              <div style="width:36px;height:36px;border-radius:50%;background:rgba(246,173,85,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+                <i class="bi bi-people-fill" style="color:var(--accent-amber);"></i>
+              </div>
+              <div style="font-size:0.7rem;color:var(--accent-amber);font-weight:700;letter-spacing:0.1em;">CONTACTS</div>
+              <div style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;">{{ trusted_contacts|length }} linked</div>
+            </div>
+          </div>
+        </div>
+        <!-- Animated security scan bar -->
+        <div style="margin-top:16px;height:3px;background:rgba(255,255,255,0.03);border-radius:3px;overflow:hidden;position:relative;">
+          <div id="security-scan-bar" style="position:absolute;width:30%;height:100%;background:linear-gradient(90deg,transparent,var(--accent-green),transparent);border-radius:3px;animation:secScan 3s linear infinite;"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+          <span style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.08em;">CONTINUOUS MONITORING ACTIVE</span>
+          <span style="font-size:0.65rem;color:var(--accent-green);" id="shield-uptime">Uptime: calculating...</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 animate-in">
+      <div class="glass-card p-4 h-100 d-flex flex-column" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent-amber),transparent);"></div>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-battery-charging" style="color:var(--accent-amber);font-size:1.1rem;"></i>
+          <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">DEVICE STATUS</h6>
+        </div>
+        <div class="flex-grow-1 d-flex flex-column justify-content-center gap-3">
+          <!-- Battery -->
+          <div>
+            <div class="d-flex justify-content-between" style="font-size:0.72rem;margin-bottom:4px;">
+              <span style="color:var(--text-muted);">Battery</span>
+              <span id="dev-battery" style="color:var(--accent-green);font-weight:600;">---%</span>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+              <div id="dev-battery-bar" style="height:100%;background:var(--accent-green);border-radius:3px;width:0%;transition:width 1s;"></div>
+            </div>
+          </div>
+          <!-- Network -->
+          <div>
+            <div class="d-flex justify-content-between" style="font-size:0.72rem;margin-bottom:4px;">
+              <span style="color:var(--text-muted);">Network</span>
+              <span id="dev-network" style="color:var(--accent-blue);font-weight:600;">Checking...</span>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+              <div id="dev-network-bar" style="height:100%;background:var(--accent-blue);border-radius:3px;width:0%;transition:width 1s;"></div>
+            </div>
+          </div>
+          <!-- GPS Accuracy -->
+          <div>
+            <div class="d-flex justify-content-between" style="font-size:0.72rem;margin-bottom:4px;">
+              <span style="color:var(--text-muted);">GPS Accuracy</span>
+              <span id="dev-gps-acc" style="color:var(--accent-purple);font-weight:600;">--m</span>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+              <div id="dev-gps-bar" style="height:100%;background:var(--accent-purple);border-radius:3px;width:0%;transition:width 1s;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Live Activity Timeline ══ -->
+  <div class="row mb-4 animate-in">
+    <div class="col-12">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,0.3),transparent);"></div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-activity" style="color:var(--red-primary);font-size:1.1rem;"></i>
+            <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">LIVE ACTIVITY</h6>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-green);animation:blink 1.5s infinite;"></div>
+            <span style="font-size:0.68rem;color:var(--text-muted);">Real-time</span>
+          </div>
+        </div>
+        <div id="activity-timeline" style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;">
+          <div class="activity-item" style="min-width:200px;background:rgba(72,187,120,0.05);border:1px solid rgba(72,187,120,0.12);border-radius:10px;padding:12px;">
+            <div style="font-size:0.65rem;color:var(--accent-green);font-weight:600;letter-spacing:0.1em;margin-bottom:4px;">SYSTEM</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);">Session started</div>
+            <div style="font-size:0.6rem;color:var(--text-muted);margin-top:4px;" id="session-start-time">Just now</div>
+          </div>
+          <div class="activity-item" style="min-width:200px;background:rgba(66,153,225,0.05);border:1px solid rgba(66,153,225,0.12);border-radius:10px;padding:12px;">
+            <div style="font-size:0.65rem;color:var(--accent-blue);font-weight:600;letter-spacing:0.1em;margin-bottom:4px;">GPS</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);" id="activity-gps">Location tracking active</div>
+            <div style="font-size:0.6rem;color:var(--text-muted);margin-top:4px;">Continuous</div>
+          </div>
+          <div class="activity-item" style="min-width:200px;background:rgba(159,122,234,0.05);border:1px solid rgba(159,122,234,0.12);border-radius:10px;padding:12px;">
+            <div style="font-size:0.65rem;color:var(--accent-purple);font-weight:600;letter-spacing:0.1em;margin-bottom:4px;">SOCKET</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);" id="activity-socket">WebSocket connected</div>
+            <div style="font-size:0.6rem;color:var(--text-muted);margin-top:4px;">Live</div>
+          </div>
+          <div class="activity-item" style="min-width:200px;background:rgba(220,38,38,0.05);border:1px solid rgba(220,38,38,0.12);border-radius:10px;padding:12px;">
+            <div style="font-size:0.65rem;color:var(--red-primary);font-weight:600;letter-spacing:0.1em;margin-bottom:4px;">SHIELD</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);">{{ trusted_contacts|length }} contacts synced</div>
+            <div style="font-size:0.6rem;color:var(--text-muted);margin-top:4px;">Ready</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Safety Tips Carousel -->
   <div class="row g-4 mb-4">
     <div class="col-12 animate-in">
@@ -528,24 +686,135 @@ function nextTip() { currentTip = (currentTip + 1) % SAFETY_TIPS.length; renderT
 renderTip(0);
 setInterval(nextTip, 8000);
 
-/* 3D tilt tracking for dashboard cards */
+/* 3D tilt tracking for dashboard cards — smoother with RAF */
 (function(){
   const cards = document.querySelectorAll('.tilt-card');
   cards.forEach(card => {
+    let ticking = false;
     card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const deltaX = (x - centerX) / centerX;
-      const deltaY = (y - centerY) / centerY;
-      card.style.transform = `perspective(1000px) rotateX(${deltaY * -10}deg) rotateY(${deltaX * 10}deg)`;
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(800px) rotateX(${y * -12}deg) rotateY(${x * 12}deg) scale3d(1.02,1.02,1.02)`;
+        // Glow follows cursor
+        const inner = card.querySelector('.glass-card,.stat-card');
+        if (inner) inner.style.boxShadow = `${x*20}px ${y*20}px 40px rgba(220,38,38,0.08)`;
+        ticking = false;
+      });
     });
     card.addEventListener('mouseleave', () => {
-      card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+      card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale3d(1,1,1)';
+      card.style.transition = 'transform .4s cubic-bezier(.22,1,.36,1)';
+      const inner = card.querySelector('.glass-card,.stat-card');
+      if (inner) inner.style.boxShadow = '';
+      setTimeout(() => card.style.transition = 'transform .1s ease-out', 400);
     });
   });
 })();
+
+/* ══ Device Status Panel ══ */
+(function(){
+  // Battery API
+  if (navigator.getBattery) {
+    navigator.getBattery().then(bat => {
+      function updateBat() {
+        const pct = Math.round(bat.level * 100);
+        const el = document.getElementById('dev-battery');
+        const bar = document.getElementById('dev-battery-bar');
+        if (el) el.textContent = pct + '%';
+        if (bar) {
+          bar.style.width = pct + '%';
+          bar.style.background = pct < 20 ? 'var(--red-primary)' : pct < 50 ? 'var(--accent-amber)' : 'var(--accent-green)';
+        }
+        if (el) el.style.color = pct < 20 ? 'var(--red-primary)' : pct < 50 ? 'var(--accent-amber)' : 'var(--accent-green)';
+      }
+      updateBat();
+      bat.addEventListener('levelchange', updateBat);
+    });
+  } else {
+    const el = document.getElementById('dev-battery');
+    if (el) el.textContent = 'N/A';
+  }
+
+  // Network status
+  function updateNet() {
+    const el = document.getElementById('dev-network');
+    const bar = document.getElementById('dev-network-bar');
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && conn.effectiveType) {
+      const type = conn.effectiveType.toUpperCase();
+      if (el) el.textContent = type;
+      const q = {'slow-2g':15,'2g':30,'3g':60,'4g':100}[conn.effectiveType] || 50;
+      if (bar) bar.style.width = q + '%';
+    } else {
+      if (el) el.textContent = navigator.onLine ? 'Online' : 'Offline';
+      if (bar) bar.style.width = navigator.onLine ? '80%' : '0%';
+    }
+  }
+  updateNet();
+  window.addEventListener('online', updateNet);
+  window.addEventListener('offline', updateNet);
+
+  // GPS accuracy from dashboard map
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const acc = Math.round(pos.coords.accuracy);
+      const el = document.getElementById('dev-gps-acc');
+      const bar = document.getElementById('dev-gps-bar');
+      const gpsShield = document.getElementById('shield-gps-status');
+      if (el) el.textContent = acc + 'm';
+      if (bar) bar.style.width = Math.max(10, Math.min(100, 100 - acc)) + '%';
+      if (gpsShield) { gpsShield.textContent = 'Locked (' + acc + 'm)'; gpsShield.style.color = 'var(--accent-green)'; }
+    }, () => {
+      const el = document.getElementById('dev-gps-acc');
+      if (el) el.textContent = 'Denied';
+      const gpsShield = document.getElementById('shield-gps-status');
+      if (gpsShield) { gpsShield.textContent = 'Denied'; gpsShield.style.color = 'var(--red-primary)'; }
+    }, { enableHighAccuracy: true });
+  }
+
+  // Uptime counter
+  const startTime = Date.now();
+  setInterval(() => {
+    const diff = Math.floor((Date.now() - startTime) / 1000);
+    const mins = Math.floor(diff / 60);
+    const secs = diff % 60;
+    const el = document.getElementById('shield-uptime');
+    if (el) el.textContent = 'Uptime: ' + (mins > 0 ? mins + 'm ' : '') + secs + 's';
+  }, 1000);
+})();
+
+/* ══ Activity timeline — add entries dynamically ══ */
+function addActivity(type, text, color) {
+  const timeline = document.getElementById('activity-timeline');
+  if (!timeline) return;
+  const item = document.createElement('div');
+  item.className = 'activity-item';
+  item.style.cssText = 'min-width:200px;background:rgba('+color+',0.05);border:1px solid rgba('+color+',0.12);border-radius:10px;padding:12px;animation:fadeSlideIn .3s ease-out;';
+  item.innerHTML = `<div style="font-size:0.65rem;color:rgb(${color});font-weight:600;letter-spacing:0.1em;margin-bottom:4px;">${type}</div>
+    <div style="font-size:0.8rem;color:var(--text-secondary);">${text}</div>
+    <div style="font-size:0.6rem;color:var(--text-muted);margin-top:4px;">${new Date().toLocaleTimeString()}</div>`;
+  timeline.prepend(item);
+  // Keep max 8 items
+  while (timeline.children.length > 8) timeline.lastChild.remove();
+}
+
+// Hook into ping success
+const _origSendPing = window.sendPing;
+if (typeof sendPing === 'function') {
+  const origPing = sendPing;
+  window.sendPing = async function() {
+    await origPing();
+    const el = document.getElementById('shield-ping-status');
+    if (el) { el.textContent = 'Sent ' + new Date().toLocaleTimeString(); el.style.color = 'var(--accent-green)'; }
+  };
+}
 </script>
+
+<style>
+@keyframes fadeSlideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+</style>
 {% endblock %}
