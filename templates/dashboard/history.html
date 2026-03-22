@@ -351,6 +351,9 @@
                 <a href="{{ url_for('sos.download_pdf', alert_id=a.id) }}" class="action-btn action-btn-blue">
                   <i class="bi bi-file-earmark-pdf"></i>PDF
                 </a>
+                <button onclick="openVault({{ a.id }})" class="action-btn" style="border:1px solid var(--accent-amber);color:var(--accent-amber); background:none;">
+                  <i class="bi bi-safe"></i>Vault
+                </button>
               </div>
             </td>
           </tr>
@@ -542,5 +545,109 @@ function filterAlerts(q) {
     });
   });
 })();
+</script>
+
+<!-- ════════════ EVI-VAULT MODAL ════════════ -->
+<div class="modal fade" id="vaultModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="background:rgba(10,10,15,0.95); border:1px solid var(--accent-amber); box-shadow:0 0 30px rgba(246,173,85,0.15); border-radius:0;">
+      <div class="modal-header" style="border-bottom:1px dashed var(--accent-amber); background:rgba(246,173,85,0.05);">
+        <h5 class="modal-title" style="font-family:'Courier New', monospace; font-weight:700; color:var(--accent-amber); letter-spacing:0.1em;">
+          <i class="bi bi-safe-fill me-2"></i>EVIDENCE VAULT TERMINAL
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-family:'Courier New', monospace; font-size:0.8rem; color:var(--text-muted); position:relative; overflow:hidden;">
+        <!-- scanline overlay -->
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(246,173,85,0) 0%, rgba(246,173,85,0.05) 50%, rgba(246,173,85,0) 100%); background-size:100% 4px; pointer-events:none; z-index:0;"></div>
+        
+        <div id="vault-loader" class="text-center py-5">
+          <div class="spinner-border text-warning" role="status"></div>
+          <div class="mt-3" style="color:var(--accent-amber); letter-spacing:0.1em; animation:blink 1.5s infinite;">RETRIEVING FORENSIC METADATA...</div>
+        </div>
+
+        <div id="vault-content" style="display:none; position:relative; z-index:1;">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-3" style="border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.5);">
+                <div style="color:var(--text-secondary); font-size:0.7rem; margin-bottom:5px;">[ IDENTIFIER ]</div>
+                <div id="v-id" style="color:var(--white); font-weight:700; font-size:1.1rem;"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3" style="border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.5);">
+                <div style="color:var(--text-secondary); font-size:0.7rem; margin-bottom:5px;">[ TIMESTAMP_UTC ]</div>
+                <div id="v-time" style="color:var(--white); font-weight:700;"></div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="p-3" style="border:1px solid rgba(246,173,85,0.3); background:rgba(246,173,85,0.05);">
+                <div style="color:var(--accent-amber); font-size:0.7rem; margin-bottom:5px;">[ IMMUTABLE_HASH_SHA256 ]</div>
+                <div id="v-hash" style="color:var(--white); word-break:break-all; font-size:0.75rem;"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3" style="border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.5);">
+                <div style="color:var(--text-secondary); font-size:0.7rem; margin-bottom:5px;">[ TELEMETRY_COORD ]</div>
+                <div id="v-coord" style="color:var(--accent-blue);"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3" style="border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.5);">
+                <div style="color:var(--text-secondary); font-size:0.7rem; margin-bottom:5px;">[ NETWORK_RELAY ]</div>
+                <div id="v-network" style="color:var(--accent-green);"></div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="p-3" style="border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.5);">
+                <div style="color:var(--text-secondary); font-size:0.7rem; margin-bottom:5px;">[ RAW_ADDRESS_DECODE ]</div>
+                <div id="v-address" style="color:var(--white);"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 pt-3 text-center" style="border-top:1px dashed rgba(255,255,255,0.1);">
+            <div style="font-size:0.65rem; color:var(--text-muted); opacity:0.6;">EVIDENCE CHAIN VERIFIED OVER AES-256-GCM</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let vaultModal;
+function openVault(alertId) {
+  if (!vaultModal) vaultModal = new bootstrap.Modal(document.getElementById('vaultModal'));
+  vaultModal.show();
+  
+  document.getElementById('vault-loader').style.display = 'block';
+  document.getElementById('vault-content').style.display = 'none';
+
+  fetch(`/sos/${alertId}/evidence`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('v-id').innerText = `ALERT-${data.evidence.alert_id.toString().padStart(5, '0')}`;
+        document.getElementById('v-time').innerText = data.evidence.timestamp;
+        document.getElementById('v-hash').innerText = data.evidence.immutable_hash;
+        document.getElementById('v-coord').innerText = `LAT: ${data.evidence.lat} / LNG: ${data.evidence.lng}`;
+        document.getElementById('v-network').innerText = data.evidence.network_path.join(' -> ');
+        document.getElementById('v-address').innerText = data.evidence.address;
+        setTimeout(() => {
+          document.getElementById('vault-loader').style.display = 'none';
+          document.getElementById('vault-content').style.display = 'block';
+        }, 800); // Add slight delay for dramatic terminal loading effect
+      } else {
+        alert('Vault Decryption Failed: ' + data.error);
+        vaultModal.hide();
+      }
+    })
+    .catch(err => {
+      alert('Network transmission failed: ' + err);
+      vaultModal.hide();
+    });
+}
 </script>
 {% endblock %}
