@@ -175,6 +175,12 @@
   <a class="sidebar-link {% if request.endpoint=='emergency.index' %}active{% endif %}" href="{{ url_for('emergency.index') }}">
     <i class="bi bi-telephone-fill"></i> <span>Emergency Dial</span>
   </a>
+  <a class="sidebar-link {% if request.endpoint=='safe_walk.index' %}active{% endif %}" href="{{ url_for('safe_walk.index') }}">
+    <i class="bi bi-geo-alt-fill"></i> <span>Safe Walk</span>
+  </a>
+  <a class="sidebar-link {% if request.endpoint=='fake_call.index' %}active{% endif %}" href="{{ url_for('fake_call.index') }}">
+    <i class="bi bi-phone-vibrate"></i> <span>Fake Call</span>
+  </a>
   {% endif %}
 
   <hr class="glow-line mx-3">

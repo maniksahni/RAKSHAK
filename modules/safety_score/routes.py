@@ -12,7 +12,7 @@ from models import query_db
 
 log = logging.getLogger('rakshak')
 
-safety_score_bp = Blueprint('safety_score', __name__, url_prefix='/safety-score')
+safety_score_bp = Blueprint('safety_score', __name__)
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
