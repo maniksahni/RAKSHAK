@@ -889,32 +889,7 @@ if ('serviceWorker' in navigator) {
     });
   }
 
-  // ---- Device Shake to SOS ----
-  let lastX = null, lastY = null, lastZ = null;
-  let shakeThreshold = 25; // Sensitivity
-  let lastUpdate = 0;
-
-  if (window.DeviceMotionEvent) {
-    window.addEventListener('devicemotion', function(event) {
-      if(!event.accelerationIncludingGravity) return;
-      let curTime = new Date().getTime();
-      if ((curTime - lastUpdate) > 100) {
-        let diffTime = (curTime - lastUpdate);
-        lastUpdate = curTime;
-
-        let { x, y, z } = event.accelerationIncludingGravity;
-        if(lastX !== null) {
-          let speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
-          if (speed > shakeThreshold) {
-            if(confirm("Violent shake detected! Trigger Global SOS?")) {
-              if(window.triggerGlobalSOS) window.triggerGlobalSOS();
-            }
-          }
-        }
-        lastX = x; lastY = y; lastZ = z;
-      }
-    });
-  }
+  // ---- Device Shake logic is handled by static/js/sos_triggers.js ----
 }
 </script>
 </body>

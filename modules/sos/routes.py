@@ -87,7 +87,21 @@ def trigger_sos():
         accuracy     = data.get('accuracy')
 
         if raw_lat is None or raw_lng is None:
-            return jsonify(success=False, error='Location is required for SOS.'), 400
+            # ── Fallback: Attempt to fetch last known location from ping_logs ──
+            last_ping = query_db(
+                '''SELECT latitude, longitude FROM ping_logs 
+                   WHERE user_id=%s AND latitude IS NOT NULL AND longitude IS NOT NULL 
+                   ORDER BY created_at DESC LIMIT 1''',
+                (current_user.id,), one=True
+            )
+            if last_ping:
+                raw_lat = last_ping['latitude']
+                raw_lng = last_ping['longitude']
+                message += " [LOCATION EST: LAST KNOWN]"
+            else:
+                raw_lat = 0.0
+                raw_lng = 0.0
+                message += " [LOCATION UNKNOWN]"
 
         try:
             lat, lng = validate_coords(raw_lat, raw_lng)
