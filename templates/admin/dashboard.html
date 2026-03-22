@@ -97,22 +97,19 @@
 
 /* command center header */
 .cmd-center {
-  background: linear-gradient(135deg, rgba(220,38,38,0.08), rgba(0,0,0,0.8));
-  border: 1px solid rgba(220,38,38,0.4); border-radius: 8px;
-  padding: 1.5rem 2rem; position: relative; overflow: hidden;
-  box-shadow: inset 0 0 40px rgba(220,38,38,0.1), 0 10px 30px rgba(0,0,0,0.5);
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
+  padding: 2rem 2.5rem; position: relative; overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 20px 40px rgba(0,0,0,0.5);
 }
 .cmd-center::before {
-  content:''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px);
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at top right, rgba(139,92,246,0.15), transparent 50%),
+              radial-gradient(circle at bottom left, rgba(59,130,246,0.15), transparent 50%);
   pointer-events: none; z-index: 0;
 }
-.cmd-center::after {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle, rgba(220,38,38,0.1) 0%, transparent 60%);
-  animation: radarSpin 10s linear infinite; pointer-events: none;
-}
-@keyframes radarSpin { 100% { transform: rotate(360deg); } }
+.cmd-center::after { display:none; }
 
 .cmd-clock {
   font-family:'Courier New',monospace;font-size:1.8rem;font-weight:700;
@@ -196,17 +193,17 @@
 
   <!-- Command Center Header -->
   <div class="cmd-center admin-greeting d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-    <div style="position:absolute; right:1%; top:-20%; font-family:var(--font-display); font-size:8rem; font-weight:900; color:rgba(220,38,38,0.02); pointer-events:none; z-index:0;">GOD.MODE</div>
+    <div style="position:absolute; right:1%; top:-20%; font-family:var(--sg); font-size:6rem; font-weight:900; color:rgba(255,255,255,0.02); pointer-events:none; z-index:0;">SYSTEM.CORE</div>
     <div class="d-flex align-items-center gap-3" style="position:relative; z-index:1;">
       <div>
         <div class="d-flex align-items-center gap-2">
-          <i class="bi bi-globe" style="color:var(--red-primary);font-size:1.6rem;animation:pulse .5s infinite alternate;"></i>
-          <h2 class="section-header" style="font-size:1.6rem; letter-spacing:2px; text-shadow:0 0 10px rgba(220,38,38,0.5);">GLOBAL OVERWATCH</h2>
+          <i class="bi bi-globe" style="color:var(--text-primary);font-size:1.6rem;"></i>
+          <h2 class="section-header" style="font-size:1.6rem; font-family:var(--sg); letter-spacing:-0.02em;">Central Command</h2>
         </div>
-        <p style="color:var(--text-muted);font-size:0.75rem;margin:0;letter-spacing:0.15em; font-family:'Courier New', monospace;">SECURE TERMINAL // SATELLITE UPLINK ACTIVE</p>
+        <p style="color:rgba(255,255,255,0.6);font-size:0.85rem;margin:4px 0 0;font-family:var(--int); font-weight:400;">Global platform statistics and active monitoring.</p>
       </div>
     </div>
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-3" style="position:relative; z-index:1;">
       <div class="cmd-stat d-none d-md-flex">
         <div class="cmd-stat-val" style="color:var(--accent-green);">{{ stats.total_users }}</div>
         <div class="cmd-stat-lbl">Users</div>
@@ -216,10 +213,10 @@
         <div class="cmd-stat-lbl">Active SOS</div>
       </div>
       <div class="text-end" style="border-left:1px solid rgba(255,255,255,0.05);padding-left:1rem;">
-        <div class="cmd-clock" id="cmd-clock">00:00:00</div>
-        <div class="cmd-date" id="cmd-date"></div>
+        <div class="cmd-clock" id="cmd-clock" style="color:#fff; text-shadow:none; letter-spacing:normal;">00:00:00</div>
+        <div class="cmd-date" id="cmd-date" style="font-family:var(--int);"></div>
       </div>
-      <div class="d-flex gap-2 align-items-center">
+      <div class="d-flex gap-2 align-items-center ms-2">
         <span class="live-indicator">LIVE</span>
         <button onclick="refreshAll()" class="btn-glass" style="font-size:0.85rem;padding:6px 14px;" title="Refresh all"><i class="bi bi-arrow-clockwise"></i></button>
       </div>

@@ -28,38 +28,38 @@
 
     /* ── HEADER ── */
     .track-header {
-      background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(5,5,10,0.95));
-      border-bottom: 1px solid rgba(220,38,38,0.25);
-      padding: 14px 24px; display: flex; align-items: center; gap: 14px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.05), rgba(5,5,10,0.95));
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 18px 24px; display: flex; align-items: center; gap: 16px;
       position: relative; overflow: hidden;
     }
     .track-header::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(220,38,38,0.6), transparent);
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
     }
     .track-header::after {
-      content: 'CLASSIFIED'; position: absolute; right: -30px; top: -20px;
-      font-size: 5rem; font-weight: 900; color: rgba(220,38,38,0.03);
-      letter-spacing: -2px; pointer-events: none; transform: rotate(-8deg);
+      content: 'SECURE LINK'; position: absolute; right: -20px; top: -10px;
+      font-size: 4.5rem; font-weight: 900; color: rgba(255,255,255,0.02);
+      letter-spacing: -2px; pointer-events: none;
     }
     .logo-box {
-      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-      background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05));
-      border: 1px solid rgba(220,38,38,0.35);
-      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-      box-shadow: 0 0 20px rgba(220,38,38,0.2);
+      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
     }
     .header-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 3px 10px; border-radius: 3px;
-      background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3);
-      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em;
-      color: var(--red); font-family: 'Courier New', monospace; margin-bottom: 3px;
+      padding: 4px 12px; border-radius: 50px;
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3);
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      color: var(--blue); font-family: 'Inter', sans-serif; margin-bottom: 4px; text-transform:uppercase;
     }
-    .badge-dot { width:5px; height:5px; border-radius:50%; background:var(--red); animation: blink .9s ease-in-out infinite; }
-    @keyframes blink { 50% { opacity:0.15; } }
-    .header-title { font-size: 1.1rem; font-weight: 800; line-height: 1.2; }
-    .header-sub { font-size: 0.73rem; color: rgba(255,255,255,0.45); }
+    .badge-dot { width:6px; height:6px; border-radius:50%; background:var(--blue); animation: blink 1.5s ease-in-out infinite; box-shadow:0 0 8px var(--blue); }
+    @keyframes blink { 50% { opacity:0.3; } }
+    .header-title { font-size: 1.25rem; font-weight: 800; line-height: 1.2; letter-spacing:-0.01em; }
+    .header-sub { font-size: 0.75rem; color: rgba(255,255,255,0.5); font-weight:500; font-family:'Inter',sans-serif; }
     .header-clock {
       margin-left: auto; text-align: right; font-family: 'Courier New', monospace;
       font-size: 0.65rem; color: rgba(255,255,255,0.4); line-height: 2em;
@@ -93,25 +93,25 @@
 
     /* ── FOOTER TELEMETRY ── */
     .track-footer {
-      background: linear-gradient(135deg, rgba(5,5,10,0.98), rgba(15,10,20,0.95));
-      border-top: 1px solid rgba(220,38,38,0.2);
-      padding: 16px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      backdrop-filter: blur(20px); -webkit-backdrop-filter:blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 24px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
       position: relative; overflow: hidden;
     }
     .track-footer::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
     }
-    .info-block { display: flex; flex-direction: column; gap: 3px; }
-    .info-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); font-family: 'Courier New', monospace; }
-    .info-value { font-size: 0.88rem; font-weight: 700; color: #fff; }
+    .info-block { display: flex; flex-direction: column; gap: 4px; }
+    .info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); font-weight:600; }
+    .info-value { font-size: 0.95rem; font-weight: 800; color: #fff; letter-spacing:-0.02em; }
     .info-value.green { color: var(--green); }
     .powered-by {
-      margin-left: auto; font-size: 0.68rem; color: rgba(255,255,255,0.25);
-      font-family: 'Courier New', monospace; letter-spacing: 0.08em;
-      display: flex; align-items: center; gap: 6px;
+      margin-left: auto; font-size: 0.75rem; color: rgba(255,255,255,0.4);
+      font-weight:600; display: flex; align-items: center; gap: 6px;
     }
-    .powered-by span { color: var(--red); font-weight: 700; }
+    .powered-by span { color: #fff; font-weight: 800; letter-spacing:-0.02em; }
 
     /* Pulse ring on map marker */
     .pulse-ring {
@@ -129,16 +129,16 @@
 
   <!-- ── CLASSIFIED TRACKING HEADER ── -->
   <div class="track-header">
-    <div class="logo-box"><i class="bi bi-shield-fill-check" style="color:var(--red);"></i></div>
+    <div class="logo-box"><i class="bi bi-shield-check" style="background:linear-gradient(135deg, #fff, rgba(255,255,255,0.6)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;"></i></div>
     <div>
-      <div class="header-badge"><div class="badge-dot"></div> CLASSIFIED — LIVE TRACKING</div>
-      <div class="header-title"><span style="color:var(--red);">{{ person_name }}</span> is sharing their journey</div>
-      <div class="header-sub">RAKSHAK Women's Safety System · Encrypted Route Broadcast</div>
+      <div class="header-badge"><div class="badge-dot"></div> SECURE TRACKING</div>
+      <div class="header-title"><span style="color:var(--blue);">{{ person_name }}</span> is sharing their journey</div>
+      <div class="header-sub">Rakshak Advanced Encryption • End-to-end secured</div>
     </div>
     <div class="header-clock">
-      <div style="color:var(--green);">● UPLINK LIVE</div>
-      <div id="hud-clock">--:--:--</div>
-      <div>GPS POLLING: 5s</div>
+      <div style="color:var(--blue); font-weight:600; font-family:'Inter', sans-serif;">● LIVE UPLINK</div>
+      <div id="hud-clock" style="font-weight:700; font-size:0.75rem;">--:--:--</div>
+      <div style="opacity:0.6; font-family:'Inter', sans-serif;">Poll: 5s</div>
     </div>
   </div>
 
