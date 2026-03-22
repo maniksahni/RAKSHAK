@@ -287,6 +287,39 @@
       </a>
     </div>
   </div>
+  <!-- Trusted Contacts Widget -->
+  <div class="row mb-4 animate-in">
+    <div class="col-12">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg); border-left:3px solid var(--accent-green); background:linear-gradient(135deg, rgba(20,20,30,0.8), rgba(10,10,20,0.95)); box-shadow:inset 0 0 15px rgba(0,0,0,0.5);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 style="margin:0; font-family:'Courier New', monospace; font-weight:700; color:var(--white); letter-spacing:0.05em;">
+            <i class="bi bi-people-fill me-2" style="color:var(--accent-green);"></i>TRUSTED OPERATIVES
+          </h5>
+          <a href="{{ url_for('main.settings') }}" class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:var(--text-muted); font-size:0.7rem;">Manage</a>
+        </div>
+        
+        <div class="d-flex overflow-auto pb-2" style="gap:15px; scrollbar-width:thin;">
+          {% if trusted_contacts %}
+            {% for contact in trusted_contacts %}
+            <div class="contact-node d-flex align-items-center" style="min-width:200px; background:rgba(0,0,0,0.3); border:1px dashed rgba(255,255,255,0.1); padding:10px 15px; border-radius:8px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:rgba(72,187,120,0.15); border:1px solid #48bb78; display:flex; align-items:center; justify-content:center; margin-right:12px; font-weight:700; color:#48bb78;">
+                {{ contact.contact_name[0]|upper }}
+              </div>
+              <div>
+                <div style="font-size:0.85rem; font-weight:600; color:var(--white);">{{ contact.contact_name }}</div>
+                <div style="font-size:0.65rem; color:var(--text-muted); font-family:'Courier New', monospace;">{{ contact.contact_email }}</div>
+              </div>
+            </div>
+            {% endendfor %}
+          {% else %}
+            <div class="text-muted w-100 text-center py-3" style="font-family:'Courier New', monospace; font-size:0.8rem;">
+              [ NO OPERATIVES REGISTERED — <a href="{{ url_for('main.settings') }}" style="color:var(--red);">ADD CONTACTS</a> ]
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Safety Tips Carousel -->
   <div class="row g-4 mb-4">
