@@ -554,8 +554,8 @@ function startMatrixRain(canvas) {
 
 // ── Real-time Clock ───────────────────────────────────────────────────────────
 function initRealtimeClock() {
-  // Look for greeting bar or create a clock element
-  const greetingBar = document.querySelector('.greeting-bar, .welcome-bar, [class*="greeting"], [class*="welcome"]');
+  // Look for greeting bar
+  const greetingBar = document.querySelector('.dash-greeting');
   if (!greetingBar) return;
 
   // Check if clock already exists
