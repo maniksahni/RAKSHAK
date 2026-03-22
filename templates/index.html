@@ -1065,6 +1065,8 @@ body::before{
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero-section">
+  <!-- Interactive Particle Mesh -->
+  <div id="particles-js" style="position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0.4;"></div>
   <!-- RADAR/SONAR EXPANDING RINGS -->
   <svg class="hero-radar-svg" viewBox="0 0 900 900">
     <circle class="radar-ring" cx="450" cy="450" r="20"/>
@@ -2031,5 +2033,40 @@ if (s) statsIO.observe(s);
     });
   });
 })();
+
+/* ── 5. Particles.js Initialization ── */
+window._initParticlesJS = function() {
+  if (typeof particlesJS !== 'undefined') {
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#dc2626" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": false, "anim": { "enable": false } },
+        "size": { "value": 3, "random": true, "anim": { "enable": false } },
+        "line_linked": { "enable": true, "distance": 150, "color": "#ef4444", "opacity": 0.2, "width": 1 },
+        "move": {
+          "enable": true, "speed": 1.5, "direction": "none", "random": false,
+          "straight": false, "out_mode": "out", "bounce": false,
+          "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": { "enable": true, "mode": "grab" },
+          "onclick": { "enable": true, "mode": "push" },
+          "resize": true
+        },
+        "modes": {
+          "grab": { "distance": 180, "line_linked": { "opacity": 0.5 } },
+          "push": { "particles_nb": 4 }
+        }
+      },
+      "retina_detect": true
+    });
+  }
+};
 </script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" onload="window._initParticlesJS()"></script>
 {% endblock %}
