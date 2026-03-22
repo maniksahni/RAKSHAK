@@ -6,21 +6,21 @@
 /* ── Immersive Auth Background ── */
 .auth-bg {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
-  background: radial-gradient(circle at 50% 100%, rgba(220, 38, 38, 0.1) 0%, #050508 60%);
+  background: radial-gradient(circle at 50% 100%, rgba(220, 38, 38, 0.05) 0%, rgba(10,10,15,1) 60%);
   position: relative; overflow: hidden; perspective: 1000px;
 }
 .auth-bg::before, .auth-bg::after {
   content: ''; position: absolute; border-radius: 50%;
-  pointer-events: none; mix-blend-mode: screen;
+  pointer-events: none; mix-blend-mode: screen; filter: blur(80px);
 }
 .auth-bg::before {
   width: 800px; height: 800px;
-  background: radial-gradient(circle, rgba(220, 38, 38, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, rgba(159,122,234,0.1) 50%, transparent 70%);
   top: -200px; right: -200px; animation: drift 15s ease-in-out infinite alternate;
 }
 .auth-bg::after {
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(220, 38, 38, 0.04) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(66, 153, 225, 0.15) 0%, rgba(245,158,11,0.05) 50%, transparent 60%);
   bottom: -150px; left: -150px; animation: drift 20s ease-in-out 3s infinite alternate-reverse;
 }
 
@@ -29,37 +29,17 @@
   100% { transform: translate(60px, 40px) scale(1.1) rotate(15deg); }
 }
 
-/* ── Floating Hexagonal Grid ── */
+/* ── Floating Hexagonal Grid -> Sleek Dots ── */
 .hex-grid {
-  position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.12;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34L28 66zm0 34L0 84V50l28-16 28 16v34l-28 16z' fill='none' stroke='%23dc2626' stroke-width='0.5'/%3E%3C/svg%3E");
-  background-size: 56px 100px;
-  animation: hexFloat 30s linear infinite;
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.2;
+  background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  animation: bgMove 60s linear infinite;
 }
-@keyframes hexFloat {
-  from { background-position: 0 0; }
-  to { background-position: 56px 100px; }
-}
+@keyframes bgMove { from { background-position:0 0; } to { background-position:300px 300px; } }
 
-/* 3D Grid floor */
-.grid-floor {
-  position: absolute; inset: 0; top: 50%; bottom: -50%;
-  background-image:
-    linear-gradient(rgba(220, 38, 38, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(220, 38, 38, 0.08) 1px, transparent 1px);
-  background-size: 80px 80px;
-  transform-origin: center top;
-  transform: perspective(1000px) rotateX(75deg) translateY(0);
-  animation: gridMove 20s linear infinite;
-  mask-image: linear-gradient(to top, black, transparent 80%);
-  -webkit-mask-image: linear-gradient(to top, black, transparent 80%);
-  pointer-events: none;
-}
-@keyframes gridMove {
-  from { background-position: 0 0; }
-  to { background-position: 0 80px; }
-}
+/* 3D Grid floor -> Removed for elegant look */
+.grid-floor { display:none; }
 
 /* Auth Card 3D Wrap */
 .auth-card-wrap {
@@ -70,91 +50,57 @@
 
 /* The actual glass card */
 .glass-card {
-  background: rgba(10, 10, 14, 0.75);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 30px 60px rgba(0,0,0,0.5);
   position: relative; overflow: hidden;
 }
 
 /* Animated glow border inside card */
 .glass-card::before {
   content:''; position: absolute; inset: -2px; z-index: -1;
-  background: conic-gradient(from 0deg, transparent 60%, var(--red-primary) 80%, transparent 100%);
+  background: conic-gradient(from 0deg, transparent 40%, rgba(220,38,38,0.5) 50%, rgba(159,122,234,0.5) 75%, transparent 100%);
   border-radius: inherit;
-  animation: rotateGlow 4s linear infinite;
-  opacity: 0.5;
+  animation: rotateGlow 5s linear infinite;
+  opacity: 0.6; filter: blur(5px);
 }
 @keyframes rotateGlow {
   to { transform: rotate(360deg); }
 }
 
-/* Pulsing red border on the card */
+/* Pulsing shadow on the card */
 .glass-card {
-  animation: cardPulse 3s ease-in-out infinite;
+  animation: cardPulse 4s ease-in-out infinite;
 }
 @keyframes cardPulse {
-  0%, 100% { box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1px rgba(220,38,38,0.1); }
-  50% { box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 20px rgba(220,38,38,0.3), 0 0 0 2px rgba(220,38,38,0.4); }
+  0%, 100% { transform:translateY(0); box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
+  50% { transform:translateY(-8px); box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(220,38,38,0.15); }
 }
 
-/* Scan line across card */
-.glass-card::after {
-  content: ''; position: absolute; left: 0; right: 0; height: 2px; z-index: 10;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.6), rgba(255,100,100,0.8), rgba(220,38,38,0.6), transparent);
-  box-shadow: 0 0 15px rgba(220,38,38,0.4), 0 0 30px rgba(220,38,38,0.2);
-  animation: scanLine 4s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes scanLine {
-  0% { top: -2px; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
+/* Scan line across card -> Removed */
 
-/* ── Secure Access Terminal Title ── */
+
+/* ── Secure Access Terminal Title -> Modern Welcome ── */
 .terminal-title {
-  font-family: 'Courier New', monospace; font-size: 0.72rem; font-weight: 700;
-  letter-spacing: 0.25em; text-transform: uppercase; color: var(--red-primary);
-  text-align: center; margin-bottom: 0.8rem; position: relative;
-  overflow: hidden; white-space: nowrap;
-  border-right: 2px solid var(--red-primary);
-  animation: termType 2.5s steps(24, end) forwards, termBlink 0.7s step-end infinite;
-  width: 0; max-width: fit-content; margin-left: auto; margin-right: auto;
-  text-shadow: 0 0 10px rgba(220,38,38,0.6);
-}
-@keyframes termType {
-  from { width: 0; }
-  to { width: 22ch; }
-}
-@keyframes termBlink {
-  50% { border-color: transparent; }
+  font-family: var(--sg); font-size: 1.8rem; font-weight: 800;
+  letter-spacing: -0.02em; color: #fff; text-transform:none;
+  text-align: center; margin-bottom: 0.8rem;
 }
 
 /* ── Large Glowing Shield Icon ── */
 .shield-icon-lg {
-  width: 90px; height: 90px; border-radius: 24px; margin: 0 auto 1rem;
-  background: linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(220,38,38,0.03) 100%);
-  border: 2px solid rgba(220,38,38,0.4);
-  box-shadow: inset 0 0 30px rgba(220,38,38,0.15), 0 0 40px rgba(220,38,38,0.3), 0 0 80px rgba(220,38,38,0.1);
-  display: inline-flex; justify-content: center; align-items: center;
-  font-size: 2.4rem; animation: shieldGlow 4s ease-in-out infinite;
-  position: relative;
+  width: 80px; height: 80px; border-radius: 20px; margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(159,122,234,0.2) 100%);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: inset 0 0 30px rgba(255,255,255,0.05), 0 10px 40px rgba(220,38,38,0.2);
+  display: flex; justify-content: center; align-items: center;
+  font-size: 2rem; position: relative; overflow:hidden;
 }
-.shield-icon-lg::after {
-  content: ''; position: absolute; inset: -6px; border-radius: 28px;
-  border: 1px solid rgba(220,38,38,0.15);
-  animation: shieldRing 3s ease-in-out infinite;
-}
-@keyframes shieldGlow {
-  0%,100% { transform: translateY(0) scale(1); box-shadow: inset 0 0 30px rgba(220,38,38,0.15), 0 0 40px rgba(220,38,38,0.3), 0 0 80px rgba(220,38,38,0.1); }
-  50% { transform: translateY(-8px) scale(1.05); box-shadow: inset 0 0 40px rgba(220,38,38,0.25), 0 0 60px rgba(220,38,38,0.5), 0 0 120px rgba(220,38,38,0.15); }
-}
-@keyframes shieldRing {
-  0%,100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.15); opacity: 0; }
+.shield-icon-lg i {
+  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.6));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.5));
 }
 
 /* Input Focus Glow + Red Underline Slide */
