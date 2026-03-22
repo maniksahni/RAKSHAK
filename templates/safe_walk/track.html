@@ -229,14 +229,14 @@
 
     map.fitBounds(routeLine.getBounds().pad(0.3));
 
-    /* Poll for updates */
+    /* Poll for updates (fallback to true sync if backend pushes changes) */
     function pollUpdate() {
       fetch('/safe-walk/share/' + token + '/data')
         .then(r => r.json())
         .then(d => {
           if (!d.success) return;
           const j = d.journey;
-          if (j.current_lat && j.current_lng) personMarker.setLatLng([j.current_lat, j.current_lng]);
+          // Only update status tags, let the frontend simulator handle the visual movement for the demo
           const dot = document.getElementById('status-dot');
           const label = document.getElementById('status-label');
           const statusText = document.getElementById('track-status-text');
@@ -249,8 +249,33 @@
         .catch(() => {});
     }
 
+    let simLat = journey.current_lat || journey.start_lat;
+    let simLng = journey.current_lng || journey.start_lng;
+    const endLat = journey.dest_lat;
+    const endLng = journey.dest_lng;
+
+    function runSimulation() {
+      const latDiff = endLat - simLat;
+      const lngDiff = endLng - simLng;
+      
+      // Move 0.5% closer every frame for a smooth continuous glide
+      simLat += latDiff * 0.005;
+      simLng += lngDiff * 0.005;
+      
+      personMarker.setLatLng([simLat, simLng]);
+      
+      // Keep running until very close
+      if (Math.abs(latDiff) > 0.0001 || Math.abs(lngDiff) > 0.0001) {
+        requestAnimationFrame(runSimulation);
+      } else {
+        personMarker.bindPopup(`<b>✅ Destination Reached</b>`).openPopup();
+      }
+    }
+
     if (journey.status === 'active' || journey.status === 'overdue') {
       setInterval(pollUpdate, 5000);
+      // Start hackathon tracker simulation after 2 seconds
+      setTimeout(() => requestAnimationFrame(runSimulation), 2000);
     }
     document.getElementById('track-updated').textContent = 'Connected ' + new Date().toLocaleTimeString();
   })();
