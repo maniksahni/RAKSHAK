@@ -92,6 +92,12 @@
 .alert-feed-item:hover {
   border-color:rgba(220,38,38,0.2);transform:translateX(3px);
 }
+/* quick action cards */
+.quick-action-card:hover {
+  border-color:rgba(220,38,38,0.25) !important;
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+}
 </style>
 {% endblock %}
 
@@ -231,6 +237,54 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3 animate-in">
+      <a href="{{ url_for('safe_walk.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(72,187,120,0.1);border:1px solid rgba(72,187,120,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="bi bi-geo-alt-fill" style="color:#48bb78;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Safe Walk</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">Track your journey</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3 animate-in">
+      <a href="{{ url_for('fake_call.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(66,153,225,0.1);border:1px solid rgba(66,153,225,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="bi bi-phone-vibrate" style="color:#4299e1;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Fake Call</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">Escape situations</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3 animate-in">
+      <a href="{{ url_for('emergency.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="bi bi-telephone-fill" style="color:#dc2626;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Emergency</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">Quick dial help</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-3 animate-in">
+      <a href="{{ url_for('safety_score.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
+        <div style="width:42px;height:42px;border-radius:12px;background:rgba(246,173,85,0.1);border:1px solid rgba(246,173,85,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="bi bi-speedometer" style="color:#f6ad55;font-size:1.1rem;"></i>
+        </div>
+        <div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Safety Score</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">Check your area</div>
+        </div>
+      </a>
     </div>
   </div>
 

@@ -381,13 +381,37 @@ function addZoneMarker(zone, coords) {
       <div style="font-size:1.2rem;margin-bottom:4px;">${emoji}</div>
       <strong style="color:#dc2626;">${(zone.zone_type||'danger').replace(/_/g,' ').toUpperCase()}</strong>
       <div style="color:#a0aec0;font-size:0.82rem;margin:6px 0;">${zone.description || ''}</div>
-      <div style="display:flex;gap:6px;align-items:center;">
+      <div style="display:flex;gap:6px;align-items:center;margin-top:4px;">
         <span class="pill pill-${zone.severity}" style="font-size:0.7rem;">${zone.severity}</span>
-        <span style="font-size:0.72rem;color:#718096;">👍 ${zone.upvotes||0} upvotes</span>
+        <span style="font-size:0.72rem;color:#718096;">👍 ${zone.upvotes||0}</span>
+        <button onclick="upvoteZone(${zone.id}, this)" style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);color:#dc2626;padding:2px 8px;border-radius:4px;font-size:0.7rem;cursor:pointer;">▲ Upvote</button>
       </div>
     </div>
   `);
   markersLayer.addLayer(marker);
+}
+
+// ── Upvote Zone ──────────────────────────────────────────────────────────────
+async function upvoteZone(zoneId, btn) {
+  try {
+    btn.disabled = true;
+    btn.textContent = '...';
+    const res = await postJSON(`/danger-zones/${zoneId}/upvote`);
+    if (res.success) {
+      btn.textContent = '✓ Done';
+      btn.style.background = 'rgba(72,187,120,0.15)';
+      btn.style.borderColor = 'rgba(72,187,120,0.4)';
+      btn.style.color = '#48bb78';
+      showToast('Zone upvoted — helps others stay safe', 'success');
+    } else {
+      btn.textContent = res.error || 'Failed';
+      setTimeout(() => { btn.textContent = '▲ Upvote'; btn.disabled = false; }, 2000);
+    }
+  } catch(e) {
+    btn.textContent = '▲ Upvote';
+    btn.disabled = false;
+    showToast('Upvote failed', 'error');
+  }
 }
 
 // ── Toggle Heatmap ────────────────────────────────────────────────────────────
