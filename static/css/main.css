@@ -191,7 +191,11 @@ h1,h2,h3,h4,h5,h6 {
 .sonar-ring {
   position: absolute;
   border-radius: 50%;
-  border: 2px solid rgba(220,38,38,0.7);
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, rgba(220,38,38,0.6), rgba(255,100,100,0.2)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
   animation: sonar 2.5s ease-out infinite;
   pointer-events: none;
 }
@@ -202,7 +206,58 @@ h1,h2,h3,h4,h5,h6 {
 
 @keyframes sonar {
   0%   { transform: scale(1);   opacity: 1; }
+  50%  { opacity: 0.6; }
   100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Rotating dots ring around SOS button */
+.sos-rotating-dots {
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  animation: rotateDots 8s linear infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+.sos-rotating-dots::before,
+.sos-rotating-dots::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #dc2626;
+  box-shadow: 0 0 8px #dc2626, 0 0 16px rgba(220,38,38,0.4);
+}
+.sos-rotating-dots::before { top: 0; left: 50%; transform: translateX(-50%); }
+.sos-rotating-dots::after  { bottom: 0; left: 50%; transform: translateX(-50%); }
+
+.sos-rotating-dots-inner {
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  animation: rotateDots 6s linear infinite reverse;
+  pointer-events: none;
+  z-index: 5;
+}
+.sos-rotating-dots-inner::before,
+.sos-rotating-dots-inner::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255,130,130,0.8);
+  box-shadow: 0 0 6px rgba(255,130,130,0.5);
+}
+.sos-rotating-dots-inner::before { left: 0; top: 50%; transform: translateY(-50%); }
+.sos-rotating-dots-inner::after  { right: 0; top: 50%; transform: translateY(-50%); }
+
+@keyframes rotateDots {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 .sos-btn {
@@ -226,21 +281,31 @@ h1,h2,h3,h4,h5,h6 {
   text-shadow: 0 2px 5px rgba(0,0,0,0.5);
   box-shadow:
     0 0 0 4px rgba(220,38,38,0.2),
-    0 0 30px rgba(220,38,38,0.5);
+    0 0 30px rgba(220,38,38,0.5),
+    inset 0 0 30px rgba(255,100,100,0.15);
   transition: transform 0.2s, box-shadow 0.2s;
   z-index: 10;
   will-change: transform, box-shadow;
+  animation: sosHeartbeat 2.5s ease-in-out infinite;
 }
 
-.sos-btn:hover {
-  transform: scale(1.05) translateZ(0);
-  box-shadow: 0 0 0 8px rgba(220,38,38,0.3), 0 0 60px rgba(220,38,38,0.8);
+@keyframes sosHeartbeat {
+  0%, 100% { transform: scale(1); }
+  15%      { transform: scale(1.04); }
+  30%      { transform: scale(1); }
+  45%      { transform: scale(1.025); }
+  60%      { transform: scale(1); }
 }
-.sos-btn:active { transform: scale(0.97) translateZ(0); }
 
 .sos-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 0 8px rgba(220,38,38,0.3), 0 0 80px rgba(220,38,38,1), 0 0 120px rgba(220,38,38,0.5), inset 0 2px 20px rgba(255,255,255,0.15);
+  animation: none;
+  box-shadow:
+    0 0 0 8px rgba(220,38,38,0.3),
+    0 0 80px rgba(220,38,38,1),
+    0 0 120px rgba(220,38,38,0.5),
+    inset 0 0 40px rgba(255,200,200,0.25),
+    inset 0 2px 20px rgba(255,255,255,0.15);
 }
 
 .sos-btn:active { transform: scale(0.97); }
@@ -1176,4 +1241,113 @@ h1,h2,h3,h4,h5,h6 {
   0% { border-color: rgba(220,38,38,0.1); }
   50% { border-color: rgba(220,38,38,0.3); }
   100% { border-color: rgba(220,38,38,0.1); }
+}
+
+/* ── Panic Mode (active SOS screen) ───────────────────────────────────── */
+.panic-mode {
+  animation: panicPulse 1.2s ease-in-out infinite;
+  position: relative;
+}
+.panic-mode::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(120, 0, 0, 0.12);
+  pointer-events: none;
+  z-index: 9990;
+  animation: panicOverlay 1.2s ease-in-out infinite;
+}
+.panic-mode::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 4px solid #dc2626;
+  pointer-events: none;
+  z-index: 9991;
+  animation: panicBorder 0.6s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+@keyframes panicPulse {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(0.92); }
+}
+@keyframes panicOverlay {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.7; }
+}
+@keyframes panicBorder {
+  0%, 100% { border-color: #dc2626; box-shadow: inset 0 0 30px rgba(220,38,38,0.2); }
+  50%      { border-color: #ff4444; box-shadow: inset 0 0 60px rgba(220,38,38,0.4); }
+}
+
+/* ── Shield Active Indicator ──────────────────────────────────────────── */
+.shield-active-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  background: rgba(72,187,120,0.1);
+  border: 1px solid rgba(72,187,120,0.3);
+  color: var(--accent-green);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  animation: shieldPulse 3s ease-in-out infinite;
+}
+.shield-active-indicator .shield-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+  animation: shieldDotBlink 2s ease-in-out infinite;
+}
+
+@keyframes shieldPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(72,187,120,0); }
+  50%      { box-shadow: 0 0 12px 2px rgba(72,187,120,0.15); }
+}
+@keyframes shieldDotBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+/* ── Matrix Rain Effect (terminal overlay) ────────────────────────────── */
+.matrix-rain-canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Terminal Blinking Cursor ─────────────────────────────────────────── */
+.term-cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1.1em;
+  background: #48bb78;
+  margin-left: 4px;
+  vertical-align: text-bottom;
+  animation: termBlink 0.7s step-end infinite;
+}
+@keyframes termBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ── Real-time Clock ──────────────────────────────────────────────────── */
+.realtime-clock {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: var(--accent-green);
+  letter-spacing: 0.08em;
+  opacity: 0.9;
+  text-shadow: 0 0 6px rgba(72,187,120,0.3);
 }

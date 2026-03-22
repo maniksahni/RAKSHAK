@@ -598,14 +598,172 @@ body::before{
   .rk-footer{flex-direction:column;text-align:center}
   .tb-inner{flex-direction:column}
 }
+
+/* ═══════════════════════════════════════════
+   SCROLL PROGRESS BAR
+═══════════════════════════════════════════*/
+.scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#dc2626,#ef4444,#f87171,#ef4444,#dc2626);background-size:200% 100%;animation:shimmer 3s linear infinite;z-index:9999;width:0;transition:width .1s linear;box-shadow:0 0 10px rgba(220,38,38,.6),0 0 20px rgba(220,38,38,.3)}
+
+/* ═══════════════════════════════════════════
+   3D SHIELD ANIMATION (Hero background)
+═══════════════════════════════════════════*/
+.hero-3d-shield{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;opacity:.06;z-index:0;pointer-events:none;animation:rotateShield 20s linear infinite}
+@keyframes rotateShield{0%{transform:translate(-50%,-50%) rotateY(0deg) rotateX(5deg)}50%{transform:translate(-50%,-50%) rotateY(180deg) rotateX(-5deg)}100%{transform:translate(-50%,-50%) rotateY(360deg) rotateX(5deg)}}
+
+/* ═══════════════════════════════════════════
+   TYPING EFFECT SUBTITLE
+═══════════════════════════════════════════*/
+.hero-typing-wrap{height:2.2rem;margin-bottom:1.8rem;overflow:hidden;animation:slideUp .5s .12s ease both}
+.hero-typing{font-family:var(--sg);font-size:clamp(1rem,1.8vw,1.3rem);font-weight:500;color:rgba(255,255,255,.55);position:relative;display:inline-block}
+.hero-typing::after{content:'|';color:var(--red);font-weight:300;animation:cursorBlink .7s step-end infinite;margin-left:2px}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ═══════════════════════════════════════════
+   PARTICLE CONNECTIONS (canvas overlay)
+═══════════════════════════════════════════*/
+.particle-connections{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:visible}
+
+/* ═══════════════════════════════════════════
+   STATS SECTION ENHANCEMENTS
+═══════════════════════════════════════════*/
+.stat-num{position:relative;display:inline-block}
+.stat-num::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:60%;height:3px;background:var(--red);border-radius:2px;box-shadow:0 0 8px var(--red),0 0 16px rgba(220,38,38,.4);animation:statGlowPulse 2s ease-in-out infinite}
+@keyframes statGlowPulse{0%,100%{box-shadow:0 0 8px var(--red),0 0 16px rgba(220,38,38,.4);opacity:.8}50%{box-shadow:0 0 14px var(--red),0 0 28px rgba(220,38,38,.6);opacity:1}}
+.stat-micro-icon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);margin:0 auto 12px;transition:all .3s}
+.stat-micro-icon svg{width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stat-cell:hover .stat-micro-icon{background:rgba(220,38,38,.2);box-shadow:0 0 15px rgba(220,38,38,.3);transform:scale(1.1)}
+.parallax-section{transition:transform .1s linear;will-change:transform}
+
+/* ═══════════════════════════════════════════
+   BENTO GRID — UNIQUE COLORED HOVERS
+═══════════════════════════════════════════*/
+.bc-sos:hover{border-color:rgba(220,38,38,.6) !important;box-shadow:inset 0 0 40px rgba(220,38,38,.12),0 0 50px rgba(220,38,38,.25) !important}
+.bc-sos:hover .bc-icon{background:rgba(220,38,38,.2) !important;box-shadow:0 0 25px rgba(220,38,38,.5) !important}
+.bc-threat:hover{border-color:rgba(245,158,11,.6) !important;box-shadow:inset 0 0 40px rgba(245,158,11,.12),0 0 50px rgba(245,158,11,.25) !important}
+.bc-threat:hover .bc-icon{background:rgba(245,158,11,.2) !important;box-shadow:0 0 25px rgba(245,158,11,.5) !important}
+.bc-threat:hover .bc-icon svg{stroke:#f59e0b !important}
+.bc-threat:hover::before{border-top-color:#f59e0b !important;border-left-color:#f59e0b !important}
+.bc-threat:hover::after{border-bottom-color:#f59e0b !important;border-right-color:#f59e0b !important}
+.bc-map:hover{border-color:rgba(59,130,246,.6) !important;box-shadow:inset 0 0 40px rgba(59,130,246,.12),0 0 50px rgba(59,130,246,.25) !important}
+.bc-map:hover .bc-icon{background:rgba(59,130,246,.2) !important;box-shadow:0 0 25px rgba(59,130,246,.5) !important}
+.bc-map:hover .bc-icon svg{stroke:#3b82f6 !important}
+.bc-map:hover::before{border-top-color:#3b82f6 !important;border-left-color:#3b82f6 !important}
+.bc-map:hover::after{border-bottom-color:#3b82f6 !important;border-right-color:#3b82f6 !important}
+.bc-hud:hover{border-color:rgba(34,197,94,.6) !important;box-shadow:inset 0 0 40px rgba(34,197,94,.12),0 0 50px rgba(34,197,94,.25) !important}
+.bc-hud:hover .bc-icon{background:rgba(34,197,94,.2) !important;box-shadow:0 0 25px rgba(34,197,94,.5) !important}
+.bc-hud:hover .bc-icon svg{stroke:#22c55e !important}
+.bc-hud:hover::before{border-top-color:#22c55e !important;border-left-color:#22c55e !important}
+.bc-hud:hover::after{border-bottom-color:#22c55e !important;border-right-color:#22c55e !important}
+.bc-vault:hover{border-color:rgba(168,85,247,.6) !important;box-shadow:inset 0 0 40px rgba(168,85,247,.12),0 0 50px rgba(168,85,247,.25) !important}
+.bc-vault:hover .bc-icon{background:rgba(168,85,247,.2) !important;box-shadow:0 0 25px rgba(168,85,247,.5) !important}
+.bc-vault:hover .bc-icon svg{stroke:#a855f7 !important}
+.bc-vault:hover::before{border-top-color:#a855f7 !important;border-left-color:#a855f7 !important}
+.bc-vault:hover::after{border-bottom-color:#a855f7 !important;border-right-color:#a855f7 !important}
+.bc-auth:hover{border-color:rgba(6,182,212,.6) !important;box-shadow:inset 0 0 40px rgba(6,182,212,.12),0 0 50px rgba(6,182,212,.25) !important}
+.bc-auth:hover .bc-icon{background:rgba(6,182,212,.2) !important;box-shadow:0 0 25px rgba(6,182,212,.5) !important}
+.bc-auth:hover .bc-icon svg{stroke:#06b6d4 !important}
+.bc-auth:hover::before{border-top-color:#06b6d4 !important;border-left-color:#06b6d4 !important}
+.bc-auth:hover::after{border-bottom-color:#06b6d4 !important;border-right-color:#06b6d4 !important}
+
+/* rotating border gradient on hover */
+.bc{position:relative}
+.bc .rotating-border{position:absolute;inset:-2px;border-radius:6px;background:conic-gradient(from 0deg,transparent,transparent,transparent,transparent);opacity:0;transition:opacity .4s;z-index:0;pointer-events:none}
+.bc:hover .rotating-border{opacity:1;animation:rotateBorder 3s linear infinite}
+@keyframes rotateBorder{0%{background:conic-gradient(from 0deg,rgba(220,38,38,.5),transparent 30%,transparent)}100%{background:conic-gradient(from 360deg,rgba(220,38,38,.5),transparent 30%,transparent)}}
+.bc-threat:hover .rotating-border{animation-name:rotateBorderAmber}
+@keyframes rotateBorderAmber{0%{background:conic-gradient(from 0deg,rgba(245,158,11,.5),transparent 30%,transparent)}100%{background:conic-gradient(from 360deg,rgba(245,158,11,.5),transparent 30%,transparent)}}
+.bc-map:hover .rotating-border{animation-name:rotateBorderBlue}
+@keyframes rotateBorderBlue{0%{background:conic-gradient(from 0deg,rgba(59,130,246,.5),transparent 30%,transparent)}100%{background:conic-gradient(from 360deg,rgba(59,130,246,.5),transparent 30%,transparent)}}
+.bc-hud:hover .rotating-border{animation-name:rotateBorderGreen}
+@keyframes rotateBorderGreen{0%{background:conic-gradient(from 0deg,rgba(34,197,94,.5),transparent 30%,transparent)}100%{background:conic-gradient(from 360deg,rgba(34,197,94,.5),transparent 30%,transparent)}}
+.bc-vault:hover .rotating-border{animation-name:rotateBorderPurple}
+@keyframes rotateBorderPurple{0%{background:conic-gradient(from 0deg,rgba(168,85,247,.5),transparent 30%,transparent)}100%{background:conic-gradient(from 360deg,rgba(168,85,247,.5),transparent 30%,transparent)}}
+.bc-auth:hover .rotating-border{animation-name:rotateBorderCyan}
+@keyframes rotateBorderCyan{0%{background:conic-gradient(from 0deg,rgba(6,182,212,.5),transparent 30%,transparent)}100%{background:conic-gradient(from 360deg,rgba(6,182,212,.5),transparent 30%,transparent)}}
+
+/* animated mini icon in bento */
+.bc-mini-anim{position:absolute;top:18px;left:18px;width:20px;height:20px;opacity:.3;z-index:2}
+.bc-mini-anim svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;animation:miniSpin 8s linear infinite}
+@keyframes miniSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════
+   HOW IT WORKS — CONNECTING LINES & BADGES
+═══════════════════════════════════════════*/
+.steps-row{position:relative}
+.step-connector{display:none}
+@media(min-width:1101px){
+  .step-connector{display:block;position:absolute;top:80px;height:2px;z-index:10;pointer-events:none}
+  .step-connector-1{left:33.33%;transform:translateX(-50%);width:calc(33.33% - 3rem)}
+  .step-connector-2{left:66.66%;transform:translateX(-50%);width:calc(33.33% - 3rem)}
+  .step-connector-line{width:100%;height:2px;background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 8px,transparent 8px,transparent 14px);animation:dashMove 1.5s linear infinite}
+  @keyframes dashMove{0%{background-position:0 0}100%{background-position:22px 0}}
+  .step-connector-arrow{position:absolute;right:-6px;top:-4px;width:0;height:0;border-left:8px solid var(--red);border-top:5px solid transparent;border-bottom:5px solid transparent;filter:drop-shadow(0 0 4px var(--red))}
+}
+.step-badge{position:absolute;top:-14px;left:20px;width:28px;height:28px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--sg);font-size:.7rem;font-weight:800;color:#fff;box-shadow:0 0 15px rgba(220,38,38,.5);z-index:10;animation:badgePulse 2s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 15px rgba(220,38,38,.5)}50%{box-shadow:0 0 25px rgba(220,38,38,.8),0 0 40px rgba(220,38,38,.3)}}
+
+/* ═══════════════════════════════════════════
+   TESTIMONIALS — AUTO-SCROLL & VERIFIED
+═══════════════════════════════════════════*/
+.testi-track-wrap{overflow:hidden;position:relative;margin-top:3.5rem}
+.testi-track-wrap::before,.testi-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.testi-track-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.testi-track-wrap::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.testi-track{display:flex;gap:1.5rem;animation:testiScroll 30s linear infinite;width:max-content}
+.testi-track:hover{animation-play-state:paused}
+@keyframes testiScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.testi-card{min-width:350px;max-width:380px;flex-shrink:0}
+.verified-badge{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:600;color:#3b82f6;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);padding:2px 8px;border-radius:10px;margin-left:8px}
+.verified-badge svg{width:10px;height:10px;fill:#3b82f6}
+
+/* ═══════════════════════════════════════════
+   CTA — FLOATING 3D SHIELD & GRADIENT TEXT
+═══════════════════════════════════════════*/
+.cta-3d-shield{position:absolute;top:50%;right:8%;transform:translateY(-50%);width:200px;height:200px;opacity:.07;pointer-events:none;animation:ctaShieldFloat 6s ease-in-out infinite}
+@keyframes ctaShieldFloat{0%,100%{transform:translateY(-50%) rotateY(0deg) rotateX(5deg)}50%{transform:translateY(-55%) rotateY(180deg) rotateX(-5deg)}}
+.cta-3d-shield-left{right:auto;left:8%}
+.cta-h2-gradient{background:linear-gradient(120deg,#dc2626,#ef4444,#f87171,#fca5a5,#f87171,#ef4444,#dc2626);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientText 4s ease infinite}
+@keyframes gradientText{0%{background-position:0% center}50%{background-position:100% center}100%{background-position:0% center}}
+
+/* ═══════════════════════════════════════════
+   FOOTER — HEARTBEAT & SOCIAL
+═══════════════════════════════════════════*/
+.footer-heartbeat{width:100%;height:40px;position:relative;overflow:hidden;margin-bottom:1rem}
+.footer-heartbeat svg{width:100%;height:40px}
+.heartbeat-line{stroke:var(--red);stroke-width:1.5;fill:none;stroke-dasharray:1000;stroke-dashoffset:1000;animation:heartbeatDraw 3s ease-in-out infinite;filter:drop-shadow(0 0 3px var(--red))}
+@keyframes heartbeatDraw{0%{stroke-dashoffset:1000}50%{stroke-dashoffset:0}100%{stroke-dashoffset:-1000}}
+.footer-social{display:flex;gap:12px;align-items:center}
+.social-icon{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:pointer}
+.social-icon:hover{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.4);transform:translateY(-2px);box-shadow:0 4px 12px rgba(220,38,38,.2)}
+.social-icon svg{width:16px;height:16px;stroke:rgba(255,255,255,.4);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.social-icon:hover svg{stroke:var(--red)}
+.footer-tagline{font-family:var(--int);font-size:.72rem;color:rgba(255,255,255,.25);letter-spacing:.05em}
+
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="scroll-progress" id="scrollProgress"></div>
 <div class="rk-page">
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero-section">
+  <!-- 3D Rotating Shield Background -->
+  <div class="hero-3d-shield">
+    <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+      <defs>
+        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#dc2626;stop-opacity:0.6"/>
+          <stop offset="50%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#dc2626;stop-opacity:0.6"/>
+        </linearGradient>
+      </defs>
+      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="url(#shieldGrad)" stroke-width="2" fill="none" opacity="0.8"/>
+      <path d="M100 30 L160 60 L160 115 C160 155 130 190 100 210 C70 190 40 155 40 115 L40 60 Z" stroke="url(#shieldGrad)" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <path d="M100 50 L140 70 L140 110 C140 140 120 170 100 185 C80 170 60 140 60 110 L60 70 Z" stroke="url(#shieldGrad)" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M80 110 L95 125 L125 95" stroke="url(#shieldGrad)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+    </svg>
+  </div>
 
   <!-- LEFT -->
   <div class="hero-content">
@@ -618,6 +776,10 @@ body::before{
       <span class="h1-white">Every Second</span>
       <span class="h1-grad">Counts.</span>
     </h1>
+
+    <div class="hero-typing-wrap">
+      <span class="hero-typing" id="heroTyping"></span>
+    </div>
 
     <p class="hero-p">
       RAKSHAK detects danger in real time, silently alerts your trusted circle,
@@ -752,6 +914,9 @@ body::before{
         </div>
       </div>
 
+      <!-- Particle Connections Canvas -->
+      <canvas class="particle-connections" id="particleConnections"></canvas>
+
       <!-- Floating notification cards — outside tilt -->
       <div class="f-card fc1">
         <div class="rc-head"><div class="rc-dot alive"></div><div class="rc-title">SOS Alert Sent</div></div>
@@ -785,11 +950,23 @@ body::before{
       <h2 class="sec-title">Built for impact.</h2>
       <p class="sec-sub">The numbers defining how RAKSHAK keeps you safe, every minute of every day.</p>
     </div>
-    <div class="stats-grid reveal d1">
-      <div class="stat-cell"><span class="stat-num" data-target="3" data-suffix="">3</span><div class="stat-lbl">User Roles</div></div>
-      <div class="stat-cell"><span class="stat-num" data-target="6" data-suffix="">6</span><div class="stat-lbl">Core Modules</div></div>
-      <div class="stat-cell"><span class="stat-num" data-target="2" data-suffix="min">2min</span><div class="stat-lbl">System Ping Cycle</div></div>
-      <div class="stat-cell"><span class="stat-num" data-target="500" data-suffix="m">500m</span><div class="stat-lbl">Danger Radius</div></div>
+    <div class="stats-grid reveal d1 parallax-section" data-parallax-speed="0.03">
+      <div class="stat-cell">
+        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <span class="stat-num" data-target="3" data-suffix="">3</span><div class="stat-lbl">User Roles</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
+        <span class="stat-num" data-target="6" data-suffix="">6</span><div class="stat-lbl">Core Modules</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <span class="stat-num" data-target="2" data-suffix="min">2min</span><div class="stat-lbl">System Ping Cycle</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+        <span class="stat-num" data-target="500" data-suffix="m">500m</span><div class="stat-lbl">Danger Radius</div>
+      </div>
     </div>
   </div>
 </section>
@@ -804,17 +981,24 @@ body::before{
       <h2 class="sec-title">Three steps to safety.</h2>
     </div>
     <div class="steps-row">
-      <div class="step-card reveal d1">
+      <!-- Connecting Lines -->
+      <div class="step-connector step-connector-1"><div class="step-connector-line"></div><div class="step-connector-arrow"></div></div>
+      <div class="step-connector step-connector-2"><div class="step-connector-line"></div><div class="step-connector-arrow"></div></div>
+
+      <div class="step-card reveal d1" style="position:relative;">
+        <div class="step-badge">1</div>
         <div class="step-top"><div class="step-big">01</div><div class="step-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg></div></div>
         <div class="step-h">One Tap. Instant Alert.</div>
         <p class="step-p">Press SOS once. No menus, no confirmation screens. RAKSHAK fires in under a second — GPS captured, contacts notified.</p>
       </div>
-      <div class="step-card reveal d2">
+      <div class="step-card reveal d2" style="position:relative;">
+        <div class="step-badge">2</div>
         <div class="step-top"><div class="step-big">02</div><div class="step-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div></div>
         <div class="step-h">GPS. Captured Silently.</div>
         <p class="step-p">Your exact coordinates are captured and encrypted the moment SOS is triggered. No manual input needed.</p>
       </div>
-      <div class="step-card reveal d3">
+      <div class="step-card reveal d3" style="position:relative;">
+        <div class="step-badge">3</div>
         <div class="step-top"><div class="step-big">03</div><div class="step-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.8 19.79 19.79 0 010 .22 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.1 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg></div></div>
         <div class="step-h">Your Circle. Notified.</div>
         <p class="step-p">Up to 5 trusted contacts receive live location alerts with real-time push notifications. Instantly. Always.</p>
@@ -834,8 +1018,10 @@ body::before{
       <p class="sec-sub">Every module built to protect — working in sync, around the clock.</p>
     </div>
     <div class="bento-grid">
-      <div class="bc bc-span2 reveal d1">
+      <div class="bc bc-span2 bc-sos reveal d1">
+        <div class="rotating-border"></div>
         <div class="bc-holo"></div>
+        <div class="bc-mini-anim" style="color:#dc2626"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <span class="bc-num">SYS.01</span>
         <div>
           <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
@@ -849,29 +1035,37 @@ body::before{
           <div class="feed-row"><div class="fd o"></div><span class="fd-txt">Overwatch alerted &middot; Case #4471</span><span class="fd-time">2.1s</span></div>
         </div>
       </div>
-      <div class="bc reveal d2">
+      <div class="bc bc-threat reveal d2">
+        <div class="rotating-border"></div>
         <div class="bc-holo"></div>
+        <div class="bc-mini-anim" style="color:#f59e0b"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
         <span class="bc-num">MOD.02</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
         <div class="bc-h">THREAT SENSOR</div>
         <p class="bc-p">Silent 2-minute bio-pings detect inactivity. Missed heartbeat protocols auto-deploy SOS countermeasures.</p>
       </div>
-      <div class="bc reveal d3">
+      <div class="bc bc-map reveal d3">
+        <div class="rotating-border"></div>
         <div class="bc-holo"></div>
+        <div class="bc-mini-anim" style="color:#3b82f6"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
         <span class="bc-num">MOD.03</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         <div class="bc-h">TACTICAL MAP</div>
         <p class="bc-p">Community-sourced hostiles on a live map. Entering a 500m hot-zone triggers automatic proximity sirens.</p>
       </div>
-      <div class="bc reveal d1">
+      <div class="bc bc-hud reveal d1">
+        <div class="rotating-border"></div>
         <div class="bc-holo"></div>
+        <div class="bc-mini-anim" style="color:#22c55e"><svg viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
         <span class="bc-num">SYS.04</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
         <div class="bc-h">OVERWATCH HUD</div>
         <p class="bc-p">Live global radar, risk scores, operative registry, and 4-panel crisis analytics for commanders.</p>
       </div>
-      <div class="bc reveal d2">
+      <div class="bc bc-vault reveal d2">
+        <div class="rotating-border"></div>
         <div class="bc-holo"></div>
+        <div class="bc-mini-anim" style="color:#a855f7"><svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
         <span class="bc-num">SYS.05</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
         <div class="bc-h">CLASSIFIED VAULT</div>

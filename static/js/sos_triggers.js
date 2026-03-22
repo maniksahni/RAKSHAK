@@ -226,6 +226,141 @@
     // silently fail if audio element creation fails
   }
 
+  // ── Triple-Click "Power Button" Trigger ──────────────────────────────────────
+  var TRIPLE_CLICK_WINDOW_MS = 800;
+  var tripleClickTimestamps = [];
+  var tripleClickCooldown = false;
+
+  document.addEventListener('click', function (e) {
+    if (tripleClickCooldown || countdownTimer) return;
+    // Only fire on triple-click (3 clicks in rapid succession)
+    var now = Date.now();
+    tripleClickTimestamps.push(now);
+    tripleClickTimestamps = tripleClickTimestamps.filter(function (t) {
+      return now - t < TRIPLE_CLICK_WINDOW_MS;
+    });
+
+    if (tripleClickTimestamps.length >= 3) {
+      // Ignore if the user clicked inside a form, input, link, or button
+      var tag = (e.target.tagName || '').toLowerCase();
+      if (['input', 'textarea', 'select', 'button', 'a'].indexOf(tag) !== -1) {
+        tripleClickTimestamps = [];
+        return;
+      }
+      tripleClickTimestamps = [];
+      tripleClickCooldown = true;
+      if (typeof showToast === 'function') showToast('Triple-tap detected! SOS activating...', 'sos');
+      showCountdown();
+      setTimeout(function () { tripleClickCooldown = false; }, 10000);
+    }
+  });
+
+  // ── Geofence Breach Detection ───────────────────────────────────────────────
+  var lastGeoPos = null;
+  var lastGeoTime = null;
+  var geofenceCooldown = false;
+  var GEOFENCE_SPEED_THRESHOLD = 50; // 500m in 10s = 50 m/s
+
+  function checkGeofenceBreach(pos) {
+    var now = Date.now();
+    if (lastGeoPos && lastGeoTime) {
+      var timeDelta = (now - lastGeoTime) / 1000; // seconds
+      if (timeDelta > 0 && timeDelta <= 12) {
+        var dist = haversineDistance(
+          lastGeoPos.latitude, lastGeoPos.longitude,
+          pos.coords.latitude, pos.coords.longitude
+        );
+        var speed = dist / timeDelta; // m/s
+        if (speed >= GEOFENCE_SPEED_THRESHOLD && !geofenceCooldown && !countdownTimer) {
+          geofenceCooldown = true;
+          if (typeof showToast === 'function') {
+            showToast('Unusual movement detected! SOS warning triggered.', 'warning', 6000);
+          }
+          showCountdown();
+          setTimeout(function () { geofenceCooldown = false; }, 30000);
+        }
+      }
+    }
+    lastGeoPos = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+    lastGeoTime = now;
+  }
+
+  function haversineDistance(lat1, lon1, lat2, lon2) {
+    var R = 6371000; // Earth radius in meters
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  // Watch position for geofence
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(
+      function (pos) { checkGeofenceBreach(pos); },
+      function () {},
+      { enableHighAccuracy: true, maximumAge: 5000 }
+    );
+  }
+
+  // ── Dead Man's Switch ───────────────────────────────────────────────────────
+  var DEAD_MAN_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+  var deadManTimer = null;
+  var alertModeActive = false;
+
+  window.setAlertMode = function (enabled) {
+    alertModeActive = enabled;
+    if (enabled) {
+      resetDeadManSwitch();
+      if (typeof showToast === 'function') showToast('Alert mode ON — check-in required every 30 min', 'info');
+    } else {
+      clearDeadManSwitch();
+      if (typeof showToast === 'function') showToast('Alert mode OFF', 'info');
+    }
+  };
+
+  function resetDeadManSwitch() {
+    if (!alertModeActive) return;
+    if (deadManTimer) clearTimeout(deadManTimer);
+    deadManTimer = setTimeout(function () {
+      if (!alertModeActive) return;
+      // Show check-in notification
+      if (typeof showToast === 'function') {
+        showToast('No activity for 30 min — are you safe? Tap to confirm.', 'warning', 15000);
+      }
+      // Give 60 seconds to interact, else trigger SOS
+      deadManTimer = setTimeout(function () {
+        if (!alertModeActive) return;
+        if (typeof showToast === 'function') {
+          showToast('No response — triggering SOS!', 'sos', 8000);
+        }
+        showCountdown();
+      }, 60000);
+    }, DEAD_MAN_TIMEOUT_MS);
+  }
+
+  function clearDeadManSwitch() {
+    if (deadManTimer) { clearTimeout(deadManTimer); deadManTimer = null; }
+  }
+
+  // Reset dead man's switch on any user interaction
+  ['click', 'touchstart', 'keydown', 'scroll'].forEach(function (evt) {
+    document.addEventListener(evt, function () {
+      if (alertModeActive) resetDeadManSwitch();
+    }, { passive: true });
+  });
+
+  // ── Haptic Feedback on SOS ──────────────────────────────────────────────────
+  var origFireSOS = fireSOS;
+  fireSOS = function () {
+    // Trigger haptic vibration pattern: short-long-short
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 200, 50, 100]);
+    }
+    origFireSOS();
+  };
+
   // ── Settings Panel (callable from dashboard) ────────────────────────────────
   window.openSOSTriggerSettings = function () {
     var existing = document.getElementById('sos-trigger-settings-modal');

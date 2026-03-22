@@ -8,6 +8,7 @@ let userMarker = null;
 let currentLat = null, currentLng = null;
 let sosConfirmPending = false;
 let pingInterval = null;
+let previousRiskLevel = null;
 
 function initDashboard(dangerZones, userAlerts) {
   initMap(dangerZones);
@@ -15,6 +16,7 @@ function initDashboard(dangerZones, userAlerts) {
   loadRiskScore();
   animateStatCounters();
   initScrollReveal();
+  initRealtimeClock();
 }
 
 // ── Animated Counters ─────────────────────────────────────────────────────────
@@ -223,11 +225,20 @@ async function confirmSOS() {
   if (btn) btn.style.opacity = '0.6';
   if (statusText) statusText.textContent = 'Establishing secure uplink...';
 
+  // Activate panic mode
+  document.body.classList.add('panic-mode');
+
   // Create & mount the Max Max Terminal Overlay
   const term = document.createElement('div');
   term.id = 'rakshak-terminal';
   term.style.cssText = 'position:fixed;inset:0;background:rgba(5,5,10,0.95);z-index:9999;display:flex;flex-direction:column;justify-content:center;padding:40px;font-family:"Courier New", monospace;color:#48bb78;backdrop-filter:blur(20px);box-shadow:inset 0 0 100px rgba(0,0,0,1);';
-  
+
+  // Matrix rain canvas background
+  const matrixCanvas = document.createElement('canvas');
+  matrixCanvas.className = 'matrix-rain-canvas';
+  term.appendChild(matrixCanvas);
+  startMatrixRain(matrixCanvas);
+
   const scanline = document.createElement('div');
   scanline.style.cssText = 'position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(72,187,120,0.1),transparent);height:10px;animation:scanline 3s linear infinite;pointer-events:none;';
   term.appendChild(scanline);
@@ -237,7 +248,7 @@ async function confirmSOS() {
   term.appendChild(styleNode);
 
   const container = document.createElement('div');
-  container.style.cssText = 'max-width:800px;margin:0 auto;width:100%;text-shadow:0 0 8px rgba(72,187,120,0.6);';
+  container.style.cssText = 'max-width:800px;margin:0 auto;width:100%;text-shadow:0 0 8px rgba(72,187,120,0.6);position:relative;z-index:1;';
   term.appendChild(container);
   document.body.appendChild(term);
 
@@ -251,20 +262,33 @@ async function confirmSOS() {
     `[COM] Payload securely delivered. Terminating uplink.`,
   ];
 
-  // Async Terminal typer
+  // Async Terminal typer with blinking cursor
   const runTerminal = async () => {
+    // Add initial cursor
+    const cursorEl = document.createElement('span');
+    cursorEl.className = 'term-cursor';
+    container.appendChild(cursorEl);
+
     for (let i = 0; i < lines.length; i++) {
+        // Remove cursor before adding line
+        if (cursorEl.parentNode) cursorEl.remove();
         const p = document.createElement('p');
         p.className = 'term-line';
         p.innerHTML = lines[i];
         if(i === 4) p.style.color = '#dc2626'; // Red for CRITICAL
         container.appendChild(p);
+        // Add cursor after last line
+        container.appendChild(cursorEl);
         await new Promise(r => setTimeout(r, Math.random() * 400 + 300));
     }
     await new Promise(r => setTimeout(r, 800));
     term.style.transition = 'opacity 0.6s';
     term.style.opacity = '0';
-    setTimeout(() => term.remove(), 600);
+    setTimeout(() => {
+      term.remove();
+      // Remove panic mode after a delay
+      setTimeout(() => document.body.classList.remove('panic-mode'), 6000);
+    }, 600);
   };
 
   try {
@@ -418,6 +442,12 @@ function updateRiskBadge(level) {
   const html = `<span class="risk-badge risk-${level}"><span style="width:8px;height:8px;border-radius:50%;background:currentColor;"></span> ${labels[level]||level.toUpperCase()}</span>`;
   if (disp) disp.innerHTML = html;
   if (navBadge) navBadge.outerHTML = html;
+
+  // Sound alert when risk transitions to HIGH
+  if (level === 'high' && previousRiskLevel !== 'high') {
+    playRiskAlertBeep();
+  }
+  previousRiskLevel = level;
 }
 
 // ── Proximity Check ──────────────────────────────────────────────────────────
@@ -450,4 +480,100 @@ function onRiskUpdate(data) {
 
 function onNewDangerZone(data) {
   showToast('⚠️ New danger zone approved near you!', 'warning');
+}
+
+// ── Web Audio API: Risk Alert Beep ────────────────────────────────────────────
+function playRiskAlertBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Two-tone alert: high-low-high pattern
+    const freqs = [880, 660, 880];
+    const durations = [0.15, 0.15, 0.2];
+    let offset = 0;
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, ctx.currentTime + offset);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + durations[i]);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + offset);
+      osc.stop(ctx.currentTime + offset + durations[i]);
+      offset += durations[i] + 0.05;
+    });
+    // Clean up context after sounds finish
+    setTimeout(() => ctx.close(), 1500);
+  } catch(e) {
+    console.warn('[RAKSHAK] Audio alert failed:', e.message);
+  }
+}
+
+// ── Matrix Rain Effect ────────────────────────────────────────────────────────
+function startMatrixRain(canvas) {
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = 'RAKSHAKSOS01アイウエオカキ警報安全'.split('');
+  const fontSize = 14;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = new Array(columns).fill(1);
+
+  let animId = null;
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 10, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#48bb78';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillStyle = Math.random() > 0.95 ? '#dc2626' : 'rgba(72, 187, 120, 0.7)';
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+    animId = requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Stop when canvas is removed
+  const observer = new MutationObserver(() => {
+    if (!document.contains(canvas)) {
+      cancelAnimationFrame(animId);
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// ── Real-time Clock ───────────────────────────────────────────────────────────
+function initRealtimeClock() {
+  // Look for greeting bar or create a clock element
+  const greetingBar = document.querySelector('.greeting-bar, .welcome-bar, [class*="greeting"], [class*="welcome"]');
+  if (!greetingBar) return;
+
+  // Check if clock already exists
+  if (document.getElementById('realtime-clock')) return;
+
+  const clockEl = document.createElement('span');
+  clockEl.id = 'realtime-clock';
+  clockEl.className = 'realtime-clock';
+  clockEl.style.marginLeft = '12px';
+  greetingBar.appendChild(clockEl);
+
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    clockEl.textContent = `[ ${h}:${m}:${s} ]`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
 }
