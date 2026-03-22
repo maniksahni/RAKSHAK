@@ -160,23 +160,45 @@
   /* Empty state */
   .ss-empty { text-align: center; padding: 40px 20px; color: var(--text-muted, #888); }
   .ss-empty i { font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.4; }
+
+  /* Spinner ring */
+  @keyframes spinRing { 100% { transform: rotate(360deg); } }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="ss-page">
-  <!-- Header -->
-  <div style="margin-bottom: 24px;">
-    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary, #fff); margin: 0 0 4px;">
-      <i class="bi bi-speedometer" style="color: var(--red-primary, #dc2626);"></i> Community Safety Score
-    </h2>
-    <p style="font-size: 0.85rem; color: var(--text-muted, #888); margin: 0;">Real-time safety analysis for your location</p>
+  <!-- ── Threat Assessment Command Header ── -->
+  <div style="background:linear-gradient(135deg,rgba(66,153,225,0.08),rgba(5,5,10,0.92));border:1px solid rgba(66,153,225,0.2);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(66,153,225,0.5),transparent);"></div>
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.1) 2px,rgba(0,0,0,0.1) 4px);pointer-events:none;border-radius:16px;"></div>
+    <div style="position:relative;z-index:2;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(66,153,225,0.12);border:1px solid rgba(66,153,225,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+          <i class="bi bi-speedometer2" style="color:var(--accent-blue);"></i>
+        </div>
+        <div>
+          <div style="font-size:0.65rem;color:var(--accent-blue);letter-spacing:0.15em;font-family:'Courier New',monospace;font-weight:700;">
+            <span style="animation:blink 1.5s infinite;">●</span> THREAT ASSESSMENT ENGINE
+          </div>
+          <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0;">Community Safety Score</h2>
+        </div>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 12px;">Real-time safety analysis — AI-powered danger zone correlation engine</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;font-family:'Courier New',monospace;font-size:0.68rem;">
+        <span style="padding:4px 10px;background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:3px;color:var(--accent-blue);">AI MODEL: ACTIVE</span>
+        <span style="padding:4px 10px;background:rgba(72,187,120,0.08);border:1px solid rgba(72,187,120,0.2);border-radius:3px;color:var(--accent-green);">LIVE DB: SYNCED</span>
+        <span style="padding:4px 10px;background:rgba(246,173,85,0.08);border:1px solid rgba(246,173,85,0.2);border-radius:3px;color:var(--accent-amber);">TIME MULTIPLIER: ON</span>
+        <span style="padding:4px 10px;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:3px;color:var(--red-primary);">RADIUS: 5KM</span>
+      </div>
+    </div>
   </div>
 
   <!-- Getting Location state -->
   <div id="ss-loading-state" class="ss-card" style="text-align:center;padding:60px 20px;">
-    <div class="spinner-border text-danger" role="status" style="width:2rem;height:2rem;"></div>
-    <div style="margin-top:16px;font-size:0.9rem;color:var(--text-secondary,#ccc);">Acquiring your location...</div>
+    <div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(66,153,225,0.2);border-top-color:var(--accent-blue);animation:spinRing 1s linear infinite;margin:0 auto 16px;"></div>
+    <div style="font-size:0.9rem;color:var(--text-secondary);font-family:'Courier New',monospace;letter-spacing:0.05em;">Acquiring GPS coordinates...</div>
+    <div style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">Scanning threat database for your location</div>
   </div>
 
   <!-- Main content (hidden until data ready) -->
