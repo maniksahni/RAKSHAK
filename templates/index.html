@@ -477,6 +477,11 @@ body::before{
 .fd-txt{color:rgba(255,255,255,0.85);flex:1;}
 .fd-time{font-family:'Courier New', monospace; color:#fca5a5;font-size:0.75rem;font-weight:700;}
 
+/* Mini-Anim Keyframes */
+@keyframes ringPulse { 0% { transform:scale(0.8); opacity:1; } 100% { transform:scale(2); opacity:0; } }
+@keyframes radarSpin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+@keyframes scanLaser { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(22px); } }
+
 .rk-hr{border:none;height:1px;max-width:1380px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1) 50%,transparent);}
 
 /* ═══════════════════════════════════════════
@@ -1451,7 +1456,12 @@ body::before{
       <div class="bc bc-threat reveal d2">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#f59e0b"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="bc-mini-anim" style="color:#f59e0b">
+          <div style="position:relative;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
+             <div style="position:absolute;width:100%;height:100%;border-radius:50%;border:1px solid #f59e0b;animation:ringPulse 2s infinite;"></div>
+             <div style="width:8px;height:8px;border-radius:50%;background:#f59e0b;box-shadow:0 0 10px #f59e0b;"></div>
+          </div>
+        </div>
         <span class="bc-num">MOD.02</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
         <div class="bc-h">THREAT SENSOR</div>
@@ -1466,7 +1476,12 @@ body::before{
       <div class="bc bc-map reveal d3">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#3b82f6"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+        <div class="bc-mini-anim" style="color:#3b82f6">
+          <div style="position:relative;width:24px;height:24px;border-radius:50%;border:1px solid rgba(59,130,246,0.3);overflow:hidden;">
+            <div style="position:absolute;top:50%;left:50%;width:50%;height:50%;transform-origin:0 0;background:linear-gradient(45deg, rgba(59,130,246,0.8), transparent);animation:radarSpin 2s linear infinite;"></div>
+            <div style="position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(59,130,246,0.5);"></div>
+          </div>
+        </div>
         <span class="bc-num">MOD.03</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         <div class="bc-h">TACTICAL MAP</div>
@@ -1481,7 +1496,11 @@ body::before{
       <div class="bc bc-hud reveal d1">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#22c55e"><svg viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <div class="bc-mini-anim" style="color:#22c55e">
+           <div style="position:relative;width:20px;height:24px;border:1px dashed rgba(34,197,94,0.4);border-radius:3px;">
+             <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:scanLaser 2s ease-in-out infinite;"></div>
+           </div>
+        </div>
         <span class="bc-num">SYS.04</span>
         <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
         <div class="bc-h">OVERWATCH HUD</div>
