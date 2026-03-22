@@ -626,15 +626,7 @@ document.addEventListener('click', function(e) {
     bar.style.animation = 'transBar 0.8s ease-in-out';
   }
 });
-// Fade in content on load
-document.addEventListener('DOMContentLoaded', function() {
-  const main = document.querySelector('.main-content');
-  if (main) {
-    main.style.opacity = '0';
-    main.style.transition = 'opacity .3s ease-in';
-    requestAnimationFrame(() => { main.style.opacity = '1'; });
-  }
-});
+// Content loads instantly — no fade delay
 
 // ── SYSTEM OVERWATCH CYBER-AUDIO ENGINE ─────────────────────────────────────
 (function() {
