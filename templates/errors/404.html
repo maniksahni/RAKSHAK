@@ -148,6 +148,10 @@
     </div>
     <div class="err-readout">
       <span>STATUS:</span> NOT_FOUND &bull; <span>SCAN:</span> ACTIVE &bull; <span>SHIELD:</span> <span style="color:var(--accent-green);">ONLINE</span>
+      &bull; <span>NODE:</span> RAKSHAK-PRIMARY &bull; <span>UPTIME:</span> <span style="color:var(--accent-green);" id="err-uptime">--</span>
+    </div>
+    <div style="font-family:'Courier New',monospace;font-size:0.65rem;color:rgba(255,255,255,0.2);margin-top:12px;letter-spacing:0.06em;">
+      &gt; sys.probe() returned 404 at path <span style="color:rgba(220,38,38,0.6);">window.location.pathname</span><span style="animation:blink 1s step-end infinite;color:var(--red);">_</span>
     </div>
   </div>
 </div>
@@ -167,6 +171,18 @@
     d.style.fontSize = (0.8+Math.random()*1.2)+'rem';
     bg.appendChild(d);
   }
+})();
+
+/* live uptime counter */
+(function(){
+  const el = document.getElementById('err-uptime');
+  if (!el) return;
+  let s = 0;
+  setInterval(() => {
+    s++;
+    const m = Math.floor(s/60), sec = s%60;
+    el.textContent = String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+  }, 1000);
 })();
 </script>
 {% endblock %}

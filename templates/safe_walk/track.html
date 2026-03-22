@@ -3,153 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Journey Tracking — RAKSHAK</title>
+  <title>CLASSIFIED: Live Tracking — RAKSHAK</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red: #dc2626; --green: #22c55e; --blue: #3b82f6;
+      --bg: #050508; --card: rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.07);
+    }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0a0a0f;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: #fff; min-height: 100vh;
+      display: flex; flex-direction: column; overflow: hidden;
     }
 
-    /* header */
+    /* Scanline overlay */
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+    }
+
+    /* ── HEADER ── */
     .track-header {
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(5,5,10,0.95));
+      border-bottom: 1px solid rgba(220,38,38,0.25);
+      padding: 14px 24px; display: flex; align-items: center; gap: 14px;
+      position: relative; overflow: hidden;
     }
-    .track-header .logo {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, #dc2626, #991b1b);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
+    .track-header::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(220,38,38,0.6), transparent);
     }
-    .track-header h1 {
-      font-size: 1rem;
-      font-weight: 700;
-      flex: 1;
+    .track-header::after {
+      content: 'CLASSIFIED'; position: absolute; right: -30px; top: -20px;
+      font-size: 5rem; font-weight: 900; color: rgba(220,38,38,0.03);
+      letter-spacing: -2px; pointer-events: none; transform: rotate(-8deg);
     }
-    .track-header h1 span {
-      color: #dc2626;
+    .logo-box {
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05));
+      border: 1px solid rgba(220,38,38,0.35);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+      box-shadow: 0 0 20px rgba(220,38,38,0.2);
     }
-    .track-header .person-name {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.5);
+    .header-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 3px;
+      background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3);
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em;
+      color: var(--red); font-family: 'Courier New', monospace; margin-bottom: 3px;
+    }
+    .badge-dot { width:5px; height:5px; border-radius:50%; background:var(--red); animation: blink .9s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity:0.15; } }
+    .header-title { font-size: 1.1rem; font-weight: 800; line-height: 1.2; }
+    .header-sub { font-size: 0.73rem; color: rgba(255,255,255,0.45); }
+    .header-clock {
+      margin-left: auto; text-align: right; font-family: 'Courier New', monospace;
+      font-size: 0.65rem; color: rgba(255,255,255,0.4); line-height: 2em;
     }
 
-    /* status bar */
+    /* ── STATUS BAR ── */
     .track-status-bar {
-      padding: 10px 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.8rem;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 10px 24px; display: flex; align-items: center; gap: 12px;
+      font-size: 0.78rem; border-bottom: 1px solid var(--border);
+      background: rgba(5,5,8,0.9);
     }
     .status-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
+      width: 8px; height: 8px; border-radius: 50%;
       animation: blink 2s ease-in-out infinite;
     }
-    .status-dot.active { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
-    .status-dot.completed { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
-    .status-dot.overdue { background: #dc2626; box-shadow: 0 0 8px #dc2626; }
-    .status-dot.sos_triggered { background: #dc2626; box-shadow: 0 0 12px #dc2626; animation: sosBlink 0.5s ease-in-out infinite; }
-    @keyframes blink { 50% { opacity: 0.4; } }
-    @keyframes sosBlink { 50% { opacity: 0.2; } }
-
-    .status-label { text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
-    .status-label.active { color: #22c55e; }
-    .status-label.completed { color: #3b82f6; }
-    .status-label.overdue { color: #ef4444; }
+    .status-dot.active     { background: var(--green); box-shadow: 0 0 10px var(--green); }
+    .status-dot.completed  { background: var(--blue); box-shadow: 0 0 10px var(--blue); }
+    .status-dot.overdue    { background: var(--red); box-shadow: 0 0 10px var(--red); animation-duration: .6s; }
+    .status-dot.sos_triggered { background: var(--red); box-shadow: 0 0 16px var(--red); animation-duration: .4s; }
+    .status-label { text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; font-family: 'Courier New', monospace; font-size: 0.72rem; }
+    .status-label.active     { color: var(--green); }
+    .status-label.completed  { color: var(--blue); }
+    .status-label.overdue    { color: #ef4444; }
     .status-label.sos_triggered { color: #ef4444; }
+    .status-sep { width: 1px; height: 16px; background: var(--border); }
+    .status-meta { font-size: 0.68rem; color: rgba(255,255,255,0.35); font-family: 'Courier New', monospace; }
+    #track-updated { margin-left: auto; font-size: 0.68rem; color: rgba(255,255,255,0.3); font-family: 'Courier New', monospace; }
 
-    .status-info { color: rgba(255,255,255,0.4); margin-left: auto; font-size: 0.75rem; }
+    /* ── MAP ── */
+    #track-map { flex: 1; min-height: 300px; }
 
-    /* map */
-    #track-map {
-      flex: 1;
-      min-height: 400px;
-    }
-
-    /* footer info card */
+    /* ── FOOTER TELEMETRY ── */
     .track-footer {
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
+      background: linear-gradient(135deg, rgba(5,5,10,0.98), rgba(15,10,20,0.95));
+      border-top: 1px solid rgba(220,38,38,0.2);
+      padding: 16px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+      position: relative; overflow: hidden;
     }
-    .track-footer .info-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    .track-footer::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
     }
-    .track-footer .info-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: rgba(255,255,255,0.4);
+    .info-block { display: flex; flex-direction: column; gap: 3px; }
+    .info-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.35); font-family: 'Courier New', monospace; }
+    .info-value { font-size: 0.88rem; font-weight: 700; color: #fff; }
+    .info-value.green { color: var(--green); }
+    .powered-by {
+      margin-left: auto; font-size: 0.68rem; color: rgba(255,255,255,0.25);
+      font-family: 'Courier New', monospace; letter-spacing: 0.08em;
+      display: flex; align-items: center; gap: 6px;
     }
-    .track-footer .info-value {
-      font-size: 0.85rem;
-      font-weight: 600;
+    .powered-by span { color: var(--red); font-weight: 700; }
+
+    /* Pulse ring on map marker */
+    .pulse-ring {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--green); position: absolute;
+      animation: pulseRing 2s ease-out infinite;
     }
-    .track-footer .powered-by {
-      margin-left: auto;
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.3);
+    @keyframes pulseRing {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(3); opacity: 0; }
     }
-    .track-footer .powered-by span { color: #dc2626; font-weight: 700; }
   </style>
 </head>
 <body>
 
+  <!-- ── CLASSIFIED TRACKING HEADER ── -->
   <div class="track-header">
-    <div class="logo"><i class="bi bi-shield-check"></i></div>
+    <div class="logo-box"><i class="bi bi-shield-fill-check" style="color:var(--red);"></i></div>
     <div>
-      <h1><span>{{ person_name }}</span> is sharing their journey with you</h1>
-      <div class="person-name">Powered by RAKSHAK Women's Safety System</div>
+      <div class="header-badge"><div class="badge-dot"></div> CLASSIFIED — LIVE TRACKING</div>
+      <div class="header-title"><span style="color:var(--red);">{{ person_name }}</span> is sharing their journey</div>
+      <div class="header-sub">RAKSHAK Women's Safety System · Encrypted Route Broadcast</div>
+    </div>
+    <div class="header-clock">
+      <div style="color:var(--green);">● UPLINK LIVE</div>
+      <div id="hud-clock">--:--:--</div>
+      <div>GPS POLLING: 5s</div>
     </div>
   </div>
 
+  <!-- ── STATUS BAR ── -->
   <div class="track-status-bar">
     <span id="status-dot" class="status-dot {{ journey.status }}"></span>
-    <span id="status-label" class="status-label {{ journey.status }}">{{ journey.status | upper }}</span>
-    <span class="status-info" id="track-updated">Connecting...</span>
+    <span id="status-label" class="status-label {{ journey.status }}">{{ journey.status | upper | replace('_', ' ') }}</span>
+    <div class="status-sep"></div>
+    <span class="status-meta">ROUTE: ENCRYPTED</span>
+    <div class="status-sep"></div>
+    <span class="status-meta">SHARE TOKEN: {{ token[:8] }}…</span>
+    <span id="track-updated">Connecting...</span>
   </div>
 
+  <!-- ── MAP ── -->
   <div id="track-map"></div>
 
+  <!-- ── FOOTER TELEMETRY ── -->
   <div class="track-footer">
     <div class="info-block">
       <span class="info-label">Started</span>
-      <span class="info-value" id="track-started">{{ journey.started_at[:16] if journey.started_at else '--' }}</span>
+      <span class="info-value">{{ journey.started_at[:16] if journey.started_at else '--' }}</span>
     </div>
     <div class="info-block">
       <span class="info-label">ETA</span>
-      <span class="info-value" id="track-eta">{{ journey.eta_minutes }} min</span>
+      <span class="info-value">{{ journey.eta_minutes }} min</span>
     </div>
     <div class="info-block">
       <span class="info-label">Status</span>
-      <span class="info-value" id="track-status-text" style="text-transform:capitalize;">{{ journey.status }}</span>
+      <span class="info-value green" id="track-status-text" style="text-transform:capitalize;">{{ journey.status }}</span>
+    </div>
+    <div class="info-block">
+      <span class="info-label">Encryption</span>
+      <span class="info-value" style="color:var(--blue);">AES-256</span>
     </div>
     <div class="powered-by">
-      <i class="bi bi-shield-fill-check"></i> Protected by <span>RAKSHAK</span>
+      <i class="bi bi-shield-fill-check" style="color:var(--red);"></i>
+      Protected by <span>RAKSHAK</span>
     </div>
   </div>
 
@@ -159,50 +186,57 @@
     const token = "{{ token }}";
     const journey = {{ journey | tojson }};
 
-    const map = L.map('track-map', {attributionControl: false}).setView(
+    /* Live clock */
+    (function() {
+      const el = document.getElementById('hud-clock');
+      setInterval(() => { el.textContent = new Date().toLocaleTimeString('en-IN', {hour12:false}); }, 1000);
+    })();
+
+    const map = L.map('track-map', {attributionControl: false, zoomControl: true}).setView(
       [journey.current_lat || journey.start_lat, journey.current_lng || journey.start_lng], 15
     );
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19
-    }).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
 
-    // Person marker (green pulsing dot)
-    const personMarker = L.circleMarker(
+    /* Custom pulsing person marker */
+    const personIcon = L.divIcon({
+      className: '',
+      html: `<div style="position:relative;width:20px;height:20px;">
+        <div style="position:absolute;inset:0;border-radius:50%;background:#22c55e;border:2px solid #fff;box-shadow:0 0 12px #22c55e;z-index:2;"></div>
+        <div style="position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(34,197,94,0.4);animation:pulseRing 2s ease-out infinite;"></div>
+      </div>`,
+      iconSize: [20, 20], iconAnchor: [10, 10]
+    });
+
+    const personMarker = L.marker(
       [journey.current_lat || journey.start_lat, journey.current_lng || journey.start_lng],
-      {radius: 9, fillColor: '#22c55e', fillOpacity: 1, color: '#fff', weight: 2}
-    ).addTo(map).bindPopup(journey.status === 'completed' ? 'Journey completed' : 'Current location');
+      {icon: personIcon}
+    ).addTo(map).bindPopup(`<b>${journey.status === 'completed' ? '✅ Journey completed' : '📡 Current location'}</b>`);
 
-    // Destination marker
+    /* Destination marker */
     L.marker([journey.dest_lat, journey.dest_lng], {
       icon: L.divIcon({
         className: '',
-        html: '<div style="width:16px;height:16px;background:#dc2626;border:2px solid #fff;border-radius:50%;box-shadow:0 0 12px rgba(220,38,38,0.6);"></div>',
-        iconSize: [16, 16], iconAnchor: [8, 8]
+        html: '<div style="width:16px;height:16px;background:#dc2626;border:2px solid #fff;border-radius:50%;box-shadow:0 0 14px rgba(220,38,38,0.7);"></div>',
+        iconSize: [16,16], iconAnchor: [8,8]
       })
-    }).addTo(map).bindPopup('Destination');
+    }).addTo(map).bindPopup('<b>🎯 Destination</b>');
 
-    // Route line
+    /* Route line */
     const routeLine = L.polyline([
       [journey.start_lat, journey.start_lng],
       [journey.dest_lat, journey.dest_lng]
-    ], {color: '#dc2626', weight: 2, dashArray: '8 6', opacity: 0.5}).addTo(map);
+    ], {color:'#dc2626', weight:2, dashArray:'8 6', opacity:0.5}).addTo(map);
 
     map.fitBounds(routeLine.getBounds().pad(0.3));
 
-    // Poll for updates
+    /* Poll for updates */
     function pollUpdate() {
       fetch('/safe-walk/share/' + token + '/data')
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
+        .then(r => r.json())
+        .then(d => {
           if (!d.success) return;
           const j = d.journey;
-
-          // Update marker
-          if (j.current_lat && j.current_lng) {
-            personMarker.setLatLng([j.current_lat, j.current_lng]);
-          }
-
-          // Update status UI
+          if (j.current_lat && j.current_lng) personMarker.setLatLng([j.current_lat, j.current_lng]);
           const dot = document.getElementById('status-dot');
           const label = document.getElementById('status-label');
           const statusText = document.getElementById('track-status-text');
@@ -210,21 +244,15 @@
           label.className = 'status-label ' + j.status;
           label.textContent = j.status.toUpperCase().replace('_', ' ');
           statusText.textContent = j.status.replace('_', ' ');
-
-          document.getElementById('track-updated').textContent =
-            'Updated ' + new Date().toLocaleTimeString();
+          document.getElementById('track-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
         })
-        .catch(function() {});
+        .catch(() => {});
     }
 
-    // Poll every 5 seconds for active journeys
     if (journey.status === 'active' || journey.status === 'overdue') {
       setInterval(pollUpdate, 5000);
     }
-
-    // Initial
-    document.getElementById('track-updated').textContent =
-      'Connected at ' + new Date().toLocaleTimeString();
+    document.getElementById('track-updated').textContent = 'Connected ' + new Date().toLocaleTimeString();
   })();
   </script>
 </body>
