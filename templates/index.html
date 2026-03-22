@@ -737,6 +737,190 @@ body::before{
 .social-icon:hover svg{stroke:var(--red)}
 .footer-tagline{font-family:var(--int);font-size:.72rem;color:rgba(255,255,255,.25);letter-spacing:.05em}
 
+/* ═══════════════════════════════════════════
+   IMMERSIVE 3D DEPTH UPGRADES
+═══════════════════════════════════════════*/
+
+/* ── 1. Parallax Depth Container ── */
+.rk-page{perspective:1200px;perspective-origin:50% 0%}
+.parallax-layer{position:fixed;inset:0;pointer-events:none;z-index:0;will-change:transform}
+.parallax-layer--deep{transform:translateZ(-300px) scale(1.25)}
+.parallax-layer--mid{transform:translateZ(-150px) scale(1.125)}
+.parallax-layer--front{transform:translateZ(-50px) scale(1.04)}
+
+/* ── 2. 3D Card Flip on Bento Hover ── */
+.bc{perspective:800px}
+.bc-inner{position:relative;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(.25,.46,.45,.94)}
+.bc:hover .bc-inner{transform:rotateY(6deg) rotateX(-3deg)}
+.bc-back{
+  position:absolute;inset:0;backface-visibility:hidden;
+  transform:rotateY(180deg);
+  background:linear-gradient(135deg,rgba(220,38,38,.08),rgba(5,5,10,.98));
+  display:flex;align-items:center;justify-content:center;
+  padding:30px;font-family:var(--int);font-size:.85rem;color:rgba(255,255,255,.5);
+  line-height:1.7;text-align:center;border-radius:4px;
+  border:1px solid rgba(220,38,38,.3);
+  opacity:0;transition:opacity .4s .1s;
+}
+.bc:hover .bc-back{opacity:0.15}
+
+/* ── 3. Glowing Particle Trail on Scroll ── */
+@keyframes scrollParticleDrift{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:.7}
+  50%{opacity:1}
+  100%{transform:translateY(-120vh) translateX(30px) scale(0);opacity:0}
+}
+@keyframes scrollParticleGlow{
+  0%,100%{box-shadow:0 0 4px rgba(220,38,38,.4)}
+  50%{box-shadow:0 0 12px rgba(220,38,38,.8),0 0 25px rgba(220,38,38,.3)}
+}
+.scroll-particle{
+  position:fixed;width:3px;height:3px;border-radius:50%;
+  background:var(--red);pointer-events:none;z-index:0;
+  animation:scrollParticleDrift 3s ease-out forwards,scrollParticleGlow 1.5s ease-in-out infinite;
+}
+
+/* ── 4. Morphing Blob Background ── */
+.hero-morph-blob{
+  position:absolute;top:50%;left:50%;width:600px;height:600px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse at center,rgba(220,38,38,.06) 0%,rgba(220,38,38,.02) 40%,transparent 70%);
+  border-radius:40% 60% 55% 45% / 55% 40% 60% 45%;
+  animation:blobMorph 12s ease-in-out infinite,blobRotate 20s linear infinite;
+  filter:blur(40px);pointer-events:none;z-index:0;
+  will-change:border-radius,transform;
+}
+@keyframes blobMorph{
+  0%{border-radius:40% 60% 55% 45% / 55% 40% 60% 45%}
+  25%{border-radius:55% 45% 40% 60% / 45% 55% 45% 55%}
+  50%{border-radius:45% 55% 60% 40% / 60% 45% 55% 45%}
+  75%{border-radius:60% 40% 45% 55% / 40% 60% 45% 55%}
+  100%{border-radius:40% 60% 55% 45% / 55% 40% 60% 45%}
+}
+@keyframes blobRotate{
+  0%{transform:translate(-50%,-50%) rotate(0deg)}
+  100%{transform:translate(-50%,-50%) rotate(360deg)}
+}
+
+/* ── 5. Perspective Grid Floor ── */
+.hero-grid-floor{
+  position:absolute;bottom:-60px;left:50%;width:200%;height:350px;
+  transform:translateX(-50%) perspective(500px) rotateX(65deg);
+  transform-origin:center top;
+  background:
+    repeating-linear-gradient(90deg,rgba(220,38,38,.08) 0px,rgba(220,38,38,.08) 1px,transparent 1px,transparent 80px),
+    repeating-linear-gradient(0deg,rgba(220,38,38,.06) 0px,rgba(220,38,38,.06) 1px,transparent 1px,transparent 80px);
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,rgba(0,0,0,.15) 60%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,rgba(0,0,0,.15) 60%,transparent 100%);
+  pointer-events:none;z-index:0;
+  animation:gridPulse 4s ease-in-out infinite;
+}
+@keyframes gridPulse{
+  0%,100%{opacity:.5}
+  50%{opacity:.8}
+}
+
+/* ── 6. Neon Text Glow on Hero Heading ── */
+.hero-h1{
+  text-shadow:0 0 10px rgba(220,38,38,0),0 0 40px rgba(220,38,38,0);
+  animation:slideUp .5s .08s ease both,neonTextPulse 3s ease-in-out infinite 1s;
+}
+@keyframes neonTextPulse{
+  0%,100%{text-shadow:0 0 8px rgba(220,38,38,0),0 0 30px rgba(220,38,38,0),0 0 60px rgba(220,38,38,0)}
+  50%{text-shadow:0 0 8px rgba(220,38,38,.15),0 0 30px rgba(220,38,38,.08),0 0 60px rgba(220,38,38,.04)}
+}
+.h1-grad{
+  filter:drop-shadow(0 0 15px rgba(220,38,38,.12));
+  animation:shimmer 4s linear infinite,neonGradPulse 3s ease-in-out infinite 1s;
+}
+@keyframes neonGradPulse{
+  0%,100%{filter:drop-shadow(0 0 10px rgba(220,38,38,.05))}
+  50%{filter:drop-shadow(0 0 25px rgba(220,38,38,.2))}
+}
+
+/* ── 7. Floating Geometric Shapes ── */
+.floating-shapes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.floating-shape{position:absolute;opacity:.04;animation-timing-function:ease-in-out;animation-iteration-count:infinite;will-change:transform}
+
+/* Triangles */
+.fs-triangle{
+  width:0;height:0;
+  border-left:15px solid transparent;border-right:15px solid transparent;border-bottom:26px solid var(--red);
+}
+.fs-triangle.lg{border-left-width:25px;border-right-width:25px;border-bottom-width:43px}
+
+/* Circles */
+.fs-circle{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid var(--red);background:transparent;
+}
+.fs-circle.lg{width:35px;height:35px;border-width:2px}
+
+/* Hexagons */
+.fs-hexagon{
+  width:24px;height:14px;background:transparent;border:1.5px solid var(--red);
+  position:relative;
+}
+.fs-hexagon::before,.fs-hexagon::after{
+  content:'';position:absolute;width:0;height:0;
+  border-left:12px solid transparent;border-right:12px solid transparent;
+  left:-1.5px;
+}
+.fs-hexagon::before{bottom:100%;border-bottom:7px solid var(--red)}
+.fs-hexagon::after{top:100%;border-top:7px solid var(--red)}
+
+/* Diamonds */
+.fs-diamond{
+  width:16px;height:16px;border:1.5px solid var(--red);
+  transform:rotate(45deg);background:transparent;
+}
+.fs-diamond.lg{width:28px;height:28px}
+
+/* Crosses */
+.fs-cross{
+  width:18px;height:18px;position:relative;
+}
+.fs-cross::before,.fs-cross::after{
+  content:'';position:absolute;background:var(--red);
+}
+.fs-cross::before{width:2px;height:100%;left:50%;transform:translateX(-50%)}
+.fs-cross::after{height:2px;width:100%;top:50%;transform:translateY(-50%)}
+
+/* Floating animations */
+@keyframes floatDrift1{
+  0%{transform:translateY(0) rotate(0deg)}
+  33%{transform:translateY(-40px) rotate(60deg)}
+  66%{transform:translateY(-20px) rotate(180deg)}
+  100%{transform:translateY(0) rotate(360deg)}
+}
+@keyframes floatDrift2{
+  0%{transform:translateY(0) translateX(0) rotate(0deg)}
+  50%{transform:translateY(-60px) translateX(30px) rotate(180deg)}
+  100%{transform:translateY(0) translateX(0) rotate(360deg)}
+}
+@keyframes floatDrift3{
+  0%{transform:translateY(0) translateX(0) rotate(0deg) scale(1)}
+  25%{transform:translateY(-30px) translateX(-20px) rotate(90deg) scale(1.1)}
+  50%{transform:translateY(-50px) translateX(10px) rotate(180deg) scale(.9)}
+  75%{transform:translateY(-20px) translateX(25px) rotate(270deg) scale(1.05)}
+  100%{transform:translateY(0) translateX(0) rotate(360deg) scale(1)}
+}
+@keyframes floatDrift4{
+  0%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-70px) rotate(-180deg)}
+  100%{transform:translateY(0) rotate(-360deg)}
+}
+
+/* ── Stagger-in for child elements ── */
+.stagger-child{opacity:0;transform:translateY(25px) scale(.97);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.stagger-child.stagger-visible{opacity:1;transform:translateY(0) scale(1)}
+
+/* ── Magnetic button pull effect ── */
+.btn-magnetic{transition:transform .15s cubic-bezier(.25,.46,.45,.94) !important}
+
+/* ── Hero depth shift on mouse ── */
+.hero-content,.hero-visual{transition:transform .08s linear}
+
 </style>
 {% endblock %}
 
@@ -744,8 +928,28 @@ body::before{
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="rk-page">
 
+<!-- ══════════ FLOATING GEOMETRIC SHAPES ══════════ -->
+<div class="floating-shapes" id="floatingShapes">
+  <div class="floating-shape fs-triangle" style="top:12%;left:8%;animation:floatDrift1 14s infinite;opacity:.035"></div>
+  <div class="floating-shape fs-circle lg" style="top:25%;right:12%;animation:floatDrift2 18s infinite;opacity:.03"></div>
+  <div class="floating-shape fs-diamond" style="top:45%;left:5%;animation:floatDrift3 16s infinite;opacity:.04"></div>
+  <div class="floating-shape fs-hexagon" style="top:60%;right:8%;animation:floatDrift4 20s infinite;opacity:.03"></div>
+  <div class="floating-shape fs-triangle lg" style="top:75%;left:15%;animation:floatDrift2 22s infinite;opacity:.025"></div>
+  <div class="floating-shape fs-circle" style="top:15%;left:45%;animation:floatDrift4 15s infinite;opacity:.035"></div>
+  <div class="floating-shape fs-cross" style="top:35%;right:20%;animation:floatDrift1 17s infinite;opacity:.03"></div>
+  <div class="floating-shape fs-diamond lg" style="top:80%;right:25%;animation:floatDrift3 19s infinite;opacity:.03"></div>
+  <div class="floating-shape fs-hexagon" style="top:50%;left:30%;animation:floatDrift2 21s infinite;opacity:.025"></div>
+  <div class="floating-shape fs-cross" style="top:8%;right:35%;animation:floatDrift3 13s infinite;opacity:.03"></div>
+  <div class="floating-shape fs-circle" style="top:90%;left:40%;animation:floatDrift1 16s infinite;opacity:.03"></div>
+  <div class="floating-shape fs-triangle" style="top:70%;right:40%;animation:floatDrift4 18s infinite;opacity:.025"></div>
+</div>
+
 <!-- ══════════ HERO ══════════ -->
 <section class="hero-section">
+  <!-- Morphing Blob Background -->
+  <div class="hero-morph-blob"></div>
+  <!-- Perspective Grid Floor -->
+  <div class="hero-grid-floor"></div>
   <!-- 3D Rotating Shield Background -->
   <div class="hero-3d-shield">
     <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
@@ -1508,6 +1712,177 @@ if (s) statsIO.observe(s);
     });
     requestAnimationFrame(draw);
   })();
+})();
+
+/* ═══════════════════════════════════════════
+   IMMERSIVE 3D DEPTH — JS UPGRADES
+═══════════════════════════════════════════*/
+
+/* ── 1. Smooth Parallax on Scroll ── */
+(function(){
+  const floatingShapes = document.querySelectorAll('.floating-shape');
+  const heroBlob = document.querySelector('.hero-morph-blob');
+  const heroGrid = document.querySelector('.hero-grid-floor');
+  const hero3dShield = document.querySelector('.hero-3d-shield');
+  let ticking = false;
+  let lastScroll = 0;
+
+  function onScroll(){
+    lastScroll = window.scrollY;
+    if(!ticking){
+      requestAnimationFrame(()=>{
+        const s = lastScroll;
+        /* Move floating shapes at different rates */
+        floatingShapes.forEach((el, i) => {
+          const speed = 0.02 + (i % 5) * 0.015;
+          const direction = i % 2 === 0 ? 1 : -1;
+          el.style.transform = `translateY(${s * speed * direction}px) rotate(${s * 0.02 * direction}deg)`;
+        });
+        /* Parallax the blob */
+        if(heroBlob){
+          heroBlob.style.transform = `translate(-50%, calc(-50% + ${s * 0.08}px))`;
+        }
+        /* Shift the grid floor */
+        if(heroGrid){
+          heroGrid.style.opacity = Math.max(0, 0.7 - s * 0.002);
+        }
+        /* Shift the 3D shield */
+        if(hero3dShield){
+          hero3dShield.style.transform = `translate(-50%, calc(-50% + ${s * 0.05}px)) rotate(${s * 0.02}deg)`;
+        }
+
+        /* Spawn scroll particles occasionally */
+        if(s > 50 && Math.random() < 0.12){
+          spawnScrollParticle();
+        }
+
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  /* Scroll particle spawner */
+  function spawnScrollParticle(){
+    const p = document.createElement('div');
+    p.className = 'scroll-particle';
+    p.style.left = (Math.random() * 100) + 'vw';
+    p.style.top = (Math.random() * 100) + 'vh';
+    const size = Math.random() * 3 + 1;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 4000);
+  }
+})();
+
+/* ── 2. Mouse-reactive Hero (3D depth illusion) ── */
+(function(){
+  const hero = document.querySelector('.hero-section');
+  if(!hero) return;
+  const content = hero.querySelector('.hero-content');
+  const visual = hero.querySelector('.hero-visual');
+  const shield = hero.querySelector('.hero-3d-shield');
+  const blob = hero.querySelector('.hero-morph-blob');
+  let mouseX = 0, mouseY = 0;
+  let currentX = 0, currentY = 0;
+
+  hero.addEventListener('mousemove', (e) => {
+    const rect = hero.getBoundingClientRect();
+    mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+    mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+  });
+
+  hero.addEventListener('mouseleave', () => {
+    mouseX = 0; mouseY = 0;
+  });
+
+  (function animate(){
+    /* Smooth lerp */
+    currentX += (mouseX - currentX) * 0.06;
+    currentY += (mouseY - currentY) * 0.06;
+
+    if(content){
+      content.style.transform = `translate(${currentX * -8}px, ${currentY * -5}px)`;
+    }
+    if(visual){
+      visual.style.transform = `translate(${currentX * 12}px, ${currentY * 8}px) rotateY(${currentX * 3}deg) rotateX(${currentY * -2}deg)`;
+    }
+    if(shield){
+      const baseTransform = shield.style.transform || '';
+      /* Only override if not already set by scroll */
+      if(!baseTransform.includes('calc')){
+        shield.style.transform = `translate(calc(-50% + ${currentX * 20}px), calc(-50% + ${currentY * 15}px))`;
+      }
+    }
+    if(blob){
+      blob.style.filter = `blur(${40 - Math.abs(currentX) * 8}px)`;
+    }
+
+    requestAnimationFrame(animate);
+  })();
+})();
+
+/* ── 3. Intersection Observer Stagger ── */
+(function(){
+  /* Add stagger-child class to children of sections that should animate */
+  const staggerContainers = document.querySelectorAll(
+    '.bento-grid, .steps-row, .stats-grid, .testi-track, .how-section .sec-hd, .bento-section .sec-hd'
+  );
+  staggerContainers.forEach(container => {
+    Array.from(container.children).forEach(child => {
+      child.classList.add('stagger-child');
+    });
+  });
+
+  const staggerIO = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const children = entry.target.querySelectorAll('.stagger-child');
+        children.forEach((child, i) => {
+          setTimeout(() => {
+            child.classList.add('stagger-visible');
+          }, i * 100);
+        });
+        staggerIO.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.05, rootMargin:'0px 0px -50px 0px'});
+
+  staggerContainers.forEach(c => staggerIO.observe(c));
+})();
+
+/* ── 4. Magnetic Button Effect ── */
+(function(){
+  const buttons = document.querySelectorAll('.btn-primary, .btn-outline, .btn-rakshak, .cta-btn');
+  const RADIUS = 100;
+  const STRENGTH = 0.25;
+
+  buttons.forEach(btn => {
+    btn.classList.add('btn-magnetic');
+
+    document.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const btnCX = rect.left + rect.width / 2;
+      const btnCY = rect.top + rect.height / 2;
+      const dx = e.clientX - btnCX;
+      const dy = e.clientY - btnCY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if(dist < RADIUS){
+        const pull = (1 - dist / RADIUS) * STRENGTH;
+        btn.style.transform = `translate(${dx * pull}px, ${dy * pull}px) scale(${1 + pull * 0.08})`;
+      } else {
+        btn.style.transform = '';
+      }
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
 })();
 </script>
 {% endblock %}
