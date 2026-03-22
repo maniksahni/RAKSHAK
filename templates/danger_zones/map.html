@@ -6,179 +6,103 @@
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
    RAKSHAK — THREAT SURVEILLANCE COMMAND CENTER
-   Military HUD + Glassmorphism + Cyberpunk Map Interface
+   Premium Glassmorphic Live Map Interface
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── MAP CONTAINER ───────────────────────────────────────────────────────── */
 .map-wrapper {
   position: relative;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 #map {
   height: calc(100vh - 200px);
   min-height: 500px;
-  border-radius: var(--radius-md);
   background: #050508;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 40px rgba(0,0,0,0.6);
 }
 
-/* HUD Border Frame — military targeting display corners */
-.hud-frame {
-  position: absolute; inset: 0; z-index: 500; pointer-events: none;
-  border-radius: var(--radius-md); overflow: hidden;
-}
-.hud-frame::before {
-  content: ''; position: absolute; inset: 8px;
-  border: 1px solid rgba(220,38,38,0.12);
-  border-radius: 4px;
-}
-
-.hud-corner {
-  position: absolute; width: 50px; height: 50px; z-index: 501; pointer-events: none;
-}
-.hud-corner::before, .hud-corner::after {
-  content: ''; position: absolute; background: rgba(220,38,38,0.7);
-  box-shadow: 0 0 8px rgba(220,38,38,0.5), 0 0 20px rgba(220,38,38,0.2);
-}
-/* Top-left */
-.hud-tl { top: 0; left: 0; }
-.hud-tl::before { top: 0; left: 0; width: 50px; height: 2px; }
-.hud-tl::after  { top: 0; left: 0; width: 2px; height: 50px; }
-/* Top-right */
-.hud-tr { top: 0; right: 0; }
-.hud-tr::before { top: 0; right: 0; width: 50px; height: 2px; }
-.hud-tr::after  { top: 0; right: 0; width: 2px; height: 50px; }
-/* Bottom-left */
-.hud-bl { bottom: 0; left: 0; }
-.hud-bl::before { bottom: 0; left: 0; width: 50px; height: 2px; }
-.hud-bl::after  { bottom: 0; left: 0; width: 2px; height: 50px; }
-/* Bottom-right */
-.hud-br { bottom: 0; right: 0; }
-.hud-br::before { bottom: 0; right: 0; width: 50px; height: 2px; }
-.hud-br::after  { bottom: 0; right: 0; width: 2px; height: 50px; }
-
-/* Inner tick marks on HUD */
-.hud-tick {
-  position: absolute; z-index: 501; pointer-events: none;
-  background: rgba(220,38,38,0.35);
-}
-.hud-tick-top    { top: 0; left: 50%; width: 30px; height: 1px; transform: translateX(-50%); }
-.hud-tick-bottom { bottom: 0; left: 50%; width: 30px; height: 1px; transform: translateX(-50%); }
-.hud-tick-left   { left: 0; top: 50%; width: 1px; height: 30px; transform: translateY(-50%); }
-.hud-tick-right  { right: 0; top: 50%; width: 1px; height: 30px; transform: translateY(-50%); }
-
-/* ── DEEP CYBERPUNK MAP FILTER ───────────────────────────────────────────── */
+/* ── PREMIUM DARK MAP FILTER ───────────────────────────────────────────── */
 .leaflet-layer,
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out,
 .leaflet-control-attribution {
-  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(120%) saturate(150%) sepia(30%) hue-rotate(330deg) drop-shadow(0 0 2px rgba(220,38,38,0.3));
+  filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(110%) sepia(20%) hue-rotate(190deg);
 }
 
 /* ── RADAR SWEEP OVERLAY ─────────────────────────────────────────────────── */
 .radar-sweep {
   position: absolute; inset: -50%;
-  background: conic-gradient(from 0deg, transparent 70%, rgba(220,38,38,0.15) 90%, rgba(220,38,38,0.4) 100%);
+  background: conic-gradient(from 0deg, transparent 70%, rgba(59,130,246,0.1) 90%, rgba(59,130,246,0.2) 100%);
   border-radius: 50%;
-  animation: radarScan 6s linear infinite;
+  animation: radarScan 8s linear infinite;
   pointer-events: none; z-index: 400;
-  mix-blend-mode: screen;
 }
 @keyframes radarScan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* ── SCAN LINE ANIMATION ─────────────────────────────────────────────────── */
-.scan-line-sweep {
-  position: absolute; inset: 0; z-index: 410; pointer-events: none;
-  overflow: hidden;
-}
-.scan-line-sweep::before {
-  content: '';
-  position: absolute; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), rgba(220,38,38,0.7), rgba(220,38,38,0.4), transparent);
-  box-shadow: 0 0 15px rgba(220,38,38,0.3), 0 2px 30px rgba(220,38,38,0.15);
-  animation: scanLineMove 4s ease-in-out infinite;
-}
-@keyframes scanLineMove {
-  0%   { top: -3px; opacity: 0; }
-  5%   { opacity: 1; }
-  95%  { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
-
-/* Scanline overlay (CRT effect) */
 /* threat ops counter */
 .threat-ops-bar {
-  position: absolute; top: 12px; right: 20px; z-index: 1000;
+  position: absolute; top: 16px; right: 16px; z-index: 1000;
   display: flex; gap: 10px;
   animation: slideInRight .5s .1s cubic-bezier(.22,1,.36,1) both;
 }
 .threat-op-chip {
   display: flex; align-items: center; gap: 8px;
-  background: rgba(5,5,10,0.88); backdrop-filter:blur(12px);
-  border: 1px solid rgba(220,38,38,0.3);
-  border-left: 3px solid var(--red-primary);
-  padding: 8px 14px; font-family: 'Courier New', monospace;
-  font-size: 0.75rem; color: var(--text-secondary);
-  border-radius: 3px;
-  box-shadow: 0 0 20px rgba(220,38,38,0.1);
-  transition: box-shadow .3s;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 16px; font-family: var(--int);
+  font-size: 0.8rem; color: rgba(255,255,255,0.7);
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-.threat-op-chip:hover { box-shadow: 0 0 30px rgba(220,38,38,0.3); }
 .threat-op-val {
-  font-size: 1.1rem; font-weight: 900; color: var(--red-primary);
-  font-family: 'Rajdhani', sans-serif;
-  text-shadow: 0 0 8px rgba(220,38,38,0.5);
+  font-size: 1rem; font-weight: 800; color: #fff;
+  font-family: var(--sg);
 }
-.threat-op-chip.green-chip { border-left-color: var(--accent-green); }
-.threat-op-chip.green-chip .threat-op-val { color: var(--accent-green); text-shadow: 0 0 8px rgba(72,187,120,0.5); }
+.threat-op-chip.green-chip { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05)); border:1px solid rgba(16,185,129,0.2); }
+.threat-op-chip.green-chip .threat-op-val { color: var(--accent-green); }
 
 /* animated breach ring */
 .breach-status-ring {
-  width: 12px; height: 12px; border-radius: 50%;
+  width: 10px; height: 10px; border-radius: 50%;
   background: var(--red-primary);
-  box-shadow: 0 0 0 0 rgba(220,38,38,0.4);
-  animation: breachPulse 1.5s ease-out infinite;
+  box-shadow: 0 0 0 0 rgba(239,68,68,0.4);
+  animation: breachPulse 2s ease-out infinite;
 }
 @keyframes breachPulse {
-  0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); }
-  70% { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
-  100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
-}
-
-.scanline-overlay {
-  position: absolute; inset: 0; z-index: 450; pointer-events: none;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px);
+  0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
 }
 
 /* ── CROSSHAIR ───────────────────────────────────────────────────────────── */
 .crosshair {
   position: absolute; top: 50%; left: 50%; width: 100%; height: 100%;
-  transform: translate(-50%, -50%); z-index: 500; pointer-events: none;
+  transform: translate(-50%, -50%); z-index: 500; pointer-events: none; opacity:0.3;
 }
-.ch-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(72,187,120,0.2); }
-.ch-v { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(72,187,120,0.2); }
+.ch-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.2); }
+.ch-v { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(255,255,255,0.2); }
 .ch-center {
   position: absolute; top: 50%; left: 50%; width: 40px; height: 40px;
-  transform: translate(-50%, -50%); border: 1px solid var(--accent-green);
+  transform: translate(-50%, -50%); border: 1px solid rgba(255,255,255,0.2);
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 15px rgba(72,187,120,0.4), inset 0 0 15px rgba(72,187,120,0.2);
-  animation: chPulse 2s infinite;
 }
-.ch-center::after { content:'+'; color: var(--accent-green); font-size: 1.2rem; font-weight: 300; }
-@keyframes chPulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.6} 50%{transform:translate(-50%,-50%) scale(1.1);opacity:1} }
 
 /* ── STATS BAR — COMMAND CENTER READOUT ──────────────────────────────────── */
 .stats-bar {
-  display: flex; gap: 0; margin-bottom: 16px;
-  background: rgba(10,10,20,0.92); backdrop-filter: blur(20px);
-  border: 1px solid rgba(220,38,38,0.15);
-  border-radius: var(--radius-md);
+  display: flex; gap: 0; margin-bottom: 24px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
   overflow: hidden;
   animation: fadeInDown 0.5s cubic-bezier(.22,1,.36,1) both;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 @keyframes fadeInDown {
   from { opacity: 0; transform: translateY(-10px); }
@@ -186,66 +110,50 @@
 }
 
 .stat-cell {
-  flex: 1; padding: 14px 18px;
+  flex: 1; padding: 18px 24px;
   border-right: 1px solid rgba(255,255,255,0.04);
   position: relative; overflow: hidden;
   transition: background 0.3s ease;
 }
 .stat-cell:last-child { border-right: none; }
-.stat-cell:hover { background: rgba(220,38,38,0.04); }
-.stat-cell::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-}
-.stat-cell:nth-child(1)::before { background: linear-gradient(90deg, #dc2626, transparent); }
-.stat-cell:nth-child(2)::before { background: linear-gradient(90deg, #f6ad55, transparent); }
-.stat-cell:nth-child(3)::before { background: linear-gradient(90deg, #48bb78, transparent); }
-.stat-cell:nth-child(4)::before { background: linear-gradient(90deg, #4299e1, transparent); }
+.stat-cell:hover { background: rgba(255,255,255,0.04); }
 
 .stat-label {
-  font-family: 'Courier New', monospace;
-  font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 0.15em; text-transform: uppercase;
-  color: var(--text-muted); margin-bottom: 4px;
-  display: flex; align-items: center; gap: 6px;
+  font-family: var(--int);
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); margin-bottom: 8px;
+  display: flex; align-items: center; justify-content:space-between;
 }
 .stat-value {
-  font-family: var(--font-display);
-  font-size: 1.4rem; font-weight: 800;
-  line-height: 1.1;
+  font-family: var(--sg);
+  font-size: 1.8rem; font-weight: 800;
+  line-height: 1.1; color:#fff;
 }
 .stat-sub {
-  font-size: 0.65rem; color: var(--text-muted);
-  font-family: 'Courier New', monospace;
-  margin-top: 2px; letter-spacing: 0.05em;
+  font-size: 0.75rem; color: rgba(255,255,255,0.4);
+  font-family: var(--int);
+  margin-top: 4px; font-weight: 400;
 }
 
 /* ── HEADER AREA — THREAT SURVEILLANCE NETWORK ───────────────────────────── */
 .surveillance-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
   animation: fadeInDown 0.4s cubic-bezier(.22,1,.36,1) both;
 }
 .surveillance-title-block {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 16px;
 }
 .surveillance-icon {
-  width: 48px; height: 48px; border-radius: 14px;
-  background: linear-gradient(135deg, rgba(220,38,38,0.15), rgba(220,38,38,0.03));
-  border: 1px solid rgba(220,38,38,0.3);
-  box-shadow: 0 0 25px rgba(220,38,38,0.15), inset 0 0 15px rgba(220,38,38,0.08);
+  width: 54px; height: 54px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05));
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.15), inset 0 0 15px rgba(239, 68, 68, 0.08);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; position: relative;
 }
-.surveillance-icon i { color: var(--red-primary); font-size: 1.3rem; }
-.surveillance-icon::after {
-  content: ''; position: absolute; inset: -3px;
-  border: 1px solid rgba(220,38,38,0.15); border-radius: 17px;
-  animation: iconRingPulse 3s ease-in-out infinite;
-}
-@keyframes iconRingPulse {
-  0%,100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-}
+.surveillance-icon i { color: #fff; font-size: 1.4rem; }
 
 .surveillance-title {
   font-family: var(--font-display);

@@ -6,21 +6,21 @@
 /* ── Immersive Auth Background ── */
 .auth-bg {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
-  background: radial-gradient(circle at 50% 100%, rgba(220, 38, 38, 0.1) 0%, #050508 60%);
+  background: radial-gradient(circle at 50% 100%, rgba(220, 38, 38, 0.05) 0%, rgba(10,10,15,1) 60%);
   position: relative; overflow: hidden; perspective: 1000px;
 }
 .auth-bg::before, .auth-bg::after {
   content: ''; position: absolute; border-radius: 50%;
-  pointer-events: none; mix-blend-mode: screen;
+  pointer-events: none; mix-blend-mode: screen; filter: blur(80px);
 }
 .auth-bg::before {
   width: 800px; height: 800px;
-  background: radial-gradient(circle, rgba(220, 38, 38, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, rgba(159,122,234,0.1) 50%, transparent 70%);
   top: -200px; left: -200px; animation: drift 15s ease-in-out infinite alternate;
 }
 .auth-bg::after {
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(220, 38, 38, 0.04) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(66, 153, 225, 0.15) 0%, rgba(245,158,11,0.05) 50%, transparent 60%);
   bottom: -150px; right: -150px; animation: drift 20s ease-in-out 3s infinite alternate-reverse;
 }
 
@@ -29,24 +29,17 @@
   100% { transform: translate(60px, 40px) scale(1.1) rotate(15deg); }
 }
 
-/* 3D Grid floor */
-.grid-floor {
-  position: absolute; inset: 0; top: 50%; bottom: -50%;
-  background-image: 
-    linear-gradient(rgba(220, 38, 38, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(220, 38, 38, 0.08) 1px, transparent 1px);
-  background-size: 80px 80px;
-  transform-origin: center top;
-  transform: perspective(1000px) rotateX(75deg) translateY(0);
-  animation: gridMove 20s linear infinite;
-  mask-image: linear-gradient(to top, black, transparent 80%);
-  -webkit-mask-image: linear-gradient(to top, black, transparent 80%);
-  pointer-events: none;
+/* ── Floating Hexagonal Grid -> Sleek Dots ── */
+.hex-grid {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.2;
+  background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  animation: bgMove 60s linear infinite;
 }
-@keyframes gridMove {
-  from { background-position: 0 0; }
-  to { background-position: 0 80px; }
-}
+@keyframes bgMove { from { background-position:0 0; } to { background-position:300px 300px; } }
+
+/* 3D Grid floor -> Removed for elegant look */
+.grid-floor { display:none; }
 
 /* Auth Card 3D Wrap */
 .auth-card-wrap {
@@ -57,51 +50,56 @@
 
 /* The actual glass card */
 .glass-card {
-  background: rgba(10, 10, 14, 0.7);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 30px 60px rgba(0,0,0,0.5);
   position: relative; overflow: hidden;
 }
 
 /* Animated glow border inside card */
 .glass-card::before {
   content:''; position: absolute; inset: -2px; z-index: -1;
-  background: conic-gradient(from 0deg, transparent 60%, var(--red-primary) 80%, transparent 100%);
+  background: conic-gradient(from 0deg, transparent 40%, rgba(220,38,38,0.5) 50%, rgba(159,122,234,0.5) 75%, transparent 100%);
   border-radius: inherit;
-  animation: rotateGlow 4s linear infinite;
-  opacity: 0.5;
+  animation: rotateGlow 5s linear infinite;
+  opacity: 0.6; filter: blur(5px);
 }
 @keyframes rotateGlow {
   to { transform: rotate(360deg); }
 }
 
-/* Logo Enhancements */
-.auth-logo {
-  font-family: var(--font-display); font-size: 2.8rem; font-weight: 900;
-  color: #fff; letter-spacing: 1px;
-  background: linear-gradient(to bottom, #fff 20%, var(--red-primary) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 15px rgba(220,38,38,0.4));
-  animation: logoBreath 4s ease-in-out infinite alternate;
+/* Pulsing shadow on the card */
+.glass-card {
+  animation: cardPulse 4s ease-in-out infinite;
 }
-@keyframes logoBreath {
-  from { filter: drop-shadow(0 0 10px rgba(220,38,38,0.3)); }
-  to { filter: drop-shadow(0 0 25px rgba(220,38,38,0.7)); }
+@keyframes cardPulse {
+  0%, 100% { transform:translateY(0); box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
+  50% { transform:translateY(-8px); box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(220,38,38,0.15); }
 }
+
+/* ── Secure Access Terminal Title -> Modern Welcome ── */
+.terminal-title {
+  font-family: var(--sg); font-size: 1.8rem; font-weight: 800;
+  letter-spacing: -0.02em; color: #fff; text-transform:none;
+  text-align: center; margin-bottom: 0.8rem;
+}
+
+/* ── Large Glowing Shield Icon ── */
 .shield-icon {
-  width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 1.2rem;
-  background: linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(220,38,38,0.02) 100%);
-  border: 1px solid rgba(220,38,38,0.3);
-  box-shadow: inset 0 0 20px rgba(220,38,38,0.1), 0 0 30px rgba(220,38,38,0.2);
-  display: inline-flex; justify-content: center; align-items: center;
-  font-size: 1.8rem; animation: shieldHover 4s ease-in-out infinite;
+  width: 72px; height: 72px; border-radius: 18px; margin: 0 auto 1.2rem;
+  background: linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(159,122,234,0.2) 100%);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: inset 0 0 30px rgba(255,255,255,0.05), 0 10px 40px rgba(220,38,38,0.2);
+  display: flex; justify-content: center; align-items: center;
+  font-size: 1.8rem; position: relative; overflow:hidden;
 }
-@keyframes shieldHover {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.05); }
+.shield-icon i {
+  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.6));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.5));
 }
+
 
 /* Input Focus Glow */
 .form-control-dark {
@@ -202,16 +200,18 @@
   <div class="grid-floor"></div>
 
   <div class="auth-card-wrap" id="auth-card">
-    <div class="text-center mb-4">
-      <div class="shield-icon">
-        <i class="bi bi-person-plus-fill" style="color:var(--red-primary);"></i>
-      </div>
-      <div class="auth-logo">RAKSHAK</div>
-      <p id="reg-typewriter" style="color:var(--text-muted);font-size:0.88rem;margin-top:6px;letter-spacing:0.05em;min-height:1.3em;"></p>
-    </div>
 
     <div class="glass-card p-4 p-md-5" style="border-radius:var(--radius-xl);">
-      <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:0.5rem;">Create Account</h2>
+      
+      <div class="text-center mb-4">
+        <div class="shield-icon">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div class="terminal-title">Join Rakshak</div>
+        <p class="text-secondary" style="font-size:0.9rem; font-family:var(--int); font-weight:400; color:rgba(255,255,255,0.6)!important;">
+          Register for the advanced AI safety system
+        </p>
+      </div>
 
       <!-- Registration progress -->
       <div class="reg-steps" id="reg-steps">

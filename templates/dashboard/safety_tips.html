@@ -5,95 +5,95 @@
 <style>
 /* Tip of the Day — enhanced */
 .tip-of-day-card {
-  background: linear-gradient(135deg, rgba(220,38,38,0.12) 0%, rgba(245,158,11,0.06) 100%);
-  border: 1px solid rgba(220,38,38,0.25); border-radius: 16px;
-  padding: 1.5rem; backdrop-filter: blur(20px); position: relative; overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
+  padding: 2rem; backdrop-filter: blur(24px); position: relative; overflow: hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3);
 }
 .tip-of-day-card::before {
-  content: ''; position: absolute; top: -50%; right: -20%;
-  width: 300px; height: 300px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(220,38,38,0.08), transparent 70%); pointer-events: none;
+  content: ''; position: absolute; inset: -1px; z-index: -1;
+  background: linear-gradient(135deg, rgba(220,38,38,0.3), rgba(245,158,11,0.3), rgba(159,122,234,0.3));
+  border-radius: inherit; opacity: 1; pointer-events: none;
+  animation: bgSpinCard 6s linear infinite; filter:blur(10px);
 }
+@keyframes bgSpinCard { 100% { filter:blur(10px) hue-rotate(360deg); } }
 .tip-of-day-card::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
   transform: skewX(-20deg); animation: tipSweep 6s linear infinite;
 }
 @keyframes tipSweep { 0%{left:-100%} 100%{left:200%} }
 .totd-icon {
-  font-size: 2.5rem; flex-shrink: 0; width: 64px; height: 64px;
+  font-size: 2.5rem; flex-shrink: 0; width: 72px; height: 72px;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(220,38,38,0.12); border-radius: 14px; border: 1px solid rgba(220,38,38,0.2);
-  box-shadow: 0 0 20px rgba(220,38,38,0.1);
+  background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05));
+  border-radius: 18px; border: 1px solid rgba(220,38,38,0.3);
+  box-shadow: 0 10px 30px rgba(220,38,38,0.2);
 }
 .totd-badge {
-  background: var(--red-primary); color: #fff; font-size: 0.65rem; font-weight: 700;
-  padding: 2px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.08em;
+  background: linear-gradient(90deg, #fff, rgba(255,255,255,0.4));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
 }
-.totd-category { color: rgba(255,255,255,0.4); font-size: 0.75rem; }
-.totd-title { color: #fff; font-weight: 700; font-size: 1.15rem; margin: 0.25rem 0 0.5rem; }
-.totd-content { color: rgba(255,255,255,0.6); font-size: 0.88rem; line-height: 1.6; margin: 0; }
+.totd-category { color: rgba(255,255,255,0.5); font-size: 0.8rem; font-family:var(--int); }
+.totd-title { color: #fff; font-weight: 800; font-family:var(--sg); font-size: 1.4rem; margin: 0.5rem 0 0.8rem; letter-spacing:-0.02em; }
+.totd-content { color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.7; margin: 0; font-weight:400; font-family:var(--int); }
 
 /* Category Tabs */
 .category-tabs {
-  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
-  scrollbar-width: thin; scrollbar-color: rgba(220,38,38,0.3) transparent;
+  display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
 .category-tabs::-webkit-scrollbar { height: 4px; }
 .category-tabs::-webkit-scrollbar-track { background: transparent; }
-.category-tabs::-webkit-scrollbar-thumb { background: rgba(220,38,38,0.3); border-radius: 4px; }
+.category-tabs::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 .cat-tab {
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.5); padding: 8px 18px; border-radius: 10px;
-  font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6); padding: 10px 24px; border-radius: 50px;
+  font-size: 0.85rem; font-family:var(--sg); font-weight: 600; cursor: pointer; white-space: nowrap;
   transition: all 0.3s ease; backdrop-filter: blur(10px); position: relative; overflow: hidden;
 }
-.cat-tab::after {
-  content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
-  transform: skewX(-20deg); transition: none;
-}
-.cat-tab:hover::after { animation: catSweep .5s ease forwards; }
-@keyframes catSweep { 100% { left: 200%; } }
-.cat-tab:hover { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); color: rgba(255,255,255,0.8); }
+.cat-tab:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.2); transform:translateY(-2px); }
 .cat-tab.active {
-  background: rgba(220,38,38,0.15); border-color: rgba(220,38,38,0.4); color: #fff;
-  box-shadow: 0 0 20px rgba(220,38,38,0.15);
+  background: rgba(220,38,38,0.15); border-color: rgba(220,38,38,0.3); color: #fff;
+  box-shadow: 0 0 20px rgba(220,38,38,0.2);
 }
 
 /* Tips Grid */
-.tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+.tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
 @media (max-width: 480px) { .tips-grid { grid-template-columns: 1fr; } }
 
 /* Tip Card */
 .tip-card {
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px; overflow: hidden; transition: all 0.3s ease;
-  backdrop-filter: blur(20px); position: relative;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; overflow: hidden; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  backdrop-filter: blur(24px); position: relative;
 }
 .tip-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: var(--red-primary); transform: scaleX(0); transform-origin: left;
-  transition: transform .4s cubic-bezier(.22,1,.36,1);
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.8), transparent); transform: scaleX(0);
+  transition: transform .5s cubic-bezier(.22,1,.36,1); opacity:0.5;
 }
 .tip-card:hover::before { transform: scaleX(1); }
-.tip-card:hover { border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-.tip-card.expanded { border-color: rgba(220,38,38,0.3); box-shadow: 0 8px 32px rgba(220,38,38,0.1); }
+.tip-card:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+.tip-card.expanded { border-color: rgba(220,38,38,0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
 .tip-card.expanded::before { transform: scaleX(1); }
-.tip-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; cursor: pointer; gap: 12px; }
-.tip-icon { font-size: 1.6rem; flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border-radius: 10px; transition: box-shadow .3s; }
-.tip-card:hover .tip-icon { box-shadow: 0 0 15px rgba(220,38,38,0.2); }
-.tip-title { color: #fff; font-size: 0.92rem; font-weight: 600; margin: 0; line-height: 1.3; }
-.tip-chevron { color: rgba(255,255,255,0.3); font-size: 0.85rem; transition: transform 0.3s ease; flex-shrink: 0; }
-.tip-card.expanded .tip-chevron { transform: rotate(180deg); color: #dc2626; }
-.tip-priority { font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
-.priority-1 { background: rgba(220,38,38,0.15); color: #dc2626; border: 1px solid rgba(220,38,38,0.3); }
-.priority-2 { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
-.priority-3 { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
-.tip-cat-label { font-size: 0.68rem; color: rgba(255,255,255,0.35); }
-.tip-card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease; padding: 0 1.25rem; }
-.tip-card.expanded .tip-card-body { max-height: 300px; padding: 0 1.25rem 1.25rem; }
-.tip-card-body p { color: rgba(255,255,255,0.55); font-size: 0.85rem; line-height: 1.7; margin: 0; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem; }
+.tip-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; cursor: pointer; gap: 14px; }
+.tip-icon { font-size: 1.4rem; flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 12px; transition: all .3s; border:1px solid rgba(255,255,255,0.05); }
+.tip-card:hover .tip-icon { box-shadow: 0 0 20px rgba(220,38,38,0.15); background:rgba(220,38,38,0.1); border-color:var(--red-primary); color:var(--red-primary); transform:scale(1.05) rotate(-5deg); }
+.tip-title { color: #fff; font-size: 1rem; font-weight: 700; font-family:var(--sg); margin: 0; line-height: 1.3; }
+.tip-chevron { color: rgba(255,255,255,0.4); font-size: 1rem; transition: transform 0.4s ease; flex-shrink: 0; }
+.tip-card.expanded .tip-chevron { transform: rotate(180deg); color: #fff; }
+.tip-priority { font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+.priority-1 { background: rgba(220,38,38,0.15); color: #ff6b6b; border: 1px solid rgba(220,38,38,0.3); }
+.priority-2 { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+.priority-3 { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+.tip-cat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); font-family:var(--int); }
+.tip-card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease; padding: 0 1.5rem; }
+.tip-card.expanded .tip-card-body { max-height: 400px; padding: 0 1.5rem 1.5rem; }
+.tip-card-body p { color: rgba(255,255,255,0.65); font-size: 0.95rem; line-height: 1.7; margin: 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem; font-family:var(--int); font-weight:400; }
+.tip-card.hidden { display: none; }
 .tip-card.hidden { display: none; }
 </style>
 {% endblock %}
@@ -102,37 +102,30 @@
 <div class="container-fluid px-4 py-4">
 
   <!-- ── Tactical Intel Library Header ── -->
-  <div style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(5,5,10,0.95));border:1px solid rgba(245,158,11,0.2);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden;">
-    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,0.5),transparent);"></div>
-    <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.1) 2px,rgba(0,0,0,0.1) 4px);pointer-events:none;border-radius:16px;"></div>
+  <div style="background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:32px 36px;margin-bottom:32px;position:relative;overflow:hidden;backdrop-filter:blur(24px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3);">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);opacity:0.3;"></div>
     <div style="position:relative;z-index:2;">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 0 20px rgba(245,158,11,0.1);">
-            <i class="bi bi-shield-check" style="color:var(--accent-amber);"></i>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg, rgba(220,38,38,0.2), rgba(220,38,38,0.05));border:1px solid rgba(220,38,38,0.3);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 0 20px rgba(220,38,38,0.2);">
+            <i class="bi bi-lightbulb-fill" style="color:#fff;"></i>
           </div>
           <div>
-            <div style="font-size:0.65rem;color:var(--accent-amber);letter-spacing:0.15em;font-family:'Courier New',monospace;font-weight:700;">
-              <span style="animation:blink 1.5s infinite;">●</span> TACTICAL INTEL LIBRARY
+            <div style="font-size:0.75rem;color:var(--red-primary);letter-spacing:0.15em;font-weight:800;font-family:var(--sg);margin-bottom:4px;">
+              <span style="animation:blink 1.5s infinite;">●</span> KNOWLEDGE HUB
             </div>
-            <h2 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;font-size:1.5rem;">Safety Tips</h2>
+            <h2 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;font-size:1.8rem;">Safety Library</h2>
           </div>
         </div>
         <!-- Search on the right -->
-        <div style="position:relative;min-width:240px;">
-          <i class="bi bi-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);font-size:0.85rem;pointer-events:none;"></i>
-          <input type="text" id="tip-search" placeholder="Search intel database..."
-            style="width:100%;padding:10px 14px 10px 38px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:0.82rem;outline:none;transition:border-color 0.3s;"
-            onfocus="this.style.borderColor='rgba(245,158,11,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+        <div style="position:relative;min-width:260px;">
+          <i class="bi bi-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:0.9rem;pointer-events:none;"></i>
+          <input type="text" id="tip-search" placeholder="Search safety protocols..."
+            style="width:100%;padding:12px 16px 12px 42px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:0.85rem;font-family:var(--int);outline:none;transition:all 0.3s;box-shadow:inset 0 2px 4px rgba(0,0,0,0.2);"
+            onfocus="this.style.borderColor='rgba(220,38,38,0.4)'; this.style.boxShadow='0 0 15px rgba(220,38,38,0.1), inset 0 2px 4px rgba(0,0,0,0.2)';" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.2)';">
         </div>
       </div>
-      <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0 0 12px;">Knowledge is your strongest shield. {{ tips|length }} classified safety protocols loaded.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;font-family:'Courier New',monospace;font-size:0.68rem;">
-        <span style="padding:4px 10px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:3px;color:var(--accent-amber);">📋 {{ tips|length }} PROTOCOLS</span>
-        <span style="padding:4px 10px;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:3px;color:var(--red-primary);">🔴 CRITICAL: {{ tips|selectattr('priority','equalto',1)|list|length }}</span>
-        <span style="padding:4px 10px;background:rgba(72,187,120,0.08);border:1px solid rgba(72,187,120,0.2);border-radius:3px;color:var(--accent-green);">✅ CLEARANCE: GRANTED</span>
-        <span style="padding:4px 10px;background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:3px;color:var(--accent-blue);">🔒 ENCRYPTED</span>
-      </div>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;font-family:var(--int);margin:0 0 16px;">Knowledge is your strongest shield. Browse curated resources and verified safety protocols.</p>
     </div>
   </div>
 
