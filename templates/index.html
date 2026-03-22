@@ -424,7 +424,14 @@ body::before{
    BENTO GRID
 ═══════════════════════════════════════════*/
 .bento-section{padding:0 clamp(2rem,6vw,6rem) 6rem;max-width:1380px;margin:0 auto}
-.bento-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));gap:2rem;margin-top:4rem}
+.bento-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:2rem;
+  margin-top:4rem;
+}
+.bento-grid .bc { min-height:380px; }
 .bc{
   background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
   border:1px solid rgba(255,255,255,0.08); border-radius:24px;
@@ -432,6 +439,7 @@ body::before{
   transition:all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.5);
   backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  display:flex;flex-direction:column;
 }
 .bc::before {
   content:''; position:absolute; inset:-2px; z-index:-1;
@@ -493,6 +501,23 @@ body::before{
 }
 .testi-stars{display:flex;gap:4px;margin-bottom:1.5rem;color:#fbbf24;font-size:1rem}
 .testi-text{font-family:var(--int);font-size:1rem;color:rgba(255,255,255,0.8);line-height:1.8;margin-bottom:2rem;font-weight:400;}
+.testi-text.bc-p{font-family:var(--int);font-size:0.95rem;color:rgba(255,255,255,0.65);line-height:1.7;margin:0; font-weight:400;}
+
+/* SOS card quick-stat pills */
+.bc-stats{margin-top:auto;padding-top:2rem;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:2;}
+.bc-stat-pill{
+  display:flex;align-items:center;gap:7px;
+  padding:6px 14px;border-radius:50px;
+  background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.1);
+  font-size:0.72rem;font-weight:700;font-family:var(--sg);letter-spacing:0.05em;
+  color:rgba(255,255,255,0.8);
+}
+.bc-stat-pill .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.bc-stat-pill.pill-r .dot{background:#ef4444;box-shadow:0 0 8px #ef4444;}
+.bc-stat-pill.pill-g .dot{background:#22c55e;box-shadow:0 0 8px #22c55e;}
+.bc-stat-pill.pill-o .dot{background:#f59e0b;box-shadow:0 0 8px #f59e0b;}
+
+/* Feed Anim */
 .testi-author{display:flex;align-items:center;gap:12px}
 .testi-avatar{
   width:44px;height:44px;border-radius:50%;
@@ -587,7 +612,10 @@ body::before{
   .hero-btns{justify-content:center}
   .hero-trust{justify-content:center}
   .hero-p{max-width:100%}
-  .bento-grid{grid-template-columns:repeat(2, 1fr)}
+  .bento-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:unset;}
+  .bento-grid .bc{min-height:320px;}
+}
+@media (max-width:768px){
   .steps-row{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
   .stat-cell:nth-child(2){border-right:none}
@@ -1403,23 +1431,23 @@ body::before{
       <p class="sec-sub">Every module built to protect — working in sync, around the clock.</p>
     </div>
     <div class="bento-grid">
+      <!-- SOS OVERRIDE -->
       <div class="bc bc-sos reveal d1">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
         <div class="bc-mini-anim" style="color:#dc2626"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <span class="bc-num">SYS.01</span>
-        <div>
-          <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-          <div class="bc-h">SOS OVERRIDE</div>
-          <p class="bc-p">One-tap emergency trigger with immediate GPS capture and silent 256-bit encrypted telemetry broadcast to your operatives.</p>
-        </div>
-        <div class="bc-feed">
-          <div class="feed-row"><div class="fd r"></div><span class="fd-txt">SOS triggered &middot; GPS LOCKED</span><span class="fd-time">0.8s</span></div>
-          <div class="feed-row"><div class="fd g"></div><span class="fd-txt">Contact Alpha notified</span><span class="fd-time">1.2s</span></div>
-          <div class="feed-row"><div class="fd g"></div><span class="fd-txt">Contact Bravo notified</span><span class="fd-time">1.5s</span></div>
-          <div class="feed-row"><div class="fd o"></div><span class="fd-txt">Overwatch alerted &middot; Case #4471</span><span class="fd-time">2.1s</span></div>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div class="bc-h">SOS OVERRIDE</div>
+        <p class="bc-p">One-tap emergency trigger with immediate GPS capture and silent 256-bit encrypted telemetry broadcast to your operatives.</p>
+        <div class="bc-stats">
+          <span class="bc-stat-pill pill-r"><span class="dot"></span>GPS LOCKED</span>
+          <span class="bc-stat-pill pill-g"><span class="dot"></span>2 CONTACTS</span>
+          <span class="bc-stat-pill pill-o"><span class="dot"></span>0.8s RESPONSE</span>
         </div>
       </div>
+
+      <!-- THREAT SENSOR -->
       <div class="bc bc-threat reveal d2">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
@@ -1428,7 +1456,13 @@ body::before{
         <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
         <div class="bc-h">THREAT SENSOR</div>
         <p class="bc-p">Silent 2-minute bio-pings detect inactivity. Missed heartbeat protocols auto-deploy SOS countermeasures.</p>
+        <div class="bc-stats">
+          <span class="bc-stat-pill pill-g"><span class="dot"></span>PING ACTIVE</span>
+          <span class="bc-stat-pill pill-o"><span class="dot"></span>120s INTERVAL</span>
+        </div>
       </div>
+
+      <!-- TACTICAL MAP -->
       <div class="bc bc-map reveal d3">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
@@ -1437,7 +1471,13 @@ body::before{
         <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         <div class="bc-h">TACTICAL MAP</div>
         <p class="bc-p">Community-sourced hostiles on a live map. Entering a 500m hot-zone triggers automatic proximity sirens.</p>
+        <div class="bc-stats">
+          <span class="bc-stat-pill pill-r"><span class="dot"></span>LIVE ZONES</span>
+          <span class="bc-stat-pill pill-g"><span class="dot"></span>500m RADIUS</span>
+        </div>
       </div>
+
+      <!-- OVERWATCH HUD -->
       <div class="bc bc-hud reveal d1">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
@@ -1446,7 +1486,13 @@ body::before{
         <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
         <div class="bc-h">OVERWATCH HUD</div>
         <p class="bc-p">Live global radar, risk scores, operative registry, and 4-panel crisis analytics for commanders.</p>
+        <div class="bc-stats">
+          <span class="bc-stat-pill pill-g"><span class="dot"></span>RADAR ONLINE</span>
+          <span class="bc-stat-pill pill-o"><span class="dot"></span>4-PANEL VIEW</span>
+        </div>
       </div>
+
+      <!-- CLASSIFIED VAULT -->
       <div class="bc bc-vault reveal d2">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
@@ -1455,15 +1501,23 @@ body::before{
         <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
         <div class="bc-h">CLASSIFIED VAULT</div>
         <p class="bc-p">Auto-generated legal-grade PDF dossiers containing forensic timelines and immutable incident hashes.</p>
+        <div class="bc-stats">
+          <span class="bc-stat-pill pill-g"><span class="dot"></span>AES-256</span>
+          <span class="bc-stat-pill pill-o"><span class="dot"></span>PDF READY</span>
+        </div>
       </div>
-      <div class="bc bc-auth bc-span3-col reveal d3">
+
+      <!-- ZERO-TRUST AUTH -->
+      <div class="bc bc-auth reveal d3">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <span class="bc-num" style="position:absolute; top:2rem; right:2.5rem; margin:0;">SEC.06</span>
-        <div class="bc-icon" style="margin-bottom:0;"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-        <div>
-          <div class="bc-h" style="margin-bottom:8px;">ZERO-TRUST AUTH</div>
-          <p class="bc-p" style="margin-bottom:0;">Bcrypt cryptographic hashing, CSRF protocol locking, and automated rate-limiting defense shielding.</p>
+        <span class="bc-num">SEC.06</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <div class="bc-h">ZERO-TRUST AUTH</div>
+        <p class="bc-p">Bcrypt cryptographic hashing, CSRF protocol locking, and automated rate-limiting defense shielding.</p>
+        <div class="bc-stats">
+          <span class="bc-stat-pill pill-g"><span class="dot"></span>BCRYPT</span>
+          <span class="bc-stat-pill pill-r"><span class="dot"></span>CSRF LOCKED</span>
         </div>
       </div>
     </div>
