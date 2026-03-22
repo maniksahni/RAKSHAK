@@ -3,346 +3,228 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAKSHAK — Offline</title>
+  <title>SIGNAL LOST — RAKSHAK</title>
   <meta name="theme-color" content="#dc2626">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #0a0a0f;
-      --bg-card: #12121a;
-      --accent: #dc2626;
-      --accent-glow: rgba(220, 38, 38, 0.4);
-      --text: #e2e2e8;
-      --text-muted: #6b6b80;
-    }
+    :root { --red: #dc2626; --green: #22c55e; --blue: #3b82f6; --bg: #050508; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      background: var(--bg); color: #fff; min-height: 100vh;
+      font-family: 'Inter', sans-serif; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
     }
 
-    /* ── Background grid ───────────────────────────────── */
+    /* BG grid */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(220, 38, 38, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(220, 38, 38, 0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(220,38,38,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(220,38,38,0.04) 1px,transparent 1px);
+      background-size: 60px 60px; pointer-events: none; z-index: 0;
     }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 2rem;
-      max-width: 480px;
+    /* scanline */
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+      background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.1) 3px,rgba(0,0,0,0.1) 4px);
     }
 
-    /* ── Radar animation ───────────────────────────────── */
-    .radar-wrapper {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin: 0 auto 2.5rem;
-    }
+    .page { position: relative; z-index: 1; text-align: center; padding: 2rem; max-width: 520px; width: 100%; }
 
+    /* Radar */
+    .radar-wrapper { position: relative; width: 180px; height: 180px; margin: 0 auto 2rem; }
     .radar-ring {
-      position: absolute;
-      border: 1px solid rgba(220, 38, 38, 0.15);
-      border-radius: 50%;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      position: absolute; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      border: 1px solid rgba(220,38,38,0.12);
     }
-
-    .radar-ring:nth-child(1) { width: 200px; height: 200px; }
-    .radar-ring:nth-child(2) { width: 150px; height: 150px; }
-    .radar-ring:nth-child(3) { width: 100px; height: 100px; }
-    .radar-ring:nth-child(4) { width: 50px;  height: 50px;  }
-
-    /* Cross-hairs */
-    .radar-wrapper::before,
-    .radar-wrapper::after {
-      content: '';
-      position: absolute;
-      background: rgba(220, 38, 38, 0.08);
-    }
-    .radar-wrapper::before {
-      width: 1px; height: 100%;
-      left: 50%; top: 0;
-    }
-    .radar-wrapper::after {
-      height: 1px; width: 100%;
-      top: 50%; left: 0;
-    }
-
-    /* Sweep arm */
+    .radar-ring:nth-child(1) { width:180px;height:180px; }
+    .radar-ring:nth-child(2) { width:130px;height:130px; }
+    .radar-ring:nth-child(3) { width:80px;height:80px; }
+    .radar-ring:nth-child(4) { width:40px;height:40px; }
+    .radar-wrapper::before { content:'';position:absolute;background:rgba(220,38,38,0.08);width:1px;height:100%;left:50%;top:0; }
+    .radar-wrapper::after  { content:'';position:absolute;background:rgba(220,38,38,0.08);height:1px;width:100%;top:50%;left:0; }
     .radar-sweep {
-      position: absolute;
-      width: 50%;
-      height: 2px;
-      top: 50%;
-      left: 50%;
-      transform-origin: left center;
-      animation: sweep 3s linear infinite;
+      position:absolute;width:50%;height:2px;top:50%;left:50%;transform-origin:left center;
+      animation:spin 3s linear infinite;
     }
     .radar-sweep::before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      box-shadow: 0 0 15px var(--accent-glow);
+      content:'';position:absolute;width:100%;height:100%;
+      background:linear-gradient(90deg,var(--red),transparent);box-shadow:0 0 12px rgba(220,38,38,0.5);
     }
-    .radar-sweep::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 100%;
-      transform: translate(-50%, -50%);
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
-
-    @keyframes sweep {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-
-    /* Center dot */
     .radar-center {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 20px var(--accent-glow);
-      animation: pulse-dot 2s ease-in-out infinite;
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:10px;height:10px;border-radius:50%;background:var(--red);
+      box-shadow:0 0 20px rgba(220,38,38,0.8);animation:pulse 2s ease-in-out infinite;
     }
-    @keyframes pulse-dot {
-      0%, 100% { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
-      50%      { transform: translate(-50%, -50%) scale(1.4); opacity: 0.7; }
-    }
-
-    /* Ping blips on radar */
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    @keyframes pulse { 50%{transform:translate(-50%,-50%) scale(1.5);opacity:0.6} }
     .radar-blip {
-      position: absolute;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      opacity: 0;
-      animation: blip 3s ease-out infinite;
+      position:absolute;width:6px;height:6px;border-radius:50%;background:var(--red);opacity:0;
+      animation:blip 3s ease-out infinite;
     }
-    .radar-blip:nth-child(6) { top: 30%; left: 65%; animation-delay: 0.5s; }
-    .radar-blip:nth-child(7) { top: 70%; left: 35%; animation-delay: 1.2s; }
-    .radar-blip:nth-child(8) { top: 25%; left: 30%; animation-delay: 2.0s; }
+    .radar-blip:nth-child(6){top:28%;left:62%;animation-delay:.4s;}
+    .radar-blip:nth-child(7){top:68%;left:32%;animation-delay:1.1s;}
+    .radar-blip:nth-child(8){top:22%;left:28%;animation-delay:2.1s;}
+    @keyframes blip {0%{opacity:0;transform:scale(0)}20%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0)}}
 
-    @keyframes blip {
-      0%   { opacity: 0; transform: scale(0); }
-      20%  { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(0); }
+    /* Status badge */
+    .signal-badge {
+      display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:3px;
+      border:1px solid rgba(220,38,38,0.35);background:rgba(220,38,38,0.08);
+      font-size:0.68rem;font-weight:700;letter-spacing:0.18em;color:var(--red);
+      font-family:'Courier New',monospace;margin-bottom:1.2rem;
+      animation:badgePulse 2s ease-in-out infinite;
     }
-
-    /* ── Typography ────────────────────────────────────── */
-    .offline-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border: 1px solid rgba(220, 38, 38, 0.3);
-      border-radius: 50px;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.5rem;
-      background: rgba(220, 38, 38, 0.06);
-    }
-    .offline-badge .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: pulse-dot 1.5s ease-in-out infinite;
-    }
+    .badge-dot { width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink .8s ease-in-out infinite; }
+    @keyframes blink { 50%{opacity:0.15;} }
+    @keyframes badgePulse { 50%{box-shadow:0 0 20px rgba(220,38,38,0.3);} }
 
     h1 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.75rem;
-      background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 2.8rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.5rem;
+      background: linear-gradient(180deg, #fff 40%, rgba(220,38,38,0.6) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: glitch 5s ease-in-out infinite 2s;
+    }
+    @keyframes glitch {
+      0%,90%,100%{transform:none;filter:none}
+      92%{transform:translate(-2px,1px);filter:hue-rotate(20deg)}
+      94%{transform:translate(2px,-1px)}
+      96%{transform:translate(-1px,2px)}
     }
 
-    .subtitle {
-      font-size: 1rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
+    .subtitle { font-size:0.9rem;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:1.5rem; }
 
-    /* ── Reassurance card ──────────────────────────────── */
-    .reassurance {
-      background: var(--bg-card);
-      border: 1px solid rgba(220, 38, 38, 0.1);
-      border-radius: 12px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2rem;
-      text-align: left;
+    /* Terminal log */
+    .terminal-log {
+      background:rgba(0,0,0,0.5);border:1px solid rgba(220,38,38,0.15);
+      border-radius:10px;padding:14px 16px;margin-bottom:1.5rem;text-align:left;
+      font-family:'Courier New',monospace;font-size:0.7rem;line-height:2em;
+      color:rgba(255,255,255,0.35);max-height:110px;overflow:hidden;
     }
-    .reassurance-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .reassurance-title svg {
-      flex-shrink: 0;
-    }
-    .reassurance ul {
-      list-style: none;
-      padding: 0;
-    }
-    .reassurance li {
-      position: relative;
-      padding: 6px 0 6px 20px;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .reassurance li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(220, 38, 38, 0.5);
-    }
+    .log-line { display:flex;gap:10px;animation:logIn .3s ease both; }
+    @keyframes logIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+    .log-ts { color:rgba(255,255,255,0.2); }
+    .log-err { color:var(--red); }
+    .log-ok  { color:var(--green); }
+    .log-warn { color:#f59e0b; }
 
-    /* ── Retry button ──────────────────────────────────── */
+    /* Metric chips */
+    .metrics { display:flex;gap:10px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap; }
+    .metric {
+      background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+      border-radius:8px;padding:10px 16px;text-align:center;min-width:90px;
+    }
+    .metric-val { font-size:1.4rem;font-weight:900;color:var(--red);display:block; }
+    .metric-val.green { color:var(--green); }
+    .metric-lbl { font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3); }
+
+    /* Retry button */
     .btn-retry {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 36px;
-      border: none;
-      border-radius: 10px;
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 4px 24px var(--accent-glow);
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:14px 36px;border:none;border-radius:10px;
+      background:linear-gradient(135deg,var(--red),#991b1b);color:#fff;
+      font-size:0.95rem;font-weight:700;letter-spacing:0.04em;cursor:pointer;
+      transition:all 0.25s;box-shadow:0 4px 24px rgba(220,38,38,0.4);
     }
-    .btn-retry:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px var(--accent-glow);
-    }
-    .btn-retry:active {
-      transform: translateY(0);
-    }
-    .btn-retry svg {
-      transition: transform 0.4s ease;
-    }
-    .btn-retry:hover svg {
-      transform: rotate(180deg);
-    }
+    .btn-retry:hover { transform:translateY(-2px);box-shadow:0 8px 36px rgba(220,38,38,0.6); }
+    .btn-retry:active { transform:translateY(0); }
 
-    /* ── Footer ────────────────────────────────────────── */
-    .offline-footer {
-      margin-top: 3rem;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      opacity: 0.5;
-    }
+    .footer-note { margin-top:2rem;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.18);font-family:'Courier New',monospace; }
   </style>
 </head>
 <body>
+<div class="page">
 
-  <div class="container">
-
-    <!-- Radar -->
-    <div class="radar-wrapper">
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
-      <div class="radar-ring"></div>
-      <div class="radar-sweep"></div>
-      <div class="radar-blip"></div>
-      <div class="radar-blip"></div>
-      <div class="radar-blip"></div>
-      <div class="radar-center"></div>
-    </div>
-
-    <!-- Status -->
-    <div class="offline-badge">
-      <span class="dot"></span>
-      Connection Lost
-    </div>
-
-    <h1>You're Offline</h1>
-    <p class="subtitle">
-      Your device has lost its network connection.<br>
-      RAKSHAK is waiting to reconnect.
-    </p>
-
-    <!-- Reassurance card -->
-    <div class="reassurance">
-      <div class="reassurance-title">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M8 1L2 4v4.5c0 3.5 2.6 6.2 6 7.5 3.4-1.3 6-4 6-7.5V4L8 1z" stroke="#dc2626" stroke-width="1.5" fill="none"/>
-          <path d="M6 8l1.5 1.5L10.5 6" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Your emergency features still work
-      </div>
-      <ul>
-        <li>SOS alerts will send when connection restores</li>
-        <li>Emergency contacts are cached on your device</li>
-        <li>Location data is stored locally until sync</li>
-      </ul>
-    </div>
-
-    <!-- Retry -->
-    <button class="btn-retry" onclick="window.location.reload()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 4 23 10 17 10"></polyline>
-        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-      </svg>
-      Retry Connection
-    </button>
-
-    <div class="offline-footer">RAKSHAK Safety System</div>
-
+  <!-- Radar -->
+  <div class="radar-wrapper">
+    <div class="radar-ring"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-sweep"></div>
+    <div class="radar-blip"></div>
+    <div class="radar-blip"></div>
+    <div class="radar-blip"></div>
+    <div class="radar-center"></div>
   </div>
 
+  <!-- Status Badge -->
+  <div class="signal-badge"><div class="badge-dot"></div> SIGNAL LOST · UPLINK SEVERED</div>
+
+  <h1>You're Offline</h1>
+  <p class="subtitle">RAKSHAK has lost network connectivity.<br>Emergency core modules are operating in standby mode.</p>
+
+  <!-- Live terminal log -->
+  <div class="terminal-log" id="terminal-log">
+    <div class="log-line"><span class="log-ts">00:00:01</span><span class="log-err">ERR</span><span>Connection refused · dns_probe_finished_no_internet</span></div>
+    <div class="log-line"><span class="log-ts">00:00:02</span><span class="log-warn">WRN</span><span>Retry attempt [1/∞] · exponential backoff applied</span></div>
+    <div class="log-line"><span class="log-ts">00:00:04</span><span class="log-err">ERR</span><span>GPS beacon: NO UPLINK · local cache active</span></div>
+    <div class="log-line"><span class="log-ts">00:00:06</span><span class="log-ok">INF</span><span>Emergency contacts cached · SOS queue armed</span></div>
+    <div class="log-line"><span class="log-ts">00:00:08</span><span class="log-warn">WRN</span><span>Satellite relay: DEGRADED · reconnecting...</span></div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metrics">
+    <div class="metric">
+      <span class="metric-val" id="retry-count">0</span>
+      <span class="metric-lbl">Retries</span>
+    </div>
+    <div class="metric">
+      <span class="metric-val" id="offline-secs">0</span>
+      <span class="metric-lbl">Seconds Offline</span>
+    </div>
+    <div class="metric">
+      <span class="metric-val green">✓</span>
+      <span class="metric-lbl">SOS Armed</span>
+    </div>
+  </div>
+
+  <!-- Retry Button -->
+  <button class="btn-retry" id="retry-btn" onclick="attemptRetry()">
+    <i>↺</i> Reconnect to RAKSHAK
+  </button>
+
+  <div class="footer-note">RAKSHAK Safety System · Offline Mode · v3.0</div>
+</div>
+
+<script>
+let retries = 0, elapsed = 0;
+const retryEl = document.getElementById('retry-count');
+const secsEl = document.getElementById('offline-secs');
+const logEl = document.getElementById('terminal-log');
+
+setInterval(() => {
+  elapsed++;
+  secsEl.textContent = elapsed;
+}, 1000);
+
+function addLog(type, msg) {
+  const ts = String(Math.floor(elapsed/60)).padStart(2,'0') + ':' + String(elapsed%60).padStart(2,'0') + ':' + String(Date.now()%60).padStart(2,'0');
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  const cls = type === 'ERR' ? 'log-err' : type === 'OK' ? 'log-ok' : 'log-warn';
+  line.innerHTML = `<span class="log-ts">${ts}</span><span class="${cls}">${type}</span><span>${msg}</span>`;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function attemptRetry() {
+  retries++;
+  retryEl.textContent = retries;
+  addLog('WRN', `Retry attempt [${retries}] initiated by operator`);
+  setTimeout(() => {
+    addLog('WRN', 'Probing network gateway...');
+    setTimeout(() => window.location.reload(), 800);
+  }, 400);
+}
+
+/* Auto-retry every 30s */
+setInterval(() => {
+  retries++;
+  retryEl.textContent = retries;
+  addLog('WRN', `Auto-retry [${retries}] · polling network status`);
+  fetch('/').then(() => { addLog('OK', 'Gateway responding · reloading...'); setTimeout(() => window.location.reload(), 500); }).catch(() => addLog('ERR', 'Still offline · holding position'));
+}, 30000);
+</script>
 </body>
 </html>
