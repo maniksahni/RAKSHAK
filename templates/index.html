@@ -765,10 +765,9 @@ body::before{
 /* ═══════════════════════════════════════════
    FOOTER — HEARTBEAT & SOCIAL
 ═══════════════════════════════════════════*/
-.footer-heartbeat{width:100%;height:40px;position:relative;overflow:hidden;margin-bottom:1rem}
-.footer-heartbeat svg{width:100%;height:40px}
-.heartbeat-line{stroke:var(--red);stroke-width:1.5;fill:none;stroke-dasharray:1000;stroke-dashoffset:1000;animation:heartbeatDraw 3s ease-in-out infinite;filter:drop-shadow(0 0 3px var(--red))}
-@keyframes heartbeatDraw{0%{stroke-dashoffset:1000}50%{stroke-dashoffset:0}100%{stroke-dashoffset:-1000}}
+.footer-heartbeat{width:100%;height:3px;position:relative;overflow:hidden;margin-bottom:1rem;background:linear-gradient(90deg, transparent, rgba(220,38,38,0.05) 20%, rgba(220,38,38,0.1) 50%, rgba(220,38,38,0.05) 80%, transparent);border-radius:3px;}
+.sweep-laser{position:absolute;top:0;left:0;height:100%;width:300px;background:linear-gradient(90deg, transparent, rgba(220,38,38,0.8) 50%, transparent);box-shadow:0 0 15px rgba(220,38,38,0.9);animation:sweepLine 3s linear infinite;}
+@keyframes sweepLine{0%{transform:translateX(-300px)}100%{transform:translateX(100vw)}}
 .footer-social{display:flex;gap:12px;align-items:center}
 .social-icon{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:pointer}
 .social-icon:hover{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.4);transform:translateY(-2px);box-shadow:0 4px 12px rgba(220,38,38,.2)}
@@ -1731,11 +1730,9 @@ body::before{
 
 <!-- ══════════ FOOTER ══════════ -->
 <footer class="rk-footer" style="flex-direction:column;gap:1.5rem;padding:3rem clamp(2rem,4vw,6rem) 2rem;">
-  <!-- Heartbeat Line Animation -->
+  <!-- Sweep Laser Line Animation -->
   <div class="footer-heartbeat">
-    <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
-      <path class="heartbeat-line" d="M0,20 L200,20 L220,20 L240,5 L260,35 L280,10 L300,30 L320,20 L500,20 L520,20 L540,5 L560,35 L580,10 L600,30 L620,20 L800,20 L820,20 L840,5 L860,35 L880,10 L900,30 L920,20 L1200,20"/>
-    </svg>
+    <div class="sweep-laser"></div>
   </div>
 
   <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:1rem;">
