@@ -427,10 +427,17 @@ body::before{
 .bento-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:2rem;
+  grid-template-areas:"sos threat threat" "map map hud" "vault auth auth";
+  gap:1.5rem;
   margin-top:4rem;
 }
-.bento-grid .bc { min-height:280px; }
+.bento-grid .bc{min-height:300px;}
+.bc-sos{grid-area:sos}
+.bc-threat{grid-area:threat}
+.bc-map{grid-area:map}
+.bc-hud{grid-area:hud}
+.bc-vault{grid-area:vault}
+.bc-auth{grid-area:auth}
 .bc{
   background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
   border:1px solid rgba(255,255,255,0.08); border-radius:24px;
@@ -440,9 +447,7 @@ body::before{
   backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
   display:flex;flex-direction:column;justify-content:space-between;
 }
-@media(max-width:1024px) {
-  .bento-grid { grid-template-columns:repeat(2,1fr); }
-}
+/* 1024px bento handled in main responsive block below */
 .bc::before {
   content:''; position:absolute; inset:-2px; z-index:-1;
   background: linear-gradient(135deg, rgba(220,38,38,0.4), rgba(159,122,234,0.4), rgba(59,130,246,0.4));
@@ -619,8 +624,10 @@ body::before{
   .hero-btns{justify-content:center}
   .hero-trust{justify-content:center}
   .hero-p{max-width:100%}
-  .bento-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:unset;}
-  .bento-grid .bc{min-height:320px;}
+  .bento-grid{grid-template-columns:1fr 1fr;grid-template-areas:"sos threat" "map hud" "vault auth";grid-template-rows:unset}
+  .bento-grid .bc{min-height:280px}
+  .bc-wide-inner{flex-direction:column;gap:1rem}
+  .bc-wide-left{flex:none;width:100%}
 }
 @media (max-width:768px){
   .steps-row{grid-template-columns:1fr}
@@ -632,7 +639,8 @@ body::before{
   .tb-item:last-child{border-bottom:none}
 }
 @media(max-width:640px){
-  .bento-grid{grid-template-columns:1fr}
+  .bento-grid{grid-template-columns:1fr;grid-template-areas:unset}
+  .bc-sos,.bc-threat,.bc-map,.bc-hud,.bc-vault,.bc-auth{grid-area:unset}
   .cta-btns{flex-direction:column;align-items:center}
   .rk-footer{flex-direction:column;text-align:center}
   .tb-inner{flex-direction:column}
@@ -722,6 +730,81 @@ body::before{
 .bc-mini-anim{position:absolute;top:18px;left:18px;width:20px;height:20px;opacity:.3;z-index:2}
 .bc-mini-anim svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;animation:miniSpin 8s linear infinite}
 @keyframes miniSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════
+   BENTO — WIDE CARD INTERIOR LAYOUT
+═══════════════════════════════════════════*/
+.bc-wide-inner{display:flex;gap:2rem;flex:1;min-height:0}
+.bc-wide-left{flex:0 0 240px;display:flex;flex-direction:column;justify-content:space-between}
+.bc-wide-right{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+
+/* ── EKG — THREAT SENSOR ── */
+.ekg-lbl{font-family:'Courier New',monospace;font-size:.55rem;color:rgba(245,158,11,.55);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.ekg-lbl::before{content:'';width:5px;height:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;animation:blink 1.5s infinite;flex-shrink:0}
+.ekg-wrap{position:relative;height:90px;background:rgba(0,0,0,.5);border:1px solid rgba(245,158,11,.1);border-radius:10px;overflow:hidden;margin-bottom:.8rem}
+.ekg-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.04) 1px,transparent 1px);background-size:100% 22px,50px 100%}
+.ekg-svg{width:100%;height:100%;position:relative;z-index:2}
+.ekg-line{fill:none;stroke:#f59e0b;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(245,158,11,.8))}
+.ekg-scan{position:absolute;top:0;bottom:0;width:32px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.14),transparent);animation:ekgScan 3s linear infinite;z-index:3}
+@keyframes ekgScan{from{left:-32px}to{left:100%}}
+.ekg-metrics{display:flex;gap:1.4rem}
+.ekg-metric{display:flex;flex-direction:column;align-items:center}
+.ekg-val{font-family:var(--sg);font-size:1.3rem;font-weight:800;line-height:1}
+.ekg-key{font-family:'Courier New',monospace;font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+
+/* ── RADAR — TACTICAL MAP ── */
+.radar-wrap{display:flex;gap:1.2rem;align-items:center;height:100%}
+.radar-scope{position:relative;width:130px;height:130px;flex-shrink:0}
+.radar-ring{position:absolute;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+.radar-ring:nth-child(1){width:44px;height:44px;border:1px solid rgba(59,130,246,.28)}
+.radar-ring:nth-child(2){width:88px;height:88px;border:1px solid rgba(59,130,246,.16)}
+.radar-ring:nth-child(3){width:130px;height:130px;border:1px solid rgba(59,130,246,.08)}
+.radar-ch{position:absolute;background:rgba(59,130,246,.09);top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+.radar-cv{position:absolute;background:rgba(59,130,246,.09);left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+.radar-sweep-arm{position:absolute;top:50%;left:50%;width:65px;height:65px;background:conic-gradient(rgba(59,130,246,.4) 0deg,transparent 50deg,transparent 360deg);transform-origin:0 0;border-radius:0 100% 0 0;animation:armSpin 3s linear infinite}
+@keyframes armSpin{to{transform:rotate(360deg)}}
+.radar-blip{position:absolute;width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%);animation:blipBeat 3s ease-in-out infinite}
+.radar-blip.blip-b{background:#3b82f6;box-shadow:0 0 8px #3b82f6,0 0 16px rgba(59,130,246,.4)}
+.radar-blip.blip-r{background:#ef4444;box-shadow:0 0 8px #ef4444,0 0 16px rgba(239,68,68,.4);animation-duration:1.5s}
+.radar-blip.blip-o{background:#f59e0b;box-shadow:0 0 8px #f59e0b,0 0 16px rgba(245,158,11,.4)}
+@keyframes blipBeat{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(.8)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}}
+.radar-zones{flex:1;display:flex;flex-direction:column;gap:.5rem}
+.radar-zone{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(0,0,0,.3);border-radius:6px;border-left:2px solid transparent;font-family:'Courier New',monospace;font-size:.63rem;letter-spacing:.04em;color:rgba(255,255,255,.45)}
+.radar-zone.zone-hot{border-left-color:#ef4444}
+.radar-zone.zone-warn{border-left-color:#f59e0b}
+.radar-zone.zone-safe{border-left-color:#22c55e}
+.rz-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.zone-hot .rz-dot{background:#ef4444;box-shadow:0 0 5px #ef4444}
+.zone-warn .rz-dot{background:#f59e0b;box-shadow:0 0 5px #f59e0b}
+.zone-safe .rz-dot{background:#22c55e;box-shadow:0 0 5px #22c55e}
+.rz-dist{margin-left:auto;font-size:.58rem;color:rgba(255,255,255,.22)}
+
+/* ── TERMINAL — ZERO-TRUST AUTH ── */
+.terminal-viz{height:100%;min-height:120px;background:rgba(0,0,0,.5);border:1px solid rgba(6,182,212,.1);border-radius:10px;padding:14px;overflow:hidden;display:flex;flex-direction:column}
+.term-bar{display:flex;align-items:center;gap:5px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.05)}
+.term-dot{width:7px;height:7px;border-radius:50%}
+.term-dot:nth-child(1){background:#ef4444}
+.term-dot:nth-child(2){background:#f59e0b}
+.term-dot:nth-child(3){background:#22c55e}
+.term-title{font-family:'Courier New',monospace;font-size:.52rem;color:rgba(255,255,255,.2);margin-left:4px;letter-spacing:.1em}
+.term-lines{display:flex;flex-direction:column;gap:0;flex:1;overflow:hidden}
+.term-line{font-family:'Courier New',monospace;font-size:.62rem;line-height:1.65;color:rgba(6,182,212,.55);opacity:0;animation:termIn .3s ease forwards;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-line .tok{color:rgba(255,255,255,.75)}
+.term-line .tok-ok{color:#22c55e}
+.term-line .tok-cmd{color:#06b6d4}
+.term-line:nth-child(1){animation-delay:.3s}
+.term-line:nth-child(2){animation-delay:.9s}
+.term-line:nth-child(3){animation-delay:1.5s}
+.term-line:nth-child(4){animation-delay:2.1s}
+.term-line:nth-child(5){animation-delay:2.7s}
+.term-line:nth-child(6){animation-delay:3.3s}
+.term-line:nth-child(7){animation-delay:3.9s}
+.term-cursor{display:inline-block;width:6px;height:.7em;background:rgba(6,182,212,.8);margin-left:2px;vertical-align:middle;animation:cursorBlink 1s infinite}
+@keyframes termIn{to{opacity:1}}
+
+/* ── FILM GRAIN OVERLAY ── */
+.grain-overlay{position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;animation:grainAnim .7s steps(1) infinite}
+@keyframes grainAnim{0%{transform:translate(0,0)}16%{transform:translate(-4%,-2%)}33%{transform:translate(2%,5%)}50%{transform:translate(5%,-3%)}66%{transform:translate(-2%,4%)}83%{transform:translate(3%,1%)}}
 
 /* ═══════════════════════════════════════════
    HOW IT WORKS — CONNECTING LINES & BADGES
@@ -1110,6 +1193,7 @@ body::before{
 {% endblock %}
 
 {% block content %}
+<div class="grain-overlay"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="rk-page">
 
@@ -1491,14 +1575,33 @@ body::before{
           </div>
         </div>
         <span class="bc-num">MOD.02</span>
-        <div class="bc-top">
-          <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
-          <div class="bc-h">THREAT SENSOR</div>
-          <p class="bc-p">Silent 2-minute bio-pings detect inactivity. Missed heartbeat protocols auto-deploy SOS countermeasures.</p>
-        </div>
-        <div class="bc-stats">
-          <span class="bc-stat-pill pill-g"><span class="dot"></span>PING ACTIVE</span>
-          <span class="bc-stat-pill pill-o"><span class="dot"></span>120s INTERVAL</span>
+        <div class="bc-wide-inner">
+          <div class="bc-wide-left">
+            <div class="bc-top">
+              <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
+              <div class="bc-h">THREAT SENSOR</div>
+              <p class="bc-p">Silent 2-minute bio-pings detect inactivity. Missed heartbeat protocols auto-deploy SOS countermeasures.</p>
+            </div>
+            <div class="bc-stats">
+              <span class="bc-stat-pill pill-g"><span class="dot"></span>PING ACTIVE</span>
+              <span class="bc-stat-pill pill-o"><span class="dot"></span>120s INTERVAL</span>
+            </div>
+          </div>
+          <div class="bc-wide-right">
+            <div class="ekg-lbl">BIOMETRIC HEARTBEAT MONITOR</div>
+            <div class="ekg-wrap">
+              <div class="ekg-grid-bg"></div>
+              <svg class="ekg-svg" viewBox="0 0 400 90" preserveAspectRatio="none">
+                <polyline class="ekg-line" points="0,45 20,45 35,40 42,50 50,10 58,80 66,36 74,52 85,45 120,45 155,45 170,40 177,50 185,10 193,80 201,36 209,52 220,45 255,45 290,45 305,40 312,50 320,10 328,80 336,36 344,52 355,45 400,45"/>
+              </svg>
+              <div class="ekg-scan"></div>
+            </div>
+            <div class="ekg-metrics">
+              <div class="ekg-metric"><span class="ekg-val" style="color:#22c55e">72</span><span class="ekg-key">BPM</span></div>
+              <div class="ekg-metric"><span class="ekg-val" style="color:#f59e0b">120s</span><span class="ekg-key">Interval</span></div>
+              <div class="ekg-metric"><span class="ekg-val" style="color:#3b82f6">98%</span><span class="ekg-key">SpO₂</span></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1513,14 +1616,40 @@ body::before{
           </div>
         </div>
         <span class="bc-num">MOD.03</span>
-        <div class="bc-top">
-          <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-          <div class="bc-h">TACTICAL MAP</div>
-          <p class="bc-p">Community-sourced hostiles on a live map. Entering a 500m hot-zone triggers automatic proximity sirens.</p>
-        </div>
-        <div class="bc-stats">
-          <span class="bc-stat-pill pill-r"><span class="dot"></span>LIVE ZONES</span>
-          <span class="bc-stat-pill pill-g"><span class="dot"></span>500m RADIUS</span>
+        <div class="bc-wide-inner">
+          <div class="bc-wide-left">
+            <div class="bc-top">
+              <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div class="bc-h">TACTICAL MAP</div>
+              <p class="bc-p">Community-sourced hostiles on a live map. Entering a 500m hot-zone triggers automatic proximity sirens.</p>
+            </div>
+            <div class="bc-stats">
+              <span class="bc-stat-pill pill-r"><span class="dot"></span>LIVE ZONES</span>
+              <span class="bc-stat-pill pill-g"><span class="dot"></span>500m RADIUS</span>
+            </div>
+          </div>
+          <div class="bc-wide-right">
+            <div class="radar-wrap">
+              <div class="radar-scope">
+                <div class="radar-ring"></div>
+                <div class="radar-ring"></div>
+                <div class="radar-ring"></div>
+                <div class="radar-ch"></div>
+                <div class="radar-cv"></div>
+                <div class="radar-sweep-arm"></div>
+                <div class="radar-blip blip-r" style="top:38%;left:45%"></div>
+                <div class="radar-blip blip-o" style="top:62%;left:28%"></div>
+                <div class="radar-blip blip-b" style="top:22%;left:68%"></div>
+                <div class="radar-blip blip-b" style="top:72%;left:65%"></div>
+              </div>
+              <div class="radar-zones">
+                <div class="radar-zone zone-hot"><div class="rz-dot"></div>ZONE-7 [HOT]<span class="rz-dist">0.8 km</span></div>
+                <div class="radar-zone zone-warn"><div class="rz-dot"></div>ZONE-12 [WATCH]<span class="rz-dist">1.4 km</span></div>
+                <div class="radar-zone zone-safe"><div class="rz-dot"></div>ZONE-3 [CLEAR]<span class="rz-dist">2.1 km</span></div>
+                <div class="radar-zone zone-safe"><div class="rz-dot"></div>ZONE-9 [CLEAR]<span class="rz-dist">3.0 km</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1567,14 +1696,35 @@ body::before{
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
         <span class="bc-num">SEC.06</span>
-        <div class="bc-top">
-          <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-          <div class="bc-h">ZERO-TRUST AUTH</div>
-          <p class="bc-p">Bcrypt cryptographic hashing, CSRF protocol locking, and automated rate-limiting defense shielding.</p>
-        </div>
-        <div class="bc-stats">
-          <span class="bc-stat-pill pill-g"><span class="dot"></span>BCRYPT</span>
-          <span class="bc-stat-pill pill-r"><span class="dot"></span>CSRF LOCKED</span>
+        <div class="bc-wide-inner">
+          <div class="bc-wide-left">
+            <div class="bc-top">
+              <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+              <div class="bc-h">ZERO-TRUST AUTH</div>
+              <p class="bc-p">Bcrypt cryptographic hashing, CSRF protocol locking, and automated rate-limiting defense shielding.</p>
+            </div>
+            <div class="bc-stats">
+              <span class="bc-stat-pill pill-g"><span class="dot"></span>BCRYPT</span>
+              <span class="bc-stat-pill pill-r"><span class="dot"></span>CSRF LOCKED</span>
+            </div>
+          </div>
+          <div class="bc-wide-right">
+            <div class="terminal-viz">
+              <div class="term-bar">
+                <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
+                <span class="term-title">RAKSHAK — SECURITY PROTOCOL v3.1</span>
+              </div>
+              <div class="term-lines">
+                <div class="term-line"><span class="tok-cmd">$</span> init zero-trust auth layer...</div>
+                <div class="term-line">→ bcrypt <span class="tok">rounds=12</span> ........... <span class="tok-ok">[OK]</span></div>
+                <div class="term-line">→ csrf_token <span class="tok">verified</span> ......... <span class="tok-ok">[OK]</span></div>
+                <div class="term-line">→ rate_limit <span class="tok">100req/min</span> ....... <span class="tok-ok">[OK]</span></div>
+                <div class="term-line">→ entropy <span class="tok">256-bit session</span> .... <span class="tok-ok">[OK]</span></div>
+                <div class="term-line">→ tls <span class="tok">1.3 handshake</span> ......... <span class="tok-ok">[OK]</span></div>
+                <div class="term-line"><span class="tok-ok">▸ ACCESS GRANTED</span> <span class="term-cursor"></span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
