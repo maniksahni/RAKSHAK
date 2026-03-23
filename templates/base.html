@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   {% block extra_css %}{% endblock %}
@@ -81,12 +85,14 @@
 {% if current_user.is_authenticated %}
 <nav class="navbar navbar-rakshak d-flex align-items-center px-4" style="position:fixed;top:0;left:240px;right:0;z-index:200;">
   <!-- Mobile toggle -->
-  <button class="btn-glass d-lg-none me-3" id="sidebar-toggle" style="padding:6px 10px;">
+  <button class="btn-glass d-lg-none me-3" id="sidebar-toggle" style="padding:6px 10px;border-radius:8px;">
     <i class="bi bi-list"></i>
   </button>
 
-  <a class="rk-logo-mark me-auto" href="{{ url_for('dashboard.index') }}" style="text-decoration:none;">
+  <!-- Logo (uses global .rk-logo-* classes from main.css) -->
+  <a class="rk-logo-mark me-auto" href="{{ url_for('dashboard.index') }}">
     <div class="rk-logo-shield-wrap">
+      <div class="rk-logo-scan"></div>
       <svg width="30" height="34" viewBox="0 0 42 50" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="lgA-base" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
@@ -123,26 +129,29 @@
     </div>
   </a>
 
-  <div class="d-flex align-items-center gap-3">
-    <!-- Hardware Dev Link -->
+  <!-- Right side controls -->
+  <div class="d-flex align-items-center gap-2">
     {% if not current_user.is_admin %}
-    <button id="hardware-link-btn" class="btn-glass" style="padding: 4px 12px; font-size: 0.75rem; height: 28px; border-radius: 4px; display: flex; align-items: center; gap: 6px; z-index: 100;" onclick="startHardwareLink()">
-      <i class="bi bi-bluetooth"></i> Link Ring
+    <!-- Bluetooth Link -->
+    <button id="hardware-link-btn" class="btn-glass" onclick="startHardwareLink()" style="display:flex;align-items:center;gap:6px;">
+      <i class="bi bi-bluetooth" style="font-size:.8rem"></i> <span style="font-size:.7rem;font-weight:700;letter-spacing:.05em">LINK RING</span>
     </button>
 
-    <!-- Global Panic SOS -->
-    <button id="global-nav-sos" class="btn-rakshak" style="padding: 4px 12px; font-size: 0.75rem; height: 28px; border-radius: 4px; box-shadow: 0 0 10px rgba(220,38,38,0.5); display: flex; align-items: center; gap: 6px; z-index: 100;" onclick="triggerGlobalSOS()">
-      <div style="width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1.5s infinite;"></div>
-      SOS OVERRIDE
+    <!-- SOS OVERRIDE -->
+    <button id="global-nav-sos" onclick="triggerGlobalSOS()" style="display:flex;align-items:center;gap:8px;height:34px;">
+      <span style="width:7px;height:7px;border-radius:50%;background:#fff;flex-shrink:0;animation:blink 1.2s infinite;"></span>
+      <span>SOS OVERRIDE</span>
     </button>
     {% endif %}
 
+    <!-- Divider -->
+    <div style="width:1px;height:24px;background:rgba(255,255,255,.07);margin:0 4px;"></div>
+
     <!-- Notifications -->
-    <div class="position-relative notif-bell" id="notif-bell-wrap" onclick="toggleNotifDropdown()">
-      <i class="bi bi-bell" style="font-size:1.2rem;color:var(--text-secondary);transition:color .2s;cursor:pointer;"></i>
+    <div class="position-relative notif-bell" id="notif-bell-wrap" onclick="toggleNotifDropdown()" style="padding:6px;cursor:pointer;">
+      <i class="bi bi-bell" style="font-size:1.1rem;color:rgba(255,255,255,.5);transition:color .2s;"></i>
       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill notif-badge"
-            style="background:var(--red-primary);font-size:0.6rem;" id="notif-count">0</span>
-      <!-- Notification dropdown -->
+            style="background:var(--red-primary);font-size:0.55rem;min-width:16px;padding:2px 4px;" id="notif-count">0</span>
       <div class="notif-dropdown" id="notif-dropdown" style="display:none;">
         <div class="notif-dropdown-header">
           <span>Notifications</span>
@@ -154,24 +163,24 @@
       </div>
     </div>
 
-    <!-- User Info -->
+    <!-- User pill -->
     <div class="user-pill d-flex align-items-center gap-2 px-3 py-2">
-      <div class="user-avatar">
-        {{ current_user.full_name[0].upper() }}
-      </div>
-      <span style="font-size:0.85rem;font-weight:500;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ current_user.full_name }}</span>
+      <div class="user-avatar">{{ current_user.full_name[0].upper() }}</div>
+      <span style="font-size:.82rem;font-weight:600;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,.85);">{{ current_user.full_name }}</span>
       {% if current_user.role == 'admin' %}
-        <span class="pill pill-resolved">Admin</span>
+        <span class="pill pill-resolved" style="font-size:.55rem;">Admin</span>
       {% else %}
-        <span id="nav-risk-badge" class="risk-badge risk-{{ current_user.risk_level }}">
-          <span class="dot" style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
+        <span id="nav-risk-badge" class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:.6rem;padding:3px 10px;">
+          <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block;"></span>
           {{ current_user.risk_level|upper }}
         </span>
       {% endif %}
     </div>
 
-    <a href="{{ url_for('auth.logout') }}" class="btn-glass logout-btn" style="padding:8px 16px;font-size:0.85rem;text-decoration:none;">
-      <i class="bi bi-box-arrow-right"></i> Logout
+    <!-- Logout -->
+    <a href="{{ url_for('auth.logout') }}" class="btn-glass logout-btn" style="text-decoration:none;display:flex;align-items:center;gap:6px;">
+      <i class="bi bi-box-arrow-right" style="font-size:.85rem;"></i>
+      <span style="font-size:.75rem;font-weight:600;letter-spacing:.04em;">OUT</span>
     </a>
   </div>
 </nav>
