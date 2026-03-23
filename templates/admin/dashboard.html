@@ -185,14 +185,170 @@
   background: white; opacity: 0.6;
   box-shadow: 0 0 8px currentColor;
 }
+
+/* ── SCAN LINE OVERLAY ── */
+.scan-line-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 9999; overflow: hidden;
+}
+.scan-line-overlay::before {
+  content: '';
+  position: absolute; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(220,38,38,0.08) 15%, rgba(220,38,38,0.25) 50%, rgba(220,38,38,0.08) 85%, transparent 100%);
+  box-shadow: 0 0 15px rgba(220,38,38,0.3), 0 0 40px rgba(220,38,38,0.1);
+  animation: scanSweep 6s linear infinite;
+}
+@keyframes scanSweep {
+  0%   { top: -2px; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── THREAT LEVEL BAR ── */
+.threat-level-bar {
+  background: rgba(5,5,10,0.9);
+  border: 1px solid rgba(220,38,38,0.3);
+  border-radius: 6px; padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem; position: relative; overflow: hidden;
+  font-family: 'Courier New', monospace;
+}
+.threat-level-bar::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.06), transparent);
+  animation: threatPulse 3s ease-in-out infinite;
+}
+@keyframes threatPulse {
+  0%, 100% { opacity: 0.3; } 50% { opacity: 1; }
+}
+.threat-level-label {
+  font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-muted);
+  text-transform: uppercase; position: relative; z-index: 1;
+}
+.threat-level-value {
+  font-size: 0.85rem; font-weight: 800; letter-spacing: 0.12em;
+  position: relative; z-index: 1; text-shadow: 0 0 12px currentColor;
+}
+.threat-level-value.elevated { color: var(--accent-amber); }
+.threat-level-value.high { color: var(--red-primary); }
+.threat-segments {
+  display: flex; gap: 3px; position: relative; z-index: 1;
+}
+.threat-seg {
+  width: 18px; height: 6px; border-radius: 2px;
+  background: rgba(255,255,255,0.06); transition: background 0.5s, box-shadow 0.5s;
+}
+.threat-seg.active-amber {
+  background: var(--accent-amber); box-shadow: 0 0 8px rgba(246,173,85,0.4);
+}
+.threat-seg.active-red {
+  background: var(--red-primary); box-shadow: 0 0 8px rgba(220,38,38,0.4);
+}
+
+/* ── HUD CORNER BRACKETS ── */
+.hud-brackets { position: relative; }
+.hud-brackets::before, .hud-brackets::after,
+.hud-bracket-bl::before, .hud-bracket-br::before {
+  content: ''; position: absolute; width: 28px; height: 28px;
+  border-color: rgba(220,38,38,0.5); border-style: solid;
+  pointer-events: none; z-index: 2;
+}
+.hud-brackets::before {
+  top: -4px; left: -4px; border-width: 2px 0 0 2px;
+}
+.hud-brackets::after {
+  top: -4px; right: -4px; border-width: 2px 2px 0 0;
+}
+.hud-bracket-bl::before {
+  bottom: -4px; left: -4px; border-width: 0 0 2px 2px;
+}
+.hud-bracket-br::before {
+  bottom: -4px; right: -4px; border-width: 0 2px 2px 0;
+}
+.hud-bracket-bl, .hud-bracket-br { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
+
+/* ── AUDIT LOG CARD ── */
+.audit-log-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-family: 'Courier New', monospace; font-size: 0.78rem;
+  animation: rowIn .3s cubic-bezier(.22,1,.36,1) both;
+}
+.audit-log-item:last-child { border-bottom: none; }
+.audit-log-time {
+  color: var(--text-muted); font-size: 0.68rem; white-space: nowrap; min-width: 55px;
+}
+.audit-log-action { color: var(--accent-green); }
+.audit-log-target { color: var(--text-secondary); }
+.audit-log-icon {
+  width: 24px; height: 24px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  font-size: 0.7rem;
+}
+
+/* ── USER TABLE ROW ROLE BORDERS ── */
+#users-tbody tr.role-admin {
+  border-left: 3px solid var(--red-primary);
+  box-shadow: inset 4px 0 12px rgba(220,38,38,0.15);
+}
+#users-tbody tr.role-user {
+  border-left: 3px solid var(--accent-green);
+  box-shadow: inset 4px 0 12px rgba(72,187,120,0.1);
+}
+
+/* ── TERMINAL EMPTY STATE ── */
+.empty-state-terminal {
+  font-family: 'Courier New', monospace; color: var(--accent-green);
+  font-size: 0.8rem; padding: 1.5rem; text-align: left;
+  background: rgba(0,0,0,0.3); border-radius: 6px;
+  border: 1px solid rgba(72,187,120,0.15);
+}
+.empty-state-terminal .terminal-prompt { color: var(--accent-green); }
+.empty-state-terminal .terminal-path { color: var(--accent-blue); }
+.empty-state-terminal .terminal-cmd { color: var(--text-primary); }
+.empty-state-terminal .terminal-output { color: var(--text-muted); margin-left: 1rem; }
+.blink-cursor {
+  display: inline-block; width: 8px; height: 14px; background: var(--accent-green);
+  animation: cursorBlink 1s step-end infinite; vertical-align: text-bottom; margin-left: 2px;
+}
+@keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ── TYPING EFFECT FOR TICKER ── */
+.ticker-typing { overflow: hidden; border-right: 2px solid var(--red-primary); white-space: nowrap; display: inline-block; }
+.ticker-typing.typing-active { animation: tickerCursorBlink .7s step-end infinite; }
+@keyframes tickerCursorBlink { 0%,100%{border-color:var(--red-primary)} 50%{border-color:transparent} }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Scan Line Overlay -->
+<div class="scan-line-overlay"></div>
+
 <div class="container-fluid py-3">
 
+  <!-- Threat Level Indicator Bar -->
+  <div class="threat-level-bar" id="threat-level-bar">
+    <div class="d-flex align-items-center gap-3">
+      <span class="threat-level-label"><i class="bi bi-shield-exclamation me-2"></i>Threat Assessment</span>
+      <span class="threat-level-value elevated" id="threat-level-text">ELEVATED</span>
+    </div>
+    <div class="threat-segments" id="threat-segments">
+      <div class="threat-seg active-amber"></div>
+      <div class="threat-seg active-amber"></div>
+      <div class="threat-seg active-amber"></div>
+      <div class="threat-seg active-amber"></div>
+      <div class="threat-seg"></div>
+      <div class="threat-seg"></div>
+      <div class="threat-seg"></div>
+      <div class="threat-seg"></div>
+    </div>
+    <span class="threat-level-label" style="font-size:0.6rem;">{{ stats.active_alerts }} ACTIVE THREAT{{ 'S' if stats.active_alerts != 1 else '' }}</span>
+  </div>
+
   <!-- Command Center Header -->
-  <div class="cmd-center admin-greeting d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+  <div class="cmd-center hud-brackets admin-greeting d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div class="hud-bracket-bl"></div><div class="hud-bracket-br"></div>
     <div style="position:absolute; right:1%; top:-20%; font-family:var(--sg); font-size:6rem; font-weight:900; color:rgba(255,255,255,0.02); pointer-events:none; z-index:0;">SYSTEM.CORE</div>
     <div class="d-flex align-items-center gap-3" style="position:relative; z-index:1;">
       <div>

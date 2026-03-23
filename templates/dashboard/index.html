@@ -160,6 +160,59 @@
   font-family:var(--font-display);
 }
 
+/* ═══ Tactical Command Strip ═══ */
+.cmd-strip {
+  backdrop-filter:blur(20px) saturate(160%);
+  background:linear-gradient(90deg, rgba(10,10,18,0.92), rgba(15,15,25,0.88));
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;
+  padding:0;
+  overflow:hidden;
+  position:relative;
+}
+.cmd-strip::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg, transparent, rgba(220,38,38,0.4), rgba(159,122,234,0.3), rgba(66,153,225,0.3), transparent);
+  animation:cmdScan 4s linear infinite;
+}
+.cmd-strip::after {
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent);
+}
+@keyframes cmdScan {
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.cmd-strip-inner {
+  display:flex;align-items:stretch;padding:0;overflow-x:auto;scrollbar-width:none;
+}
+.cmd-strip-inner::-webkit-scrollbar{display:none}
+.cmd-node {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 20px;gap:3px;min-width:fit-content;
+  position:relative;transition:background .2s;
+}
+.cmd-node:hover { background:rgba(255,255,255,0.03); }
+.cmd-lbl {
+  font-size:0.5rem;letter-spacing:0.18em;color:rgba(255,255,255,0.25);
+  font-family:'Courier New',monospace;text-transform:uppercase;
+}
+.cmd-val {
+  font-size:0.72rem;font-weight:700;color:var(--white);letter-spacing:0.08em;
+  font-family:'Courier New',monospace;
+}
+.cmd-sep {
+  width:1px;background:rgba(255,255,255,0.05);margin:8px 0;flex-shrink:0;
+}
+.cmd-threat-low    { color:#22c55e; }
+.cmd-threat-medium { color:#f59e0b; }
+.cmd-threat-high   { color:#f97316; }
+.cmd-threat-critical{ color:#ef4444; }
+.cmd-green  { color:#22c55e; }
+.cmd-purple { color:#a78bfa; }
+.cmd-blue   { color:#60a5fa; }
+.cmd-blink  { animation:blink .9s step-end infinite; }
+
 /* ═══ Nearby Safe Places ═══ */
 .safe-places-card {
   position:relative;overflow:hidden;
@@ -624,9 +677,57 @@
         </div>
       </div>
     </div>
-    <div class="d-flex align-items-center gap-2">
-      <div class="live-dot"></div>
-      <span style="font-size:0.75rem;color:var(--accent-green);letter-spacing:0.1em;font-weight:600;">LIVE</span>
+    <div class="d-flex align-items-center gap-3">
+      <!-- Live clock -->
+      <div style="text-align:right;display:none;" id="hdr-clock-wrap" class="d-md-block">
+        <div id="hdr-clock" style="font-family:'Courier New',monospace;font-size:1.1rem;font-weight:700;color:var(--white);letter-spacing:0.08em;line-height:1;"></div>
+        <div id="hdr-date" style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.06em;margin-top:2px;"></div>
+      </div>
+      <!-- GPS coords -->
+      <div style="display:none;text-align:right;" id="hdr-gps-wrap">
+        <div id="hdr-gps" style="font-family:'Courier New',monospace;font-size:0.6rem;color:var(--accent-blue);letter-spacing:0.05em;line-height:1.4;"></div>
+        <div style="font-size:0.5rem;color:rgba(255,255,255,0.15);letter-spacing:0.06em;margin-top:1px;">GPS LOCKED</div>
+      </div>
+      <!-- Live indicator -->
+      <div class="d-flex align-items-center gap-2">
+        <div class="live-dot"></div>
+        <span style="font-size:0.75rem;color:var(--accent-green);letter-spacing:0.1em;font-weight:600;">LIVE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TACTICAL COMMAND STRIP ═══ -->
+  <div class="cmd-strip mb-4 animate-in" id="cmd-strip">
+    <div class="cmd-strip-inner">
+      <div class="cmd-node">
+        <span class="cmd-lbl">SESSION</span>
+        <span class="cmd-val" id="cmd-session">00:00:00</span>
+      </div>
+      <div class="cmd-sep"></div>
+      <div class="cmd-node">
+        <span class="cmd-lbl">GPS</span>
+        <span class="cmd-val" id="cmd-gps">ACQUIRING<span class="cmd-blink">_</span></span>
+      </div>
+      <div class="cmd-sep"></div>
+      <div class="cmd-node">
+        <span class="cmd-lbl">THREAT</span>
+        <span class="cmd-val cmd-threat-{{ current_user.risk_level }}">{{ current_user.risk_level|upper }}</span>
+      </div>
+      <div class="cmd-sep"></div>
+      <div class="cmd-node">
+        <span class="cmd-lbl">NETWORK</span>
+        <span class="cmd-val" id="cmd-net">CHECKING</span>
+      </div>
+      <div class="cmd-sep"></div>
+      <div class="cmd-node">
+        <span class="cmd-lbl">CONTACTS</span>
+        <span class="cmd-val cmd-green">{{ trusted_contacts|length }} LINKED</span>
+      </div>
+      <div class="cmd-sep d-none d-md-block"></div>
+      <div class="cmd-node d-none d-md-flex">
+        <span class="cmd-lbl">ENCRYPTION</span>
+        <span class="cmd-val cmd-purple">AES-256 ✓</span>
+      </div>
     </div>
   </div>
 
@@ -691,32 +792,50 @@
 
     <!-- Risk Level + Threat Status -->
     <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-      <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between" style="transform:translateZ(10px);">
-        <div style="transform:translateZ(15px);">
-          <p style="font-size:0.75rem;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">THREAT RISK LEVEL</p>
+      <div class="glass-card p-4 h-100 d-flex flex-column gap-3" style="transform:translateZ(10px);">
+        <div>
+          <p style="font-size:0.65rem;letter-spacing:0.22em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.6rem;font-family:'Courier New',monospace;">THREAT RISK LEVEL</p>
+          <!-- Visual gauge bar -->
+          <div style="margin-bottom:0.6rem;">
+            <div style="display:flex;justify-content:space-between;font-size:0.55rem;color:rgba(255,255,255,0.25);letter-spacing:0.12em;font-family:'Courier New',monospace;margin-bottom:5px;">
+              <span>LOW</span><span>MED</span><span>HIGH</span><span>CRIT</span>
+            </div>
+            <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;position:relative;">
+              <div id="risk-gauge-bar" style="height:100%;border-radius:10px;transition:width 1.2s cubic-bezier(.22,1,.36,1);
+                width:{% if current_user.risk_level=='critical' %}96{% elif current_user.risk_level=='high' %}66{% elif current_user.risk_level=='medium' %}36{% else %}8{% endif %}%;
+                background:{% if current_user.risk_level=='critical' %}linear-gradient(90deg,#dc2626,#ef4444){% elif current_user.risk_level=='high' %}linear-gradient(90deg,#f97316,#fb923c){% elif current_user.risk_level=='medium' %}linear-gradient(90deg,#f59e0b,#fbbf24){% else %}linear-gradient(90deg,#22c55e,#4ade80){% endif %};
+                box-shadow:0 0 12px {% if current_user.risk_level=='critical' %}rgba(220,38,38,.7){% elif current_user.risk_level=='high' %}rgba(249,115,22,.7){% elif current_user.risk_level=='medium' %}rgba(245,158,11,.7){% else %}rgba(34,197,94,.7){% endif %};">
+              </div>
+            </div>
+          </div>
+          <!-- Badge -->
           <div id="risk-display">
-            <span class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:1rem;">
-              <span style="width:8px;height:8px;border-radius:50%;background:currentColor;"></span>
+            <span class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:1.05rem;font-weight:800;">
+              <span style="width:9px;height:9px;border-radius:50%;background:currentColor;display:inline-block;margin-right:6px;"></span>
               {{ current_user.risk_level|upper }}
             </span>
           </div>
-          <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.75rem;" id="missed-ping-info">
-            Consecutive missed pings: <strong id="missed-count">{{ current_user.consecutive_missed_pings }}</strong>
-          </p>
-          <p style="font-size:0.78rem;color:var(--text-muted);" id="last-ping-info">
-            Last ping: <strong id="last-ping-ts">{{ current_user.last_ping or 'Never' }}</strong>
-          </p>
         </div>
-
-        <div>
-          <div class="ai-card-glow" style="transform:translateZ(10px);">
+        <!-- Mini stat tiles -->
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:0.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;margin-bottom:4px;">Missed</div>
+            <div style="font-size:1.4rem;font-weight:800;color:var(--white);line-height:1;" id="missed-count">{{ current_user.consecutive_missed_pings }}</div>
+          </div>
+          <div style="flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:0.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;margin-bottom:4px;">Last Ping</div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--white);line-height:1.3;" id="last-ping-ts">{{ current_user.last_ping or 'Never' }}</div>
+          </div>
+        </div>
+        <!-- AI engine -->
+        <div class="ai-card-glow" style="margin-top:auto;">
           <div class="d-flex align-items-center gap-3">
-            <div style="width:40px;height:40px;border-radius:10px;background:rgba(220,38,38,0.15);display:flex;align-items:center;justify-content:center;">
-              <i class="bi bi-cpu" style="color:var(--red-primary);font-size:1.2rem;"></i>
+            <div style="width:36px;height:36px;border-radius:9px;background:rgba(220,38,38,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="bi bi-cpu" style="color:var(--red-primary);font-size:1rem;"></i>
             </div>
             <div>
-              <p style="font-size:0.75rem;color:var(--red-primary);font-weight:600;margin:0;">Threat Engine Active</p>
-              <p style="font-size:0.65rem;color:var(--text-muted);margin:0;">Analyzing surroundings...</p>
+              <p style="font-size:0.72rem;color:var(--red-primary);font-weight:600;margin:0;">Threat Engine Active</p>
+              <p style="font-size:0.6rem;color:var(--text-muted);margin:0;">Analyzing surroundings...</p>
             </div>
           </div>
         </div>
@@ -727,25 +846,29 @@
     <div class="col-md-4 animate-in">
       <div class="row g-3 h-100">
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100" style="transform:translateZ(10px);">
+          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(220,38,38,0.4);">
+            <i class="bi bi-bell-fill" style="font-size:0.9rem;color:rgba(220,38,38,0.6);margin-bottom:4px;display:block;"></i>
             <div class="stat-number" id="total-alerts">{{ alerts|length }}</div>
             <div class="stat-label" style="white-space:nowrap;">Alerts</div>
           </div>
         </div>
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100" style="transform:translateZ(10px);">
-            <div class="stat-number" id="active-alerts">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
+          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(249,115,22,0.4);">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size:0.9rem;color:rgba(249,115,22,0.6);margin-bottom:4px;display:block;"></i>
+            <div class="stat-number" id="active-alerts" style="color:var(--accent-amber);">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
             <div class="stat-label" style="white-space:nowrap;">Active</div>
           </div>
         </div>
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100" style="transform:translateZ(10px);">
+          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(245,158,11,0.4);">
+            <i class="bi bi-wifi-off" style="font-size:0.9rem;color:rgba(245,158,11,0.6);margin-bottom:4px;display:block;"></i>
             <div class="stat-number">{{ (current_user.consecutive_missed_pings or 0) }}</div>
             <div class="stat-label" style="white-space:nowrap;">Missed</div>
           </div>
         </div>
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100 d-flex flex-column justify-content-between" style="transform:translateZ(10px);">
+          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(34,197,94,0.4);">
+            <i class="bi bi-shield-check-fill" style="font-size:0.9rem;color:rgba(34,197,94,0.6);margin-bottom:4px;display:block;"></i>
             <div class="stat-number" style="color:var(--accent-green);">ON</div>
             <div class="stat-label" style="white-space:nowrap;">Sys Status</div>
           </div>
@@ -807,30 +930,42 @@
   <!-- Trusted Contacts Widget -->
   <div class="row mb-4 animate-in">
     <div class="col-12">
-      <div class="glass-card p-4" style="border-radius:var(--radius-lg); border-left:3px solid var(--accent-green); background:linear-gradient(135deg, rgba(20,20,30,0.8), rgba(10,10,20,0.95)); box-shadow:inset 0 0 15px rgba(0,0,0,0.5);">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg); border-left:3px solid var(--accent-green); background:linear-gradient(135deg, rgba(20,20,30,0.8), rgba(10,10,20,0.95));">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 style="margin:0; font-family:'Courier New', monospace; font-weight:700; color:var(--white); letter-spacing:0.05em;">
+          <h5 style="margin:0; font-family:'Courier New', monospace; font-weight:700; color:var(--white); letter-spacing:0.08em; font-size:0.9rem;">
             <i class="bi bi-people-fill me-2" style="color:var(--accent-green);"></i>TRUSTED OPERATIVES
           </h5>
-          <a href="{{ url_for('auth.profile') }}" class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:var(--text-muted); font-size:0.7rem;">Manage</a>
+          <a href="{{ url_for('auth.profile') }}" style="font-size:0.7rem;color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);padding:4px 12px;border-radius:20px;text-decoration:none;background:rgba(255,255,255,0.03);transition:all .2s;">Manage</a>
         </div>
-        
+
         <div class="d-flex flex-wrap" style="gap:12px;">
           {% if trusted_contacts %}
             {% for contact in trusted_contacts %}
-            <div class="contact-node d-flex align-items-center" style="min-width:180px; flex:1 1 180px; max-width:280px; background:rgba(0,0,0,0.3); border:1px dashed rgba(255,255,255,0.1); padding:10px 15px; border-radius:8px;">
-              <div style="width:36px; height:36px; flex-shrink:0; border-radius:50%; background:rgba(72,187,120,0.15); border:1px solid #48bb78; display:flex; align-items:center; justify-content:center; margin-right:12px; font-weight:700; color:#48bb78;">
+            <div class="contact-node d-flex align-items-center gap-3" style="min-width:190px; flex:1 1 190px; max-width:300px; background:rgba(72,187,120,0.04); border:1px solid rgba(72,187,120,0.15); padding:12px 16px; border-radius:12px; transition:all .2s;">
+              <div style="width:38px; height:38px; flex-shrink:0; border-radius:50%; background:rgba(72,187,120,0.15); border:1.5px solid rgba(72,187,120,0.4); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; color:#48bb78; font-family:var(--font-display);">
                 {{ contact.contact_name[0]|upper }}
               </div>
               <div style="min-width:0; overflow:hidden;">
                 <div style="font-size:0.85rem; font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_name }}</div>
-                <div style="font-size:0.65rem; color:var(--text-muted); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_email }}</div>
+                <div style="font-size:0.62rem; color:var(--text-muted); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_email }}</div>
+              </div>
+              <div style="margin-left:auto; flex-shrink:0;">
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 6px var(--accent-green);"></div>
               </div>
             </div>
             {% endfor %}
           {% else %}
-            <div class="text-muted w-100 text-center py-3" style="font-family:'Courier New', monospace; font-size:0.8rem;">
-              [ NO OPERATIVES REGISTERED — <a href="{{ url_for('auth.profile') }}" style="color:var(--red);">ADD CONTACTS</a> ]
+            <div class="w-100 d-flex flex-column align-items-center py-3" style="gap:12px;">
+              <div style="width:52px;height:52px;border-radius:16px;background:rgba(72,187,120,0.07);border:1px solid rgba(72,187,120,0.15);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:rgba(72,187,120,0.35);">
+                <i class="bi bi-people"></i>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:4px;">No operatives registered</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">Add contacts to receive your SOS alerts instantly</div>
+              </div>
+              <a href="{{ url_for('auth.profile') }}" style="font-size:0.75rem;color:var(--red);border:1px solid rgba(220,38,38,0.25);padding:7px 20px;border-radius:20px;text-decoration:none;background:rgba(220,38,38,0.06);transition:all .2s;">
+                + Add Contacts
+              </a>
             </div>
           {% endif %}
         </div>
@@ -1381,6 +1516,81 @@
   if (text) text.innerHTML = '<i class="bi bi-shield-check me-2" style="color:var(--red-primary);font-size:1.1rem;"></i>'+greeting+', '+name;
 })();
 
+// ── Live clock in header ──
+(function(){
+  const clockEl = document.getElementById('hdr-clock');
+  const dateEl  = document.getElementById('hdr-date');
+  const wrap    = document.getElementById('hdr-clock-wrap');
+  const DAYS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  function tick() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const ss = String(now.getSeconds()).padStart(2,'0');
+    if (clockEl) clockEl.textContent = hh + ':' + mm + ':' + ss;
+    if (dateEl)  dateEl.textContent  = DAYS[now.getDay()] + ' ' + String(now.getDate()).padStart(2,'0') + ' ' + MONTHS[now.getMonth()];
+    if (wrap) wrap.style.display = 'block';
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+// ── GPS coords in header (populated when location is acquired) ──
+(function(){
+  if (!navigator.geolocation) return;
+  navigator.geolocation.watchPosition(pos => {
+    window.currentLat = pos.coords.latitude;
+    window.currentLng = pos.coords.longitude;
+    const wrap = document.getElementById('hdr-gps-wrap');
+    const el   = document.getElementById('hdr-gps');
+    if (el) el.innerHTML = pos.coords.latitude.toFixed(4) + '° N<br>' + pos.coords.longitude.toFixed(4) + '° E';
+    if (wrap) wrap.style.display = 'block';
+  }, null, { enableHighAccuracy: true, maximumAge: 10000 });
+})();
+
+// ── Tactical Command Strip ──
+(function(){
+  const sessionStart = Date.now();
+  // Session timer
+  setInterval(() => {
+    const diff = Math.floor((Date.now() - sessionStart) / 1000);
+    const h = Math.floor(diff / 3600);
+    const m = Math.floor((diff % 3600) / 60);
+    const s = diff % 60;
+    const el = document.getElementById('cmd-session');
+    if (el) el.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }, 1000);
+  // Network
+  function updateCmdNet() {
+    const el = document.getElementById('cmd-net');
+    if (!el) return;
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && conn.effectiveType) {
+      el.textContent = conn.effectiveType.toUpperCase();
+      el.style.color = {'4g':'#22c55e','3g':'#f59e0b','2g':'#f97316','slow-2g':'#ef4444'}[conn.effectiveType] || 'var(--white)';
+    } else {
+      el.textContent = navigator.onLine ? 'ONLINE' : 'OFFLINE';
+      el.style.color = navigator.onLine ? '#22c55e' : '#ef4444';
+    }
+  }
+  updateCmdNet();
+  window.addEventListener('online', updateCmdNet);
+  window.addEventListener('offline', updateCmdNet);
+  // GPS — update cmd strip when watchPosition fires
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(pos => {
+      const el = document.getElementById('cmd-gps');
+      if (el) {
+        const lat = pos.coords.latitude.toFixed(4);
+        const lng = pos.coords.longitude.toFixed(4);
+        el.innerHTML = lat + '°N ' + lng + '°E';
+        el.style.color = '#22c55e';
+      }
+    });
+  }
+})();
+
 // Pass server data to JS
 window.currentUserId = {{ current_user.id | tojson }};
 const DANGER_ZONES = {{ danger_zones | tojson | safe }};
@@ -1614,18 +1824,24 @@ function fetchNearbyPlaces() {
       }, () => {
         ['places-police','places-hospital','places-fire'].forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.78rem;"><i class="bi bi-geo-alt-fill me-1" style="color:var(--red-primary);"></i>GPS required</div>';
+          if (el) el.innerHTML = `<div style="text-align:center;padding:20px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+              <i class="bi bi-geo-alt-slash" style="color:var(--red-primary);font-size:0.9rem;"></i>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Location access denied</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.2);margin-top:3px;">Enable in browser settings</div>
+          </div>`;
         });
-      });
+      }, { timeout: 10000 });
     }
     return;
   }
 
-  const radius = 3000; // 3km
+  const radius = 5000; // 5km
   const queries = {
-    police: `[out:json][timeout:10];node["amenity"="police"](around:${radius},${lat},${lng});out body 5;`,
-    hospital: `[out:json][timeout:10];node["amenity"="hospital"](around:${radius},${lat},${lng});out body 5;`,
-    fire: `[out:json][timeout:10];node["amenity"="fire_station"](around:${radius},${lat},${lng});out body 5;`
+    police: `[out:json][timeout:15];(node["amenity"="police"](around:${radius},${lat},${lng});way["amenity"="police"](around:${radius},${lat},${lng}););out center 5;`,
+    hospital: `[out:json][timeout:15];(node["amenity"="hospital"](around:${radius},${lat},${lng});node["amenity"="clinic"](around:${radius},${lat},${lng});way["amenity"="hospital"](around:${radius},${lat},${lng}););out center 5;`,
+    fire: `[out:json][timeout:15];(node["amenity"="fire_station"](around:${radius},${lat},${lng});way["amenity"="fire_station"](around:${radius},${lat},${lng}););out center 5;`
   };
 
   function haversine(lat1, lon1, lat2, lon2) {
@@ -1644,7 +1860,13 @@ function fetchNearbyPlaces() {
       return;
     }
     const sorted = data.elements
-      .map(el => ({ name: el.tags.name || 'Unnamed', lat: el.lat, lon: el.lon, dist: haversine(lat, lng, el.lat, el.lon) }))
+      .map(el => {
+        const elLat = el.lat ?? el.center?.lat;
+        const elLon = el.lon ?? el.center?.lon;
+        if (!elLat || !elLon) return null;
+        return { name: el.tags?.name || 'Unnamed', lat: elLat, lon: elLon, dist: haversine(lat, lng, elLat, elLon) };
+      })
+      .filter(Boolean)
       .sort((a,b) => a.dist - b.dist)
       .slice(0, 3);
 
@@ -1683,17 +1905,8 @@ function fetchNearbyPlaces() {
   });
 }
 
-// Auto-fetch nearby places when GPS is available
-(function(){
-  function tryFetch() {
-    if (window.currentLat && window.currentLng) {
-      fetchNearbyPlaces();
-    } else {
-      setTimeout(tryFetch, 2000);
-    }
-  }
-  setTimeout(tryFetch, 1500);
-})();
+// Auto-fetch nearby places — call directly so getCurrentPosition fires immediately
+setTimeout(fetchNearbyPlaces, 1500);
 
 /* ══ Weekly Safety Summary ══ */
 (function(){

@@ -4,7 +4,7 @@
     {
       "name": "rakshak",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["wsgi.py"],
+      "runtimeArgs": ["/Users/maniksahni/Desktop/RAKSHAK/wsgi.py"],
       "port": 5001
     }
   ]
