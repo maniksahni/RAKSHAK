@@ -66,6 +66,9 @@ def google_login():
     session['google_nonce'] = nonce
 
     callback_url = url_for('google_auth.google_callback', _external=True)
+    # Ensure https in production (Railway terminates SSL at proxy level)
+    if callback_url.startswith('http://') and not os.environ.get('FLASK_DEBUG'):
+        callback_url = 'https://' + callback_url[7:]
     return google.authorize_redirect(callback_url, nonce=nonce)
 
 
@@ -79,7 +82,10 @@ def google_callback():
     try:
         token = google.authorize_access_token()
         nonce = session.pop('google_nonce', None)
-        user_info = google.parse_id_token(token, nonce=nonce)
+        # authlib 1.x: userinfo is parsed into token automatically for openid scope
+        user_info = token.get('userinfo')
+        if user_info is None:
+            user_info = google.parse_id_token(token, nonce=nonce)
 
         google_email = user_info.get('email', '').strip().lower()
         google_name  = user_info.get('name', google_email.split('@')[0])

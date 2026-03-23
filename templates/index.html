@@ -729,12 +729,37 @@ body::before{
 .steps-row{position:relative}
 .step-connector{display:none}
 @media(min-width:1101px){
-  .step-connector{display:block;position:absolute;top:80px;height:2px;z-index:10;pointer-events:none}
-  .step-connector-1{left:33.33%;transform:translateX(-50%);width:calc(33.33% - 3rem)}
-  .step-connector-2{left:66.66%;transform:translateX(-50%);width:calc(33.33% - 3rem)}
-  .step-connector-line{width:100%;height:2px;background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 8px,transparent 8px,transparent 14px);animation:dashMove 1.5s linear infinite}
-  @keyframes dashMove{0%{background-position:0 0}100%{background-position:22px 0}}
-  .step-connector-arrow{position:absolute;right:-6px;top:-4px;width:0;height:0;border-left:8px solid var(--red);border-top:5px solid transparent;border-bottom:5px solid transparent;filter:drop-shadow(0 0 4px var(--red))}
+  /* Connectors span only the gap between cards, aligned at icon center */
+  .step-connector{
+    display:flex;align-items:center;
+    position:absolute;
+    height:10px;top:70px;    /* icon center: 40px card padding + 30px half icon */
+    z-index:10;              /* safe — width:2rem means no card overlap */
+    pointer-events:none;
+  }
+  /* Gap 1: right edge of col 1 → left edge of col 2 */
+  .step-connector-1{
+    left:calc((100% - 4rem) / 3);
+    width:2rem;
+  }
+  /* Gap 2: right edge of col 2 → left edge of col 3 */
+  .step-connector-2{
+    left:calc((100% - 4rem) / 3 * 2 + 2rem);
+    width:2rem;
+  }
+  .step-connector-line{
+    flex:1;height:2px;
+    background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 6px,transparent 6px,transparent 11px);
+    animation:dashMove 1.2s linear infinite;
+  }
+  @keyframes dashMove{0%{background-position:0 0}100%{background-position:17px 0}}
+  .step-connector-arrow{
+    flex-shrink:0;width:0;height:0;
+    border-left:7px solid var(--red);
+    border-top:4px solid transparent;
+    border-bottom:4px solid transparent;
+    filter:drop-shadow(0 0 4px var(--red));
+  }
 }
 .step-badge{position:absolute;top:-14px;left:20px;width:28px;height:28px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--sg);font-size:.7rem;font-weight:800;color:#fff;box-shadow:0 0 15px rgba(220,38,38,.5);z-index:10;animation:badgePulse 2s ease-in-out infinite}
 @keyframes badgePulse{0%,100%{box-shadow:0 0 15px rgba(220,38,38,.5)}50%{box-shadow:0 0 25px rgba(220,38,38,.8),0 0 40px rgba(220,38,38,.3)}}
