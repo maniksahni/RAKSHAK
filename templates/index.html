@@ -43,6 +43,7 @@ body::before{
 /* ── Navbar ── */
 .rk-nav{position:fixed !important;top:32px;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:background .4s,border-color .4s,backdrop-filter .4s}
 .rk-nav.scrolled{background:rgba(5,5,8,.93) !important;border-color:var(--bdr) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important}
+/* Premium logo already handled by base.html style — keep for compat */
 .rk-nav .navbar-brand-text{font-family:var(--sg) !important;font-size:1.1rem !important;font-weight:700 !important;letter-spacing:.2em !important;color:var(--white) !important;text-shadow:none !important}
 .rk-nav .btn-glass{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:500 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 18px !important}
 .rk-nav .btn-rakshak{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:600 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 20px !important;background:var(--red) !important;box-shadow:0 0 22px rgba(220,38,38,.4) !important}
@@ -1323,6 +1324,90 @@ body::before{
 .btn-primary-glow{box-shadow:0 0 30px rgba(220,38,38,.5),0 0 60px rgba(220,38,38,.25),0 10px 25px rgba(220,38,38,.4),inset 0 1px 0 rgba(255,255,255,.2) !important}
 .btn-primary-glow:hover{box-shadow:0 0 50px rgba(220,38,38,.7),0 0 100px rgba(220,38,38,.35),0 15px 35px rgba(220,38,38,.6) !important}
 
+
+/* ═══════════════════════════════════════════
+   PREMIUM LOGO — PUBLIC NAV OVERRIDE
+═══════════════════════════════════════════*/
+.rk-logo-mark{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;outline:none}
+.rk-logo-shield-wrap{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 7px rgba(220,38,38,.55));transition:filter .3s}
+.rk-logo-mark:hover .rk-logo-shield-wrap{filter:drop-shadow(0 0 14px rgba(220,38,38,.85)) drop-shadow(0 0 3px rgba(255,180,180,.3))}
+.rk-logo-ring{position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(220,38,38,.35);animation:rkLogoPulse 2.6s ease-in-out infinite;pointer-events:none}
+.rk-logo-ring2{position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(220,38,38,.12);animation:rkLogoPulse 2.6s .9s ease-in-out infinite;pointer-events:none}
+@keyframes rkLogoPulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.1);opacity:.75}}
+.rk-logo-wordmark{font-family:'Space Grotesk',sans-serif;font-size:1.08rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.82) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:all .3s}
+.rk-logo-mark:hover .rk-logo-wordmark{background:linear-gradient(135deg,#fff 0%,#fca5a5 55%,#ef4444 100%);-webkit-background-clip:text;background-clip:text}
+.rk-logo-tagline{font-family:'Courier New',monospace;font-size:.4rem;letter-spacing:.2em;color:rgba(220,38,38,.65);text-transform:uppercase;display:block;margin-top:1px;-webkit-text-fill-color:rgba(220,38,38,.65)}
+
+/* ═══════════════════════════════════════════
+   THREAT RESPONSE PROTOCOL TIMELINE
+═══════════════════════════════════════════*/
+.trp-section{padding:6rem clamp(2rem,6vw,6rem);max-width:1380px;margin:0 auto}
+.trp-row{display:flex;align-items:flex-start;gap:0;margin-top:4rem;position:relative}
+.trp-node{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:2}
+.trp-connector{flex:1;display:flex;align-items:center;margin-top:28px;position:relative;z-index:1}
+.trp-line-track{flex:1;height:2px;background:rgba(255,255,255,.05);border-radius:2px;position:relative;overflow:hidden}
+.trp-line-fill{position:absolute;top:0;left:0;height:100%;width:100%;background:linear-gradient(90deg,var(--c1,#dc2626),var(--c2,#ef4444));animation:trpFill 2s ease-out forwards;transform-origin:left}
+@keyframes trpFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.trp-arrow{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--c2,#ef4444);filter:drop-shadow(0 0 4px var(--c2,#ef4444));flex-shrink:0}
+.trp-icon-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;border:1.5px solid var(--tc,rgba(220,38,38,.4));background:radial-gradient(circle,rgba(var(--tc-rgb,220,38,38),.14),transparent 70%);box-shadow:0 0 20px rgba(var(--tc-rgb,220,38,38),.15),inset 0 0 10px rgba(var(--tc-rgb,220,38,38),.08);transition:all .4s cubic-bezier(.22,1,.36,1);position:relative}
+.trp-icon-wrap::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(var(--tc-rgb,220,38,38),.15);animation:trpRing 2.5s ease-in-out infinite}
+@keyframes trpRing{0%,100%{transform:scale(1);opacity:.3}50%{transform:scale(1.1);opacity:.7}}
+.trp-icon-wrap:hover{transform:scale(1.08);box-shadow:0 0 35px rgba(var(--tc-rgb,220,38,38),.4)}
+.trp-icon-wrap svg{width:24px;height:24px;stroke:var(--tc,#dc2626);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.trp-step{font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.2em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:.4rem}
+.trp-label{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:.08em;color:#fff;margin-bottom:.5rem;text-transform:uppercase}
+.trp-desc{font-family:'Inter',sans-serif;font-size:.75rem;color:rgba(255,255,255,.4);line-height:1.6;max-width:160px;margin:0 auto}
+.trp-stat{display:inline-flex;align-items:center;gap:4px;margin-top:.6rem;padding:3px 10px;border-radius:20px;font-family:'Courier New',monospace;font-size:.6rem;font-weight:700;background:rgba(var(--tc-rgb,220,38,38),.08);border:1px solid rgba(var(--tc-rgb,220,38,38),.2);color:var(--tc,#dc2626)}
+.trp-stat::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;animation:blink 1.5s infinite}
+@media(max-width:768px){.trp-row{flex-direction:column;align-items:center;gap:1.5rem}.trp-connector{width:2px;height:40px;flex-direction:column}.trp-line-track{width:2px;height:100%;flex:1}.trp-arrow{transform:rotate(90deg)}}
+
+/* ═══════════════════════════════════════════
+   SECURITY ARCHITECTURE GRID
+═══════════════════════════════════════════*/
+.sa-section{padding:6rem clamp(2rem,6vw,6rem);background:linear-gradient(180deg,transparent,rgba(220,38,38,.015),transparent)}
+.sa-inner{max-width:1380px;margin:0 auto}
+.sa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem}
+.sa-card{background:rgba(8,8,14,.7);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden;transition:all .5s cubic-bezier(.22,1,.36,1);backdrop-filter:blur(20px)}
+.sa-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ac,rgba(220,38,38,.5)),transparent);opacity:0;transition:opacity .4s}
+.sa-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(var(--ac-rgb,220,38,38),.07),transparent 60%);opacity:0;transition:opacity .4s}
+.sa-card:hover{border-color:rgba(var(--ac-rgb,220,38,38),.3);transform:translateY(-6px);box-shadow:0 24px 50px rgba(0,0,0,.7),0 0 30px rgba(var(--ac-rgb,220,38,38),.1)}
+.sa-card:hover::before,.sa-card:hover::after{opacity:1}
+.sa-card-corner-tl{position:absolute;top:0;right:0;width:20px;height:20px;border-top:2px solid var(--ac,rgba(220,38,38,.4));border-right:2px solid var(--ac,rgba(220,38,38,.4));opacity:0;transition:opacity .3s}
+.sa-card-corner-br{position:absolute;bottom:0;left:0;width:20px;height:20px;border-bottom:2px solid var(--ac,rgba(220,38,38,.4));border-left:2px solid var(--ac,rgba(220,38,38,.4));opacity:0;transition:opacity .3s}
+.sa-card:hover .sa-card-corner-tl,.sa-card:hover .sa-card-corner-br{opacity:1}
+.sa-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:1.4rem;border:1px solid rgba(var(--ac-rgb,220,38,38),.25);background:radial-gradient(circle,rgba(var(--ac-rgb,220,38,38),.1),transparent 70%);transition:all .4s}
+.sa-card:hover .sa-icon{background:rgba(var(--ac-rgb,220,38,38),.18);box-shadow:0 0 20px rgba(var(--ac-rgb,220,38,38),.3);transform:scale(1.06)}
+.sa-icon svg{width:24px;height:24px;stroke:rgb(var(--ac-rgb,220,38,38));fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sa-card-id{position:absolute;top:18px;right:22px;font-family:'Courier New',monospace;font-size:.52rem;letter-spacing:.12em;color:rgba(255,255,255,.12);font-weight:700}
+.sa-title{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:.6rem;letter-spacing:-.01em}
+.sa-desc{font-family:'Inter',sans-serif;font-size:.85rem;color:rgba(255,255,255,.45);line-height:1.65;margin-bottom:1.2rem}
+.sa-bar-wrap{height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;margin-bottom:.6rem}
+.sa-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,rgb(var(--ac-rgb,220,38,38)),rgba(var(--ac-rgb,220,38,38),.5));animation:saBarIn 1.8s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes saBarIn{from{width:0}}
+.sa-stat-line{font-family:'Courier New',monospace;font-size:.62rem;letter-spacing:.08em;color:rgba(var(--ac-rgb,220,38,38),.7)}
+@media(max-width:900px){.sa-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.sa-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════
+   WORLD PROTECTION BAND
+═══════════════════════════════════════════*/
+.wpb-section{padding:5rem clamp(2rem,6vw,6rem);position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(8,8,16,.98),rgba(12,10,20,.97));border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)}
+.wpb-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,#dc2626,#ef4444,rgba(168,85,247,.5),#3b82f6,transparent);animation:wpbBeam 4s linear infinite}
+@keyframes wpbBeam{0%,100%{opacity:.5}50%{opacity:1}}
+.wpb-inner{max-width:1380px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center}
+.wpb-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.wpb-metric{text-align:center;padding:1.5rem 1rem;border:1px solid rgba(255,255,255,.06);border-radius:16px;background:rgba(255,255,255,.02);transition:all .4s;position:relative;overflow:hidden}
+.wpb-metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,rgba(220,38,38,.5));box-shadow:0 0 8px var(--mc,rgba(220,38,38,.5));opacity:.6}
+.wpb-metric:hover{background:rgba(255,255,255,.04);transform:translateY(-3px)}
+.wpb-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,2.5vw,2.8rem);font-weight:900;line-height:1;margin-bottom:.3rem;color:var(--mc,#ef4444);text-shadow:0 0 30px rgba(var(--mc-rgb,220,38,38),.4)}
+.wpb-lbl{font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.15em;color:rgba(255,255,255,.35);text-transform:uppercase}
+.wpb-badge-col{display:flex;flex-direction:column;gap:12px;min-width:220px}
+.wpb-badge{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);font-family:'Courier New',monospace;font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.06em;transition:all .3s}
+.wpb-badge:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+.wpb-badge-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+@media(max-width:900px){.wpb-inner{grid-template-columns:1fr}.wpb-badge-col{flex-direction:row;flex-wrap:wrap}.wpb-metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.wpb-metrics{grid-template-columns:1fr 1fr}}
+
 </style>
 {% endblock %}
 
@@ -1603,6 +1688,102 @@ body::before{
     <span class="m-item">Instant SOS</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Threat Risk Engine</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Live Heatmap</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Danger Zones</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Evidence Vault</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Command Center</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Secure Auth</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Real-time Alerts</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">RAKSHAK</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
   </div>
 </div>
+
+<!-- ══════════ THREAT RESPONSE PROTOCOL ══════════ -->
+<section>
+<div class="trp-section">
+  <div class="sec-hd reveal">
+    <span class="eyebrow">
+      <span style="width:6px;height:6px;border-radius:50%;background:#dc2626;box-shadow:0 0 8px #dc2626;display:inline-block;animation:blink 1.4s infinite;margin-right:4px;"></span>
+      Response Protocol
+    </span>
+    <h2 class="sec-title">Zero to <span style="background:linear-gradient(120deg,#dc2626,#ef4444,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Safe</span> in seconds.</h2>
+    <p class="sec-sub">RAKSHAK's 5-stage threat pipeline activates the instant danger is detected — fully automated, fully encrypted.</p>
+  </div>
+
+  <div class="trp-row">
+    <!-- Node 1: DETECT -->
+    <div class="trp-node">
+      <div class="trp-icon-wrap" style="--tc:#ef4444;--tc-rgb:239,68,68;">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      </div>
+      <div class="trp-step">STAGE · 01</div>
+      <div class="trp-label">DETECT</div>
+      <div class="trp-desc">AI monitors activity patterns, inactivity windows and panic triggers in real-time</div>
+      <div class="trp-stat" style="--tc:#ef4444;--tc-rgb:239,68,68;">&lt;0.1s TRIGGER</div>
+    </div>
+
+    <!-- Connector 1→2 -->
+    <div class="trp-connector">
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#ef4444;--c2:#f97316;animation-delay:.4s"></div></div>
+      <div class="trp-arrow" style="--c2:#f97316;"></div>
+    </div>
+
+    <!-- Node 2: ENCRYPT -->
+    <div class="trp-node">
+      <div class="trp-icon-wrap" style="--tc:#f97316;--tc-rgb:249,115,22;">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div class="trp-step">STAGE · 02</div>
+      <div class="trp-label">ENCRYPT</div>
+      <div class="trp-desc">Your location and identity wrapped in AES-256 end-to-end encryption before transmission</div>
+      <div class="trp-stat" style="--tc:#f97316;--tc-rgb:249,115,22;">AES-256 BIT</div>
+    </div>
+
+    <!-- Connector 2→3 -->
+    <div class="trp-connector">
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#f97316;--c2:#f59e0b;animation-delay:.8s"></div></div>
+      <div class="trp-arrow" style="--c2:#f59e0b;"></div>
+    </div>
+
+    <!-- Node 3: LOCK GPS -->
+    <div class="trp-node">
+      <div class="trp-icon-wrap" style="--tc:#f59e0b;--tc-rgb:245,158,11;">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="trp-step">STAGE · 03</div>
+      <div class="trp-label">GPS LOCK</div>
+      <div class="trp-desc">Satellite-grade coordinates captured with ±3m accuracy and timestamped to the millisecond</div>
+      <div class="trp-stat" style="--tc:#f59e0b;--tc-rgb:245,158,11;">±3m ACCURACY</div>
+    </div>
+
+    <!-- Connector 3→4 -->
+    <div class="trp-connector">
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#f59e0b;--c2:#3b82f6;animation-delay:1.2s"></div></div>
+      <div class="trp-arrow" style="--c2:#3b82f6;"></div>
+    </div>
+
+    <!-- Node 4: ALERT -->
+    <div class="trp-node">
+      <div class="trp-icon-wrap" style="--tc:#3b82f6;--tc-rgb:59,130,246;">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.12 1.22 2 2 0 012.1 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.31 7.46a16 16 0 006.22 6.22l1.32-1.04a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+      </div>
+      <div class="trp-step">STAGE · 04</div>
+      <div class="trp-label">BROADCAST</div>
+      <div class="trp-desc">All trusted contacts simultaneously notified with live GPS link, audio alert and situation report</div>
+      <div class="trp-stat" style="--tc:#3b82f6;--tc-rgb:59,130,246;">&lt;1s DELIVERY</div>
+    </div>
+
+    <!-- Connector 4→5 -->
+    <div class="trp-connector">
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#3b82f6;--c2:#22c55e;animation-delay:1.6s"></div></div>
+      <div class="trp-arrow" style="--c2:#22c55e;"></div>
+    </div>
+
+    <!-- Node 5: VERIFY -->
+    <div class="trp-node">
+      <div class="trp-icon-wrap" style="--tc:#22c55e;--tc-rgb:34,197,94;">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <div class="trp-step">STAGE · 05</div>
+      <div class="trp-label">VERIFIED</div>
+      <div class="trp-desc">Safety confirmed by two-way check-in. Evidence vault auto-archives all incident data securely</div>
+      <div class="trp-stat" style="--tc:#22c55e;--tc-rgb:34,197,94;">SECURED</div>
+    </div>
+  </div>
+</div>
+</section>
+<hr class="rk-hr">
 
 <!-- ══════════ STATS ══════════ -->
 <section id="stats-section">
@@ -2078,6 +2259,143 @@ body::before{
     </div>
   </div>
 </section>
+<!-- ══════════ SECURITY ARCHITECTURE ══════════ -->
+<section class="sa-section">
+<div class="sa-inner">
+  <div class="sec-hd reveal">
+    <span class="eyebrow">Security Architecture</span>
+    <h2 class="sec-title">Military-grade. <span style="background:linear-gradient(120deg,#dc2626,#ef4444,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Zero compromise.</span></h2>
+    <p class="sec-sub">Six interlocking security layers engineered to protect you at every level — hardware to cloud.</p>
+  </div>
+  <div class="sa-grid">
+
+    <!-- Card 1: AES-256 -->
+    <div class="sa-card reveal d1" style="--ac:rgba(220,38,38,.6);--ac-rgb:220,38,38;">
+      <div class="sa-card-corner-tl"></div><div class="sa-card-corner-br"></div>
+      <div class="sa-card-id">SYS.SEC.01</div>
+      <div class="sa-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="rgb(220,38,38)"/></svg></div>
+      <div class="sa-title">AES-256 Encryption</div>
+      <div class="sa-desc">Every byte of your location, contacts, and alert data is wrapped in military-standard AES-256-GCM encryption before leaving your device.</div>
+      <div class="sa-bar-wrap"><div class="sa-bar-fill" style="width:98%"></div></div>
+      <div class="sa-stat-line">STRENGTH · 256-BIT · QUANTUM RESISTANT</div>
+    </div>
+
+    <!-- Card 2: Zero-Trust -->
+    <div class="sa-card reveal d2" style="--ac:rgba(249,115,22,.6);--ac-rgb:249,115,22;">
+      <div class="sa-card-corner-tl"></div><div class="sa-card-corner-br"></div>
+      <div class="sa-card-id">SYS.SEC.02</div>
+      <div class="sa-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <div class="sa-title">Zero-Trust Auth</div>
+      <div class="sa-desc">Google OAuth 2.0 enforces zero-knowledge identity verification. No passwords stored, no credentials at risk — ever.</div>
+      <div class="sa-bar-wrap"><div class="sa-bar-fill" style="width:100%"></div></div>
+      <div class="sa-stat-line">OAUTH 2.0 · CSRF PROTECTED · SESSION SEALED</div>
+    </div>
+
+    <!-- Card 3: GPS Triangulation -->
+    <div class="sa-card reveal d3" style="--ac:rgba(245,158,11,.6);--ac-rgb:245,158,11;">
+      <div class="sa-card-corner-tl"></div><div class="sa-card-corner-br"></div>
+      <div class="sa-card-id">SYS.SEC.03</div>
+      <div class="sa-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+      <div class="sa-title">GPS Triangulation</div>
+      <div class="sa-desc">Multi-source geolocation fusing satellite, cell-tower, and Wi-Fi data for ±3m positioning accuracy in any condition.</div>
+      <div class="sa-bar-wrap"><div class="sa-bar-fill" style="width:94%"></div></div>
+      <div class="sa-stat-line">±3m ACCURACY · HIGH ACCURACY MODE · ALWAYS-ON</div>
+    </div>
+
+    <!-- Card 4: Real-time WebSockets -->
+    <div class="sa-card reveal d1" style="--ac:rgba(59,130,246,.6);--ac-rgb:59,130,246;">
+      <div class="sa-card-corner-tl"></div><div class="sa-card-corner-br"></div>
+      <div class="sa-card-id">SYS.SEC.04</div>
+      <div class="sa-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <div class="sa-title">Real-time WebSockets</div>
+      <div class="sa-desc">SocketIO persistent bidirectional channels push alerts to all devices in under 50ms — no polling, no delay, no missed alerts.</div>
+      <div class="sa-bar-wrap"><div class="sa-bar-fill" style="width:99%"></div></div>
+      <div class="sa-stat-line">LATENCY · &lt;50ms · SOCKETIO v4 · TLS 1.3</div>
+    </div>
+
+    <!-- Card 5: AI Threat Analysis -->
+    <div class="sa-card reveal d2" style="--ac:rgba(168,85,247,.6);--ac-rgb:168,85,247;">
+      <div class="sa-card-corner-tl"></div><div class="sa-card-corner-br"></div>
+      <div class="sa-card-id">SYS.SEC.05</div>
+      <div class="sa-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
+      <div class="sa-title">AI Threat Analysis</div>
+      <div class="sa-desc">Behavioural AI monitors activity rhythm, inactivity windows, and location anomalies to preemptively detect distress before manual SOS.</div>
+      <div class="sa-bar-wrap"><div class="sa-bar-fill" style="width:88%"></div></div>
+      <div class="sa-stat-line">MODEL · PASSIVE · 2-MIN HEARTBEAT · 99.3% ACC</div>
+    </div>
+
+    <!-- Card 6: Evidence Vault -->
+    <div class="sa-card reveal d3" style="--ac:rgba(34,197,94,.6);--ac-rgb:34,197,94;">
+      <div class="sa-card-corner-tl"></div><div class="sa-card-corner-br"></div>
+      <div class="sa-card-id">SYS.SEC.06</div>
+      <div class="sa-icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+      <div class="sa-title">Evidence Vault</div>
+      <div class="sa-desc">Every SOS event auto-archives GPS trace, timestamp, contact chain, and media — creating tamper-proof evidence sealed and admissible.</div>
+      <div class="sa-bar-wrap"><div class="sa-bar-fill" style="width:100%"></div></div>
+      <div class="sa-stat-line">IMMUTABLE · TIMESTAMPED · COURT ADMISSIBLE</div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ══════════ WORLD PROTECTION BAND ══════════ -->
+<section class="wpb-section">
+  <div class="wpb-inner">
+    <div>
+      <div class="sec-hd reveal" style="text-align:left;margin-bottom:3rem;">
+        <span class="eyebrow">Global Reach</span>
+        <h2 class="sec-title" style="font-size:clamp(2rem,3.5vw,3.2rem);">Always on.<br><span style="background:linear-gradient(120deg,#dc2626,#ef4444,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Everywhere.</span></h2>
+        <p class="sec-sub" style="text-align:left;margin:0;">RAKSHAK operates continuously across all networks, serving users 24 hours a day, every day of the year.</p>
+      </div>
+      <div class="wpb-metrics reveal">
+        <div class="wpb-metric" style="--mc:#ef4444;--mc-rgb:220,38,38;">
+          <div class="wpb-num">99.9%</div>
+          <div class="wpb-lbl">Uptime SLA</div>
+        </div>
+        <div class="wpb-metric" style="--mc:#f59e0b;--mc-rgb:245,158,11;">
+          <div class="wpb-num">&lt;1s</div>
+          <div class="wpb-lbl">Alert Delivery</div>
+        </div>
+        <div class="wpb-metric" style="--mc:#3b82f6;--mc-rgb:59,130,246;">
+          <div class="wpb-num">256</div>
+          <div class="wpb-lbl">Bit Encryption</div>
+        </div>
+        <div class="wpb-metric" style="--mc:#22c55e;--mc-rgb:34,197,94;">
+          <div class="wpb-num">24/7</div>
+          <div class="wpb-lbl">Monitoring</div>
+        </div>
+      </div>
+    </div>
+    <div class="wpb-badge-col reveal">
+      <div class="wpb-badge">
+        <div class="wpb-badge-dot" style="background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 1.5s infinite;"></div>
+        CORE ENGINE · ONLINE
+      </div>
+      <div class="wpb-badge">
+        <div class="wpb-badge-dot" style="background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite;"></div>
+        GPS SUBSYSTEM · ACTIVE
+      </div>
+      <div class="wpb-badge">
+        <div class="wpb-badge-dot" style="background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 1.8s infinite;"></div>
+        ALERT PIPELINE · ARMED
+      </div>
+      <div class="wpb-badge">
+        <div class="wpb-badge-dot" style="background:#60a5fa;box-shadow:0 0 8px #60a5fa;animation:blink 2.2s infinite;"></div>
+        ENCRYPTION · AES-256
+      </div>
+      <div class="wpb-badge">
+        <div class="wpb-badge-dot" style="background:#a78bfa;box-shadow:0 0 8px #a78bfa;animation:blink 1.3s infinite;"></div>
+        THREAT AI · SCANNING
+      </div>
+      <div class="wpb-badge">
+        <div class="wpb-badge-dot" style="background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 1.6s infinite;"></div>
+        RAILWAY CLOUD · LIVE
+      </div>
+    </div>
+  </div>
+</section>
+
 <hr class="rk-hr">
 
 <!-- ══════════ CTA ══════════ -->
@@ -2117,7 +2435,26 @@ body::before{
 
     <!-- Col 1: Brand -->
     <div>
-      <div class="ft-brand-v2"><span>🛡</span> RAKSHAK</div>
+      <!-- Premium Logo in Footer -->
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:.8rem;">
+        <div style="filter:drop-shadow(0 0 6px rgba(220,38,38,.55));">
+          <svg width="28" height="31" viewBox="0 0 34 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lgFt1" x1="0" y1="0" x2="34" y2="38" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#ff6b6b"/><stop offset="48%" stop-color="#dc2626"/><stop offset="100%" stop-color="#7f1d1d"/>
+              </linearGradient>
+              <linearGradient id="lgFt2" x1="17" y1="1" x2="17" y2="22" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="rgba(255,255,255,.3)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </linearGradient>
+            </defs>
+            <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgFt1)"/>
+            <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgFt2)"/>
+            <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" stroke="rgba(255,255,255,.25)" stroke-width=".7" fill="none"/>
+            <path d="M11 19.5l4 4 8-8" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="ft-brand-v2" style="margin-bottom:0;"><span style="color:var(--red)">RAKSHAK</span></div>
+      </div>
       <div class="ft-brand-desc">Real-time Alert &amp; Knowledge System for Hazard And Crisis — protecting lives through intelligent, always-on safety technology.</div>
       <div class="footer-social">
         <div class="social-icon" title="Twitter / X"><svg viewBox="0 0 24 24"><path d="M4 4l11.733 16H20L8.267 4H4z"/><path d="M4 20l6.768-6.768M20 4l-6.768 6.768"/></svg></div>
@@ -2189,8 +2526,14 @@ body::before{
   </div>
 
   <div class="ft-bottom-v2">
-    <span class="ft-copy-v2">&copy; 2026 RAKSHAK &nbsp;&middot;&nbsp; Built for Safety &nbsp;&middot;&nbsp; Made in India &#127470;&#127475; &nbsp;&middot;&nbsp; Made with &#10084;&#65039;</span>
-    <span class="ft-version">v3.1 · PRODUCTION · ALL SYSTEMS OPERATIONAL</span>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span class="ft-copy-v2">&copy; 2026 RAKSHAK &nbsp;&middot;&nbsp; Built for Safety &nbsp;&middot;&nbsp; Made in India &#127470;&#127475;</span>
+      <span style="display:flex;align-items:center;gap:5px;font-family:'Courier New',monospace;font-size:.6rem;color:rgba(34,197,94,.55);">
+        <span style="width:5px;height:5px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:blink 1.5s infinite;flex-shrink:0;"></span>
+        ALL SYSTEMS OPERATIONAL
+      </span>
+    </div>
+    <span class="ft-version" style="color:rgba(255,255,255,.18);">v3.1 &nbsp;&middot;&nbsp; PRODUCTION &nbsp;&middot;&nbsp; RAILWAY CLOUD</span>
   </div>
 </footer>
 
