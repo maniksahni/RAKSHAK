@@ -213,42 +213,140 @@
 .cmd-blue   { color:#60a5fa; }
 .cmd-blink  { animation:blink .9s step-end infinite; }
 
-/* ═══ Nearby Safe Places ═══ */
+/* ═══ Nearby Safe Places — Premium ═══ */
 .safe-places-card {
   position:relative;overflow:hidden;
   border-left:3px solid var(--accent-blue);
-  background:linear-gradient(135deg, rgba(20,20,30,0.85), rgba(10,10,20,0.95));
+  background:linear-gradient(135deg, rgba(12,12,22,0.9), rgba(8,8,18,0.97));
 }
 .safe-places-card::before {
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(66,153,225,0.3),transparent);
+  background:linear-gradient(90deg,transparent,rgba(66,153,225,0.5),transparent);
+  animation:secScan 4s linear infinite;
 }
+
+/* Radar scanning state */
+.nsp-scan-state {
+  display:flex;flex-direction:column;align-items:center;padding:18px 10px;gap:10px;
+}
+.nsp-scope {
+  width:72px;height:72px;border-radius:50%;
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.nsp-scope-ring {
+  position:absolute;border-radius:50%;border:1px solid rgba(var(--nsp-rgb),0.2);
+}
+.nsp-scope-ring.r1 { inset:0; }
+.nsp-scope-ring.r2 { inset:16px; }
+.nsp-scope-ring.r3 { inset:28px; }
+.nsp-scope-ch {
+  position:absolute;background:rgba(var(--nsp-rgb),0.08);
+}
+.nsp-scope-ch.h { width:1px;height:100%;left:50%;top:0; }
+.nsp-scope-ch.v { height:1px;width:100%;top:50%;left:0; }
+.nsp-scope-sweep {
+  position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(rgba(var(--nsp-rgb),0.35) 0deg, rgba(var(--nsp-rgb),0.12) 45deg, transparent 90deg);
+  animation:nspSpin 2s linear infinite;
+}
+.nsp-scope-dot {
+  position:absolute;width:5px;height:5px;border-radius:50%;
+  background:rgb(var(--nsp-rgb));top:50%;left:50%;
+  transform:translate(-50%,-50%);z-index:2;
+  box-shadow:0 0 8px rgb(var(--nsp-rgb));
+}
+@keyframes nspSpin { to { transform:rotate(360deg); } }
+.nsp-scan-lbl {
+  font-size:0.6rem;letter-spacing:0.18em;color:rgba(var(--nsp-rgb),0.7);
+  font-family:'Courier New',monospace;font-weight:700;text-transform:uppercase;
+}
+.nsp-scan-radius {
+  font-size:0.52rem;color:rgba(255,255,255,0.2);letter-spacing:0.1em;
+  font-family:'Courier New',monospace;
+}
+
+/* Result cards */
 .safe-place-item {
-  display:flex;align-items:center;gap:12px;padding:10px 12px;
-  border-radius:8px;border:1px solid rgba(255,255,255,0.04);
+  display:flex;align-items:flex-start;gap:12px;padding:11px 13px;
+  border-radius:10px;border:1px solid rgba(255,255,255,0.05);
   background:rgba(255,255,255,0.02);margin-bottom:6px;
-  transition:all .25s ease;
+  transition:all .25s ease;position:relative;overflow:hidden;
+}
+.safe-place-item::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:rgb(var(--nsp-rgb,66,153,225));border-radius:2px;opacity:0.6;
 }
 .safe-place-item:hover {
-  border-color:rgba(66,153,225,0.2);background:rgba(66,153,225,0.04);
-  transform:translateX(3px);
+  border-color:rgba(var(--nsp-rgb,66,153,225),0.25);
+  background:rgba(var(--nsp-rgb,66,153,225),0.04);
+  transform:translateX(4px);
 }
 .safe-place-icon {
-  width:36px;height:36px;border-radius:8px;
+  width:36px;height:36px;border-radius:9px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  margin-top:1px;
 }
-.safe-place-name { font-size:0.82rem;font-weight:600;color:var(--text-primary); }
-.safe-place-dist { font-size:0.68rem;color:var(--text-muted);font-family:'Courier New',monospace; }
-.safe-places-loading {
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:30px;color:var(--text-muted);font-size:0.8rem;
+.safe-place-name { font-size:0.82rem;font-weight:600;color:var(--text-primary);line-height:1.3; }
+.safe-place-dist { font-size:0.65rem;color:var(--text-muted);font-family:'Courier New',monospace;margin-top:2px; }
+.safe-place-dist-bar {
+  height:3px;border-radius:2px;margin-top:5px;
+  background:rgba(255,255,255,0.06);overflow:hidden;
 }
-.safe-places-loading .spinner-dot {
-  width:6px;height:6px;border-radius:50%;background:var(--accent-blue);
-  animation:blink 1.2s infinite;
+.safe-place-dist-bar-fill {
+  height:100%;border-radius:2px;transition:width 1s cubic-bezier(.22,1,.36,1);
 }
-.safe-places-loading .spinner-dot:nth-child(2) { animation-delay:0.2s; }
-.safe-places-loading .spinner-dot:nth-child(3) { animation-delay:0.4s; }
+.safe-place-nav {
+  font-size:0.6rem;color:rgba(var(--nsp-rgb,66,153,225),0.7);
+  letter-spacing:0.08em;margin-top:4px;text-decoration:none;
+  display:inline-flex;align-items:center;gap:3px;
+  transition:color .2s;
+}
+.safe-place-nav:hover { color:rgb(var(--nsp-rgb,66,153,225)); }
+
+/* Personal Safety Index */
+.safety-index-card {
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg, rgba(10,10,20,0.95), rgba(14,14,26,0.9));
+  border-left:3px solid var(--accent-purple);
+}
+.safety-index-card::before {
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(159,122,234,0.4),transparent);
+}
+.si-metric {
+  display:flex;align-items:center;gap:14px;padding:14px;
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);
+  border-radius:12px;transition:all .25s;
+}
+.si-metric:hover {
+  border-color:rgba(var(--si-rgb,159,122,234),0.2);
+  background:rgba(var(--si-rgb,159,122,234),0.03);
+  transform:translateY(-2px);
+}
+.si-ring-wrap { position:relative;flex-shrink:0;width:52px;height:52px; }
+.si-ring-bg { fill:none;stroke:rgba(255,255,255,0.05);stroke-width:4; }
+.si-ring-fill {
+  fill:none;stroke-width:4;stroke-linecap:round;
+  stroke-dasharray:125.66;stroke-dashoffset:125.66;
+  transition:stroke-dashoffset 1.5s cubic-bezier(.22,1,.36,1);
+  transform:rotate(-90deg);transform-origin:center;
+  filter:drop-shadow(0 0 4px rgba(var(--si-rgb,159,122,234),0.5));
+}
+.si-pct {
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:0.65rem;font-weight:800;font-family:var(--font-display);
+}
+.si-label { font-size:0.72rem;font-weight:700;color:var(--text-secondary);letter-spacing:0.04em; }
+.si-sublabel { font-size:0.6rem;color:var(--text-muted);margin-top:2px; }
+.si-bar { flex:1; }
+.si-bar-track {
+  height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;margin-top:6px;
+}
+.si-bar-fill {
+  height:100%;border-radius:2px;transition:width 1.5s cubic-bezier(.22,1,.36,1);
+  background:linear-gradient(90deg,rgb(var(--si-rgb)),rgba(var(--si-rgb),0.6));
+  box-shadow:0 0 8px rgba(var(--si-rgb),0.4);
+}
 
 /* ═══ Emergency Quick Dial ═══ */
 .quick-dial-btn {
@@ -1298,14 +1396,21 @@
   <div class="row g-4 mb-4">
     <div class="col-12 animate-in">
       <div class="glass-card safe-places-card p-4" style="border-radius:var(--radius-lg);">
-        <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center justify-content-between mb-1">
           <div class="d-flex align-items-center gap-2">
-            <i class="bi bi-hospital-fill" style="color:var(--accent-blue);font-size:1.1rem;"></i>
+            <i class="bi bi-crosshair" style="color:var(--accent-blue);font-size:1.1rem;"></i>
             <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">NEARBY SAFE PLACES</h6>
           </div>
           <button onclick="fetchNearbyPlaces()" class="btn-glass" style="font-size:0.72rem;padding:4px 12px;">
             <i class="bi bi-arrow-clockwise me-1"></i>Refresh
           </button>
+        </div>
+        <!-- Scan origin badge -->
+        <div class="d-flex align-items-center gap-2 mb-3" style="font-size:0.6rem;font-family:'Courier New',monospace;">
+          <span style="color:rgba(255,255,255,0.18);">SCAN ORIGIN:</span>
+          <span id="nsp-origin" style="color:rgba(66,153,225,0.6);">AWAITING GPS LOCK</span>
+          <span style="color:rgba(255,255,255,0.12);">·</span>
+          <span style="color:rgba(255,255,255,0.25);">RADIUS: 5km</span>
         </div>
         <div class="row g-3">
           <div class="col-md-4">
@@ -1314,9 +1419,14 @@
               <span style="font-size:0.72rem;font-weight:700;color:#4299e1;letter-spacing:0.1em;">POLICE STATIONS</span>
             </div>
             <div id="places-police">
-              <div class="safe-places-loading">
-                <span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
-                <span>Scanning...</span>
+              <div class="nsp-scan-state" style="--nsp-rgb:66,153,225">
+                <div class="nsp-scope">
+                  <div class="nsp-scope-ring r1"></div><div class="nsp-scope-ring r2"></div><div class="nsp-scope-ring r3"></div>
+                  <div class="nsp-scope-ch h"></div><div class="nsp-scope-ch v"></div>
+                  <div class="nsp-scope-sweep"></div><div class="nsp-scope-dot"></div>
+                </div>
+                <div class="nsp-scan-lbl">Scanning</div>
+                <div class="nsp-scan-radius">5km RADIUS</div>
               </div>
             </div>
           </div>
@@ -1326,9 +1436,14 @@
               <span style="font-size:0.72rem;font-weight:700;color:#48bb78;letter-spacing:0.1em;">HOSPITALS</span>
             </div>
             <div id="places-hospital">
-              <div class="safe-places-loading">
-                <span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
-                <span>Scanning...</span>
+              <div class="nsp-scan-state" style="--nsp-rgb:72,187,120">
+                <div class="nsp-scope">
+                  <div class="nsp-scope-ring r1"></div><div class="nsp-scope-ring r2"></div><div class="nsp-scope-ring r3"></div>
+                  <div class="nsp-scope-ch h"></div><div class="nsp-scope-ch v"></div>
+                  <div class="nsp-scope-sweep"></div><div class="nsp-scope-dot"></div>
+                </div>
+                <div class="nsp-scan-lbl">Scanning</div>
+                <div class="nsp-scan-radius">5km RADIUS</div>
               </div>
             </div>
           </div>
@@ -1338,9 +1453,104 @@
               <span style="font-size:0.72rem;font-weight:700;color:#f6ad55;letter-spacing:0.1em;">FIRE STATIONS</span>
             </div>
             <div id="places-fire">
-              <div class="safe-places-loading">
-                <span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span>
-                <span>Scanning...</span>
+              <div class="nsp-scan-state" style="--nsp-rgb:246,173,85">
+                <div class="nsp-scope">
+                  <div class="nsp-scope-ring r1"></div><div class="nsp-scope-ring r2"></div><div class="nsp-scope-ring r3"></div>
+                  <div class="nsp-scope-ch h"></div><div class="nsp-scope-ch v"></div>
+                  <div class="nsp-scope-sweep"></div><div class="nsp-scope-dot"></div>
+                </div>
+                <div class="nsp-scan-lbl">Scanning</div>
+                <div class="nsp-scan-radius">5km RADIUS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Personal Safety Index ══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 animate-in">
+      <div class="glass-card safety-index-card p-4" style="border-radius:var(--radius-lg);">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-shield-shaded" style="color:var(--accent-purple);font-size:1.1rem;"></i>
+            <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">PERSONAL SAFETY INDEX</h6>
+          </div>
+          <div style="font-size:0.6rem;color:var(--text-muted);font-family:'Courier New',monospace;letter-spacing:0.1em;">LIVE METRICS</div>
+        </div>
+        <div class="row g-3">
+          <!-- SOS Readiness -->
+          <div class="col-md-6">
+            <div class="si-metric" style="--si-rgb:220,38,38">
+              <div class="si-ring-wrap">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                  <circle class="si-ring-bg" cx="26" cy="26" r="20"/>
+                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="rgb(220,38,38)" id="si-ring-sos" style="stroke-dashoffset:0;"/>
+                </svg>
+                <span class="si-pct" style="color:#ef4444;" id="si-pct-sos">100%</span>
+              </div>
+              <div class="si-bar">
+                <div class="si-label"><i class="bi bi-sos me-1" style="color:#ef4444;"></i>SOS READINESS</div>
+                <div class="si-sublabel">Emergency trigger armed &amp; active</div>
+                <div class="si-bar-track"><div class="si-bar-fill" id="si-bar-sos" style="width:100%"></div></div>
+              </div>
+            </div>
+          </div>
+          <!-- GPS Coverage -->
+          <div class="col-md-6">
+            <div class="si-metric" style="--si-rgb:66,153,225">
+              <div class="si-ring-wrap">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                  <circle class="si-ring-bg" cx="26" cy="26" r="20"/>
+                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="rgb(66,153,225)" id="si-ring-gps" style="stroke-dashoffset:125.66;"/>
+                </svg>
+                <span class="si-pct" style="color:#4299e1;" id="si-pct-gps">—</span>
+              </div>
+              <div class="si-bar">
+                <div class="si-label"><i class="bi bi-geo-alt-fill me-1" style="color:#4299e1;"></i>GPS COVERAGE</div>
+                <div class="si-sublabel" id="si-sub-gps">Acquiring satellite lock...</div>
+                <div class="si-bar-track"><div class="si-bar-fill" id="si-bar-gps" style="width:0%;background:linear-gradient(90deg,#4299e1,rgba(66,153,225,0.5));box-shadow:0 0 8px rgba(66,153,225,0.4);"></div></div>
+              </div>
+            </div>
+          </div>
+          <!-- Contact Network -->
+          <div class="col-md-6">
+            <div class="si-metric" style="--si-rgb:72,187,120">
+              <div class="si-ring-wrap">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                  <circle class="si-ring-bg" cx="26" cy="26" r="20"/>
+                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="rgb(72,187,120)"
+                    id="si-ring-contacts"
+                    style="stroke-dashoffset:{{ (125.66 * (1 - [trusted_contacts|length, 5]|min / 5))|round(2) }};"/>
+                </svg>
+                <span class="si-pct" style="color:#48bb78;">{{ ([trusted_contacts|length, 5]|min * 20) }}%</span>
+              </div>
+              <div class="si-bar">
+                <div class="si-label"><i class="bi bi-people-fill me-1" style="color:#48bb78;"></i>CONTACT NETWORK</div>
+                <div class="si-sublabel">{{ trusted_contacts|length }} of 5 operatives linked</div>
+                <div class="si-bar-track"><div class="si-bar-fill" style="width:{{ [trusted_contacts|length, 5]|min * 20 }}%;background:linear-gradient(90deg,#48bb78,rgba(72,187,120,0.5));box-shadow:0 0 8px rgba(72,187,120,0.4);"></div></div>
+              </div>
+            </div>
+          </div>
+          <!-- Threat Score -->
+          <div class="col-md-6">
+            <div class="si-metric" style="--si-rgb:{% if current_user.risk_level=='critical' %}220,38,38{% elif current_user.risk_level=='high' %}249,115,22{% elif current_user.risk_level=='medium' %}245,158,11{% else %}34,197,94{% endif %}">
+              {% set threat_score = {'critical':8,'high':30,'medium':55,'low':88}[current_user.risk_level] %}
+              {% set threat_color = {'critical':'#ef4444','high':'#f97316','medium':'#f59e0b','low':'#22c55e'}[current_user.risk_level] %}
+              <div class="si-ring-wrap">
+                <svg viewBox="0 0 52 52" width="52" height="52">
+                  <circle class="si-ring-bg" cx="26" cy="26" r="20"/>
+                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="{{ threat_color }}"
+                    style="stroke-dashoffset:{{ (125.66 * (1 - threat_score/100))|round(2) }};"/>
+                </svg>
+                <span class="si-pct" style="color:{{ threat_color }};">{{ threat_score }}%</span>
+              </div>
+              <div class="si-bar">
+                <div class="si-label"><i class="bi bi-activity me-1" style="color:{{ threat_color }};"></i>THREAT SCORE</div>
+                <div class="si-sublabel">Current risk: {{ current_user.risk_level|upper }}</div>
+                <div class="si-bar-track"><div class="si-bar-fill" style="width:{{ threat_score }}%;background:linear-gradient(90deg,{{ threat_color }},rgba({{ {'critical':'220,38,38','high':'249,115,22','medium':'245,158,11','low':'34,197,94'}[current_user.risk_level] }},0.5));box-shadow:0 0 8px rgba({{ {'critical':'220,38,38','high':'249,115,22','medium':'245,158,11','low':'34,197,94'}[current_user.risk_level] }},0.4);"></div></div>
               </div>
             </div>
           </div>
@@ -1536,16 +1746,29 @@
   setInterval(tick, 1000);
 })();
 
-// ── GPS coords in header (populated when location is acquired) ──
+// ── GPS coords in header + Personal Safety Index GPS ring ──
 (function(){
   if (!navigator.geolocation) return;
   navigator.geolocation.watchPosition(pos => {
     window.currentLat = pos.coords.latitude;
     window.currentLng = pos.coords.longitude;
+    // Header display
     const wrap = document.getElementById('hdr-gps-wrap');
     const el   = document.getElementById('hdr-gps');
     if (el) el.innerHTML = pos.coords.latitude.toFixed(4) + '° N<br>' + pos.coords.longitude.toFixed(4) + '° E';
     if (wrap) wrap.style.display = 'block';
+    // Personal Safety Index — GPS ring
+    const acc = pos.coords.accuracy || 50;
+    const gpsPct = Math.round(Math.max(10, Math.min(100, 100 - (acc - 5) / 1.5)));
+    const dashOffset = 125.66 * (1 - gpsPct / 100);
+    const ring = document.getElementById('si-ring-gps');
+    const pct  = document.getElementById('si-pct-gps');
+    const bar  = document.getElementById('si-bar-gps');
+    const sub  = document.getElementById('si-sub-gps');
+    if (ring) ring.style.strokeDashoffset = dashOffset;
+    if (pct)  pct.textContent = gpsPct + '%';
+    if (bar)  bar.style.width = gpsPct + '%';
+    if (sub)  sub.textContent = 'Accuracy ±' + Math.round(acc) + 'm · ' + pos.coords.latitude.toFixed(3) + '°N';
   }, null, { enableHighAccuracy: true, maximumAge: 10000 });
 })();
 
@@ -1852,11 +2075,22 @@ function fetchNearbyPlaces() {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
+  // Update scan origin badge
+  const originEl = document.getElementById('nsp-origin');
+  if (originEl) originEl.textContent = lat.toFixed(4) + '°N  ' + lng.toFixed(4) + '°E';
+
+  const colorMap = { police: '66,153,225', hospital: '72,187,120', fire: '246,173,85' };
+  const iconMap  = { police: 'bi-shield-fill', hospital: 'bi-heart-pulse-fill', fire: 'bi-fire' };
+
   function renderPlaces(containerId, data, icon, color) {
     const container = document.getElementById(containerId);
     if (!container) return;
     if (!data.elements || data.elements.length === 0) {
-      container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.78rem;">None found within 3km</div>';
+      container.innerHTML = `<div style="text-align:center;padding:20px;">
+        <div style="font-size:1.4rem;opacity:0.2;margin-bottom:8px;">📍</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;">None found within 5km</div>
+        <div style="font-size:0.62rem;color:rgba(255,255,255,0.15);margin-top:3px;">Try expanding your location access</div>
+      </div>`;
       return;
     }
     const sorted = data.elements
@@ -1870,15 +2104,24 @@ function fetchNearbyPlaces() {
       .sort((a,b) => a.dist - b.dist)
       .slice(0, 3);
 
-    container.innerHTML = sorted.map(p => {
+    container.innerHTML = sorted.map((p, i) => {
       const distStr = p.dist < 1000 ? Math.round(p.dist) + 'm' : (p.dist/1000).toFixed(1) + 'km';
-      return `<div class="safe-place-item">
+      const distPct = Math.max(4, Math.min(96, (1 - p.dist / 5000) * 100)).toFixed(0);
+      const distColor = p.dist < 1000 ? '#22c55e' : p.dist < 3000 ? '#f59e0b' : '#f97316';
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`;
+      return `<div class="safe-place-item" style="--nsp-rgb:${color};animation:fadeSlideIn .3s ease-out ${i*0.08}s both;">
         <div class="safe-place-icon" style="background:rgba(${color},0.1);border:1px solid rgba(${color},0.2);">
           <i class="bi ${icon}" style="color:rgb(${color});font-size:0.9rem;"></i>
         </div>
         <div style="flex:1;min-width:0;">
           <div class="safe-place-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
-          <div class="safe-place-dist">${distStr} away</div>
+          <div class="safe-place-dist" style="color:${distColor};">${distStr} away</div>
+          <div class="safe-place-dist-bar">
+            <div class="safe-place-dist-bar-fill" style="width:${distPct}%;background:linear-gradient(90deg,${distColor},rgba(${color},0.3));"></div>
+          </div>
+          <a href="${mapsUrl}" target="_blank" rel="noopener" class="safe-place-nav">
+            <i class="bi bi-box-arrow-up-right" style="font-size:0.55rem;"></i>NAVIGATE
+          </a>
         </div>
       </div>`;
     }).join('');
@@ -1889,13 +2132,20 @@ function fetchNearbyPlaces() {
   Object.entries(queries).forEach(([type, query]) => {
     const containerId = 'places-' + type;
     const el = document.getElementById(containerId);
-    if (el) el.innerHTML = '<div class="safe-places-loading"><span class="spinner-dot"></span><span class="spinner-dot"></span><span class="spinner-dot"></span><span>Scanning...</span></div>';
+    const c = colorMap[type];
+    if (el) el.innerHTML = `<div class="nsp-scan-state" style="--nsp-rgb:${c}">
+      <div class="nsp-scope">
+        <div class="nsp-scope-ring r1"></div><div class="nsp-scope-ring r2"></div><div class="nsp-scope-ring r3"></div>
+        <div class="nsp-scope-ch h"></div><div class="nsp-scope-ch v"></div>
+        <div class="nsp-scope-sweep"></div><div class="nsp-scope-dot"></div>
+      </div>
+      <div class="nsp-scan-lbl">Scanning</div>
+      <div class="nsp-scan-radius">5km RADIUS</div>
+    </div>`;
 
     fetch(overpassUrl, { method: 'POST', body: 'data=' + encodeURIComponent(query), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
       .then(r => r.json())
       .then(data => {
-        const iconMap = { police: 'bi-shield-fill', hospital: 'bi-heart-pulse-fill', fire: 'bi-fire' };
-        const colorMap = { police: '66,153,225', hospital: '72,187,120', fire: '246,173,85' };
         renderPlaces(containerId, data, iconMap[type], colorMap[type]);
       })
       .catch(() => {
