@@ -578,6 +578,18 @@
 .parallax-slow { transition: transform 0.3s ease-out; }
 .parallax-medium { transition: transform 0.2s ease-out; }
 .parallax-fast { transition: transform 0.1s ease-out; }
+
+/* ── Responsive stat cards ── */
+@media (max-width: 1100px) {
+  .stat-card { padding: 1rem; }
+  .stat-number { font-size: 2rem; }
+  .stat-label { font-size: 0.7rem; letter-spacing: 0.04em; }
+}
+@media (max-width: 900px) {
+  .stat-card { padding: 0.75rem; }
+  .stat-number { font-size: 1.7rem; }
+  .stat-label { font-size: 0.65rem; letter-spacing: 0.02em; }
+}
 </style>
 {% endblock %}
 
@@ -717,25 +729,25 @@
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
           <div class="stat-card h-100" style="transform:translateZ(10px);">
             <div class="stat-number" id="total-alerts">{{ alerts|length }}</div>
-            <div class="stat-label">Total Alerts</div>
+            <div class="stat-label" style="white-space:nowrap;">Alerts</div>
           </div>
         </div>
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
           <div class="stat-card h-100" style="transform:translateZ(10px);">
             <div class="stat-number" id="active-alerts">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
-            <div class="stat-label">Active Alerts</div>
+            <div class="stat-label" style="white-space:nowrap;">Active</div>
           </div>
         </div>
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
           <div class="stat-card h-100" style="transform:translateZ(10px);">
             <div class="stat-number">{{ (current_user.consecutive_missed_pings or 0) }}</div>
-            <div class="stat-label">Missed Pings</div>
+            <div class="stat-label" style="white-space:nowrap;">Missed</div>
           </div>
         </div>
         <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
           <div class="stat-card h-100 d-flex flex-column justify-content-between" style="transform:translateZ(10px);">
             <div class="stat-number" style="color:var(--accent-green);">ON</div>
-            <div class="stat-label">Sys Monitor</div>
+            <div class="stat-label" style="white-space:nowrap;">Sys Status</div>
           </div>
         </div>
       </div>
@@ -803,16 +815,16 @@
           <a href="{{ url_for('auth.profile') }}" class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:var(--text-muted); font-size:0.7rem;">Manage</a>
         </div>
         
-        <div class="d-flex overflow-auto pb-2" style="gap:15px; scrollbar-width:thin;">
+        <div class="d-flex flex-wrap" style="gap:12px;">
           {% if trusted_contacts %}
             {% for contact in trusted_contacts %}
-            <div class="contact-node d-flex align-items-center" style="min-width:200px; background:rgba(0,0,0,0.3); border:1px dashed rgba(255,255,255,0.1); padding:10px 15px; border-radius:8px;">
-              <div style="width:36px; height:36px; border-radius:50%; background:rgba(72,187,120,0.15); border:1px solid #48bb78; display:flex; align-items:center; justify-content:center; margin-right:12px; font-weight:700; color:#48bb78;">
+            <div class="contact-node d-flex align-items-center" style="min-width:180px; flex:1 1 180px; max-width:280px; background:rgba(0,0,0,0.3); border:1px dashed rgba(255,255,255,0.1); padding:10px 15px; border-radius:8px;">
+              <div style="width:36px; height:36px; flex-shrink:0; border-radius:50%; background:rgba(72,187,120,0.15); border:1px solid #48bb78; display:flex; align-items:center; justify-content:center; margin-right:12px; font-weight:700; color:#48bb78;">
                 {{ contact.contact_name[0]|upper }}
               </div>
-              <div>
-                <div style="font-size:0.85rem; font-weight:600; color:var(--white);">{{ contact.contact_name }}</div>
-                <div style="font-size:0.65rem; color:var(--text-muted); font-family:'Courier New', monospace;">{{ contact.contact_email }}</div>
+              <div style="min-width:0; overflow:hidden;">
+                <div style="font-size:0.85rem; font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_name }}</div>
+                <div style="font-size:0.65rem; color:var(--text-muted); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_email }}</div>
               </div>
             </div>
             {% endfor %}
