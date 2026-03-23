@@ -89,42 +89,44 @@
     <i class="bi bi-list"></i>
   </button>
 
-  <!-- Logo (uses global .rk-logo-* classes from main.css) -->
-  <a class="rk-logo-mark me-auto" href="{{ url_for('dashboard.index') }}">
-    <div class="rk-logo-shield-wrap">
-      <div class="rk-logo-scan"></div>
-      <svg width="30" height="34" viewBox="0 0 42 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- ── ULTRA PREMIUM NAVBAR LOGO ── -->
+  <a class="rkn-logo" href="{{ url_for('dashboard.index') }}">
+    <!-- Shield mark -->
+    <div class="rkn-shield-wrap">
+      <div class="rkn-orbit"></div>
+      <svg class="rkn-svg" width="36" height="40" viewBox="0 0 60 70" fill="none">
         <defs>
-          <linearGradient id="lgA-base" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#ff5252"/><stop offset="30%" stop-color="#e02020"/><stop offset="65%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#4c0707"/>
-          </linearGradient>
-          <linearGradient id="lgA-gloss" x1="21" y1="2" x2="21" y2="28" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="rgba(255,255,255,.52)"/><stop offset="50%" stop-color="rgba(255,255,255,.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-          </linearGradient>
-          <linearGradient id="lgA-rim" x1="0" y1="25" x2="42" y2="25" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="rgba(255,180,180,.35)"/><stop offset="25%" stop-color="rgba(255,255,255,0)"/><stop offset="100%" stop-color="rgba(0,0,0,.2)"/>
-          </linearGradient>
-          <linearGradient id="lgA-bdr" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="rgba(255,210,210,.65)"/><stop offset="50%" stop-color="rgba(200,50,50,.25)"/><stop offset="100%" stop-color="rgba(80,0,0,.25)"/>
-          </linearGradient>
+          <radialGradient id="nRG1" cx="38%" cy="28%" r="65%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="45%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
+          <linearGradient id="nLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.5)"/><stop offset="60%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.3)"/></linearGradient>
+          <filter id="nGlow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="rgba(0,0,0,.15)" transform="translate(.8,1.5)"/>
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgA-base)"/>
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgA-rim)"/>
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgA-gloss)"/>
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" stroke="url(#lgA-bdr)" stroke-width="1" fill="none"/>
-        <path d="M21 9L8 16v11c0 9.8 7 18.2 13 21 6-2.8 13-11.2 13-21V16L21 9z" stroke="rgba(255,255,255,.12)" stroke-width=".8" fill="rgba(255,255,255,.04)"/>
-        <ellipse cx="8" cy="13" rx="2" ry="1.2" fill="rgba(255,255,255,.28)" transform="rotate(-25 8 13)"/>
-        <path d="M13 28l6 6.5 12-13" stroke="rgba(255,255,255,.3)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M13 28l6 6.5 12-13" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Shadow -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="rgba(0,0,0,.4)" transform="translate(1.5,2.5) scale(.97)"/>
+        <!-- Body -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#nRG1)"/>
+        <!-- Gloss overlay -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#nLG2)"/>
+        <!-- Border shine -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" stroke="rgba(255,200,200,.45)" stroke-width="1.2" fill="none"/>
+        <!-- Inner frame -->
+        <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z" stroke="rgba(255,255,255,.12)" stroke-width=".8" fill="rgba(255,255,255,.03)"/>
+        <!-- Top glint -->
+        <ellipse cx="11" cy="18" rx="3.5" ry="2" fill="rgba(255,255,255,.35)" transform="rotate(-28 11 18)"/>
+        <!-- Circuit lines -->
+        <line x1="3" y1="38" x2="10" y2="38" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="50" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <!-- Checkmark with glow -->
+        <path d="M18 38l9 10 17-18" stroke="rgba(255,150,150,.4)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#nGlow)"/>
+        <path d="M18 38l9 10 17-18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    <div class="rk-logo-text-wrap">
-      <div class="rk-logo-wordmark">RAKSHAK</div>
-      <div class="rk-logo-sub">
-        <div class="rk-logo-sub-line"></div>
-        <span class="rk-logo-tagline">Safety Platform</span>
-        <div class="rk-logo-sub-line" style="background:linear-gradient(90deg,rgba(220,38,38,.2),rgba(220,38,38,.8))"></div>
+    <!-- Wordmark -->
+    <div class="rkn-text">
+      <div class="rkn-wordmark">RAKSHAK</div>
+      <div class="rkn-tagrow">
+        <span class="rkn-dash"></span>
+        <span class="rkn-tag">SAFETY PLATFORM</span>
+        <span class="rkn-dash" style="background:linear-gradient(90deg,rgba(220,38,38,.15),rgba(220,38,38,.6))"></span>
       </div>
     </div>
   </a>
@@ -186,43 +188,61 @@
 </nav>
 
 <!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
-<aside class="sidebar pt-4" id="sidebar">
-  <div class="px-4 mb-4">
-    <div class="sidebar-brand" style="gap:10px;">
-      <!-- Ultra-Premium Shield Mark -->
-      <div style="position:relative;flex-shrink:0;transition:all .4s cubic-bezier(.22,1,.36,1);" onmouseover="this.style.transform='scale(1.08) translateY(-1px)'" onmouseout="this.style.transform='scale(1) translateY(0)'">
-        <svg width="44" height="50" viewBox="0 0 42 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 3px 14px rgba(220,38,38,.55)) drop-shadow(0 0 5px rgba(255,80,80,.2))">
+<aside class="sidebar pt-3" id="sidebar">
+
+  <!-- ══ Premium Sidebar Brand ══ -->
+  <div class="rksb-brand-wrap">
+    <div class="rksb-bg-glow"></div>
+
+    <!-- Big shield + wordmark -->
+    <div class="rksb-logo">
+      <!-- Shield -->
+      <div class="rksb-shield-outer">
+        <div class="rksb-shield-ring"></div>
+        <svg class="rksb-svg" width="52" height="60" viewBox="0 0 60 70" fill="none">
           <defs>
-            <linearGradient id="lgSB-base" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#ff5252"/><stop offset="30%" stop-color="#e02020"/><stop offset="65%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#4c0707"/>
-            </linearGradient>
-            <linearGradient id="lgSB-gloss" x1="21" y1="2" x2="21" y2="28" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="rgba(255,255,255,.55)"/><stop offset="50%" stop-color="rgba(255,255,255,.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-            </linearGradient>
-            <linearGradient id="lgSB-rim" x1="0" y1="25" x2="42" y2="25" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="rgba(255,180,180,.4)"/><stop offset="25%" stop-color="rgba(255,255,255,0)"/><stop offset="100%" stop-color="rgba(0,0,0,.22)"/>
-            </linearGradient>
-            <linearGradient id="lgSB-bdr" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="rgba(255,215,215,.7)"/><stop offset="50%" stop-color="rgba(200,50,50,.3)"/><stop offset="100%" stop-color="rgba(80,0,0,.25)"/>
-            </linearGradient>
+            <radialGradient id="sbRG1" cx="38%" cy="28%" r="68%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="40%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
+            <linearGradient id="sbLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.55)"/><stop offset="55%" stop-color="rgba(255,255,255,.04)"/><stop offset="100%" stop-color="rgba(0,0,0,.25)"/></linearGradient>
+            <radialGradient id="sbRG3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,80,80,.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+            <filter id="sbCkGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="sbBodyGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
           </defs>
-          <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="rgba(0,0,0,.15)" transform="translate(.8,1.6)"/>
-          <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgSB-base)"/>
-          <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgSB-rim)"/>
-          <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgSB-gloss)"/>
-          <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" stroke="url(#lgSB-bdr)" stroke-width="1" fill="none"/>
-          <path d="M21 9L8 16v11c0 9.8 7 18.2 13 21 6-2.8 13-11.2 13-21V16L21 9z" stroke="rgba(255,255,255,.14)" stroke-width=".85" fill="rgba(255,255,255,.04)"/>
-          <ellipse cx="8" cy="13" rx="2.5" ry="1.5" fill="rgba(255,255,255,.3)" transform="rotate(-25 8 13)"/>
-          <path d="M13 28l6 6.5 12-13" stroke="rgba(255,255,255,.32)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M13 28l6 6.5 12-13" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Drop shadow -->
+          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="rgba(180,0,0,.35)" transform="translate(2,4) scale(.94)" filter="url(#sbBodyGlow)"/>
+          <!-- Main body -->
+          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#sbRG1)"/>
+          <!-- Center depth -->
+          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#sbRG3)"/>
+          <!-- Gloss -->
+          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#sbLG2)"/>
+          <!-- Border -->
+          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" stroke="rgba(255,200,200,.5)" stroke-width="1.2" fill="none"/>
+          <!-- Inner frame -->
+          <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z" stroke="rgba(255,255,255,.14)" stroke-width=".9" fill="rgba(255,255,255,.03)"/>
+          <!-- Glint -->
+          <ellipse cx="11" cy="18" rx="4" ry="2.2" fill="rgba(255,255,255,.38)" transform="rotate(-28 11 18)"/>
+          <!-- Circuit accent lines -->
+          <line x1="3" y1="38" x2="12" y2="38" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+          <line x1="48" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+          <line x1="30" y1="4" x2="30" y2="13" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+          <!-- Checkmark glow -->
+          <path d="M18 38l9 10 17-18" stroke="rgba(255,140,140,.45)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#sbCkGlow)"/>
+          <path d="M18 38l9 10 17-18" stroke="white" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.22rem;font-weight:800;letter-spacing:.18em;background:linear-gradient(135deg,#ffffff 0%,#ffe8e8 40%,#ffffff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;">RAKSHAK</div>
-        <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
-          <div style="height:1px;width:12px;background:linear-gradient(90deg,rgba(220,38,38,.9),rgba(220,38,38,.2));border-radius:2px;"></div>
-          <div style="font-family:'Courier New',monospace;font-size:.44rem;color:rgba(220,38,38,.72);letter-spacing:.22em;text-transform:uppercase;">Safety Platform</div>
-          <div style="height:1px;width:12px;background:linear-gradient(90deg,rgba(220,38,38,.2),rgba(220,38,38,.9));border-radius:2px;"></div>
+
+      <!-- Text stack -->
+      <div class="rksb-text">
+        <div class="rksb-wordmark">RAKSHAK</div>
+        <div class="rksb-tagrow">
+          <span class="rksb-dash"></span>
+          <span class="rksb-tag">SAFETY PLATFORM</span>
+          <span class="rksb-dash" style="background:linear-gradient(90deg,rgba(220,38,38,.15),rgba(220,38,38,.7))"></span>
+        </div>
+        <!-- Live status pill -->
+        <div class="rksb-status">
+          <span class="rksb-dot"></span>
+          <span class="rksb-status-text">SHIELD ACTIVE</span>
         </div>
       </div>
     </div>
