@@ -30,18 +30,8 @@ body::before{
   -webkit-mask-image:radial-gradient(ellipse 90% 90% at 50% 0%,black 30%,transparent 80%);
 }
 
-/* ── Ticker ── */
-.public-ticker {
-  position: fixed; top: 0; left: 0; right: 0; height: 32px; z-index: 1001;
-  background: rgba(220,38,38,0.05); border-bottom: 1px solid rgba(220,38,38,0.1);
-  backdrop-filter: blur(10px); display: flex; align-items: center; overflow: hidden;
-  font-family: 'Courier New', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.6);
-}
-.pt-track { display: flex; gap: 3rem; white-space: nowrap; animation: tickerScroll 20s linear infinite; }
-
 /* ── Navbar ── */
-.rk-nav{position:fixed !important;top:32px;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:background .4s,border-color .4s,backdrop-filter .4s}
+.rk-nav{position:fixed !important;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:background .4s,border-color .4s,backdrop-filter .4s}
 .rk-nav.scrolled{background:rgba(5,5,8,.93) !important;border-color:var(--bdr) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important}
 /* Premium logo already handled by base.html style — keep for compat */
 .rk-nav .navbar-brand-text{font-family:var(--sg) !important;font-size:1.1rem !important;font-weight:700 !important;letter-spacing:.2em !important;color:var(--white) !important;text-shadow:none !important}
@@ -1449,34 +1439,6 @@ body::before{
     <circle class="radar-ring" cx="450" cy="450" r="20"/>
     <circle class="radar-ring" cx="450" cy="450" r="20"/>
   </svg>
-  <!-- ── Global Public Threat Ticker ── -->
-<div class="public-ticker">
-  <div class="pt-track">
-    <span>SYSTEM STATUS: OPTIMAL</span>
-    <span>•</span>
-    <span style="color:var(--red);">THREAT ENGINE: ACTIVE</span>
-    <span>•</span>
-    <span>AI SENTINEL: ARMED</span>
-    <span>•</span>
-    <span>GLOBAL LATENCY: 42MS</span>
-    <span>•</span>
-    <span style="color:var(--accent-blue);">SSL ENCRYPTION: SECURE</span>
-    <span>•</span>
-    <span>SATELLITE UPLINK: LOCKED</span>
-    <span>•</span>
-    <span>SYSTEM STATUS: OPTIMAL</span>
-    <span>•</span>
-    <span style="color:var(--red);">THREAT ENGINE: ACTIVE</span>
-    <span>•</span>
-    <span>AI SENTINEL: ARMED</span>
-    <span>•</span>
-    <span>GLOBAL LATENCY: 42MS</span>
-    <span>•</span>
-    <span style="color:var(--accent-blue);">SSL ENCRYPTION: SECURE</span>
-    <span>•</span>
-    <span>SATELLITE UPLINK: LOCKED</span>
-  </div>
-</div>
 
   <!-- SCAN LINES -->
   <div class="hero-scanlines">
@@ -1683,11 +1645,117 @@ body::before{
 
 </section>
 
-<!-- ══════════ MARQUEE ══════════ -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="m-item">Instant SOS</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Threat Risk Engine</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Live Heatmap</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Danger Zones</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Evidence Vault</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Command Center</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Secure Auth</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Real-time Alerts</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">RAKSHAK</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-    <span class="m-item">Instant SOS</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Threat Risk Engine</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Live Heatmap</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Danger Zones</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Evidence Vault</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">Command Center</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span><span class="m-item">Secure Auth</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span class="m-item">Real-time Alerts</span><span class="m-sep"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span><span class="m-item">RAKSHAK</span><span class="m-sep"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+<!-- ══════════ PREMIUM FEATURE TICKER STRIP ══════════ -->
+<style>
+/* ── Premium Dual-Track Ticker ── */
+.pticker-wrap{
+  position:relative;overflow:hidden;
+  padding:28px 0;
+  background:linear-gradient(135deg,rgba(8,8,14,.98),rgba(12,10,22,.97));
+  border-top:1px solid rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.pticker-wrap::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(220,38,38,.7),rgba(168,85,247,.5),rgba(59,130,246,.4),transparent);
+  animation:ptBeam 4s linear infinite;
+}
+.pticker-wrap::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(59,130,246,.4),rgba(168,85,247,.5),rgba(220,38,38,.7),transparent);
+  animation:ptBeam 4s 2s linear infinite;
+}
+@keyframes ptBeam{0%,100%{opacity:.5}50%{opacity:1}}
+/* fade edges */
+.pticker-wrap>.pt-fade-l{position:absolute;top:0;left:0;bottom:0;width:140px;background:linear-gradient(90deg,rgba(8,8,14,1),transparent);z-index:5;pointer-events:none}
+.pticker-wrap>.pt-fade-r{position:absolute;top:0;right:0;bottom:0;width:140px;background:linear-gradient(270deg,rgba(8,8,14,1),transparent);z-index:5;pointer-events:none}
+.pt-row{display:flex;gap:0;margin-bottom:12px}
+.pt-row:last-child{margin-bottom:0}
+.pt-track{display:flex;gap:1.5rem;white-space:nowrap;animation:ptScroll 28s linear infinite}
+.pt-track.reverse{animation-direction:reverse;animation-duration:34s}
+.pt-track:hover{animation-play-state:paused}
+@keyframes ptScroll{to{transform:translateX(-50%)}}
+.pt-chip{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:8px 20px;border-radius:50px;
+  font-family:'Space Grotesk',sans-serif;font-size:.78rem;font-weight:600;
+  letter-spacing:.08em;white-space:nowrap;transition:all .3s;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);
+  color:rgba(255,255,255,.65);
+}
+.pt-chip svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.8}
+.pt-chip.red{border-color:rgba(220,38,38,.25);color:rgba(248,113,113,.9)}
+.pt-chip.red svg{filter:drop-shadow(0 0 4px rgba(220,38,38,.6))}
+.pt-chip.amber{border-color:rgba(245,158,11,.25);color:rgba(251,191,36,.9)}
+.pt-chip.amber svg{filter:drop-shadow(0 0 4px rgba(245,158,11,.6))}
+.pt-chip.blue{border-color:rgba(59,130,246,.25);color:rgba(147,197,253,.9)}
+.pt-chip.blue svg{filter:drop-shadow(0 0 4px rgba(59,130,246,.6))}
+.pt-chip.green{border-color:rgba(34,197,94,.25);color:rgba(134,239,172,.9)}
+.pt-chip.green svg{filter:drop-shadow(0 0 4px rgba(34,197,94,.6))}
+.pt-chip.purple{border-color:rgba(168,85,247,.25);color:rgba(196,181,253,.9)}
+.pt-chip.purple svg{filter:drop-shadow(0 0 4px rgba(168,85,247,.6))}
+.pt-chip.cyan{border-color:rgba(6,182,212,.25);color:rgba(103,232,249,.9)}
+.pt-chip.cyan svg{filter:drop-shadow(0 0 4px rgba(6,182,212,.6))}
+</style>
+<div class="pticker-wrap">
+  <div class="pt-fade-l"></div>
+  <div class="pt-fade-r"></div>
+  <!-- Track 1 (left→right) -->
+  <div class="pt-row">
+    <div class="pt-track">
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>One-tap SOS Override</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg>AI Threat Biosensor</span>
+      <span class="pt-chip blue"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Tactical Danger Map</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Certified GPS Lock</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Classified Evidence Vault</span>
+      <span class="pt-chip cyan"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Zero-Trust Auth Layer</span>
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.12 1.22 2 2 0 012.1 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.31 7.46a16 16 0 006.22 6.22l1.32-1.04a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>Sub-second Alert Broadcast</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>120s Heartbeat Monitor</span>
+      <span class="pt-chip blue"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>SocketIO Real-time Push</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 003.2 7.2M2 12.5a10 10 0 0018.8 4.2"/></svg>Safe Walk + ETA Guard</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>42 Global Hotspots Mapped</span>
+      <!-- Duplicate for seamless scroll -->
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>One-tap SOS Override</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg>AI Threat Biosensor</span>
+      <span class="pt-chip blue"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Tactical Danger Map</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>Certified GPS Lock</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Classified Evidence Vault</span>
+      <span class="pt-chip cyan"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Zero-Trust Auth Layer</span>
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.12 1.22 2 2 0 012.1 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.31 7.46a16 16 0 006.22 6.22l1.32-1.04a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>Sub-second Alert Broadcast</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>120s Heartbeat Monitor</span>
+      <span class="pt-chip blue"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>SocketIO Real-time Push</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><path d="M2.5 2v6h6M21.5 22v-6h-6"/><path d="M22 11.5A10 10 0 003.2 7.2M2 12.5a10 10 0 0018.8 4.2"/></svg>Safe Walk + ETA Guard</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>42 Global Hotspots Mapped</span>
+    </div>
+  </div>
+  <!-- Track 2 (right→left) -->
+  <div class="pt-row">
+    <div class="pt-track reverse">
+      <span class="pt-chip cyan"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AES-256 Encrypted Transit</span>
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Live Activity Monitor</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Multi-source GPS Fusion</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Up to 5 Trusted Contacts</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><phone d="M22 16.92v3a2 2 0 01-2.18 2"/><path d="M5 4H3a2 2 0 00-2 2v3c0 9.39 7.61 17 17 17h3a2 2 0 002-2v-3a2 2 0 00-1.72-1.97l-4-0.5"/></svg>Fake Call Defender</span>
+      <span class="pt-chip blue"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Admin Command Center</span>
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Instant SOS Broadcast</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Real-time Risk Score</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>500m Hotzone Proximity</span>
+      <span class="pt-chip cyan"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>SHA-256 Incident Hash</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>bcrypt · cost=12</span>
+      <!-- Duplicate for seamless scroll -->
+      <span class="pt-chip cyan"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AES-256 Encrypted Transit</span>
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Live Activity Monitor</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Multi-source GPS Fusion</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Up to 5 Trusted Contacts</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2"/><path d="M5 4H3a2 2 0 00-2 2v3c0 9.39 7.61 17 17 17h3a2 2 0 002-2v-3a2 2 0 00-1.72-1.97l-4-0.5"/></svg>Fake Call Defender</span>
+      <span class="pt-chip blue"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Admin Command Center</span>
+      <span class="pt-chip red"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Instant SOS Broadcast</span>
+      <span class="pt-chip green"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Real-time Risk Score</span>
+      <span class="pt-chip purple"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>500m Hotzone Proximity</span>
+      <span class="pt-chip cyan"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>SHA-256 Incident Hash</span>
+      <span class="pt-chip amber"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>bcrypt · cost=12</span>
+    </div>
   </div>
 </div>
 
@@ -2394,6 +2462,398 @@ body::before{
     </div>
   </div>
 </section>
+<!-- ══════════ FEATURE DEEP-DIVE ACCORDION ══════════ -->
+<style>
+.fdd-section{padding:7rem clamp(2rem,6vw,6rem);max-width:1380px;margin:0 auto}
+.fdd-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:4rem}
+.fdd-list{display:flex;flex-direction:column;gap:1rem}
+.fdd-item{
+  border:1px solid rgba(255,255,255,.07);border-radius:16px;
+  background:rgba(8,8,14,.6);backdrop-filter:blur(20px);
+  overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);cursor:pointer;
+}
+.fdd-item.active{border-color:rgba(220,38,38,.35);box-shadow:0 0 30px rgba(220,38,38,.08),inset 0 0 30px rgba(220,38,38,.04)}
+.fdd-header{display:flex;align-items:center;gap:14px;padding:20px 24px}
+.fdd-icon{width:42px;height:42px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .4s;border:1px solid rgba(255,255,255,.08)}
+.fdd-item.active .fdd-icon{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.3);box-shadow:0 0 18px rgba(220,38,38,.2)}
+.fdd-icon svg{width:20px;height:20px;stroke:rgba(255,255,255,.5);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.fdd-item.active .fdd-icon svg{stroke:rgba(248,113,113,.9)}
+.fdd-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:rgba(255,255,255,.7);flex:1;transition:color .3s}
+.fdd-item.active .fdd-title{color:#fff}
+.fdd-arrow{width:20px;height:20px;border:1px solid rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .4s;flex-shrink:0}
+.fdd-arrow svg{width:10px;height:10px;stroke:rgba(255,255,255,.3);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .4s,stroke .3s}
+.fdd-item.active .fdd-arrow{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.3)}
+.fdd-item.active .fdd-arrow svg{transform:rotate(180deg);stroke:rgba(248,113,113,.9)}
+.fdd-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.22,1,.36,1)}
+.fdd-item.active .fdd-body{max-height:200px}
+.fdd-body-inner{padding:0 24px 20px;font-family:'Inter',sans-serif;font-size:.88rem;color:rgba(255,255,255,.5);line-height:1.75;border-top:1px solid rgba(255,255,255,.04)}
+.fdd-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.fdd-tag{padding:3px 10px;border-radius:20px;font-family:'Courier New',monospace;font-size:.6rem;font-weight:700;letter-spacing:.08em;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);color:rgba(248,113,113,.8)}
+
+/* right preview panel */
+.fdd-preview{position:sticky;top:120px;background:rgba(8,8,14,.8);border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;backdrop-filter:blur(30px)}
+.fdd-preview-header{display:flex;align-items:center;gap:8px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+.fdp-dot{width:9px;height:9px;border-radius:50%}
+.fdp-title{font-family:'Courier New',monospace;font-size:.6rem;color:rgba(255,255,255,.25);letter-spacing:.15em;margin-left:8px}
+.fdd-preview-screen{padding:28px;min-height:340px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
+.fdp-visual{width:100%;text-align:center}
+
+@media(max-width:900px){.fdd-layout{grid-template-columns:1fr}.fdd-preview{display:none}}
+</style>
+
+<section style="background:linear-gradient(180deg,transparent,rgba(220,38,38,.015),transparent);border-top:1px solid rgba(255,255,255,.04)">
+<div class="fdd-section reveal">
+  <div class="sec-hd" style="text-align:center">
+    <span class="eyebrow">Feature Deep-Dive</span>
+    <h2 class="sec-title">Every shield, explained.</h2>
+    <p class="sec-sub">Explore how each module of RAKSHAK works together to create an impenetrable protection layer.</p>
+  </div>
+  <div class="fdd-layout">
+    <!-- Accordion -->
+    <div class="fdd-list" id="fddList">
+
+      <div class="fdd-item active" data-preview="sos">
+        <div class="fdd-header" onclick="fddToggle(this)">
+          <div class="fdd-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <span class="fdd-title">SOS Override System</span>
+          <div class="fdd-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="fdd-body"><div class="fdd-body-inner">
+          One tap triggers a full emergency broadcast: GPS captured in &lt;0.1s, AES-256 encrypted payload dispatched via SocketIO to all trusted contacts simultaneously. Works even with screen locked.
+          <div class="fdd-tags"><span class="fdd-tag">GPS LOCK</span><span class="fdd-tag">&lt;0.1s</span><span class="fdd-tag">ENCRYPTED</span><span class="fdd-tag">5 CONTACTS</span></div>
+        </div></div>
+      </div>
+
+      <div class="fdd-item" data-preview="ai">
+        <div class="fdd-header" onclick="fddToggle(this)">
+          <div class="fdd-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20"/><path d="M7 10h2l2-4 2 8 2-4h2"/></svg></div>
+          <span class="fdd-title">AI Liveness Engine</span>
+          <div class="fdd-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="fdd-body"><div class="fdd-body-inner">
+          A passive biosensor pings every 120 seconds. If 3 consecutive pings are missed (6 minutes of silence), the AI automatically escalates risk to CRITICAL and deploys SOS without user action — server-side.
+          <div class="fdd-tags"><span class="fdd-tag">120s CYCLE</span><span class="fdd-tag">AUTO-SOS</span><span class="fdd-tag">SERVER-SIDE</span><span class="fdd-tag">NO APP NEEDED</span></div>
+        </div></div>
+      </div>
+
+      <div class="fdd-item" data-preview="map">
+        <div class="fdd-header" onclick="fddToggle(this)">
+          <div class="fdd-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <span class="fdd-title">Tactical Danger Map</span>
+          <div class="fdd-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="fdd-body"><div class="fdd-body-inner">
+          Community-sourced danger zones overlaid on a live map. Entering a 500m radius of a hot-zone auto-triggers a silent proximity siren and pushes a real-time warning to trusted contacts.
+          <div class="fdd-tags"><span class="fdd-tag">LIVE MAP</span><span class="fdd-tag">500m RADIUS</span><span class="fdd-tag">COMMUNITY DATA</span><span class="fdd-tag">PROXIMITY ALERT</span></div>
+        </div></div>
+      </div>
+
+      <div class="fdd-item" data-preview="vault">
+        <div class="fdd-header" onclick="fddToggle(this)">
+          <div class="fdd-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <span class="fdd-title">Classified Evidence Vault</span>
+          <div class="fdd-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="fdd-body"><div class="fdd-body-inner">
+          Every SOS incident auto-generates a tamper-proof forensic dossier: SHA-256 hash, GPS trace, contact notification log, full audit trail. Downloadable as court-admissible PDF.
+          <div class="fdd-tags"><span class="fdd-tag">SHA-256</span><span class="fdd-tag">PDF EXPORT</span><span class="fdd-tag">AUDIT TRAIL</span><span class="fdd-tag">COURT ADMISSIBLE</span></div>
+        </div></div>
+      </div>
+
+      <div class="fdd-item" data-preview="walk">
+        <div class="fdd-header" onclick="fddToggle(this)">
+          <div class="fdd-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <span class="fdd-title">Safe Walk + ETA Guard</span>
+          <div class="fdd-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="fdd-body"><div class="fdd-body-inner">
+          Share a live tracking link before any journey. Set an ETA. If you don't check-in by arrival time, RAKSHAK automatically notifies all contacts — no manual action needed from you.
+          <div class="fdd-tags"><span class="fdd-tag">LIVE TRACKING</span><span class="fdd-tag">ETA GUARD</span><span class="fdd-tag">NO LOGIN FOR VIEWER</span><span class="fdd-tag">CRYPTO TOKEN</span></div>
+        </div></div>
+      </div>
+
+    </div><!-- /fdd-list -->
+
+    <!-- Preview Panel -->
+    <div class="fdd-preview">
+      <div class="fdd-preview-header">
+        <div class="fdp-dot" style="background:#ef4444"></div>
+        <div class="fdp-dot" style="background:#f59e0b;margin-left:6px"></div>
+        <div class="fdp-dot" style="background:#22c55e;margin-left:6px"></div>
+        <span class="fdp-title">RAKSHAK — LIVE MODULE PREVIEW</span>
+      </div>
+      <div class="fdd-preview-screen" id="fddPreview">
+        <!-- SOS default preview -->
+        <div style="text-align:center">
+          <div style="width:110px;height:110px;border-radius:50%;margin:0 auto 24px;background:rgba(220,38,38,.08);border:1.5px solid rgba(220,38,38,.3);display:flex;align-items:center;justify-content:center;animation:sosPulse1 2.5s ease-in-out infinite;position:relative">
+            <div style="width:85px;height:85px;border-radius:50%;background:rgba(220,38,38,.12);display:flex;align-items:center;justify-content:center;animation:sosPulse2 2.5s .6s ease-in-out infinite">
+              <div style="width:62px;height:62px;border-radius:50%;background:linear-gradient(145deg,#dc2626,#9b1c1c);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(220,38,38,.7)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+            </div>
+          </div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;letter-spacing:.08em;margin-bottom:8px">SOS OVERRIDE</div>
+          <div style="font-family:'Courier New',monospace;font-size:.65rem;color:rgba(220,38,38,.7);letter-spacing:.15em">ARMED · ENCRYPTED · INSTANT</div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+            <span style="padding:4px 12px;border-radius:20px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);font-family:'Courier New',monospace;font-size:.6rem;color:rgba(248,113,113,.8)">&lt;0.1s TRIGGER</span>
+            <span style="padding:4px 12px;border-radius:20px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);font-family:'Courier New',monospace;font-size:.6rem;color:rgba(134,239,172,.8)">GPS LOCKED</span>
+            <span style="padding:4px 12px;border-radius:20px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);font-family:'Courier New',monospace;font-size:.6rem;color:rgba(147,197,253,.8)">AES-256</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="rk-hr">
+
+<!-- ══════════ LIVE THREAT INTELLIGENCE ══════════ -->
+<style>
+.lti-section{padding:7rem clamp(2rem,6vw,6rem);position:relative;overflow:hidden}
+.lti-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:900px;background:radial-gradient(ellipse,rgba(220,38,38,.04),transparent 65%);pointer-events:none;filter:blur(60px)}
+.lti-inner{max-width:1380px;margin:0 auto;position:relative;z-index:1}
+.lti-layout{display:grid;grid-template-columns:1fr 340px;gap:3rem;margin-top:4rem;align-items:start}
+.lti-globe-wrap{position:relative;display:flex;align-items:center;justify-content:center;min-height:480px}
+#ltiGlobe{border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(220,38,38,.18) 0%,rgba(10,10,20,.95) 60%,rgba(5,5,15,1) 100%);box-shadow:0 0 80px rgba(220,38,38,.12),0 0 160px rgba(220,38,38,.05),inset 0 0 80px rgba(220,38,38,.08);animation:globeFloat 6s ease-in-out infinite}
+@keyframes globeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.globe-ring{position:absolute;border-radius:50%;border:1px solid rgba(220,38,38,.12);animation:globeRingPulse 3s ease-in-out infinite}
+.globe-ring:nth-child(1){inset:-20px;animation-delay:0s}
+.globe-ring:nth-child(2){inset:-40px;animation-delay:1s}
+.globe-ring:nth-child(3){inset:-60px;animation-delay:2s}
+@keyframes globeRingPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}}
+
+/* Incident feed */
+.lti-feed{display:flex;flex-direction:column;gap:1rem}
+.lti-feed-hd{font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.25em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:8px}
+.lti-feed-hd::before{content:'';width:6px;height:6px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;animation:blink 1.5s infinite}
+.lti-incident{background:rgba(8,8,16,.8);border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--ic,rgba(220,38,38,.8));border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;animation:incidentIn .6s ease forwards;opacity:0}
+@keyframes incidentIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.lti-incident::after{content:'';position:absolute;top:0;right:0;width:40px;height:40px;background:radial-gradient(circle at 100% 0%,rgba(var(--ic-rgb,220,38,38),.15),transparent 70%)}
+.inc-type{font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.15em;color:var(--ic,rgba(220,38,38,.8));text-transform:uppercase;margin-bottom:4px;font-weight:700}
+.inc-loc{font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;color:#fff;margin-bottom:3px}
+.inc-meta{font-family:'Courier New',monospace;font-size:.58rem;color:rgba(255,255,255,.3)}
+
+/* globe stat bar */
+.lti-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.lti-stat{background:rgba(8,8,16,.7);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;text-align:center;transition:all .4s}
+.lti-stat:hover{border-color:rgba(220,38,38,.25);background:rgba(220,38,38,.03)}
+.lti-stat-n{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:900;color:#ef4444;line-height:1;text-shadow:0 0 30px rgba(220,38,38,.4)}
+.lti-stat-l{font-family:'Courier New',monospace;font-size:.52rem;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+
+@media(max-width:900px){.lti-layout{grid-template-columns:1fr}}
+</style>
+
+<section class="lti-section">
+<div class="lti-inner">
+  <div class="sec-hd reveal" style="text-align:center">
+    <span class="eyebrow">
+      <span style="width:6px;height:6px;border-radius:50%;background:#dc2626;box-shadow:0 0 8px #dc2626;display:inline-block;animation:blink 1.4s infinite;margin-right:4px"></span>
+      Live Intelligence
+    </span>
+    <h2 class="sec-title">Threats never sleep.<br><span style="background:linear-gradient(120deg,#dc2626,#ef4444,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Neither do we.</span></h2>
+    <p class="sec-sub">RAKSHAK's threat intelligence engine monitors global danger signals in real time — categorising, mapping, and alerting 24/7.</p>
+  </div>
+
+  <div class="lti-layout reveal">
+    <!-- Globe visualization -->
+    <div>
+      <div class="lti-globe-wrap">
+        <div class="globe-ring"></div>
+        <div class="globe-ring"></div>
+        <div class="globe-ring"></div>
+        <canvas id="ltiGlobe" width="380" height="380"></canvas>
+      </div>
+      <div class="lti-stats">
+        <div class="lti-stat"><div class="lti-stat-n" id="ltiAlerts">0</div><div class="lti-stat-l">Alerts Today</div></div>
+        <div class="lti-stat"><div class="lti-stat-n" id="ltiZones">0</div><div class="lti-stat-l">Hot Zones</div></div>
+        <div class="lti-stat"><div class="lti-stat-n" id="ltiUsers">0</div><div class="lti-stat-l">Shielded Now</div></div>
+      </div>
+    </div>
+
+    <!-- Live incident feed -->
+    <div>
+      <div class="lti-feed-hd">Live Incident Feed</div>
+      <div class="lti-feed" id="ltiFeed">
+        <div class="lti-incident" style="--ic:rgba(239,68,68,.9);--ic-rgb:239,68,68;animation-delay:.1s">
+          <div class="inc-type">🆘 SOS ALERT</div>
+          <div class="inc-loc">New Delhi, India</div>
+          <div class="inc-meta">GPS locked · 3 contacts notified · 0.8s ago</div>
+        </div>
+        <div class="lti-incident" style="--ic:rgba(245,158,11,.9);--ic-rgb:245,158,11;animation-delay:.3s">
+          <div class="inc-type">⚠ ZONE ALERT</div>
+          <div class="inc-loc">Mumbai, Maharashtra</div>
+          <div class="inc-meta">Proximity 480m · Risk: High · 2m ago</div>
+        </div>
+        <div class="lti-incident" style="--ic:rgba(59,130,246,.9);--ic-rgb:59,130,246;animation-delay:.5s">
+          <div class="inc-type">📡 PING MISSED</div>
+          <div class="inc-loc">Bangalore, Karnataka</div>
+          <div class="inc-meta">Auto-escalated · Contacts notified · 4m ago</div>
+        </div>
+        <div class="lti-incident" style="--ic:rgba(34,197,94,.9);--ic-rgb:34,197,94;animation-delay:.7s">
+          <div class="inc-type">✓ SAFE CHECK-IN</div>
+          <div class="inc-loc">Chennai, Tamil Nadu</div>
+          <div class="inc-meta">All clear · Risk normalized · 6m ago</div>
+        </div>
+        <div class="lti-incident" style="--ic:rgba(168,85,247,.9);--ic-rgb:168,85,247;animation-delay:.9s">
+          <div class="inc-type">🚶 SAFE WALK END</div>
+          <div class="inc-loc">Hyderabad, Telangana</div>
+          <div class="inc-meta">Arrived safely · ETA met · 8m ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="rk-hr">
+
+<!-- ══════════ MOBILE APP DOWNLOAD ══════════ -->
+<style>
+.app-section{padding:7rem clamp(2rem,6vw,6rem);position:relative;overflow:hidden}
+.app-section::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(220,38,38,.04) 0%,transparent 40%,rgba(59,130,246,.03) 100%);pointer-events:none}
+.app-inner{max-width:1380px;margin:0 auto;position:relative;z-index:1}
+.app-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.app-phone-stack{position:relative;height:520px;display:flex;align-items:center;justify-content:center}
+.app-phone{position:absolute;width:200px;border-radius:38px;background:linear-gradient(165deg,#2a2a2e,#1a1a1c);border:1px solid rgba(255,255,255,.2);overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+.app-phone-1{left:50%;transform:translateX(-75%) rotate(-8deg);z-index:1;opacity:.7}
+.app-phone-2{left:50%;transform:translateX(-50%);z-index:3;animation:appPhoneFloat 5s ease-in-out infinite}
+.app-phone-3{left:50%;transform:translateX(-25%) rotate(8deg);z-index:1;opacity:.7}
+@keyframes appPhoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
+.app-screen-inner{padding:16px 12px;background:#030305;min-height:360px}
+.app-screen-header{font-family:'Space Grotesk',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.15em;color:rgba(220,38,38,.7);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.app-screen-header::before{content:'';width:4px;height:4px;border-radius:50%;background:#dc2626;box-shadow:0 0 5px #dc2626;animation:blink 1.5s infinite}
+.app-sos-mini{width:60px;height:60px;border-radius:50%;background:linear-gradient(145deg,#dc2626,#9b1c1c);margin:10px auto;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(220,38,38,.6)}
+.app-sos-mini svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.app-mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:10px}
+.app-mini-stat{background:rgba(255,255,255,.04);border-radius:7px;padding:5px 3px;text-align:center;font-family:'Space Grotesk',sans-serif}
+.app-mini-stat-n{font-size:.7rem;font-weight:700;color:#fff}
+.app-mini-stat-l{font-size:.38rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em}
+.app-mini-bar{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:8px;overflow:hidden}
+.app-mini-bar-fill{height:100%;background:linear-gradient(90deg,#dc2626,#ef4444);border-radius:2px}
+.app-mini-item{display:flex;align-items:center;gap:5px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-family:'Inter',sans-serif;font-size:.5rem;color:rgba(255,255,255,.5)}
+.app-mini-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+
+/* Right content */
+.app-badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:2.5rem;margin-bottom:2rem}
+.app-store-btn{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 22px;border-radius:14px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+  text-decoration:none;transition:all .4s cubic-bezier(.22,1,.36,1);
+  backdrop-filter:blur(20px);
+}
+.app-store-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.app-store-btn svg{width:24px;height:24px;flex-shrink:0}
+.asb-sub{font-family:'Inter',sans-serif;font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:.05em}
+.asb-name{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;color:#fff;line-height:1.2}
+.app-feature-list{display:flex;flex-direction:column;gap:10px;margin-top:2rem}
+.app-feat{display:flex;align-items:center;gap:12px;font-family:'Inter',sans-serif;font-size:.88rem;color:rgba(255,255,255,.6)}
+.app-feat-icon{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15)}
+.app-feat-icon svg{width:16px;height:16px;stroke:rgba(248,113,113,.8);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.app-pwa-note{margin-top:2rem;padding:16px 20px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.15);border-radius:12px;display:flex;align-items:center;gap:12px;font-family:'Courier New',monospace;font-size:.68rem;color:rgba(134,239,172,.8);letter-spacing:.05em}
+.app-pwa-note svg{width:18px;height:18px;stroke:rgba(34,197,94,.7);fill:none;stroke-width:2;flex-shrink:0}
+
+@media(max-width:900px){.app-layout{grid-template-columns:1fr}.app-phone-stack{height:360px}}
+</style>
+
+<section class="app-section">
+<div class="app-inner">
+  <div class="app-layout reveal">
+    <!-- Phone stack -->
+    <div class="app-phone-stack">
+      <div class="app-phone app-phone-1">
+        <div style="height:20px;background:#000;border-radius:0"></div>
+        <div class="app-screen-inner">
+          <div class="app-screen-header">Danger Map</div>
+          <div style="height:140px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.1);border-radius:8px;position:relative;overflow:hidden;margin-bottom:8px">
+            <div style="position:absolute;top:40%;left:35%;width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 10px #ef4444;animation:blink 1.5s infinite"></div>
+            <div style="position:absolute;top:60%;left:55%;width:6px;height:6px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;animation:blink 2s infinite"></div>
+            <div style="position:absolute;top:25%;left:65%;width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e"></div>
+            <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);background-size:20px 20px"></div>
+          </div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#ef4444;box-shadow:0 0 4px #ef4444"></div>Zone-7 HOT — 0.8km</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#f59e0b;box-shadow:0 0 4px #f59e0b"></div>Zone-12 WATCH — 1.4km</div>
+        </div>
+      </div>
+
+      <div class="app-phone app-phone-2">
+        <div style="height:22px;background:#000;border-radius:0;display:flex;align-items:center;justify-content:center">
+          <div style="width:40px;height:10px;background:#000;border-radius:10px;border:1px solid rgba(255,255,255,.1)"></div>
+        </div>
+        <div class="app-screen-inner" style="padding:12px 10px">
+          <div class="app-screen-header">RAKSHAK Active</div>
+          <div style="text-align:center;margin:8px 0">
+            <div style="position:relative;width:70px;height:70px;margin:0 auto">
+              <div style="position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(220,38,38,.2);animation:sosPulse1 2.5s ease-in-out infinite"></div>
+              <div class="app-sos-mini"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            </div>
+          </div>
+          <div class="app-mini-stats">
+            <div class="app-mini-stat"><div class="app-mini-stat-n" style="color:#22c55e">LOW</div><div class="app-mini-stat-l">Risk</div></div>
+            <div class="app-mini-stat"><div class="app-mini-stat-n">3</div><div class="app-mini-stat-l">Contacts</div></div>
+            <div class="app-mini-stat"><div class="app-mini-stat-n">✓</div><div class="app-mini-stat-l">Active</div></div>
+          </div>
+          <div class="app-mini-bar" style="margin-top:10px"><div class="app-mini-bar-fill" style="width:17%"></div></div>
+          <div style="font-family:'Courier New',monospace;font-size:.45rem;color:rgba(255,255,255,.25);letter-spacing:.08em;margin-top:4px">RISK LEVEL — LOW</div>
+          <div class="app-mini-item" style="margin-top:8px"><div class="app-mini-dot" style="background:#dc2626;box-shadow:0 0 4px #dc2626;animation:blink 1.5s infinite"></div>SOS Sent · 3 alerted</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#22c55e;box-shadow:0 0 4px #22c55e"></div>Sys Ping OK · risk low</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#f97316;box-shadow:0 0 4px #f97316"></div>Zone Alert · 480m</div>
+        </div>
+      </div>
+
+      <div class="app-phone app-phone-3">
+        <div style="height:20px;background:#000;border-radius:0"></div>
+        <div class="app-screen-inner">
+          <div class="app-screen-header">Safety Score</div>
+          <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 10px;border:3px solid rgba(34,197,94,.3);display:flex;align-items:center;justify-content:center;background:rgba(34,197,94,.05);font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:900;color:#22c55e;text-shadow:0 0 20px rgba(34,197,94,.5)">87</div>
+          <div style="font-family:'Courier New',monospace;font-size:.5rem;text-align:center;color:rgba(34,197,94,.6);letter-spacing:.1em;margin-bottom:10px">SCORE — EXCELLENT</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#22c55e"></div>Contacts verified</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#22c55e"></div>GPS enabled</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#f59e0b"></div>Fake call not set</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="app-content">
+      <span class="eyebrow">Get the App</span>
+      <h2 class="sec-title" style="font-size:clamp(2.2rem,4vw,3.5rem);margin-top:1rem">Protection in<br><em style="font-style:normal;background:linear-gradient(120deg,#dc2626,#ef4444,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">your pocket.</em></h2>
+      <p style="font-family:'Inter',sans-serif;font-size:1rem;color:rgba(255,255,255,.5);line-height:1.75;margin-top:1rem;max-width:440px">RAKSHAK works on any device — phone, tablet, or desktop. Install it as a native PWA for the full offline-capable, push-notification-enabled experience.</p>
+
+      <div class="app-badge-row">
+        <a href="{{ url_for('auth.register') }}" class="app-store-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18.5a6.5 6.5 0 100-13 6.5 6.5 0 000 13z"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <div class="asb-text"><div class="asb-sub">Launch Web App</div><div class="asb-name">Open RAKSHAK</div></div>
+        </a>
+        <a href="#" class="app-store-btn" id="pwa-install-btn" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <div class="asb-text"><div class="asb-sub">Install as App</div><div class="asb-name">Add to Home</div></div>
+        </a>
+        <a href="https://github.com/maniksahni/RAKSHAK" target="_blank" class="app-store-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          <div class="asb-text"><div class="asb-sub">View Source</div><div class="asb-name">GitHub</div></div>
+        </a>
+      </div>
+
+      <div class="app-feature-list">
+        <div class="app-feat"><div class="app-feat-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>Works offline with service worker cache</div>
+        <div class="app-feat"><div class="app-feat-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg></div>Push notifications for SOS & alerts</div>
+        <div class="app-feat"><div class="app-feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10"/></svg></div>Works on any device, any browser</div>
+        <div class="app-feat"><div class="app-feat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>No app store required — instant access</div>
+      </div>
+
+      <div class="app-pwa-note">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        PWA CERTIFIED · OFFLINE CAPABLE · INSTALLABLE · OPEN SOURCE
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="rk-hr">
+
 <!-- ══════════ SECURITY ARCHITECTURE ══════════ -->
 <section class="sa-section">
 <div class="sa-inner">
@@ -3075,7 +3535,156 @@ window._initParticlesJS = function() {
   }
 };
 
-/* ── 6. Ultra-Premium 3D Parallax Tilt (Bento Cards) ── */
+/* ── Feature Deep-Dive Accordion ── */
+function fddToggle(header) {
+  const item = header.closest('.fdd-item');
+  const list = document.getElementById('fddList');
+  if (!list) return;
+  list.querySelectorAll('.fdd-item').forEach(i => i.classList.remove('active'));
+  item.classList.add('active');
+}
+
+/* ── LTI Globe Canvas ── */
+(function(){
+  const canvas = document.getElementById('ltiGlobe');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2, R = W/2 - 6;
+  let angle = 0;
+
+  // Hotspot dots (lat/lon) — major Indian cities + world
+  const hotspots = [
+    {lat:28.6,lon:77.2,c:'#ef4444',size:5,pulse:0},   // Delhi
+    {lat:19.1,lon:72.9,c:'#f59e0b',size:4,pulse:0.3},  // Mumbai
+    {lat:12.9,lon:77.6,c:'#22c55e',size:3,pulse:0.6},  // Bangalore
+    {lat:13.1,lon:80.3,c:'#ef4444',size:4,pulse:0.9},  // Chennai
+    {lat:17.4,lon:78.5,c:'#a78bfa',size:3,pulse:1.2},  // Hyderabad
+    {lat:22.6,lon:88.4,c:'#60a5fa',size:4,pulse:1.5},  // Kolkata
+    {lat:51.5,lon:-0.1,c:'#f59e0b',size:3,pulse:0.5},  // London
+    {lat:40.7,lon:-74.0,c:'#22c55e',size:3,pulse:1.0}, // NYC
+    {lat:35.7,lon:139.7,c:'#ef4444',size:3,pulse:1.8}, // Tokyo
+    {lat:-33.9,lon:151.2,c:'#60a5fa',size:3,pulse:2.1},// Sydney
+  ];
+
+  function latLonToXY(lat,lon,r,rot){
+    const phi = (90-lat)*Math.PI/180;
+    const theta = (lon+rot)*Math.PI/180;
+    const x = cx + r*Math.sin(phi)*Math.cos(theta);
+    const y = cy - r*Math.cos(phi);
+    const z = Math.sin(phi)*Math.sin(theta); // -1 to 1, positive=front
+    return {x,y,z};
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // globe base
+    const grad = ctx.createRadialGradient(cx-R*0.3,cy-R*0.3,R*0.1,cx,cy,R);
+    grad.addColorStop(0,'rgba(40,8,8,0.95)');
+    grad.addColorStop(0.5,'rgba(15,5,5,0.98)');
+    grad.addColorStop(1,'rgba(5,2,2,1)');
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.fillStyle=grad;
+    ctx.fill();
+
+    // latitude lines
+    for(let lat=-60;lat<=60;lat+=30){
+      ctx.beginPath();
+      let first=true;
+      for(let lon=0;lon<=360;lon+=4){
+        const p=latLonToXY(lat,lon,R,angle*57.3);
+        if(p.z>-0.3){
+          if(first){ctx.moveTo(p.x,p.y);first=false;}
+          else ctx.lineTo(p.x,p.y);
+        } else first=true;
+      }
+      ctx.strokeStyle='rgba(220,38,38,0.1)';
+      ctx.lineWidth=0.6;
+      ctx.stroke();
+    }
+
+    // longitude lines
+    for(let lon=0;lon<360;lon+=30){
+      ctx.beginPath();
+      let first=true;
+      for(let lat=-80;lat<=80;lat+=4){
+        const p=latLonToXY(lat,lon,R,angle*57.3);
+        if(p.z>-0.3){
+          if(first){ctx.moveTo(p.x,p.y);first=false;}
+          else ctx.lineTo(p.x,p.y);
+        } else first=true;
+      }
+      ctx.strokeStyle='rgba(220,38,38,0.07)';
+      ctx.lineWidth=0.5;
+      ctx.stroke();
+    }
+
+    // hotspot dots
+    const t = Date.now()/1000;
+    hotspots.forEach(h=>{
+      const p = latLonToXY(h.lat,h.lon,R,angle*57.3);
+      if(p.z < 0) return; // backside
+      const pulse = 0.5+0.5*Math.sin(t*2+h.pulse*Math.PI);
+      // outer ring
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,h.size+4*pulse,0,Math.PI*2);
+      ctx.strokeStyle=h.c.replace(')',',0.3)').replace('rgb','rgba');
+      ctx.lineWidth=1;
+      ctx.stroke();
+      // dot
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,h.size,0,Math.PI*2);
+      ctx.fillStyle=h.c;
+      ctx.shadowColor=h.c;
+      ctx.shadowBlur=8+6*pulse;
+      ctx.fill();
+      ctx.shadowBlur=0;
+    });
+
+    // highlight ring
+    const rimGrad = ctx.createRadialGradient(cx-R*0.6,cy-R*0.6,R*0.2,cx,cy,R);
+    rimGrad.addColorStop(0,'rgba(255,100,100,0.06)');
+    rimGrad.addColorStop(0.7,'transparent');
+    rimGrad.addColorStop(1,'rgba(0,0,0,0.4)');
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.fillStyle=rimGrad;
+    ctx.fill();
+
+    angle += 0.004;
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Count-up for LTI stats
+  const ltiIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        animCount('ltiAlerts',247,1800,'');
+        animCount('ltiZones',42,1800,'');
+        animCount('ltiUsers',1839,2200,'+');
+        ltiIO.unobserve(e.target);
+      }
+    });
+  },{threshold:0.3});
+  const ltiSection = document.querySelector('.lti-section');
+  if(ltiSection) ltiIO.observe(ltiSection);
+
+  function animCount(id,target,dur,suffix){
+    const el=document.getElementById(id);
+    if(!el) return;
+    const t0=performance.now();
+    (function tick(now){
+      const p=Math.min((now-t0)/dur,1);
+      const ease=1-Math.pow(1-p,3);
+      el.textContent=suffix+Math.round(ease*target);
+      if(p<1) requestAnimationFrame(tick);
+    })(t0);
+  }
+})();
+
 (function(){
   const cards = document.querySelectorAll('.bc');
   cards.forEach(card => {
