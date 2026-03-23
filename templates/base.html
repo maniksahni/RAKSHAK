@@ -85,7 +85,25 @@
     <i class="bi bi-list"></i>
   </button>
 
-  <span class="navbar-brand-text me-auto">🛡 RAKSHAK</span>
+  <a class="rk-logo-mark me-auto" href="{{ url_for('dashboard.index') }}" style="text-decoration:none;">
+    <div class="rk-logo-shield-wrap" style="filter:drop-shadow(0 0 6px rgba(220,38,38,.5));">
+      <svg width="28" height="31" viewBox="0 0 34 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lgAuth1" x1="0" y1="0" x2="34" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ff6b6b"/><stop offset="48%" stop-color="#dc2626"/><stop offset="100%" stop-color="#7f1d1d"/>
+          </linearGradient>
+          <linearGradient id="lgAuth2" x1="17" y1="1" x2="17" y2="22" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(255,255,255,.3)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </linearGradient>
+        </defs>
+        <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgAuth1)"/>
+        <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgAuth2)"/>
+        <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" stroke="rgba(255,255,255,.25)" stroke-width=".7" fill="none"/>
+        <path d="M11 19.5l4 4 8-8" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:800;letter-spacing:.2em;color:#fff;">RAKSHAK</span>
+  </a>
 
   <div class="d-flex align-items-center gap-3">
     <!-- Hardware Dev Link -->
@@ -143,13 +161,31 @@
 <!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
 <aside class="sidebar pt-4" id="sidebar">
   <div class="px-4 mb-4">
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-icon">
-        <i class="bi bi-shield-lock-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
+    <div class="sidebar-brand" style="gap:10px;">
+      <!-- Premium Shield Mark -->
+      <div style="position:relative;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(220,38,38,.6));transition:filter .3s;" onmouseover="this.style.filter='drop-shadow(0 0 14px rgba(220,38,38,.9))'" onmouseout="this.style.filter='drop-shadow(0 0 8px rgba(220,38,38,.6))'">
+        <svg width="38" height="43" viewBox="0 0 34 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lgSB1" x1="0" y1="0" x2="34" y2="38" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff6b6b"/><stop offset="48%" stop-color="#dc2626"/><stop offset="100%" stop-color="#7f1d1d"/>
+            </linearGradient>
+            <linearGradient id="lgSB2" x1="17" y1="1" x2="17" y2="22" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(255,255,255,.35)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </linearGradient>
+          </defs>
+          <!-- Shield layers -->
+          <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgSB1)"/>
+          <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgSB2)"/>
+          <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" stroke="rgba(255,255,255,.3)" stroke-width=".7" fill="none"/>
+          <path d="M17 7L7.5 12.5v8c0 6.5 4.2 12 9.5 14 5.3-2 9.5-7.5 9.5-14V12.5L17 7z" stroke="rgba(255,255,255,.1)" stroke-width=".5" fill="none"/>
+          <path d="M11 19.5l4 4 8-8" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <!-- Pulse ring -->
+        <div style="position:absolute;inset:-5px;border-radius:50%;border:1px solid rgba(220,38,38,.3);animation:rkLogoPulse 2.6s ease-in-out infinite;pointer-events:none;"></div>
       </div>
       <div>
-        <div style="font-family:var(--font-display);font-size:1.3rem;font-weight:800;color:var(--red-primary);letter-spacing:0.08em;">RAKSHAK</div>
-        <div style="font-size:0.62rem;color:var(--text-muted);letter-spacing:0.18em;text-transform:uppercase;">Safety System v2.0</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:800;letter-spacing:.1em;background:linear-gradient(135deg,#fff,rgba(255,255,255,.75));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">RAKSHAK</div>
+        <div style="font-family:'Courier New',monospace;font-size:.52rem;color:rgba(220,38,38,.6);letter-spacing:.2em;text-transform:uppercase;margin-top:1px;">Safety Platform v3.1</div>
       </div>
     </div>
   </div>
@@ -253,8 +289,41 @@
 </style>
 {% else %}
 <!-- Public Navbar -->
+<style>
+/* ── PREMIUM LOGO MARK ── */
+.rk-logo-mark{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;outline:none}
+.rk-logo-shield-wrap{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 7px rgba(220,38,38,.55));transition:filter .3s}
+.rk-logo-mark:hover .rk-logo-shield-wrap{filter:drop-shadow(0 0 14px rgba(220,38,38,.85)) drop-shadow(0 0 3px rgba(255,180,180,.3))}
+.rk-logo-ring{position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(220,38,38,.35);animation:rkLogoPulse 2.6s ease-in-out infinite;pointer-events:none}
+.rk-logo-ring2{position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(220,38,38,.12);animation:rkLogoPulse 2.6s .9s ease-in-out infinite;pointer-events:none}
+@keyframes rkLogoPulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.1);opacity:.75}}
+.rk-logo-wordmark{font-family:'Space Grotesk',sans-serif;font-size:1.08rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.82) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:all .3s}
+.rk-logo-mark:hover .rk-logo-wordmark{background:linear-gradient(135deg,#fff 0%,#fca5a5 55%,#ef4444 100%);-webkit-background-clip:text;background-clip:text}
+.rk-logo-tagline{font-family:'Courier New',monospace;font-size:.4rem;letter-spacing:.2em;color:rgba(220,38,38,.65);text-transform:uppercase;display:block;margin-top:1px;-webkit-text-fill-color:rgba(220,38,38,.65)}
+</style>
 <nav class="navbar navbar-rakshak px-4 d-flex align-items-center" style="position:fixed;top:0;left:0;right:0;z-index:1000;">
-  <a class="navbar-brand-text me-auto text-decoration-none" href="{{ url_for('main.index') }}">🛡 RAKSHAK</a>
+  <a class="rk-logo-mark me-auto" href="{{ url_for('main.index') }}">
+    <div class="rk-logo-shield-wrap">
+      <div class="rk-logo-ring"></div>
+      <div class="rk-logo-ring2"></div>
+      <svg width="34" height="38" viewBox="0 0 34 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lgPub1" x1="0" y1="0" x2="34" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ff6b6b"/><stop offset="48%" stop-color="#dc2626"/><stop offset="100%" stop-color="#7f1d1d"/>
+          </linearGradient>
+          <linearGradient id="lgPub2" x1="17" y1="1" x2="17" y2="22" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(255,255,255,.32)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+          </linearGradient>
+        </defs>
+        <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgPub1)"/>
+        <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgPub2)"/>
+        <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" stroke="rgba(255,255,255,.28)" stroke-width=".7" fill="none"/>
+        <path d="M17 7L7.5 12.5v8c0 6.5 4.2 12 9.5 14 5.3-2 9.5-7.5 9.5-14V12.5L17 7z" stroke="rgba(255,255,255,.1)" stroke-width=".5" fill="none"/>
+        <path d="M11 19.5l4 4 8-8" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="rk-logo-wordmark">RAKSHAK<span class="rk-logo-tagline">Safety Platform</span></div>
+  </a>
   <div class="d-flex gap-3">
     <a href="{{ url_for('auth.login') }}" class="btn-glass text-decoration-none" style="padding:8px 20px;font-size:0.9rem;">Login</a>
     <a href="{{ url_for('auth.register') }}" class="btn-rakshak text-decoration-none" style="padding:8px 24px;font-size:0.9rem;">Get Protected</a>
