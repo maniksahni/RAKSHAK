@@ -89,50 +89,10 @@
     <i class="bi bi-list"></i>
   </button>
 
-  <!-- ── ULTRA PREMIUM NAVBAR LOGO ── -->
-  <a class="rkn-logo" href="{{ url_for('dashboard.index') }}">
-    <!-- Shield mark -->
-    <div class="rkn-shield-wrap">
-      <div class="rkn-orbit"></div>
-      <svg class="rkn-svg" width="36" height="40" viewBox="0 0 60 70" fill="none">
-        <defs>
-          <radialGradient id="nRG1" cx="38%" cy="28%" r="65%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="45%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
-          <linearGradient id="nLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.5)"/><stop offset="60%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.3)"/></linearGradient>
-          <filter id="nGlow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <!-- Shadow -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="rgba(0,0,0,.4)" transform="translate(1.5,2.5) scale(.97)"/>
-        <!-- Body -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#nRG1)"/>
-        <!-- Gloss overlay -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#nLG2)"/>
-        <!-- Border shine -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" stroke="rgba(255,200,200,.45)" stroke-width="1.2" fill="none"/>
-        <!-- Inner frame -->
-        <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z" stroke="rgba(255,255,255,.12)" stroke-width=".8" fill="rgba(255,255,255,.03)"/>
-        <!-- Top glint -->
-        <ellipse cx="11" cy="18" rx="3.5" ry="2" fill="rgba(255,255,255,.35)" transform="rotate(-28 11 18)"/>
-        <!-- Circuit lines -->
-        <line x1="3" y1="38" x2="10" y2="38" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
-        <line x1="50" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
-        <!-- Checkmark with glow -->
-        <path d="M18 38l9 10 17-18" stroke="rgba(255,150,150,.4)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#nGlow)"/>
-        <path d="M18 38l9 10 17-18" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <!-- Wordmark -->
-    <div class="rkn-text">
-      <div class="rkn-wordmark">RAKSHAK</div>
-      <div class="rkn-tagrow">
-        <span class="rkn-dash"></span>
-        <span class="rkn-tag">SAFETY PLATFORM</span>
-        <span class="rkn-dash" style="background:linear-gradient(90deg,rgba(220,38,38,.15),rgba(220,38,38,.6))"></span>
-      </div>
-    </div>
-  </a>
+
 
   <!-- Right side controls -->
-  <div class="d-flex align-items-center gap-2">
+  <div class="d-flex align-items-center justify-content-end gap-2 w-100 pe-2">
     {% if not current_user.is_admin %}
     <!-- Bluetooth Link -->
     <button id="hardware-link-btn" class="btn-glass" onclick="startHardwareLink()" style="display:flex;align-items:center;gap:6px;">
@@ -166,9 +126,9 @@
     </div>
 
     <!-- User pill -->
-    <div class="user-pill d-flex align-items-center gap-2 px-3 py-2">
+    <div class="user-pill d-flex align-items-center gap-2 px-3 py-2 ms-auto">
       <div class="user-avatar">{{ current_user.full_name[0].upper() }}</div>
-      <span style="font-size:.82rem;font-weight:600;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,.85);">{{ current_user.full_name }}</span>
+      <span class="d-none d-md-inline-block" style="font-size:.82rem;font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,.85);">{{ current_user.full_name }}</span>
       {% if current_user.role == 'admin' %}
         <span class="pill pill-resolved" style="font-size:.55rem;">Admin</span>
       {% else %}
