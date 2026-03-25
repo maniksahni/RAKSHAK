@@ -7,6 +7,142 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/premium-upgrade.css') }}">
 {% endblock %}
 
+<style>
+/* ══════════════════════════════════════════
+   RAKSHAK DASHBOARD — NEXT LEVEL UPGRADES
+   ══════════════════════════════════════════ */
+
+/* Live clock ultra-premium */
+.dsh-clock {
+  font-family: 'Courier New', monospace !important;
+  font-size: 1.6rem !important;
+  font-weight: 900 !important;
+  background: linear-gradient(90deg,#fff,#ffb3cb,#f43f5e) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  letter-spacing: .1em !important;
+  filter: drop-shadow(0 0 8px rgba(244,63,94,0.4)) !important;
+}
+
+/* Avatar ring — magenta glow */
+.dsh-avatar-ring {
+  box-shadow: 0 0 0 2px rgba(244,63,94,.5), 0 0 15px rgba(244,63,94,.3) !important;
+}
+
+/* SOS card — pumping neon pink */
+.sos-card {
+  background: linear-gradient(145deg, rgba(30,5,12,.95), rgba(15,2,6,.98)) !important;
+  border: 1px solid rgba(244,63,94,.25) !important;
+  box-shadow: inset 0 1px 0 rgba(244,63,94,.1), 0 20px 60px rgba(244,63,94,.15) !important;
+}
+
+/* Command strip — rose-gold theme */
+.cmd-strip {
+  background: linear-gradient(135deg, rgba(244,63,94,.06), rgba(10,5,10,.95)) !important;
+  border: 1px solid rgba(244,63,94,.18) !important;
+}
+.cmd-val { color: rgba(244,63,94,.9) !important; }
+.cmd-green { color: #22c55e !important; }
+.cmd-purple { color: #a78bfa !important; }
+
+/* Glass cards — premium upgrade */
+.glass-card {
+  background: linear-gradient(145deg,rgba(20,8,14,.8),rgba(10,4,8,.95)) !important;
+  border-color: rgba(244,63,94,.12) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 4px 20px rgba(0,0,0,.5) !important;
+  transition: all .4s cubic-bezier(.22,1,.36,1) !important;
+}
+.glass-card:hover {
+  border-color: rgba(244,63,94,.3) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 8px 40px rgba(244,63,94,.15), 0 0 0 1px rgba(244,63,94,.08) !important;
+  transform: translateY(-3px) !important;
+}
+
+/* Quick action buttons — rose-gold */
+.quick-action-btn {
+  background: linear-gradient(135deg,rgba(244,63,94,.1),rgba(244,63,94,.05)) !important;
+  border-color: rgba(244,63,94,.2) !important;
+  transition: all .35s cubic-bezier(.22,1,.36,1) !important;
+}
+.quick-action-btn:hover {
+  background: linear-gradient(135deg,rgba(244,63,94,.2),rgba(244,63,94,.1)) !important;
+  border-color: rgba(244,63,94,.5) !important;
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 10px 30px rgba(244,63,94,.25) !important;
+}
+
+/* SOS override button pulse ring — magenta */
+.sonar-ring {
+  border-color: rgba(244,63,94,.4) !important;
+  box-shadow: 0 0 0 0 rgba(244,63,94,.5) !important;
+}
+
+/* Live status dot — rose-gold */
+.dsh-live-dot {
+  background: #f43f5e !important;
+  box-shadow: 0 0 0 0 rgba(244,63,94,.8) !important;
+}
+
+/* Map watermark / card headers — rose-gold accent */
+.card-header-accent, .tactical-label {
+  color: rgba(244,63,94,.8) !important;
+}
+
+/* Scrollbars — rose-gold */
+::-webkit-scrollbar-thumb {
+  background: rgba(244,63,94,.4) !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(244,63,94,.7) !important;
+}
+
+/* ── Floating Trishul Watermark on SOS card ── */
+.sos-card::after {
+  content: '';
+  position: absolute;
+  bottom: 10px; right: 10px;
+  width: 48px; height: 48px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 70'%3E%3Cpath d='M27 37 L30 4 L33 37Z' fill='rgba(244,63,94,.15)'/%3E%3Crect x='13' y='37' width='34' height='4' rx='2' fill='rgba(244,63,94,.12)'/%3E%3Crect x='27.5' y='41' width='5' height='20' rx='2' fill='rgba(244,63,94,.12)'/%3E%3C/svg%3E") center/contain no-repeat;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ── Premium animated tab indicator ── */
+.nav-tabs .nav-link.active {
+  background: linear-gradient(135deg,rgba(244,63,94,.15),rgba(244,63,94,.05)) !important;
+  border-color: rgba(244,63,94,.3) rgba(244,63,94,.3) transparent !important;
+  color: #f43f5e !important;
+}
+
+/* Risk badge — rose-gold pulse */
+.risk-badge {
+  animation: riskBadgePulse 3s ease-in-out infinite !important;
+}
+@keyframes riskBadgePulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,0)}
+  50%{box-shadow:0 0 0 4px rgba(244,63,94,.2)}
+}
+
+/* ── Premium shimmer on header ── */
+.dsh-header {
+  background: linear-gradient(145deg,rgba(30,5,15,.6),rgba(10,3,8,.8)) !important;
+  border: 1px solid rgba(244,63,94,.15) !important;
+  border-radius: 20px !important;
+  padding: 20px 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.dsh-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 60%; height: 2px;
+  background: linear-gradient(90deg,transparent,rgba(244,63,94,.8),transparent);
+  animation: headerScan 4s ease-in-out infinite;
+}
+@keyframes headerScan{0%{left:-60%}100%{left:160%}}
+</style>
+
 {% block content %}
 <!-- ═══ 3D Immersive Background Layers ═══ -->
 <!-- Background grid (orbs removed for clean look) -->
