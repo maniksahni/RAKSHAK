@@ -10,9 +10,9 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --red: #dc2626; --green: #22c55e; --blue: #3b82f6;
-      --bg: #050508; --card: rgba(255,255,255,0.03);
-      --border: rgba(255,255,255,0.07);
+      --red: #ef4444; --green: #10b981; --cyan: #06b6d4; --blue: #3b82f6; --amber: #f59e0b;
+      --bg: #030305; --card: rgba(6,182,212,0.03);
+      --border: rgba(6,182,212,0.15);
     }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -20,125 +20,144 @@
       display: flex; flex-direction: column; overflow: hidden;
     }
 
-    /* Scanline overlay */
+    /* Scanline overlay & Grid */
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:linear-gradient(rgba(6,182,212,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(6,182,212,0.05) 1px,transparent 1px);
+      background-size:25px 25px;
+    }
     body::after {
       content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px);
     }
 
     /* ── HEADER ── */
     .track-header {
-      background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.05), rgba(5,5,10,0.95));
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding: 18px 24px; display: flex; align-items: center; gap: 16px;
-      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(10,10,15,0.95));
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px; display: flex; align-items: center; gap: 20px;
+      position: relative; z-index:10;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .track-header::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      animation: headerScan 3s ease-in-out infinite;
     }
+    @keyframes headerScan { 0%{opacity:0.2;} 50%{opacity:1;box-shadow:0 0 10px var(--cyan);} 100%{opacity:0.2;} }
+    
     .track-header::after {
-      content: 'SECURE LINK'; position: absolute; right: -20px; top: -10px;
-      font-size: 4.5rem; font-weight: 900; color: rgba(255,255,255,0.02);
-      letter-spacing: -2px; pointer-events: none;
+      content: 'ASSET UPLINK'; position: absolute; right: -5px; top: -5px;
+      font-family:'Space Grotesk',sans-serif;
+      font-size: 5rem; font-weight: 900; color: rgba(6,182,212,0.03);
+      letter-spacing: 0.05em; pointer-events: none;
     }
     .logo-box {
-      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.15);
-      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+      width: 54px; height: 54px; border-radius: 8px; flex-shrink: 0;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid var(--cyan);
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color:var(--cyan);
+      box-shadow: 0 0 15px rgba(6,182,212,0.2), inset 0 0 10px rgba(6,182,212,0.2);
+      animation: pulseLogo 4s infinite;
     }
+    @keyframes pulseLogo { 0%,100%{box-shadow:0 0 15px rgba(6,182,212,0.2);} 50%{box-shadow:0 0 25px rgba(6,182,212,0.5);} }
     .header-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; border-radius: 50px;
-      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3);
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
-      color: var(--blue); font-family: 'Inter', sans-serif; margin-bottom: 4px; text-transform:uppercase;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 4px;
+      background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.4);
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.15em;
+      color: var(--cyan); font-family: 'Space Grotesk', sans-serif; margin-bottom: 6px; text-transform:uppercase;
     }
-    .badge-dot { width:6px; height:6px; border-radius:50%; background:var(--blue); animation: blink 1.5s ease-in-out infinite; box-shadow:0 0 8px var(--blue); }
-    @keyframes blink { 50% { opacity:0.3; } }
-    .header-title { font-size: 1.25rem; font-weight: 800; line-height: 1.2; letter-spacing:-0.01em; }
-    .header-sub { font-size: 0.75rem; color: rgba(255,255,255,0.5); font-weight:500; font-family:'Inter',sans-serif; }
+    .badge-dot { width:8px; height:8px; border-radius:0; background:var(--cyan); animation: blink 1.2s ease-in-out infinite; box-shadow:0 0 10px var(--cyan); }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+    .header-title { font-size: 1.3rem; font-weight: 900; letter-spacing:0.02em; font-family:'Space Grotesk',sans-serif; text-transform:uppercase; }
+    .header-sub { font-size: 0.72rem; color: rgba(255,255,255,0.6); font-weight:500; font-family:'Courier New',monospace; letter-spacing:0.05em; margin-top:2px; }
     .header-clock {
       margin-left: auto; text-align: right; font-family: 'Courier New', monospace;
-      font-size: 0.65rem; color: rgba(255,255,255,0.4); line-height: 2em;
+      font-size: 0.65rem; color: rgba(255,255,255,0.6); line-height: 1.6;
     }
 
     /* ── STATUS BAR ── */
     .track-status-bar {
-      padding: 10px 24px; display: flex; align-items: center; gap: 12px;
-      font-size: 0.78rem; border-bottom: 1px solid var(--border);
-      background: rgba(5,5,8,0.9);
+      padding: 12px 24px; display: flex; align-items: center; gap: 14px;
+      font-size: 0.75rem; border-bottom: 1px solid var(--border);
+      background: rgba(4,4,6,0.9); z-index:10;
     }
     .status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
+      width: 10px; height: 10px; border-radius: 0;
       animation: blink 2s ease-in-out infinite;
+      box-shadow: 0 0 8px currentColor;
     }
-    .status-dot.active     { background: var(--green); box-shadow: 0 0 10px var(--green); }
-    .status-dot.completed  { background: var(--blue); box-shadow: 0 0 10px var(--blue); }
-    .status-dot.overdue    { background: var(--red); box-shadow: 0 0 10px var(--red); animation-duration: .6s; }
-    .status-dot.sos_triggered { background: var(--red); box-shadow: 0 0 16px var(--red); animation-duration: .4s; }
-    .status-label { text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; font-family: 'Courier New', monospace; font-size: 0.72rem; }
-    .status-label.active     { color: var(--green); }
-    .status-label.completed  { color: var(--blue); }
+    .status-dot.active     { background: var(--cyan); color: var(--cyan); }
+    .status-dot.completed  { background: var(--green); color: var(--green); }
+    .status-dot.overdue    { background: var(--red); color: var(--red); animation-duration: .6s; }
+    .status-dot.sos_triggered { background: var(--red); color: var(--red); animation-duration: .4s; }
+    .status-label { text-transform: uppercase; letter-spacing: 0.15em; font-weight: 800; font-family: 'Courier New', monospace; font-size: 0.75rem; }
+    .status-label.active     { color: var(--cyan); }
+    .status-label.completed  { color: var(--green); }
     .status-label.overdue    { color: #ef4444; }
     .status-label.sos_triggered { color: #ef4444; }
-    .status-sep { width: 1px; height: 16px; background: var(--border); }
-    .status-meta { font-size: 0.68rem; color: rgba(255,255,255,0.35); font-family: 'Courier New', monospace; }
-    #track-updated { margin-left: auto; font-size: 0.68rem; color: rgba(255,255,255,0.3); font-family: 'Courier New', monospace; }
+    
+    .status-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.15); }
+    .status-meta { font-size: 0.7rem; color: rgba(255,255,255,0.4); font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
+    #track-updated { margin-left: auto; font-size: 0.7rem; color: var(--cyan); font-family: 'Courier New', monospace; }
 
-    /* ── MAP ── */
-    #track-map { flex: 1; min-height: 300px; }
+    /* ── MAP CONTAINER HUD ── */
+    .map-wrapper { flex: 1; position: relative; background: #000; overflow: hidden; }
+    .tactical-map-layer { filter: grayscale(1) sepia(1) hue-rotate(180deg) saturate(3) brightness(0.7) contrast(1.6); width:100%; height:100%; }
+    
+    /* HUD Overlay */
+    .hud-overlay { position:absolute;inset:0;pointer-events:none;z-index:400; }
+    .hud-bracket { position:absolute;width:40px;height:40px;border:2px solid var(--cyan);z-index:400;opacity:0.6; }
+    .hud-bracket.tl { top:20px;left:20px;border-right:none;border-bottom:none;box-shadow:-2px -2px 10px rgba(6,182,212,0.3); }
+    .hud-bracket.tr { top:20px;right:20px;border-left:none;border-bottom:none;box-shadow:2px -2px 10px rgba(6,182,212,0.3); }
+    .hud-bracket.bl { bottom:20px;left:20px;border-right:none;border-top:none;box-shadow:-2px 2px 10px rgba(6,182,212,0.3); }
+    .hud-bracket.br { bottom:20px;right:20px;border-left:none;border-top:none;box-shadow:2px 2px 10px rgba(6,182,212,0.3); }
+    
+    /* Crosshair sweep */
+    .hud-sweep { position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);border-radius:50%;border:1px dashed rgba(6,182,212,0.2);animation:radarSpin 20s linear infinite; }
+    @keyframes radarSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 
     /* ── FOOTER TELEMETRY ── */
     .track-footer {
-      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      backdrop-filter: blur(20px); -webkit-backdrop-filter:blur(20px);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 16px 24px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
-      position: relative; overflow: hidden;
+      background: rgba(4,4,6,0.95);
+      border-top: 1px solid var(--border);
+      padding: 20px 24px; display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+      position: relative; z-index:10;
     }
     .track-footer::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(6,182,212,0.6), transparent);
     }
-    .info-block { display: flex; flex-direction: column; gap: 4px; }
-    .info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); font-weight:600; }
-    .info-value { font-size: 0.95rem; font-weight: 800; color: #fff; letter-spacing:-0.02em; }
-    .info-value.green { color: var(--green); }
+    .info-block { display: flex; flex-direction: column; gap: 6px; }
+    .info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.4); font-weight:700; font-family:'Space Grotesk',sans-serif; }
+    .info-value { font-size: 1.1rem; font-weight: 800; color: #fff; letter-spacing:0.02em; font-family:'Courier New',monospace; }
+    .info-value.cyan { color: var(--cyan); text-shadow:0 0 10px rgba(6,182,212,0.5); }
     .powered-by {
-      margin-left: auto; font-size: 0.75rem; color: rgba(255,255,255,0.4);
-      font-weight:600; display: flex; align-items: center; gap: 6px;
+      margin-left: auto; font-size: 0.75rem; color: rgba(255,255,255,0.3);
+      font-weight:600; display: flex; align-items: center; gap: 8px; letter-spacing:0.05em; text-transform:uppercase;
     }
-    .powered-by span { color: #fff; font-weight: 800; letter-spacing:-0.02em; }
-
-    /* Pulse ring on map marker */
-    .pulse-ring {
-      width: 20px; height: 20px; border-radius: 50%;
-      border: 2px solid var(--green); position: absolute;
-      animation: pulseRing 2s ease-out infinite;
-    }
-    @keyframes pulseRing {
-      0% { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(3); opacity: 0; }
-    }
+    .powered-by span { color: rgba(220,38,38,0.9); font-weight: 900; letter-spacing:0.2em; }
+    
+    /* Ensure Leaflet popups inside tactical map get filtered correctly */
+    .tactical-map-layer .leaflet-popup-content-wrapper { background:rgba(0,0,0,0.8); border:1px solid #fff; border-radius:0; color:#fff; font-family:'Courier New',monospace; font-weight:700; }
+    .tactical-map-layer .leaflet-popup-tip { background:rgba(0,0,0,0.8); border:1px solid #fff; }
   </style>
 </head>
 <body>
 
   <!-- ── CLASSIFIED TRACKING HEADER ── -->
   <div class="track-header">
-    <div class="logo-box"><i class="bi bi-shield-check" style="background:linear-gradient(135deg, #fff, rgba(255,255,255,0.6)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;"></i></div>
+    <div class="logo-box"><i class="bi bi-crosshair"></i></div>
     <div>
-      <div class="header-badge"><div class="badge-dot"></div> SECURE TRACKING</div>
-      <div class="header-title"><span style="color:var(--blue);">{{ person_name }}</span> is sharing their journey</div>
-      <div class="header-sub">Rakshak Advanced Encryption • End-to-end secured</div>
+      <div class="header-badge"><div class="badge-dot"></div> SECURE UPLINK ESTABLISHED</div>
+      <div class="header-title"><span style="color:var(--cyan);text-shadow:0 0 10px rgba(6,182,212,0.5);">{{ person_name }}</span> IS DEPLOYED</div>
+      <div class="header-sub" id="glitch-text">NETWORK: ENCRYPTED // END-TO-END SECURE</div>
     </div>
     <div class="header-clock">
-      <div style="color:var(--blue); font-weight:600; font-family:'Inter', sans-serif;">● LIVE UPLINK</div>
-      <div id="hud-clock" style="font-weight:700; font-size:0.75rem;">--:--:--</div>
-      <div style="opacity:0.6; font-family:'Inter', sans-serif;">Poll: 5s</div>
+      <div style="color:var(--cyan); font-weight:800; font-family:'Space Grotesk', sans-serif; letter-spacing:0.1em;">● LIVE FEED</div>
+      <div id="hud-clock" style="font-weight:800; font-size:0.9rem; color:#fff;">--:--:--</div>
+      <div style="opacity:0.5; font-weight:600;">POLL RT: 5.0ms</div>
     </div>
   </div>
 
@@ -153,30 +172,40 @@
     <span id="track-updated">Connecting...</span>
   </div>
 
-  <!-- ── MAP ── -->
-  <div id="track-map"></div>
+  <!-- ── MAP CONTAINER ── -->
+  <div class="map-wrapper">
+    <div class="hud-overlay">
+      <div class="hud-bracket tl"></div>
+      <div class="hud-bracket tr"></div>
+      <div class="hud-bracket bl"></div>
+      <div class="hud-bracket br"></div>
+      <div class="hud-sweep"></div>
+      <div style="position:absolute;bottom:20px;width:100%;text-align:center;color:var(--cyan);font-family:'Courier New',monospace;font-size:0.75rem;letter-spacing:0.2em;font-weight:700;opacity:0.6;">AWAITING ASSET TELEMETRY...</div>
+    </div>
+    <div id="track-map" class="tactical-map-layer"></div>
+  </div>
 
   <!-- ── FOOTER TELEMETRY ── -->
   <div class="track-footer">
     <div class="info-block">
-      <span class="info-label">Started</span>
+      <span class="info-label">MISSION START</span>
       <span class="info-value">{{ journey.started_at[:16] if journey.started_at else '--' }}</span>
     </div>
     <div class="info-block">
-      <span class="info-label">ETA</span>
-      <span class="info-value">{{ journey.eta_minutes }} min</span>
+      <span class="info-label">EST RELIEF TIME</span>
+      <span class="info-value">{{ journey.eta_minutes }} MIN</span>
     </div>
     <div class="info-block">
-      <span class="info-label">Status</span>
-      <span class="info-value green" id="track-status-text" style="text-transform:capitalize;">{{ journey.status }}</span>
+      <span class="info-label">PROTOCOL</span>
+      <span class="info-value cyan" id="track-status-text" style="text-transform:uppercase;">{{ journey.status }}</span>
     </div>
     <div class="info-block">
-      <span class="info-label">Encryption</span>
-      <span class="info-value" style="color:var(--blue);">AES-256</span>
+      <span class="info-label">CIPHER</span>
+      <span class="info-value" style="color:#fff;">AES-256-GCM [ACTIVE]</span>
     </div>
     <div class="powered-by">
-      <i class="bi bi-shield-fill-check" style="color:var(--red);"></i>
-      Protected by <span>RAKSHAK</span>
+      <i class="bi bi-broadcast" style="color:var(--red);animation:blink 1s infinite;"></i>
+      SYS <span style="font-family:'Space Grotesk',sans-serif;">RAKSHAK</span>
     </div>
   </div>
 
@@ -197,37 +226,38 @@
     );
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
 
-    /* Custom pulsing person marker */
+    /* Custom pulsing tactical person marker */
     const personIcon = L.divIcon({
       className: '',
-      html: `<div style="position:relative;width:20px;height:20px;">
-        <div style="position:absolute;inset:0;border-radius:50%;background:#22c55e;border:2px solid #fff;box-shadow:0 0 12px #22c55e;z-index:2;"></div>
-        <div style="position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(34,197,94,0.4);animation:pulseRing 2s ease-out infinite;"></div>
+      html: `<div style="position:relative;width:30px;height:30px;display:flex;align-items:center;justify-content:center;">
+        <div style="position:absolute;inset:0;border-radius:50%;border:1px dashed #fff;animation:radarSpin 4s linear infinite;opacity:0.8;"></div>
+        <div style="position:absolute;width:12px;height:12px;border-radius:0;background:#fff;box-shadow:0 0 15px #fff;z-index:2;"></div>
+        <div style="position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);animation:pulseRing 2s ease-out infinite;"></div>
       </div>`,
-      iconSize: [20, 20], iconAnchor: [10, 10]
+      iconSize: [30, 30], iconAnchor: [15, 15]
     });
 
     const personMarker = L.marker(
       [journey.current_lat || journey.start_lat, journey.current_lng || journey.start_lng],
       {icon: personIcon}
-    ).addTo(map).bindPopup(`<b>${journey.status === 'completed' ? '✅ Journey completed' : '📡 Current location'}</b>`);
+    ).addTo(map).bindPopup(`[ASSET LOCATED]`);
 
-    /* Destination marker */
+    /* Tactical Destination marker */
     L.marker([journey.dest_lat, journey.dest_lng], {
       icon: L.divIcon({
         className: '',
-        html: '<div style="width:16px;height:16px;background:#dc2626;border:2px solid #fff;border-radius:50%;box-shadow:0 0 14px rgba(220,38,38,0.7);"></div>',
-        iconSize: [16,16], iconAnchor: [8,8]
+        html: '<div style="position:relative;width:24px;height:24px;border:2px solid #fff;border-radius:0;display:flex;align-items:center;justify-content:center;"><div style="width:6px;height:6px;background:#fff;"></div><div style="position:absolute;width:1px;height:40px;background:rgba(255,255,255,0.4);"></div><div style="position:absolute;width:40px;height:1px;background:rgba(255,255,255,0.4);"></div></div>',
+        iconSize: [24,24], iconAnchor: [12,12]
       })
-    }).addTo(map).bindPopup('<b>🎯 Destination</b>');
+    }).addTo(map).bindPopup('[EXTRACTION POINT / DEST]');
 
-    /* Route line */
+    /* Glowing Route line */
     const routeLine = L.polyline([
       [journey.start_lat, journey.start_lng],
       [journey.dest_lat, journey.dest_lng]
-    ], {color:'#dc2626', weight:2, dashArray:'8 6', opacity:0.5}).addTo(map);
+    ], {color:'#fff', weight:2, dashArray:'4 8', opacity:0.8}).addTo(map);
 
-    map.fitBounds(routeLine.getBounds().pad(0.3));
+    map.fitBounds(routeLine.getBounds().pad(0.4));
 
     /* Poll for updates (fallback to true sync if backend pushes changes) */
     function pollUpdate() {

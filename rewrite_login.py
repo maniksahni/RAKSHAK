@@ -1,0 +1,450 @@
+import os
+
+new_content = """{% extends "base.html" %}
+{% block title %}Secure Access — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ════════════════════════════════════════════════
+   RAKSHAK — ULTRA-PREMIUM LOGIN PAGE
+   ════════════════════════════════════════════════ */
+
+/* Hide the default public navbar for full immersion */
+.navbar-rakshak { display: none !important; }
+
+body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
+
+.login-root {
+  display: flex; height: 100vh; width: 100vw; position: relative;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── LEFT PANEL: CINEMATIC ENGINE ── */
+.lp-left {
+  flex: 0 0 55%; position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; overflow: hidden;
+  background: radial-gradient(circle at center, #0a0307 0%, #020104 100%);
+  border-right: 1px solid rgba(220,38,38,0.15);
+  box-shadow: inset -20px 0 50px rgba(0,0,0,0.8);
+}
+
+/* Background Cyber Grid */
+.lp-cyber-grid {
+  position: absolute; inset: -50%; pointer-events: none; z-index: 0;
+  background-image: 
+    linear-gradient(rgba(220,38,38,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220,38,38,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(1000px) rotateX(60deg);
+  animation: gridMove 20s linear infinite;
+  mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
+}
+@keyframes gridMove { 0% { transform: perspective(1000px) rotateX(60deg) translateY(0); } 100% { transform: perspective(1000px) rotateX(60deg) translateY(60px); } }
+
+/* Massive pulsing ambient core */
+.lp-ambient-core {
+  position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
+  transform: translate(-50%, -50%); border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, rgba(139,0,0,0.05) 40%, transparent 70%);
+  animation: corePulse 8s ease-in-out infinite alternate;
+  pointer-events: none; z-index: 1;
+}
+@keyframes corePulse {
+  0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; filter: hue-rotate(-10deg); }
+  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; filter: hue-rotate(10deg); }
+}
+
+/* Particles Canvas */
+.lp-left-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+
+/* ── SHIELD HERO ASSEMBLY ── */
+.lp-hero-assembly {
+  position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center;
+  transform-style: preserve-3d; animation: floatAssembly 6s ease-in-out infinite;
+}
+@keyframes floatAssembly {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Orbiting Rings */
+.lp-orbit {
+  position: absolute; top: 35%; left: 50%; border-radius: 50%;
+  border: 1px dashed rgba(220,38,38,0.2); transform: translate(-50%, -50%); pointer-events: none;
+}
+.lp-orbit-1 { width: 320px; height: 320px; animation: orbitSpin 15s linear infinite; }
+.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(220,38,38,0.1); animation: orbitSpin 25s linear infinite reverse; }
+.lp-orbit-3 { width: 560px; height: 560px; border-style: dotted; animation: orbitSpin 35s linear infinite; }
+.lp-orbit::after {
+  content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: #ff4444; box-shadow: 0 0 15px #ff4444; top: -4px; left: 50%; transform: translateX(-50%);
+}
+@keyframes orbitSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+/* The SVG Shield */
+.lp-shield-svg {
+  width: 220px; height: 260px; margin-bottom: 2rem;
+  filter: drop-shadow(0 0 40px rgba(220,38,38,0.6)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+  position: relative; z-index: 10;
+}
+
+/* Shield text */
+.lp-hero-text { text-align: center; position: relative; z-index: 10; }
+.lp-hero-badge {
+  display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px; border-radius: 30px;
+  background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3);
+  font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700;
+  color: #ff6b6b; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(220,38,38,0.1); backdrop-filter: blur(10px);
+}
+.lp-hero-badge-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #ff4444; box-shadow: 0 0 10px #ff4444;
+  animation: blink 2s ease-in-out infinite;
+}
+.lp-hero-title {
+  font-family: 'Space Grotesk', sans-serif; font-size: 4.5rem; font-weight: 900;
+  letter-spacing: 0.15em; line-height: 1; margin-bottom: 15px;
+  background: linear-gradient(180deg, #ffffff 0%, #ffcaca 50%, #ff6b6b 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 12px rgba(220,38,38,0.3));
+}
+.lp-hero-sub {
+  font-size: 1.05rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; line-height: 1.6; font-weight: 300;
+}
+
+/* Stat Cards */
+.lp-stat-row { display: flex; gap: 24px; margin-top: 45px; justify-content: center; }
+.lp-stat {
+  position: relative; padding: 18px 28px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 15px 30px rgba(0,0,0,0.4);
+  display: flex; flex-direction: column; align-items: center; min-width: 140px; overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+}
+.lp-stat::before {
+  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(220,38,38,0.1), transparent);
+  opacity: 0; transition: opacity 0.4s;
+}
+.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(220,38,38,0.2); }
+.lp-stat:hover::before { opacity: 1; }
+.lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #ff4444; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
+.lp-stat-lbl { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; position: relative; z-index: 1; }
+
+/* ── RIGHT PANEL: AUTH STATION ── */
+.lp-right {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  position: relative; background: #05050A; overflow: hidden;
+}
+.lp-right::before {
+  content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none;
+}
+.lp-right-nav {
+  position: absolute; top: 30px; right: 40px; z-index: 20; display: flex; gap: 16px;
+}
+.lp-btn-outline {
+  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+  color: #fff; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s;
+  background: rgba(255,255,255,0.02);
+}
+.lp-btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); color: #fff; transform: translateY(-2px); }
+.lp-btn-solid {
+  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(220,38,38,0.5);
+  background: rgba(220,38,38,0.15); color: #ff6b6b; font-size: 0.85rem; font-weight: 700; text-decoration: none;
+  transition: all 0.3s; box-shadow: 0 0 15px rgba(220,38,38,0.2);
+}
+.lp-btn-solid:hover { background: rgba(220,38,38,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(220,38,38,0.4); }
+
+/* Auth Card Glassmorphism */
+.lp-card { width: 100%; max-width: 480px; position: relative; z-index: 10; animation: cardIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.lp-card-inner {
+  background: linear-gradient(145deg, rgba(20,20,30,0.6), rgba(10,10,15,0.8));
+  backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 30px 60px rgba(0,0,0,0.6), 0 0 100px rgba(0,0,0,0.5);
+  padding: 50px 48px; position: relative; overflow: hidden;
+}
+.lp-card-inner::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.8), transparent);
+  animation: cardScan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes cardScan { 0% { left: -50%; } 100% { left: 150%; } }
+
+/* Login Header */
+.lp-card-tag {
+  display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 20px;
+  background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2);
+  font-family: 'Courier New', monospace; font-size: 0.65rem; color: #ff6b6b; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;
+}
+.lp-welcome { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.1; }
+.lp-welcome span { background: linear-gradient(90deg, #ff4444, #fca5a5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.lp-card-sub { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 35px; }
+
+/* The Google Button */
+.lp-google-btn {
+  display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; padding: 18px 24px;
+  border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+  color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; text-decoration: none;
+  position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.lp-google-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(66,133,244,0.1), rgba(234,67,53,0.1), rgba(251,188,5,0.1), rgba(52,168,83,0.1));
+  opacity: 0; transition: opacity 0.4s; z-index: 0;
+}
+.lp-google-btn:hover {
+  transform: translateY(-4px); border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(66,133,244,0.15);
+}
+.lp-google-btn:hover::before { opacity: 1; }
+.lp-google-btn:active { transform: translateY(-1px); }
+.lp-google-btn svg, .lp-google-btn span { position: relative; z-index: 1; }
+.lp-google-text { background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.02em; }
+.lp-google-arrow { margin-left: auto; color: rgba(255,255,255,0.4); transition: transform 0.3s, color 0.3s; }
+.lp-google-btn:hover .lp-google-arrow { color: #fff; transform: translateX(5px); }
+
+/* OR Divider */
+.lp-divider-row { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 30px 0; }
+.lp-divider-line { height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+.lp-divider-text { font-family: 'Courier New', monospace; font-size: 0.7rem; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; }
+
+/* Features List */
+.lp-features { display: flex; flex-direction: column; gap: 14px; }
+.lp-feature-item {
+  display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 14px;
+  background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); transition: all 0.3s;
+}
+.lp-feature-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); transform: translateX(5px); }
+.lp-feature-icon-box {
+  width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+}
+.lp-fi-red { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; }
+.lp-fi-blue { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: #3b82f6; }
+.lp-fi-green { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; }
+.lp-feature-text h4 { font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0 0 2px 0; letter-spacing: 0.01em; }
+.lp-feature-text p { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin: 0; line-height: 1.4; }
+
+/* Footer */
+.lp-footer-info {
+  margin-top: 35px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;
+}
+.lp-footer-info p {
+  font-family: 'Courier New', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; text-transform: uppercase; margin: 0; display: inline-flex; align-items: center; gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  body, html { overflow: auto; height: auto; }
+  .login-root { flex-direction: column; height: auto; }
+  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(220,38,38,0.15); }
+  .lp-right { padding: 60px 24px; min-height: 100vh; }
+  .lp-hero-title { font-size: 3rem; }
+  .lp-stat-row { flex-wrap: wrap; }
+  .lp-right-nav { position: static; justify-content: center; margin-bottom: 40px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-root">
+
+  <!-- LEFT PANEL -->
+  <div class="lp-left">
+    <div class="lp-cyber-grid"></div>
+    <div class="lp-ambient-core"></div>
+    <canvas class="lp-left-canvas" id="lp-particles"></canvas>
+    
+    <div class="lp-hero-assembly">
+      <div class="lp-orbit lp-orbit-3"></div>
+      <div class="lp-orbit lp-orbit-2"></div>
+      <div class="lp-orbit lp-orbit-1"></div>
+      
+      <!-- Premium SVG Shield -->
+      <svg class="lp-shield-svg" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="hRG1" cx="38%" cy="28%" r="65%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="45%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
+          <linearGradient id="hLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.5)"/><stop offset="60%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.3)"/></linearGradient>
+          <filter id="hGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- Shadow -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="rgba(0,0,0,.6)" transform="translate(1.5,3) scale(.97)"/>
+        <!-- Body -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#hRG1)"/>
+        <!-- Gloss -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#hLG2)"/>
+        <!-- Border shine -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" stroke="rgba(255,200,200,.5)" stroke-width="1.2" fill="none"/>
+        <!-- Inner frame -->
+        <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z" stroke="rgba(255,255,255,.15)" stroke-width=".8" fill="rgba(255,255,255,.03)"/>
+        <!-- Top glint -->
+        <ellipse cx="11" cy="18" rx="3.5" ry="2" fill="rgba(255,255,255,.45)" transform="rotate(-28 11 18)"/>
+        <!-- Circuit lines -->
+        <line x1="3" y1="38" x2="10" y2="38" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <line x1="50" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <!-- Checkmark with massive glow -->
+        <path d="M16 38l10 11 18-19" stroke="rgba(255,160,160,.6)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#hGlow)"/>
+        <path d="M16 38l10 11 18-19" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      
+      <div class="lp-hero-text">
+        <div class="lp-hero-badge"><span class="lp-hero-badge-dot"></span>System Operational</div>
+        <div class="lp-hero-title">RAKSHAK</div>
+        <p class="lp-hero-sub">The world's most advanced AI safety platform.<br>Always watching. Always protecting.</p>
+        
+        <div class="lp-stat-row">
+          <div class="lp-stat">
+            <div class="lp-stat-num">100K</div>
+            <div class="lp-stat-lbl">Secure Nodes</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-num" style="color:#10b981;">99.99%</div>
+            <div class="lp-stat-lbl">Uptime SLA</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-num" style="color:#3b82f6;">&lt;1.2s</div>
+            <div class="lp-stat-lbl">SOS Latency</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="lp-right">
+    
+    <!-- Top Nav links only visible on desktop -->
+    <div class="lp-right-nav d-none d-lg-flex">
+      <a href="{{ url_for('main.index') }}" class="lp-btn-outline"><i class="bi bi-house me-1"></i> Home</a>
+      <a href="{{ url_for('auth.register') }}" class="lp-btn-solid">Get Protected</a>
+    </div>
+
+    <div class="lp-card">
+      <div class="lp-card-inner">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 30px;">
+          <div class="lp-card-tag"><span class="lp-hero-badge-dot"></span>Secure Access Portal</div>
+          <h1 class="lp-welcome">Welcome <span>back.</span></h1>
+          <p class="lp-card-sub">Authenticate to access your central command.</p>
+        </div>
+
+        <!-- The Google Button -->
+        <a href="{{ url_for('google_auth.google_login') }}" class="lp-google-btn">
+          <svg width="24" height="24" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          <span class="lp-google-text">Authenticate with Google</span>
+          <svg class="lp-google-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </a>
+
+        <div class="lp-divider-row">
+          <div class="lp-divider-line"></div>
+          <div class="lp-divider-text">KEY CAPABILITIES</div>
+          <div class="lp-divider-line"></div>
+        </div>
+
+        <!-- Beautiful Feature Cards -->
+        <div class="lp-features">
+          <div class="lp-feature-item">
+            <div class="lp-feature-icon-box lp-fi-red"><i class="bi bi-shield-lock-fill"></i></div>
+            <div class="lp-feature-text">
+              <h4>One-Tap SOS Override</h4>
+              <p>Instant broadcast to authorities & trusted contacts.</p>
+            </div>
+          </div>
+          <div class="lp-feature-item">
+            <div class="lp-feature-icon-box lp-fi-blue"><i class="bi bi-crosshair"></i></div>
+            <div class="lp-feature-text">
+              <h4>Live Danger Map Engine</h4>
+              <p>AI threat-intel mapping routing you away from risk.</p>
+            </div>
+          </div>
+          <div class="lp-feature-item">
+            <div class="lp-feature-icon-box lp-fi-green"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="lp-feature-text">
+              <h4>Safe Walk & ETA Guard</h4>
+              <p>Real-time telemetry tracking with fail-deadly triggers.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="lp-footer-info">
+          <p><span class="lp-hero-badge-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;"></span> Zero-Knowledge Arch · Military-Grade AES-256</p>
+          <!-- Mobile home link fallback -->
+          <div class="d-lg-none mt-3">
+             <a href="{{ url_for('main.index') }}" style="color:rgba(255,255,255,0.4); text-decoration:none; font-size:0.8rem;"><i class="bi bi-arrow-left"></i> Return Home</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Particle Canvas Engine ── */
+(function(){
+  const canvas = document.getElementById('lp-particles');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W = canvas.width  = canvas.offsetWidth;
+  let H = canvas.height = canvas.offsetHeight;
+  window.addEventListener('resize', () => { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; });
+  
+  const N = 70; // High particle density
+  const pts = Array.from({length: N}, () => ({
+    x: Math.random() * W, y: Math.random() * H,
+    vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4,
+    r: Math.random() * 1.5 + .5, o: Math.random() * .5 + .2
+  }));
+  
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // Draw connections
+    for (let i = 0; i < N; i++) {
+      const p = pts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      
+      for (let j = i+1; j < N; j++) {
+        const q = pts[j];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(220,38,38,${(1 - dist/120) * 0.15})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(220,38,38,${p.o})`;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(220,38,38,0.8)';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+{% endblock %}
+"""
+
+with open('/Users/maniksahni/Desktop/RAKSHAK/templates/auth/login.html', 'w') as f:
+    f.write(new_content)
+print("Rewrote auth/login.html")
