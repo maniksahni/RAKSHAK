@@ -319,3 +319,25 @@
   .section-header { font-size: 1.1rem; }
   .glass-card { border-radius: 18px !important; }
 }
+
+/* ── Leaflet Tactical Overrides ── */
+.leaflet-popup.tactical-popup {
+  margin-bottom: 25px;
+}
+.tactical-popup .leaflet-popup-content-wrapper {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+.tactical-popup .leaflet-popup-tip-container {
+  display: none; 
+}
+.tactical-popup .leaflet-popup-content {
+  margin: 0;
+  min-width: 140px;
+}
+/* Ensure elements behind filter glow heavily */
+.tactical-map-layer .leaflet-marker-icon {
+  filter: drop-shadow(0 0 10px #fff);
+}
