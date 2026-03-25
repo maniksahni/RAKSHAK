@@ -65,7 +65,7 @@
   }
   .ss-score-green { background: rgba(34,197,94,0.15); color: #22c55e; }
   .ss-score-amber { background: rgba(245,158,11,0.15); color: #f59e0b; }
-  .ss-score-red   { background: rgba(220,38,38,0.15); color: #dc2626; }
+  .ss-score-red   { background: rgba(244,63,94,0.15); color: #f43f5e; }
 
   /* Breakdown */
   .ss-breakdown-item {
@@ -96,7 +96,7 @@
     border-radius: 50%;
     flex-shrink: 0;
   }
-  .ss-sev-high   { background: #dc2626; box-shadow: 0 0 8px rgba(220,38,38,0.5); }
+  .ss-sev-high   { background: #f43f5e; box-shadow: 0 0 8px rgba(244,63,94,0.5); }
   .ss-sev-medium { background: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.4); }
   .ss-sev-low    { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.4); }
   .ss-zone-text  { flex: 1; font-size: 0.85rem; color: var(--text-secondary, #ccc); }
@@ -114,12 +114,12 @@
     outline: none;
     transition: border-color 0.2s;
   }
-  .ss-location-input:focus { border-color: rgba(220,38,38,0.4); }
+  .ss-location-input:focus { border-color: rgba(244,63,94,0.4); }
   .ss-location-input::placeholder { color: rgba(255,255,255,0.25); }
 
   .ss-btn {
     padding: 10px 24px;
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    background: linear-gradient(135deg, #f43f5e, #be123c);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -129,7 +129,7 @@
     letter-spacing: 0.05em;
     transition: opacity 0.2s;
   }
-  .ss-btn:hover { opacity: 0.85; }
+  .ss-btn:hover { opacity: 0.85; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(244,63,94,0.4); }
   .ss-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* Advisory */
@@ -287,7 +287,7 @@
         <span style="padding:4px 10px;background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:3px;color:var(--accent-blue);">AI MODEL: ACTIVE</span>
         <span style="padding:4px 10px;background:rgba(72,187,120,0.08);border:1px solid rgba(72,187,120,0.2);border-radius:3px;color:var(--accent-green);">LIVE DB: SYNCED</span>
         <span style="padding:4px 10px;background:rgba(246,173,85,0.08);border:1px solid rgba(246,173,85,0.2);border-radius:3px;color:var(--accent-amber);">TIME MULTIPLIER: ON</span>
-        <span style="padding:4px 10px;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:3px;color:var(--red-primary);">RADIUS: 5KM</span>
+        <span style="padding:4px 10px;background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.2);border-radius:3px;color:var(--red-primary);">RADIUS: 5KM</span>
       </div>
     </div>
   </div>
@@ -336,10 +336,10 @@
           </div>
         </div>
         <div class="ss-breakdown-item">
-          <span class="ss-breakdown-label"><i class="bi bi-exclamation-triangle-fill" style="color:#dc2626;margin-right:8px;"></i>Recent SOS Alerts</span>
+          <span class="ss-breakdown-label"><i class="bi bi-exclamation-triangle-fill" style="color:#f43f5e;margin-right:8px;"></i>Recent SOS Alerts</span>
           <div class="d-flex align-items-center">
-            <span class="ss-breakdown-value" style="color:#dc2626;" id="ss-sos-penalty">-0</span>
-            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-sos-bar" style="width:0%;background:#dc2626;"></div></div>
+            <span class="ss-breakdown-value" style="color:#f43f5e;" id="ss-sos-penalty">-0</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-sos-bar" style="width:0%;background:#f43f5e;"></div></div>
           </div>
         </div>
         <div class="ss-breakdown-item">
@@ -395,7 +395,7 @@
 
     <!-- Community Alerts Nearby -->
     <div class="ss-card">
-      <div class="ss-card-title"><i class="bi bi-broadcast me-2" style="color:#dc2626;"></i>Community Alerts Nearby</div>
+      <div class="ss-card-title"><i class="bi bi-broadcast me-2" style="color:#f43f5e;"></i>Community Alerts Nearby</div>
       <div id="ss-nearby-alerts" style="max-height:220px;overflow-y:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.04);">
         <div class="ss-empty"><i class="bi bi-broadcast"></i>Check a location to see nearby incidents</div>
       </div>
@@ -438,7 +438,7 @@
     var color;
     if (score > 70) { color = '#22c55e'; }
     else if (score >= 40) { color = '#f59e0b'; }
-    else { color = '#dc2626'; }
+    else { color = '#f43f5e'; }
     gaugeRing.setAttribute('stroke', color);
     gaugeNum.textContent = score;
     gaugeNum.setAttribute('fill', color);
@@ -478,7 +478,7 @@
         return '<div class="ss-trend-bar-col"><div class="ss-trend-bar" style="height:4px;background:rgba(255,255,255,0.04);" data-value="--"></div><div class="ss-trend-label">--</div></div>';
       }
       var h = Math.max(8, (entry.score / 100) * 100);
-      var color = entry.score > 70 ? '#22c55e' : (entry.score >= 40 ? '#f59e0b' : '#dc2626');
+      var color = entry.score > 70 ? '#22c55e' : (entry.score >= 40 ? '#f59e0b' : '#f43f5e');
       var label = entry.time ? new Date(entry.time).toLocaleDateString([], {month:'short', day:'numeric'}) : '';
       return '<div class="ss-trend-bar-col">' +
         '<div class="ss-trend-bar" style="height:' + h + 'px;background:' + color + ';" data-value="' + entry.score + '"></div>' +
@@ -493,10 +493,10 @@
 
     if (data.danger_zone_penalty > 0) {
       suggestions.push({
-        icon: 'bi-geo-alt', iconBg: 'rgba(220,38,38,0.12)', iconColor: '#dc2626',
+        icon: 'bi-geo-alt', iconBg: 'rgba(244,63,94,0.12)', iconColor: '#f43f5e',
         title: 'Avoid Nearby Danger Zones',
         desc: 'Your location is near reported danger zones. Consider moving to well-lit, populated areas.',
-        impact: '+' + Math.min(20, data.danger_zone_penalty) + ' pts', impactBg: 'rgba(220,38,38,0.1)', impactColor: '#dc2626'
+        impact: '+' + Math.min(20, data.danger_zone_penalty) + ' pts', impactBg: 'rgba(244,63,94,0.1)', impactColor: '#f43f5e'
       });
     }
     if (data.recent_sos_penalty > 0) {
@@ -568,7 +568,7 @@
     finalEl.textContent = data.score;
     if (data.score > 70) finalEl.style.color = '#22c55e';
     else if (data.score >= 40) finalEl.style.color = '#f59e0b';
-    else finalEl.style.color = '#dc2626';
+    else finalEl.style.color = '#f43f5e';
 
     // Advisory
     var advEl = document.getElementById('ss-advisory');
@@ -614,13 +614,13 @@
           loadNearbyAlerts(lat, lng);
         } else {
           document.getElementById('ss-loading-state').innerHTML =
-            '<i class="bi bi-exclamation-triangle" style="font-size:2rem;color:#dc2626;"></i>' +
+            '<i class="bi bi-exclamation-triangle" style="font-size:2rem;color:#f43f5e;"></i>' +
             '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">' + (data.error || 'Failed to calculate score') + '</div>';
         }
       })
       .catch(function() {
         document.getElementById('ss-loading-state').innerHTML =
-          '<i class="bi bi-wifi-off" style="font-size:2rem;color:#dc2626;"></i>' +
+          '<i class="bi bi-wifi-off" style="font-size:2rem;color:#f43f5e;"></i>' +
           '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">Network error</div>';
       });
   }
@@ -639,8 +639,8 @@
           var dt = a.created_at ? new Date(a.created_at).toLocaleDateString() + ' ' + new Date(a.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '';
           var typeLabel = (a.trigger_type || 'manual').replace(/_/g, ' ');
           return '<div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;">' +
-            '<div style="display:flex;align-items:center;gap:8px;"><i class="bi bi-exclamation-circle" style="color:#dc2626;font-size:0.9rem;"></i><div><div style="font-size:0.78rem;font-weight:500;">' + typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1) + ' alert</div><div style="font-size:0.68rem;color:var(--text-muted,#888);">' + dt + '</div></div></div>' +
-            '<span style="font-size:0.65rem;padding:2px 6px;border-radius:4px;background:rgba(220,38,38,0.1);color:#dc2626;border:1px solid rgba(220,38,38,0.2);">' + (a.status || '?') + '</span></div>';
+            '<div style="display:flex;align-items:center;gap:8px;"><i class="bi bi-exclamation-circle" style="color:#f43f5e;font-size:0.9rem;"></i><div><div style="font-size:0.78rem;font-weight:500;">' + typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1) + ' alert</div><div style="font-size:0.68rem;color:var(--text-muted,#888);">' + dt + '</div></div></div>' +
+            '<span style="font-size:0.65rem;padding:2px 6px;border-radius:4px;background:rgba(244,63,94,0.1);color:#f43f5e;border:1px solid rgba(244,63,94,0.2);">' + (a.status || '?') + '</span></div>';
         }).join('');
         container.innerHTML = '<div style="padding:8px 12px;font-size:0.7rem;color:var(--text-muted,#888);border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600;letter-spacing:0.08em;">INCIDENTS WITHIN 5KM (LAST 7 DAYS): ' + d.count + '</div>' + container.innerHTML;
       })
