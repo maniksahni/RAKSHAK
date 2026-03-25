@@ -1365,7 +1365,7 @@ h1,h2,h3,h4,h5,h6 {
   background:linear-gradient(90deg,rgba(6,6,10,.97),rgba(10,10,18,.94))!important;
   border-bottom:1px solid rgba(255,255,255,.04)!important;
   box-shadow:0 1px 0 rgba(220,38,38,.06),0 4px 30px rgba(0,0,0,.6)!important;
-  position:relative!important;
+  position:fixed!important;
 }
 .navbar-rakshak::before{
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
