@@ -204,12 +204,14 @@
     <div class="glass-card p-4 p-md-5" style="border-radius:var(--radius-xl);">
 
       <div class="text-center mb-4">
-        <div class="shield-icon">
-          <i class="bi bi-shield-check"></i>
+        <div style="margin:0 auto 16px;width:72px;height:72px;position:relative;display:flex;align-items:center;justify-content:center;">
+          <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,94,.4) 0%,transparent 70%);animation:bootAura 2s ease-in-out infinite alternate;"></div>
+          <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="72" height="72"
+            style="position:relative;z-index:2;filter:drop-shadow(0 0 12px rgba(244,63,94,0.9));object-fit:contain;animation:logoFloat 4s ease-in-out infinite;">
         </div>
-        <div class="terminal-title">Join Rakshak</div>
-        <p class="text-secondary" style="font-size:0.9rem; font-family:var(--int); font-weight:400; color:rgba(255,255,255,0.6)!important;">
-          One click to activate your safety shield
+        <div class="terminal-title" style="background:linear-gradient(135deg,#fff 0%,#ffb3cb 40%,#f43f5e 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Join RAKSHAK</div>
+        <p class="text-secondary" style="font-size:0.85rem;color:rgba(255,255,255,0.5)!important;font-family:'Courier New',monospace;letter-spacing:.08em;">
+          ACTIVATE YOUR VALKYRIE SHIELD // SECURE ONBOARDING
         </p>
       </div>
 

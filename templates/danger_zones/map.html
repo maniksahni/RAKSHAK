@@ -159,7 +159,7 @@
   font-family: var(--font-display);
   font-size: 1.35rem; font-weight: 900;
   letter-spacing: 0.12em; text-transform: uppercase;
-  background: linear-gradient(135deg, #fff, #dc2626);
+  background: linear-gradient(135deg, #fff, #f43f5e);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1.2;
@@ -198,7 +198,7 @@
   letter-spacing: 0.08em; color: var(--text-secondary);
   transition: all 0.3s ease;
 }
-.header-badge:hover { border-color: rgba(220,38,38,0.3); }
+.header-badge:hover { border-color: rgba(244,63,94,0.3); }
 
 /* ── FILTER BUTTONS — ZONE TYPE TOGGLES ──────────────────────────────────── */
 .filter-bar {
@@ -217,15 +217,15 @@
   letter-spacing: 0.03em;
 }
 .filter-pill:hover {
-  border-color: rgba(220,38,38,0.3);
+  border-color: rgba(244,63,94,0.3);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 .filter-pill.active {
-  background: rgba(220,38,38,0.12);
-  border-color: rgba(220,38,38,0.5);
+  background: rgba(244,63,94,0.12);
+  border-color: rgba(244,63,94,0.5);
   color: var(--red-primary);
-  box-shadow: 0 0 15px rgba(220,38,38,0.1);
+  box-shadow: 0 0 15px rgba(244,63,94,0.1);
 }
 .filter-pill.active.filter-all {
   background: rgba(72,187,120,0.1);
@@ -242,7 +242,7 @@
   transition: all 0.3s;
 }
 .filter-pill.active .filter-count {
-  background: rgba(220,38,38,0.2);
+  background: rgba(244,63,94,0.2);
 }
 .filter-pill.active.filter-all .filter-count {
   background: rgba(72,187,120,0.2);
@@ -269,13 +269,13 @@
 }
 .map-ctrl-btn::before {
   content:''; position:absolute; inset:0;
-  background:linear-gradient(135deg, rgba(220,38,38,0.1), transparent);
+  background:linear-gradient(135deg, rgba(244,63,94,0.1), transparent);
   opacity:0; transition:opacity .3s;
 }
 .map-ctrl-btn:hover {
-  border-color: rgba(220,38,38,0.4); color: var(--red-primary);
+  border-color: rgba(244,63,94,0.4); color: var(--red-primary);
   transform: translateX(-3px);
-  box-shadow: 0 0 20px rgba(220,38,38,0.1), inset 0 0 20px rgba(220,38,38,0.03);
+  box-shadow: 0 0 20px rgba(244,63,94,0.1), inset 0 0 20px rgba(244,63,94,0.03);
 }
 .map-ctrl-btn:hover::before { opacity:1; }
 
@@ -290,7 +290,7 @@
 }
 .legend::before {
   content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.4), transparent);
 }
 @keyframes slideInLeft {
   from { opacity:0; transform:translateX(-20px); }
@@ -350,7 +350,7 @@
 }
 .map-title-bar::before {
   content: ''; position: absolute; bottom: 0; left: 12px; right: 12px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.3), transparent);
 }
 
 /* ── TARGET DATA PANEL ───────────────────────────────────────────────────── */
@@ -398,21 +398,21 @@
 .leaflet-popup-content-wrapper {
   background: rgba(10,10,20,0.92) !important;
   backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(220,38,38,0.25) !important;
+  border: 1px solid rgba(244,63,94,0.25) !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(220,38,38,0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(244,63,94,0.08) !important;
   color: #e2e8f0 !important;
   overflow: hidden;
   position: relative;
 }
 .leaflet-popup-content-wrapper::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, #dc2626, #f6ad55, #dc2626);
+  background: linear-gradient(90deg, #f43f5e, #f6ad55, #f43f5e);
   opacity: 0.8;
 }
 .leaflet-popup-tip {
   background: rgba(10,10,20,0.92) !important;
-  border: 1px solid rgba(220,38,38,0.25) !important;
+  border: 1px solid rgba(244,63,94,0.25) !important;
   border-top: none !important; border-left: none !important;
   box-shadow: none !important;
 }
@@ -427,7 +427,7 @@
   transition: color 0.2s !important;
 }
 .leaflet-popup-close-button:hover {
-  color: #dc2626 !important;
+  color: #f43f5e !important;
 }
 
 /* ── GLOBAL UTILITY ANIMATIONS ───────────────────────────────────────────── */
@@ -437,8 +437,8 @@
 }
 
 @keyframes glowPulse {
-  0%,100% { box-shadow: 0 0 5px rgba(220,38,38,0.2); }
-  50% { box-shadow: 0 0 20px rgba(220,38,38,0.4), 0 0 40px rgba(220,38,38,0.1); }
+  0%,100% { box-shadow: 0 0 5px rgba(244,63,94,0.2); }
+  50% { box-shadow: 0 0 20px rgba(244,63,94,0.4), 0 0 40px rgba(244,63,94,0.1); }
 }
 
 /* ── RESPONSIVE — MOBILE STACKING ────────────────────────────────────────── */
@@ -549,10 +549,10 @@
 <div class="stats-bar">
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-geo-alt-fill" style="color:#dc2626;font-size:0.7rem;"></i>
+      <i class="bi bi-geo-alt-fill" style="color:#f43f5e;font-size:0.7rem;"></i>
       Total Zones
     </div>
-    <div class="stat-value" style="color:#dc2626;" id="stat-total-zones">--</div>
+    <div class="stat-value" style="color:#f43f5e;" id="stat-total-zones">--</div>
     <div class="stat-sub">Global + Community</div>
   </div>
   <div class="stat-cell">
@@ -659,7 +659,7 @@
 
   <!-- Title bar (inside map) -->
   <div class="map-title-bar">
-    <div style="width:36px;height:36px;border-radius:10px;background:rgba(220,38,38,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div style="width:36px;height:36px;border-radius:10px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
       <i class="bi bi-map-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
     </div>
     <div>
@@ -728,7 +728,7 @@
       <i class="bi bi-shield-fill-exclamation"></i> THREAT LEVELS
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#dc2626;box-shadow:0 0 6px #dc2626;color:#dc2626;"></span>
+      <span class="legend-dot pulse-dot" style="background:#f43f5e;box-shadow:0 0 6px #f43f5e;color:#f43f5e;"></span>
       <span>High Risk</span>
     </div>
     <div class="legend-item">
@@ -748,11 +748,11 @@
       <span>Your Location</span>
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#dc2626;box-shadow:0 0 8px #dc2626;color:#dc2626;animation-delay:1.6s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#f43f5e;box-shadow:0 0 8px #f43f5e;color:#f43f5e;animation-delay:1.6s;"></span>
       <span>Global Hotspot</span>
     </div>
     <div class="legend-item" style="margin-bottom:0;">
-      <span class="legend-dot" style="background:rgba(220,38,38,0.5);border:2px solid #dc2626;color:#dc2626;width:10px;height:10px;"></span>
+      <span class="legend-dot" style="background:rgba(244,63,94,0.5);border:2px solid #f43f5e;color:#f43f5e;width:10px;height:10px;"></span>
       <span>Community Report</span>
     </div>
   </div>
@@ -767,7 +767,7 @@
     <div style="position:absolute;inset:-2px;border-radius:var(--radius-xl);background:conic-gradient(from 0deg,transparent 60%,var(--red-primary) 80%,transparent 100%);z-index:-1;animation:radarScan 4s linear infinite;opacity:0.6;"></div>
 
     <div class="text-center mb-4">
-      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(220,38,38,0.15),rgba(220,38,38,0.02));border:1px solid rgba(220,38,38,0.3);box-shadow:inset 0 0 20px rgba(220,38,38,0.1),0 0 30px rgba(220,38,38,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">
+      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(244,63,94,0.15),rgba(244,63,94,0.02));border:1px solid rgba(244,63,94,0.3);box-shadow:inset 0 0 20px rgba(244,63,94,0.1),0 0 30px rgba(244,63,94,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">
         <i class="bi bi-exclamation-triangle-fill"></i>
       </div>
       <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;letter-spacing:1px;color:#fff;">Report Danger Zone</h3>
@@ -817,7 +817,7 @@
      ═══════════════════════════════════════════════════════════════════════════ -->
 <div id="proximity-modal" class="proximity-float">
   <div class="glass-card-red p-3 d-flex align-items-center gap-3" style="border-radius:var(--radius-md);">
-    <div style="width:40px;height:40px;border-radius:10px;background:rgba(220,38,38,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div style="width:40px;height:40px;border-radius:10px;background:rgba(244,63,94,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
       <i class="bi bi-exclamation-triangle-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
     </div>
     <div style="flex:1;">
@@ -909,8 +909,8 @@ function filterZones(type, btn) {
     GLOBAL_HOTSPOTS.forEach((spot, i) => {
       if (type !== 'all' && spot.type !== type) return;
 
-      const colors = { high:'#dc2626', medium:'#f6ad55', low:'#48bb78' };
-      const color = colors[spot.severity] || '#dc2626';
+      const colors = { high:'#f43f5e', medium:'#f6ad55', low:'#48bb78' };
+      const color = colors[spot.severity] || '#f43f5e';
       const size = spot.severity === 'high' ? 18 : spot.severity === 'medium' ? 14 : 11;
       const ringDelay = (i * 0.3 % 3).toFixed(1);
 
@@ -951,7 +951,7 @@ function filterZones(type, btn) {
     if (heatPoints.length > 0) {
       window.globalHeatLayer = L.heatLayer(heatPoints, {
         radius: 40, blur: 30, maxZoom: 10, max: 1.0,
-        gradient: { 0.0:'#48bb78', 0.3:'#f6ad55', 0.6:'#dc2626', 0.85:'#ff4444', 1.0:'#fff' },
+        gradient: { 0.0:'#48bb78', 0.3:'#f6ad55', 0.6:'#f43f5e', 0.85:'#ff4444', 1.0:'#fff' },
       });
       globalHeatLayer.addTo(heatMap);
     }
