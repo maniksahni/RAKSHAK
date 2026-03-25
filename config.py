@@ -18,7 +18,7 @@ class Config:
 
     # Rate limiting
     RATELIMIT_STORAGE_URL = 'memory://'
-    RATELIMIT_DEFAULT = '200 per day;50 per hour'
+    RATELIMIT_DEFAULT = '20000 per day;5000 per hour'
 
     # SocketIO
     SOCKETIO_ASYNC_MODE = 'eventlet'
