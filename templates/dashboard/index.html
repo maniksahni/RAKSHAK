@@ -1046,115 +1046,241 @@
       </div>
     </div>
 
-    <!-- Quick Stats -->
+    <!-- Quick Stats — PREMIUM -->
     <div class="col-md-4 animate-in">
       <div class="row g-3 h-100">
-        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(220,38,38,0.4);">
-            <i class="bi bi-bell-fill" style="font-size:0.9rem;color:rgba(220,38,38,0.6);margin-bottom:4px;display:block;"></i>
-            <div class="stat-number" id="total-alerts">{{ alerts|length }}</div>
-            <div class="stat-label" style="white-space:nowrap;">Alerts</div>
+
+        <!-- Total Alerts -->
+        <div class="col-6">
+          <div class="psc" style="--psc-accent:220,38,38;">
+            <div class="psc-top-bar"></div>
+            <div class="psc-icon"><i class="bi bi-bell-fill" style="color:rgba(220,38,38,.8);"></i></div>
+            <div class="psc-num" id="total-alerts">{{ alerts|length }}</div>
+            <div class="psc-lbl">TOTAL ALERTS</div>
           </div>
         </div>
-        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(249,115,22,0.4);">
-            <i class="bi bi-exclamation-triangle-fill" style="font-size:0.9rem;color:rgba(249,115,22,0.6);margin-bottom:4px;display:block;"></i>
-            <div class="stat-number" id="active-alerts" style="color:var(--accent-amber);">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
-            <div class="stat-label" style="white-space:nowrap;">Active</div>
+
+        <!-- Active -->
+        <div class="col-6">
+          <div class="psc" style="--psc-accent:249,115,22;">
+            <div class="psc-top-bar"></div>
+            <div class="psc-icon"><i class="bi bi-exclamation-triangle-fill" style="color:rgba(249,115,22,.8);"></i></div>
+            <div class="psc-num" id="active-alerts" style="color:#fb923c;">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
+            <div class="psc-lbl">ACTIVE NOW</div>
           </div>
         </div>
-        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(245,158,11,0.4);">
-            <i class="bi bi-wifi-off" style="font-size:0.9rem;color:rgba(245,158,11,0.6);margin-bottom:4px;display:block;"></i>
-            <div class="stat-number">{{ (current_user.consecutive_missed_pings or 0) }}</div>
-            <div class="stat-label" style="white-space:nowrap;">Missed</div>
+
+        <!-- Missed pings -->
+        <div class="col-6">
+          <div class="psc" style="--psc-accent:245,158,11;">
+            <div class="psc-top-bar"></div>
+            <div class="psc-icon"><i class="bi bi-wifi-off" style="color:rgba(245,158,11,.8);"></i></div>
+            <div class="psc-num" style="color:#fbbf24;">{{ (current_user.consecutive_missed_pings or 0) }}</div>
+            <div class="psc-lbl">MISSED PINGS</div>
           </div>
         </div>
-        <div class="col-6 tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-          <div class="stat-card h-100" style="transform:translateZ(10px);border-top:2px solid rgba(34,197,94,0.4);">
-            <i class="bi bi-shield-check-fill" style="font-size:0.9rem;color:rgba(34,197,94,0.6);margin-bottom:4px;display:block;"></i>
-            <div class="stat-number" style="color:var(--accent-green);">ON</div>
-            <div class="stat-label" style="white-space:nowrap;">Sys Status</div>
+
+        <!-- System Status -->
+        <div class="col-6">
+          <div class="psc" style="--psc-accent:34,197,94;">
+            <div class="psc-top-bar"></div>
+            <div class="psc-icon"><i class="bi bi-shield-check-fill" style="color:rgba(34,197,94,.8);"></i></div>
+            <div class="psc-num" style="color:#4ade80;font-size:1.3rem;">LIVE</div>
+            <div class="psc-lbl">SYS STATUS</div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 
+<style>
+/* ── Premium Stat Cards (.psc) ── */
+.psc{
+  padding:16px 14px 14px;border-radius:14px;height:100%;
+  background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 4px 20px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
+  transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s;
+  display:flex;flex-direction:column;gap:6px;
+}
+.psc:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1),0 0 20px rgba(var(--psc-accent),.12);
+  border-color:rgba(var(--psc-accent),.2);
+}
+.psc-top-bar{
+  position:absolute;top:0;left:0;right:0;height:2.5px;
+  background:linear-gradient(90deg,rgba(var(--psc-accent),.6),rgba(var(--psc-accent),.2),rgba(var(--psc-accent),.6));
+  border-radius:14px 14px 0 0;
+  box-shadow:0 0 8px rgba(var(--psc-accent),.5);
+}
+.psc-icon{
+  font-size:.95rem;filter:drop-shadow(0 0 5px rgba(var(--psc-accent),.4));
+  margin-top:4px;
+}
+.psc-num{
+  font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:900;
+  line-height:1;color:#fff;
+  text-shadow:0 0 20px rgba(var(--psc-accent),.3);
+  letter-spacing:-.02em;
+}
+.psc-lbl{
+  font-family:'Courier New',monospace;font-size:.44rem;letter-spacing:.18em;
+  color:rgba(255,255,255,.3);text-transform:uppercase;margin-top:auto;
+}
+/* Corner glow on hover */
+.psc::after{
+  content:'';position:absolute;bottom:-20px;right:-20px;
+  width:60px;height:60px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--psc-accent),.12),transparent 70%);
+  transition:opacity .3s;opacity:0;
+}
+.psc:hover::after{opacity:1;}
+</style>
+
   <!-- Section Gap -->
   <div style="height:8px;"></div>
 
-  <!-- Quick Actions -->
+  <!-- ══ PREMIUM QUICK ACTIONS ══ -->
   <div class="row g-3 mb-4">
+
     <div class="col-6 col-md-3 animate-in">
-      <a href="{{ url_for('safe_walk.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
-        <div style="width:42px;height:42px;border-radius:12px;background:rgba(72,187,120,0.1);border:1px solid rgba(72,187,120,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="bi bi-geo-alt-fill" style="color:#48bb78;font-size:1.1rem;"></i>
+      <a href="{{ url_for('safe_walk.index') }}" class="pqa pqa-green text-decoration-none">
+        <div class="pqa-icon-wrap" style="background:rgba(72,187,120,.1);border-color:rgba(72,187,120,.25);">
+          <i class="bi bi-geo-alt-fill" style="color:#4ade80;"></i>
         </div>
-        <div>
-          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Safe Walk</div>
-          <div style="font-size:0.68rem;color:var(--text-muted);">Track your journey</div>
+        <div class="pqa-info">
+          <div class="pqa-title">Safe Walk</div>
+          <div class="pqa-sub">Track your journey</div>
         </div>
+        <div class="pqa-arrow"><i class="bi bi-arrow-right"></i></div>
+        <div class="pqa-glow" style="background:radial-gradient(circle,rgba(72,187,120,.08),transparent 70%);"></div>
       </a>
     </div>
+
     <div class="col-6 col-md-3 animate-in">
-      <a href="{{ url_for('fake_call.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
-        <div style="width:42px;height:42px;border-radius:12px;background:rgba(66,153,225,0.1);border:1px solid rgba(66,153,225,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="bi bi-phone-vibrate" style="color:#4299e1;font-size:1.1rem;"></i>
+      <a href="{{ url_for('fake_call.index') }}" class="pqa pqa-blue text-decoration-none">
+        <div class="pqa-icon-wrap" style="background:rgba(66,153,225,.1);border-color:rgba(66,153,225,.25);">
+          <i class="bi bi-phone-vibrate" style="color:#60a5fa;"></i>
         </div>
-        <div>
-          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Fake Call</div>
-          <div style="font-size:0.68rem;color:var(--text-muted);">Escape situations</div>
+        <div class="pqa-info">
+          <div class="pqa-title">Fake Call</div>
+          <div class="pqa-sub">Escape situations</div>
         </div>
+        <div class="pqa-arrow"><i class="bi bi-arrow-right"></i></div>
+        <div class="pqa-glow" style="background:radial-gradient(circle,rgba(66,153,225,.08),transparent 70%);"></div>
       </a>
     </div>
+
     <div class="col-6 col-md-3 animate-in">
-      <a href="{{ url_for('emergency.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
-        <div style="width:42px;height:42px;border-radius:12px;background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="bi bi-telephone-fill" style="color:#dc2626;font-size:1.1rem;"></i>
+      <a href="{{ url_for('emergency.index') }}" class="pqa pqa-red text-decoration-none">
+        <div class="pqa-icon-wrap" style="background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.25);">
+          <i class="bi bi-telephone-fill" style="color:#f87171;"></i>
         </div>
-        <div>
-          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Emergency</div>
-          <div style="font-size:0.68rem;color:var(--text-muted);">Quick dial help</div>
+        <div class="pqa-info">
+          <div class="pqa-title">Emergency</div>
+          <div class="pqa-sub">Quick dial help</div>
         </div>
+        <div class="pqa-arrow"><i class="bi bi-arrow-right"></i></div>
+        <div class="pqa-glow" style="background:radial-gradient(circle,rgba(220,38,38,.08),transparent 70%);"></div>
       </a>
     </div>
+
     <div class="col-6 col-md-3 animate-in">
-      <a href="{{ url_for('safety_score.index') }}" class="glass-card p-3 d-flex align-items-center gap-3 text-decoration-none quick-action-card" style="border-radius:var(--radius-lg);transition:all .3s;">
-        <div style="width:42px;height:42px;border-radius:12px;background:rgba(246,173,85,0.1);border:1px solid rgba(246,173,85,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="bi bi-speedometer" style="color:#f6ad55;font-size:1.1rem;"></i>
+      <a href="{{ url_for('safety_score.index') }}" class="pqa pqa-amber text-decoration-none">
+        <div class="pqa-icon-wrap" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);">
+          <i class="bi bi-speedometer" style="color:#fbbf24;"></i>
         </div>
-        <div>
-          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary);">Safety Score</div>
-          <div style="font-size:0.68rem;color:var(--text-muted);">Check your area</div>
+        <div class="pqa-info">
+          <div class="pqa-title">Safety Score</div>
+          <div class="pqa-sub">Check your area</div>
         </div>
+        <div class="pqa-arrow"><i class="bi bi-arrow-right"></i></div>
+        <div class="pqa-glow" style="background:radial-gradient(circle,rgba(245,158,11,.08),transparent 70%);"></div>
       </a>
     </div>
+
   </div>
+
+<style>
+/* ── Premium Quick Actions (.pqa) ── */
+.pqa{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
+  transition:all .3s cubic-bezier(.22,1,.36,1);
+  cursor:pointer;
+}
+.pqa:hover{
+  transform:translateY(-3px) translateX(2px);
+  border-color:rgba(255,255,255,.12);
+  box-shadow:0 10px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1);
+}
+.pqa-green:hover { border-color:rgba(72,187,120,.25)!important; }
+.pqa-blue:hover  { border-color:rgba(66,153,225,.25)!important; }
+.pqa-red:hover   { border-color:rgba(220,38,38,.25)!important; }
+.pqa-amber:hover { border-color:rgba(245,158,11,.25)!important; }
+.pqa-icon-wrap{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  border:1px solid;
+  display:flex;align-items:center;justify-content:center;font-size:1.15rem;
+  transition:all .3s;
+}
+.pqa:hover .pqa-icon-wrap { transform:scale(1.1) rotate(-3deg); }
+.pqa-info { flex:1;min-width:0; }
+.pqa-title { font-size:.88rem;font-weight:700;color:rgba(255,255,255,.9); }
+.pqa-sub   { font-size:.65rem;color:rgba(255,255,255,.35);margin-top:2px; }
+.pqa-arrow {
+  font-size:.8rem;color:rgba(255,255,255,.2);
+  transition:all .3s;flex-shrink:0;
+}
+.pqa:hover .pqa-arrow { color:rgba(255,255,255,.6);transform:translateX(4px); }
+.pqa-glow {
+  position:absolute;inset:0;pointer-events:none;
+  opacity:0;transition:opacity .3s;
+}
+.pqa:hover .pqa-glow { opacity:1; }
+</style>
   <!-- Trusted Contacts Widget -->
   <div class="row mb-4 animate-in">
     <div class="col-12">
-      <div class="glass-card p-4" style="border-radius:var(--radius-lg); border-left:3px solid var(--accent-green); background:linear-gradient(135deg, rgba(20,20,30,0.8), rgba(10,10,20,0.95));">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg);background:linear-gradient(135deg,rgba(15,20,30,.9),rgba(8,10,18,.97));border-left:3px solid rgba(16,185,129,.4);position:relative;overflow:hidden;">
+        <!-- Header glow line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(16,185,129,.3),transparent);"></div>
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 style="margin:0; font-family:'Courier New', monospace; font-weight:700; color:var(--white); letter-spacing:0.08em; font-size:0.9rem;">
-            <i class="bi bi-people-fill me-2" style="color:var(--accent-green);"></i>TRUSTED OPERATIVES
-          </h5>
-          <a href="{{ url_for('auth.profile') }}" style="font-size:0.7rem;color:var(--text-muted);border:1px solid rgba(255,255,255,0.1);padding:4px 12px;border-radius:20px;text-decoration:none;background:rgba(255,255,255,0.03);transition:all .2s;">Manage</a>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:9px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-people-fill" style="color:#10b981;font-size:.85rem;"></i>
+            </div>
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:.85rem;font-weight:700;color:#fff;letter-spacing:.06em;">TRUSTED OPERATIVES</div>
+              <div style="font-family:'Courier New',monospace;font-size:.45rem;color:rgba(16,185,129,.55);letter-spacing:.15em;">EMERGENCY CONTACT NETWORK</div>
+            </div>
+          </div>
+          <a href="{{ url_for('auth.profile') }}" style="font-size:.7rem;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);padding:5px 14px;border-radius:20px;text-decoration:none;background:rgba(255,255,255,.02);transition:all .2s;letter-spacing:.04em;" onmouseover="this.style.color='rgba(255,255,255,.8)';this.style.borderColor='rgba(255,255,255,.15)'" onmouseout="this.style.color='rgba(255,255,255,.4)';this.style.borderColor='rgba(255,255,255,.08)'">+ Manage</a>
         </div>
 
-        <div class="d-flex flex-wrap" style="gap:12px;">
+        <div class="d-flex flex-wrap" style="gap:10px;">
           {% if trusted_contacts %}
             {% for contact in trusted_contacts %}
-            <div class="contact-node d-flex align-items-center gap-3" style="min-width:190px; flex:1 1 190px; max-width:300px; background:rgba(72,187,120,0.04); border:1px solid rgba(72,187,120,0.15); padding:12px 16px; border-radius:12px; transition:all .2s;">
-              <div style="width:38px; height:38px; flex-shrink:0; border-radius:50%; background:rgba(72,187,120,0.15); border:1.5px solid rgba(72,187,120,0.4); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; color:#48bb78; font-family:var(--font-display);">
+            <div class="contact-node d-flex align-items-center gap-3" style="min-width:200px; flex:1 1 200px; max-width:320px; background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.12); padding:12px 16px; border-radius:12px; transition:all .25s;position:relative;overflow:hidden;" onmouseover="this.style.background='rgba(16,185,129,.08)';this.style.borderColor='rgba(16,185,129,.25)'" onmouseout="this.style.background='rgba(16,185,129,.04)';this.style.borderColor='rgba(16,185,129,.12)'">
+              <!-- Avatar -->
+              <div style="width:40px; height:40px; flex-shrink:0; border-radius:11px; background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(16,185,129,.1)); border:1.5px solid rgba(16,185,129,.3); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; color:#10b981; font-family:'Space Grotesk',sans-serif;">
                 {{ contact.contact_name[0]|upper }}
               </div>
-              <div style="min-width:0; overflow:hidden;">
-                <div style="font-size:0.85rem; font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_name }}</div>
-                <div style="font-size:0.62rem; color:var(--text-muted); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_email }}</div>
+              <div style="min-width:0; overflow:hidden;flex:1;">
+                <div style="font-size:.85rem; font-weight:700; color:rgba(255,255,255,.9); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_name }}</div>
+                <div style="font-size:.62rem; color:rgba(255,255,255,.35); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;letter-spacing:.03em;">{{ contact.contact_email }}</div>
               </div>
-              <div style="margin-left:auto; flex-shrink:0;">
-                <div style="width:7px;height:7px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 6px var(--accent-green);"></div>
+              <!-- Online dot -->
+              <div style="margin-left:auto; flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.8);animation:blink 2s ease-in-out infinite;"></div>
+                <div style="font-family:'Courier New',monospace;font-size:.38rem;color:rgba(16,185,129,.5);letter-spacing:.1em;">ACTIVE</div>
               </div>
             </div>
             {% endfor %}
