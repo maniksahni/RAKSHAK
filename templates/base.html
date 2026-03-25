@@ -210,8 +210,37 @@
         <div class="rksb-shield-ring"></div>
         <svg class="rksb-svg" width="52" height="60" viewBox="0 0 60 70" fill="none" style="overflow:visible;">
           <defs>
-            <linearGradient id="valkGrad" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse">
+            <linearGradient id="tG1" x1="30" y1="0" x2="30" y2="70" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="25%" stop-color="#ffb3cb"/>
+              <stop offset="60%" stop-color="#f43f5e"/>
+              <stop offset="100%" stop-color="#881337"/>
+            </linearGradient>
+            <filter id="tGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="tJewelGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <style>
+            .t-jewel{animation:tJPulse 2s ease-in-out infinite alternate;transform-origin:30px 37px}
+            @keyframes tJPulse{from{opacity:.6;transform:scale(.85)}to{opacity:1;transform:scale(1.15)}}
+          </style>
+          <!-- Ambient Aura -->
+          <ellipse cx="30" cy="40" rx="22" ry="18" fill="rgba(244,63,94,0.18)" filter="url(#tGlow)"/>
+          <!-- Staff -->
+          <rect x="27.5" y="39" width="5" height="24" rx="2.5" fill="url(#tG1)" filter="drop-shadow(0 0 4px rgba(244,63,94,.5))"/>
+          <!-- Crossbar -->
+          <rect x="13" y="37" width="34" height="4" rx="2" fill="url(#tG1)" filter="drop-shadow(0 0 6px rgba(244,63,94,.6))"/>
+          <!-- Center Prong -->
+          <path d="M27,37 L30,4 L33,37 Z" fill="url(#tG1)" filter="drop-shadow(0 0 8px rgba(255,180,200,.8))"/>
+          <path d="M29.3,37 L30,8 L30.7,37 Z" fill="rgba(255,255,255,0.4)"/>
+          <!-- Left Prong -->
+          <path d="M20,38 C18,31 10,24 10,16 C10,9 17,7.5 21,12 C24,15.5 24,27 21,37 Z" fill="url(#tG1)" filter="drop-shadow(0 0 6px rgba(244,63,94,.5))"/>
+          <path d="M19.5,37 C18,31 12,25 12,17 C12,12 16,10.5 19,14 C21.5,17 21.5,27.5 19.5,37 Z" fill="rgba(255,255,255,0.2)"/>
+          <!-- Right Prong -->
+          <path d="M40,38 C42,31 50,24 50,16 C50,9 43,7.5 39,12 C36,15.5 36,27 39,37 Z" fill="url(#tG1)" filter="drop-shadow(0 0 6px rgba(244,63,94,.5))"/>
+          <path d="M40.5,37 C42,31 48,25 48,17 C48,12 44,10.5 41,14 C38.5,17 38.5,27.5 40.5,37 Z" fill="rgba(255,255,255,0.2)"/>
+          <!-- Center Jewel -->
+          <polygon class="t-jewel" points="30,33.5 33,37 30,40.5 27,37" fill="#ffffff" filter="url(#tJewelGlow)"/>
+        </svg>
               <stop offset="30%" stop-color="#ff7eb3"/>
               <stop offset="70%" stop-color="#f43f5e"/>
               <stop offset="100%" stop-color="#be123c"/>
@@ -368,34 +397,32 @@
       <div class="rk-logo-scan"></div>
       <svg width="42" height="48" viewBox="0 0 42 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
           <defs>
-            <linearGradient id="valkGrad-mini" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
+            <linearGradient id="tG1-n" x1="21" y1="0" x2="21" y2="50" gradientUnits="userSpaceOnUse">
               <stop offset="0%" stop-color="#ffffff"/>
-              <stop offset="30%" stop-color="#ff7eb3"/>
-              <stop offset="70%" stop-color="#f43f5e"/>
-              <stop offset="100%" stop-color="#be123c"/>
+              <stop offset="25%" stop-color="#ffb3cb"/>
+              <stop offset="60%" stop-color="#f43f5e"/>
+              <stop offset="100%" stop-color="#881337"/>
             </linearGradient>
-            <filter id="miniGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="miniStarGlow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="tGn"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="tJn"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
           </defs>
-          <style>
-            .orbit-1-mini { transform-origin: 21px 31px; animation: spinOrb1-mini 6s linear infinite; }
-            .orbit-2-mini { transform-origin: 21px 31px; animation: spinOrb2-mini 8s linear infinite reverse; }
-            @keyframes spinOrb1-mini { 0% { transform: rotateX(70deg) rotateY(-15deg) rotateZ(0deg); } 100% { transform: rotateX(70deg) rotateY(-15deg) rotateZ(360deg); } }
-            @keyframes spinOrb2-mini { 0% { transform: rotateX(65deg) rotateY(20deg) rotateZ(0deg); } 100% { transform: rotateX(65deg) rotateY(20deg) rotateZ(360deg); } }
-            /* valk-core animation is already defined globally or in the main sidebar SVG */
-          </style>
-          <!-- Ambient aura -->
-          <circle cx="21" cy="23" r="14" fill="rgba(244,63,94,0.2)" filter="url(#miniGlow)"/>
-          <!-- Mini Wings -->
-          <path d="M21,3 C35,3 42,16 31,30 C25,21 21,18 21,14 C21,18 17,21 11,30 C0,16 7,3 21,3Z" fill="url(#valkGrad-mini)" filter="drop-shadow(0 0 8px rgba(244,63,94,.6))"/>
-          <path d="M21,11 C29,11 33,20 26,32 C23,25 21,22 21,18 C21,22 19,25 16,32 C9,20 13,11 21,11Z" fill="rgba(255,255,255,.95)"/>
-          <!-- Diamond core -->
-          <polygon class="valk-core" points="21,22 24,31 21,43 18,31" fill="#ffffff" filter="drop-shadow(0 0 8px #fff)"/>
-          <!-- Star burst apex -->
-          <path d="M21,-1 L22,3 L26,4 L22,5 L21,9 L20,5 L16,4 L20,3Z" fill="#ffffff" filter="url(#miniStarGlow)"/>
-          <!-- Orbiting rings -->
-          <circle cx="21" cy="31" r="16" stroke="rgba(255,255,255,.7)" stroke-width="1" fill="none" class="orbit-1-mini"/>
-          <circle cx="21" cy="31" r="18" stroke="rgba(244,63,94,.8)" stroke-width=".8" fill="none" class="orbit-2-mini"/>
+          <!-- Aura -->
+          <ellipse cx="21" cy="28" rx="16" ry="13" fill="rgba(244,63,94,0.18)" filter="url(#tGn)"/>
+          <!-- Staff -->
+          <rect x="19" y="27.5" width="4" height="18" rx="2" fill="url(#tG1-n)" filter="drop-shadow(0 0 3px rgba(244,63,94,.5))"/>
+          <!-- Crossbar -->
+          <rect x="9" y="26" width="24" height="3" rx="1.5" fill="url(#tG1-n)" filter="drop-shadow(0 0 5px rgba(244,63,94,.6))"/>
+          <!-- Center Prong -->
+          <path d="M19.5,26 L21,3 L22.5,26 Z" fill="url(#tG1-n)" filter="drop-shadow(0 0 6px rgba(255,180,200,.8))"/>
+          <path d="M20.4,26 L21,6 L21.6,26 Z" fill="rgba(255,255,255,0.4)"/>
+          <!-- Left Prong -->
+          <path d="M14,27 C12.5,22 7,17 7,11 C7,6 12,5 15,8.5 C17,11 17,19 15,26.5 Z" fill="url(#tG1-n)" filter="drop-shadow(0 0 4px rgba(244,63,94,.5))"/>
+          <path d="M13.5,26.5 C12.2,22 8.5,18 8.5,12.5 C8.5,8.5 12,7.5 14,10.5 C15.5,12.5 15.5,19.5 13.5,26.5 Z" fill="rgba(255,255,255,0.2)"/>
+          <!-- Right Prong -->
+          <path d="M28,27 C29.5,22 35,17 35,11 C35,6 30,5 27,8.5 C25,11 25,19 27,26.5 Z" fill="url(#tG1-n)" filter="drop-shadow(0 0 4px rgba(244,63,94,.5))"/>
+          <path d="M28.5,26.5 C29.8,22 33.5,18 33.5,12.5 C33.5,8.5 30,7.5 28,10.5 C26.5,12.5 26.5,19.5 28.5,26.5 Z" fill="rgba(255,255,255,0.2)"/>
+          <!-- Center Jewel -->
+          <polygon class="t-jewel" points="21,23 23.5,26.5 21,30 18.5,26.5" fill="#ffffff" filter="url(#tJn)"/>
         </svg>
     </div>
     <div class="rk-logo-text-wrap">
