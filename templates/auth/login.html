@@ -22,7 +22,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   flex: 0 0 55%; position: relative; display: flex; flex-direction: column;
   align-items: center; justify-content: center; overflow: hidden;
   background: radial-gradient(circle at center, #0a0307 0%, #020104 100%);
-  border-right: 1px solid rgba(220,38,38,0.15);
+  border-right: 1px solid rgba(244,63,94,0.15);
   box-shadow: inset -20px 0 50px rgba(0,0,0,0.8);
 }
 
@@ -30,8 +30,8 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-cyber-grid {
   position: absolute; inset: -50%; pointer-events: none; z-index: 0;
   background-image: 
-    linear-gradient(rgba(220,38,38,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(220,38,38,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(244,63,94,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244,63,94,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
   transform: perspective(1000px) rotateX(60deg);
   animation: gridMove 20s linear infinite;
@@ -44,7 +44,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-ambient-core {
   position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
   transform: translate(-50%, -50%); border-radius: 50%;
-  background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, rgba(139,0,0,0.05) 40%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(244,63,94,0.15) 0%, rgba(100,5,30,0.05) 40%, transparent 70%);
   animation: corePulse 8s ease-in-out infinite alternate;
   pointer-events: none; z-index: 1;
 }
@@ -69,43 +69,44 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* Orbiting Rings */
 .lp-orbit {
   position: absolute; top: 35%; left: 50%; border-radius: 50%;
-  border: 1px dashed rgba(220,38,38,0.2); transform: translate(-50%, -50%); pointer-events: none;
+  border: 1px dashed rgba(244,63,94,0.2); transform: translate(-50%, -50%); pointer-events: none;
 }
 .lp-orbit-1 { width: 320px; height: 320px; animation: orbitSpin 15s linear infinite; }
-.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(220,38,38,0.1); animation: orbitSpin 25s linear infinite reverse; }
+.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(244,63,94,0.1); animation: orbitSpin 25s linear infinite reverse; }
 .lp-orbit-3 { width: 560px; height: 560px; border-style: dotted; animation: orbitSpin 35s linear infinite; }
 .lp-orbit::after {
   content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
-  background: #ff4444; box-shadow: 0 0 15px #ff4444; top: -4px; left: 50%; transform: translateX(-50%);
+  background: #f43f5e; box-shadow: 0 0 15px #f43f5e; top: -4px; left: 50%; transform: translateX(-50%);
 }
 @keyframes orbitSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
 /* The SVG Shield */
 .lp-shield-svg {
-  width: 220px; height: 260px; margin-bottom: 2rem;
-  filter: drop-shadow(0 0 40px rgba(220,38,38,0.6)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+  width: 180px; height: 240px; margin-bottom: 2rem;
+  filter: drop-shadow(0 0 40px rgba(244,63,94,0.7)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
   position: relative; z-index: 10;
+  animation: floatAssembly 6s ease-in-out infinite;
 }
 
 /* Shield text */
 .lp-hero-text { text-align: center; position: relative; z-index: 10; }
 .lp-hero-badge {
   display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px; border-radius: 30px;
-  background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3);
+  background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3);
   font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700;
-  color: #ff6b6b; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
-  box-shadow: 0 0 20px rgba(220,38,38,0.1); backdrop-filter: blur(10px);
+  color: #ff7eb3; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(244,63,94,0.1); backdrop-filter: blur(10px);
 }
 .lp-hero-badge-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: #ff4444; box-shadow: 0 0 10px #ff4444;
+  width: 6px; height: 6px; border-radius: 50%; background: #f43f5e; box-shadow: 0 0 10px #f43f5e;
   animation: blink 2s ease-in-out infinite;
 }
 .lp-hero-title {
   font-family: 'Space Grotesk', sans-serif; font-size: 4.5rem; font-weight: 900;
   letter-spacing: 0.15em; line-height: 1; margin-bottom: 15px;
-  background: linear-gradient(180deg, #ffffff 0%, #ffcaca 50%, #ff6b6b 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #ffb3cb 50%, #f43f5e 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(220,38,38,0.3));
+  filter: drop-shadow(0 4px 12px rgba(244,63,94,0.3));
 }
 .lp-hero-sub {
   font-size: 1.05rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; line-height: 1.6; font-weight: 300;
@@ -122,12 +123,12 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
 }
 .lp-stat::before {
-  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(220,38,38,0.1), transparent);
+  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(244,63,94,0.1), transparent);
   opacity: 0; transition: opacity 0.4s;
 }
-.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(220,38,38,0.2); }
+.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(244,63,94,0.2); }
 .lp-stat:hover::before { opacity: 1; }
-.lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #ff4444; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
+.lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #f43f5e; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
 .lp-stat-lbl { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; position: relative; z-index: 1; }
 
 /* ── RIGHT PANEL: AUTH STATION ── */
@@ -149,11 +150,11 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 .lp-btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); color: #fff; transform: translateY(-2px); }
 .lp-btn-solid {
-  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(220,38,38,0.5);
-  background: rgba(220,38,38,0.15); color: #ff6b6b; font-size: 0.85rem; font-weight: 700; text-decoration: none;
-  transition: all 0.3s; box-shadow: 0 0 15px rgba(220,38,38,0.2);
+  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(244,63,94,0.5);
+  background: rgba(244,63,94,0.15); color: #ff7eb3; font-size: 0.85rem; font-weight: 700; text-decoration: none;
+  transition: all 0.3s; box-shadow: 0 0 15px rgba(244,63,94,0.2);
 }
-.lp-btn-solid:hover { background: rgba(220,38,38,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(220,38,38,0.4); }
+.lp-btn-solid:hover { background: rgba(244,63,94,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(244,63,94,0.4); }
 
 /* Auth Card Glassmorphism */
 .lp-card { width: 100%; max-width: 480px; position: relative; z-index: 10; animation: cardIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
@@ -169,7 +170,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 .lp-card-inner::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.8), transparent);
   animation: cardScan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes cardScan { 0% { left: -50%; } 100% { left: 150%; } }
@@ -177,11 +178,11 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* Login Header */
 .lp-card-tag {
   display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 20px;
-  background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2);
-  font-family: 'Courier New', monospace; font-size: 0.65rem; color: #ff6b6b; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;
+  background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.2);
+  font-family: 'Courier New', monospace; font-size: 0.65rem; color: #ff7eb3; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;
 }
 .lp-welcome { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.1; }
-.lp-welcome span { background: linear-gradient(90deg, #ff4444, #fca5a5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.lp-welcome span { background: linear-gradient(90deg, #f43f5e, #ffb3cb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .lp-card-sub { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 35px; }
 
 /* The Google Button */
@@ -241,7 +242,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 @media (max-width: 1024px) {
   body, html { overflow: auto; height: auto; }
   .login-root { flex-direction: column; height: auto; }
-  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(220,38,38,0.15); }
+  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(244,63,94,0.15); }
   .lp-right { padding: 60px 24px; min-height: 100vh; }
   .lp-hero-title { font-size: 3rem; }
   .lp-stat-row { flex-wrap: wrap; }
@@ -264,31 +265,40 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
       <div class="lp-orbit lp-orbit-2"></div>
       <div class="lp-orbit lp-orbit-1"></div>
       
-      <!-- Premium SVG Shield -->
-      <svg class="lp-shield-svg" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Cyber Trishul - The Weapon of Goddess Durga -->
+      <svg class="lp-shield-svg" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
         <defs>
-          <radialGradient id="hRG1" cx="38%" cy="28%" r="65%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="45%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
-          <linearGradient id="hLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.5)"/><stop offset="60%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.3)"/></linearGradient>
-          <filter id="hGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="lpTG" x1="30" y1="0" x2="30" y2="80" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="20%" stop-color="#ffb3cb"/>
+            <stop offset="55%" stop-color="#f43f5e"/>
+            <stop offset="100%" stop-color="#881337"/>
+          </linearGradient>
+          <filter id="lpTGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="lpJGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
-        <!-- Shadow -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="rgba(0,0,0,.6)" transform="translate(1.5,3) scale(.97)"/>
-        <!-- Body -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#hRG1)"/>
-        <!-- Gloss -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#hLG2)"/>
-        <!-- Border shine -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" stroke="rgba(255,200,200,.5)" stroke-width="1.2" fill="none"/>
-        <!-- Inner frame -->
-        <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z" stroke="rgba(255,255,255,.15)" stroke-width=".8" fill="rgba(255,255,255,.03)"/>
-        <!-- Top glint -->
-        <ellipse cx="11" cy="18" rx="3.5" ry="2" fill="rgba(255,255,255,.45)" transform="rotate(-28 11 18)"/>
-        <!-- Circuit lines -->
-        <line x1="3" y1="38" x2="10" y2="38" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
-        <line x1="50" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
-        <!-- Checkmark with massive glow -->
-        <path d="M16 38l10 11 18-19" stroke="rgba(255,160,160,.6)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#hGlow)"/>
-        <path d="M16 38l10 11 18-19" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <style>
+          .lp-t-jewel{animation:lpJPulse 1.8s ease-in-out infinite alternate;transform-origin:30px 43px}
+          @keyframes lpJPulse{from{opacity:.5;transform:scale(.8)}to{opacity:1;transform:scale(1.2)}}
+          .lp-prong{filter:drop-shadow(0 0 10px rgba(244,63,94,.8))}
+        </style>
+        <!-- Mega ambient aura -->
+        <ellipse cx="30" cy="46" rx="28" ry="22" fill="rgba(244,63,94,0.2)" filter="url(#lpTGlow)"/>
+        <!-- Staff -->
+        <rect x="26.5" y="45" width="7" height="30" rx="3.5" fill="url(#lpTG)"/>
+        <!-- Crossbar -->
+        <rect x="10" y="42" width="40" height="6" rx="3" fill="url(#lpTG)" filter="url(#lpTGlow)"/>
+        <!-- Center Prong -->
+        <path class="lp-prong" d="M25,42 L30,3 L35,42 Z" fill="url(#lpTG)"/>
+        <path d="M28.8,42 L30,8 L31.2,42 Z" fill="rgba(255,255,255,0.45)"/>
+        <!-- Left Prong -->
+        <path class="lp-prong" d="M22,44 C19,35 8,27 8,17 C8,8 17,6 22,12 C26,17 26,32 22,43 Z" fill="url(#lpTG)"/>
+        <path d="M21,43 C19,35 10,28 10,19 C10,12 17,10.5 21,15 C24,19 24,32 21,43 Z" fill="rgba(255,255,255,0.2)"/>
+        <!-- Right Prong -->
+        <path class="lp-prong" d="M38,44 C41,35 52,27 52,17 C52,8 43,6 38,12 C34,17 34,32 38,43 Z" fill="url(#lpTG)"/>
+        <path d="M39,43 C41,35 50,28 50,19 C50,12 43,10.5 39,15 C36,19 36,32 39,43 Z" fill="rgba(255,255,255,0.2)"/>
+        <!-- Pulsing Center Jewel -->
+        <polygon class="lp-t-jewel" points="30,38 35,43 30,48 25,43" fill="#ffffff" filter="url(#lpJGlow)"/>
       </svg>
       
       <div class="lp-hero-text">
@@ -298,15 +308,15 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
         
         <div class="lp-stat-row">
           <div class="lp-stat">
-            <div class="lp-stat-num">100K</div>
-            <div class="lp-stat-lbl">Secure Nodes</div>
+            <div class="lp-stat-num" style="color:#f43f5e;">10K+</div>
+            <div class="lp-stat-lbl">Protected Users</div>
           </div>
           <div class="lp-stat">
             <div class="lp-stat-num" style="color:#10b981;">99.99%</div>
             <div class="lp-stat-lbl">Uptime SLA</div>
           </div>
           <div class="lp-stat">
-            <div class="lp-stat-num" style="color:#3b82f6;">&lt;1.2s</div>
+            <div class="lp-stat-num" style="color:#a78bfa;"><1.2s</div>
             <div class="lp-stat-lbl">SOS Latency</div>
           </div>
         </div>
@@ -422,16 +432,16 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
         if (dist < 120) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(220,38,38,${(1 - dist/120) * 0.15})`;
+          ctx.strokeStyle = `rgba(244,63,94,${(1 - dist/120) * 0.15})`;
           ctx.lineWidth = 0.6;
           ctx.stroke();
         }
       }
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(220,38,38,${p.o})`;
+      ctx.fillStyle = `rgba(244,63,94,${p.o})`;
       ctx.shadowBlur = 10;
-      ctx.shadowColor = 'rgba(220,38,38,0.8)';
+      ctx.shadowColor = 'rgba(244,63,94,0.8)';
       ctx.fill();
       ctx.shadowBlur = 0;
     }
