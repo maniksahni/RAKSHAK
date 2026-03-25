@@ -5,294 +5,247 @@
 <style>
 /* ════════════════════════════════════════════════
    RAKSHAK — ULTRA-PREMIUM LOGIN PAGE
-   Split layout: cinematic left panel + auth card
    ════════════════════════════════════════════════ */
 
-body { overflow: hidden; }
+/* Hide the default public navbar for full immersion */
+.navbar-rakshak { display: none !important; }
 
-/* ── Full-bleed layout ── */
+body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
+
 .login-root {
-  display: flex; min-height: 100vh; position: relative; overflow: hidden;
-  background: #04040a;
+  display: flex; height: 100vh; width: 100vw; position: relative;
+  font-family: 'Inter', sans-serif;
 }
 
-/* ── LEFT PANEL ── */
+/* ── LEFT PANEL: CINEMATIC ENGINE ── */
 .lp-left {
-  flex: 0 0 52%; position: relative; display: flex; flex-direction: column;
+  flex: 0 0 55%; position: relative; display: flex; flex-direction: column;
   align-items: center; justify-content: center; overflow: hidden;
-  background: linear-gradient(160deg, #0a0008 0%, #06000e 40%, #0a0005 100%);
+  background: radial-gradient(circle at center, #0a0307 0%, #020104 100%);
+  border-right: 1px solid rgba(220,38,38,0.15);
+  box-shadow: inset -20px 0 50px rgba(0,0,0,0.8);
 }
-.lp-left-canvas {
-  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+
+/* Background Cyber Grid */
+.lp-cyber-grid {
+  position: absolute; inset: -50%; pointer-events: none; z-index: 0;
+  background-image: 
+    linear-gradient(rgba(220,38,38,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220,38,38,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(1000px) rotateX(60deg);
+  animation: gridMove 20s linear infinite;
+  mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
 }
-/* Ambient red orb */
-.lp-left::before {
-  content: ''; position: absolute;
-  width: 700px; height: 700px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(220,38,38,.12) 0%, rgba(139,0,0,.06) 40%, transparent 70%);
-  top: 50%; left: 50%; transform: translate(-50%, -50%);
-  animation: lp-orb-breathe 6s ease-in-out infinite;
+@keyframes gridMove { 0% { transform: perspective(1000px) rotateX(60deg) translateY(0); } 100% { transform: perspective(1000px) rotateX(60deg) translateY(60px); } }
+
+/* Massive pulsing ambient core */
+.lp-ambient-core {
+  position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
+  transform: translate(-50%, -50%); border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, rgba(139,0,0,0.05) 40%, transparent 70%);
+  animation: corePulse 8s ease-in-out infinite alternate;
   pointer-events: none; z-index: 1;
 }
-@keyframes lp-orb-breathe {
-  0%,100% { transform: translate(-50%,-50%) scale(1); opacity: .8; }
-  50%      { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+@keyframes corePulse {
+  0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; filter: hue-rotate(-10deg); }
+  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; filter: hue-rotate(10deg); }
 }
 
-/* ── Giant hero shield ── */
-.lp-shield-hero {
-  position: relative; z-index: 2; margin-bottom: 40px;
-  animation: lp-shield-float 5s ease-in-out infinite;
+/* Particles Canvas */
+.lp-left-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+
+/* ── SHIELD HERO ASSEMBLY ── */
+.lp-hero-assembly {
+  position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center;
+  transform-style: preserve-3d; animation: floatAssembly 6s ease-in-out infinite;
 }
-@keyframes lp-shield-float {
-  0%,100% { transform: translateY(0) rotateY(0deg); }
-  25%     { transform: translateY(-12px) rotateY(4deg); }
-  75%     { transform: translateY(-6px) rotateY(-4deg); }
+@keyframes floatAssembly {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
 }
-/* orbit rings around shield */
+
+/* Orbiting Rings */
 .lp-orbit {
-  position: absolute; top: 50%; left: 50%; border-radius: 50%;
-  border: 1px solid;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  position: absolute; top: 35%; left: 50%; border-radius: 50%;
+  border: 1px dashed rgba(220,38,38,0.2); transform: translate(-50%, -50%); pointer-events: none;
 }
-.lp-orbit-1 {
-  width: 220px; height: 220px;
-  border-color: rgba(220,38,38,.15);
-  animation: lp-orbit-spin 12s linear infinite;
-}
-.lp-orbit-2 {
-  width: 300px; height: 300px;
-  border-color: rgba(220,38,38,.08);
-  animation: lp-orbit-spin 20s linear infinite reverse;
-}
-.lp-orbit-3 {
-  width: 390px; height: 390px;
-  border-color: rgba(220,38,38,.04);
-  animation: lp-orbit-spin 30s linear infinite;
-}
-/* orbit dot markers */
+.lp-orbit-1 { width: 320px; height: 320px; animation: orbitSpin 15s linear infinite; }
+.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(220,38,38,0.1); animation: orbitSpin 25s linear infinite reverse; }
+.lp-orbit-3 { width: 560px; height: 560px; border-style: dotted; animation: orbitSpin 35s linear infinite; }
 .lp-orbit::after {
-  content: ''; position: absolute; width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(220,38,38,.7); box-shadow: 0 0 10px rgba(220,38,38,.8);
-  top: -3px; left: 50%; transform: translateX(-50%);
+  content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: #ff4444; box-shadow: 0 0 15px #ff4444; top: -4px; left: 50%; transform: translateX(-50%);
 }
-@keyframes lp-orbit-spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+@keyframes orbitSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
-/* hero SVG shield */
+/* The SVG Shield */
 .lp-shield-svg {
-  filter: drop-shadow(0 0 40px rgba(220,38,38,.5)) drop-shadow(0 0 80px rgba(220,38,38,.25)) drop-shadow(0 20px 40px rgba(0,0,0,.8));
-  position: relative; z-index: 3;
+  width: 220px; height: 260px; margin-bottom: 2rem;
+  filter: drop-shadow(0 0 40px rgba(220,38,38,0.6)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+  position: relative; z-index: 10;
 }
 
-/* ── Left panel text ── */
-.lp-hero-text {
-  position: relative; z-index: 2; text-align: center; max-width: 380px;
-}
+/* Shield text */
+.lp-hero-text { text-align: center; position: relative; z-index: 10; }
 .lp-hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 5px 14px; border-radius: 20px; margin-bottom: 18px;
-  background: rgba(220,38,38,.08); border: 1px solid rgba(220,38,38,.25);
-  font-family: 'Courier New', monospace; font-size: .65rem;
-  letter-spacing: .22em; color: rgba(220,38,38,.8); text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px; border-radius: 30px;
+  background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3);
+  font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700;
+  color: #ff6b6b; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(220,38,38,0.1); backdrop-filter: blur(10px);
 }
 .lp-hero-badge-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #ef4444; box-shadow: 0 0 6px #ef4444;
+  width: 6px; height: 6px; border-radius: 50%; background: #ff4444; box-shadow: 0 0 10px #ff4444;
   animation: blink 2s ease-in-out infinite;
 }
 .lp-hero-title {
-  font-family: 'Space Grotesk', sans-serif; font-size: 3.2rem; font-weight: 900;
-  letter-spacing: .12em; line-height: 1;
-  background: linear-gradient(135deg, #fff 0%, #ffd6d6 30%, #fff 60%, rgba(255,255,255,.7) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  margin-bottom: 12px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 4.5rem; font-weight: 900;
+  letter-spacing: 0.15em; line-height: 1; margin-bottom: 15px;
+  background: linear-gradient(180deg, #ffffff 0%, #ffcaca 50%, #ff6b6b 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 12px rgba(220,38,38,0.3));
 }
 .lp-hero-sub {
-  font-size: .88rem; color: rgba(255,255,255,.4); letter-spacing: .04em; line-height: 1.6;
-}
-/* stat chips */
-.lp-stat-row {
-  display: flex; gap: 16px; margin-top: 32px; justify-content: center;
-}
-.lp-stat {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 12px 20px; border-radius: 12px;
-  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
-  min-width: 80px;
-}
-.lp-stat-num {
-  font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 800;
-  color: #ef4444; line-height: 1;
-}
-.lp-stat-lbl {
-  font-family: 'Courier New', monospace; font-size: .45rem;
-  color: rgba(255,255,255,.3); letter-spacing: .14em; margin-top: 4px; text-transform: uppercase;
+  font-size: 1.05rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; line-height: 1.6; font-weight: 300;
 }
 
-/* ── RIGHT PANEL (auth card) ── */
+/* Stat Cards */
+.lp-stat-row { display: flex; gap: 24px; margin-top: 45px; justify-content: center; }
+.lp-stat {
+  position: relative; padding: 18px 28px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 15px 30px rgba(0,0,0,0.4);
+  display: flex; flex-direction: column; align-items: center; min-width: 140px; overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+}
+.lp-stat::before {
+  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(220,38,38,0.1), transparent);
+  opacity: 0; transition: opacity 0.4s;
+}
+.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(220,38,38,0.2); }
+.lp-stat:hover::before { opacity: 1; }
+.lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #ff4444; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
+.lp-stat-lbl { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; position: relative; z-index: 1; }
+
+/* ── RIGHT PANEL: AUTH STATION ── */
 .lp-right {
   flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 40px 48px; position: relative; overflow: hidden;
-  background: linear-gradient(160deg, #060610 0%, #08080f 100%);
+  position: relative; background: #05050A; overflow: hidden;
 }
-/* top-right ambient glow blob */
 .lp-right::before {
-  content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(139,92,246,.06) 0%, transparent 70%);
-  top: -200px; right: -200px; pointer-events: none;
+  content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none;
 }
+.lp-right-nav {
+  position: absolute; top: 30px; right: 40px; z-index: 20; display: flex; gap: 16px;
+}
+.lp-btn-outline {
+  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+  color: #fff; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s;
+  background: rgba(255,255,255,0.02);
+}
+.lp-btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); color: #fff; transform: translateY(-2px); }
+.lp-btn-solid {
+  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(220,38,38,0.5);
+  background: rgba(220,38,38,0.15); color: #ff6b6b; font-size: 0.85rem; font-weight: 700; text-decoration: none;
+  transition: all 0.3s; box-shadow: 0 0 15px rgba(220,38,38,0.2);
+}
+.lp-btn-solid:hover { background: rgba(220,38,38,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(220,38,38,0.4); }
 
-/* Vertical divider */
-.lp-divider {
-  position: absolute; left: 52%; top: 8%; bottom: 8%; width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(220,38,38,.2) 30%, rgba(220,38,38,.2) 70%, transparent);
-  z-index: 10;
-}
+/* Auth Card Glassmorphism */
+.lp-card { width: 100%; max-width: 480px; position: relative; z-index: 10; animation: cardIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-/* ── Auth card ── */
-.lp-card {
-  width: 100%; max-width: 420px; position: relative; z-index: 2;
-}
 .lp-card-inner {
-  background: linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  background: linear-gradient(145deg, rgba(20,20,30,0.6), rgba(10,10,15,0.8));
   backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: 28px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 32px 64px rgba(0,0,0,.7), 0 0 0 1px rgba(0,0,0,.3);
-  padding: 44px 40px;
-  position: relative; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 30px 60px rgba(0,0,0,0.6), 0 0 100px rgba(0,0,0,0.5);
+  padding: 50px 48px; position: relative; overflow: hidden;
 }
-/* Animated top glow border on card */
 .lp-card-inner::before {
-  content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,.6), rgba(168,85,247,.5), rgba(220,38,38,.6), transparent);
-  background-size: 200% 100%;
-  animation: lp-card-scan 4s linear infinite;
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.8), transparent);
+  animation: cardScan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
-@keyframes lp-card-scan { 0%{background-position:100% 0} 100%{background-position:-100% 0} }
+@keyframes cardScan { 0% { left: -50%; } 100% { left: 150%; } }
 
-/* corner accent brackets */
-.lp-card-inner::after {
-  content: ''; position: absolute; top: 12px; right: 12px;
-  width: 20px; height: 20px;
-  border-top: 1.5px solid rgba(220,38,38,.4);
-  border-right: 1.5px solid rgba(220,38,38,.4);
-  border-radius: 0 4px 0 0;
-}
-
-/* ── Card header ── */
-.lp-card-head { text-align: center; margin-bottom: 32px; }
+/* Login Header */
 .lp-card-tag {
-  display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px;
-  padding: 4px 12px; border-radius: 20px;
-  background: rgba(220,38,38,.06); border: 1px solid rgba(220,38,38,.2);
-  font-family: 'Courier New', monospace; font-size: .58rem;
-  letter-spacing: .2em; color: rgba(220,38,38,.7); text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 20px;
+  background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2);
+  font-family: 'Courier New', monospace; font-size: 0.65rem; color: #ff6b6b; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;
 }
-.lp-card-tag-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: #ef4444; box-shadow: 0 0 5px #ef4444;
-  animation: blink 2s ease-in-out infinite;
-}
-.lp-welcome {
-  font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800;
-  color: #fff; letter-spacing: -.01em; line-height: 1.1; margin-bottom: 8px;
-}
-.lp-welcome span {
-  background: linear-gradient(135deg, #ef4444, #fca5a5);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-.lp-card-sub {
-  font-size: .85rem; color: rgba(255,255,255,.4); line-height: 1.5;
-}
+.lp-welcome { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.1; }
+.lp-welcome span { background: linear-gradient(90deg, #ff4444, #fca5a5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.lp-card-sub { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 35px; }
 
-/* ── Google Button — MASSIVE PREMIUM ── */
+/* The Google Button */
 .lp-google-btn {
-  display: flex; align-items: center; justify-content: center; gap: 14px;
-  width: 100%; padding: 16px 24px; border-radius: 14px;
-  background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.03) 100%);
-  border: 1px solid rgba(255,255,255,.12);
-  color: #fff; font-family: 'Space Grotesk', sans-serif;
-  font-size: 1rem; font-weight: 700; letter-spacing: .02em;
-  cursor: pointer; text-decoration: none;
-  position: relative; overflow: hidden;
-  transition: all .35s cubic-bezier(.22,1,.36,1);
-  box-shadow: 0 4px 20px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);
-  margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; padding: 18px 24px;
+  border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+  color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; text-decoration: none;
+  position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 .lp-google-btn::before {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(66,133,244,.08), rgba(234,67,53,.08), rgba(251,188,5,.08), rgba(52,168,83,.08));
-  opacity: 0; transition: opacity .35s;
+  background: linear-gradient(135deg, rgba(66,133,244,0.1), rgba(234,67,53,0.1), rgba(251,188,5,0.1), rgba(52,168,83,0.1));
+  opacity: 0; transition: opacity 0.4s; z-index: 0;
 }
-.lp-google-btn::after {
-  content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
-  animation: lp-google-sweep 3s ease-in-out infinite;
-}
-@keyframes lp-google-sweep { 0%{left:-60%} 100%{left:120%} }
 .lp-google-btn:hover {
-  border-color: rgba(255,255,255,.22);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.18);
+  transform: translateY(-4px); border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(66,133,244,0.15);
 }
 .lp-google-btn:hover::before { opacity: 1; }
 .lp-google-btn:active { transform: translateY(-1px); }
-.lp-google-text {
-  background: linear-gradient(90deg, #4285F4 0%, #EA4335 35%, #FBBC05 65%, #34A853 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+.lp-google-btn svg, .lp-google-btn span { position: relative; z-index: 1; }
+.lp-google-text { background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.02em; }
+.lp-google-arrow { margin-left: auto; color: rgba(255,255,255,0.4); transition: transform 0.3s, color 0.3s; }
+.lp-google-btn:hover .lp-google-arrow { color: #fff; transform: translateX(5px); }
+
+/* OR Divider */
+.lp-divider-row { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 30px 0; }
+.lp-divider-line { height: 1px; flex: 1; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+.lp-divider-text { font-family: 'Courier New', monospace; font-size: 0.7rem; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; }
+
+/* Features List */
+.lp-features { display: flex; flex-direction: column; gap: 14px; }
+.lp-feature-item {
+  display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 14px;
+  background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); transition: all 0.3s;
+}
+.lp-feature-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); transform: translateX(5px); }
+.lp-feature-icon-box {
+  width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+}
+.lp-fi-red { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; }
+.lp-fi-blue { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: #3b82f6; }
+.lp-fi-green { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; }
+.lp-feature-text h4 { font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0 0 2px 0; letter-spacing: 0.01em; }
+.lp-feature-text p { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin: 0; line-height: 1.4; }
+
+/* Footer */
+.lp-footer-info {
+  margin-top: 35px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;
+}
+.lp-footer-info p {
+  font-family: 'Courier New', monospace; font-size: 0.65rem; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; text-transform: uppercase; margin: 0; display: inline-flex; align-items: center; gap: 8px;
 }
 
-/* ── feature chips ── */
-.lp-features {
-  display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px;
-}
-.lp-feature-chip {
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 16px; border-radius: 10px;
-  background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05);
-  transition: all .25s;
-}
-.lp-feature-chip:hover {
-  background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.09);
-  transform: translateX(4px);
-}
-.lp-feature-icon {
-  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: .9rem;
-}
-.lp-feature-info { flex: 1; }
-.lp-feature-title { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.9); }
-.lp-feature-desc  { font-size: .7rem; color: rgba(255,255,255,.35); margin-top: 1px; }
-
-/* ── Footer ── */
-.lp-footer {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding-top: 20px; border-top: 1px solid rgba(255,255,255,.05);
-}
-.lp-footer-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #10b981; box-shadow: 0 0 6px #10b981;
-  animation: blink 2s ease-in-out infinite;
-}
-.lp-footer-text {
-  font-family: 'Courier New', monospace; font-size: .62rem;
-  color: rgba(255,255,255,.3); letter-spacing: .1em; text-transform: uppercase;
-}
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  body { overflow: auto; }
-  .login-root { flex-direction: column; }
-  .lp-left { flex: 0 0 auto; min-height: 340px; }
-  .lp-right { padding: 32px 24px; }
-  .lp-divider { display: none; }
-  .lp-hero-title { font-size: 2.2rem; }
-  .lp-shield-svg { width: 100px; height: 120px; }
-  .lp-orbit-1 { width: 140px; height: 140px; }
-  .lp-orbit-2 { width: 190px; height: 190px; }
-  .lp-orbit-3 { display: none; }
+/* Responsive */
+@media (max-width: 1024px) {
+  body, html { overflow: auto; height: auto; }
+  .login-root { flex-direction: column; height: auto; }
+  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(220,38,38,0.15); }
+  .lp-right { padding: 60px 24px; min-height: 100vh; }
+  .lp-hero-title { font-size: 3rem; }
+  .lp-stat-row { flex-wrap: wrap; }
+  .lp-right-nav { position: static; justify-content: center; margin-bottom: 40px; }
 }
 </style>
 {% endblock %}
@@ -300,189 +253,187 @@ body { overflow: hidden; }
 {% block content %}
 <div class="login-root">
 
-  <!-- Vertical divider -->
-  <div class="lp-divider"></div>
-
-  <!-- ═════════ LEFT PANEL ═════════ -->
+  <!-- LEFT PANEL -->
   <div class="lp-left">
+    <div class="lp-cyber-grid"></div>
+    <div class="lp-ambient-core"></div>
     <canvas class="lp-left-canvas" id="lp-particles"></canvas>
-
-    <!-- Orbiting rings + Giant shield -->
-    <div class="lp-shield-hero">
+    
+    <div class="lp-hero-assembly">
       <div class="lp-orbit lp-orbit-3"></div>
       <div class="lp-orbit lp-orbit-2"></div>
       <div class="lp-orbit lp-orbit-1"></div>
-
-      <svg class="lp-shield-svg" width="160" height="185" viewBox="0 0 60 70" fill="none">
+      
+      <!-- Premium SVG Shield -->
+      <svg class="lp-shield-svg" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="lpRG1" cx="38%" cy="28%" r="68%">
-            <stop offset="0%"   stop-color="#ff6b6b"/>
-            <stop offset="38%"  stop-color="#dc2626"/>
-            <stop offset="100%" stop-color="#3d0808"/>
-          </radialGradient>
-          <linearGradient id="lpLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse">
-            <stop offset="0%"   stop-color="rgba(255,255,255,.55)"/>
-            <stop offset="50%"  stop-color="rgba(255,255,255,.04)"/>
-            <stop offset="100%" stop-color="rgba(0,0,0,.3)"/>
-          </linearGradient>
-          <radialGradient id="lpRG3" cx="50%" cy="50%" r="50%">
-            <stop offset="0%"   stop-color="rgba(255,80,80,.22)"/>
-            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-          </radialGradient>
-          <filter id="lpCkGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="lpBodyShadow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="hRG1" cx="38%" cy="28%" r="65%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="45%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
+          <linearGradient id="hLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.5)"/><stop offset="60%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.3)"/></linearGradient>
+          <filter id="hGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
-        <!-- Deep shadow -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z"
-              fill="rgba(160,0,0,.4)" transform="translate(2,5) scale(.94)" filter="url(#lpBodyShadow)"/>
+        <!-- Shadow -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="rgba(0,0,0,.6)" transform="translate(1.5,3) scale(.97)"/>
         <!-- Body -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#lpRG1)"/>
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#lpRG3)"/>
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#lpLG2)"/>
-        <!-- Border -->
-        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z"
-              stroke="rgba(255,200,200,.5)" stroke-width="1.2" fill="none"/>
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#hRG1)"/>
+        <!-- Gloss -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#hLG2)"/>
+        <!-- Border shine -->
+        <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" stroke="rgba(255,200,200,.5)" stroke-width="1.2" fill="none"/>
         <!-- Inner frame -->
-        <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z"
-              stroke="rgba(255,255,255,.14)" stroke-width="1" fill="rgba(255,255,255,.03)"/>
-        <!-- Glint -->
-        <ellipse cx="11" cy="18" rx="4" ry="2.2" fill="rgba(255,255,255,.4)" transform="rotate(-28 11 18)"/>
+        <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z" stroke="rgba(255,255,255,.15)" stroke-width=".8" fill="rgba(255,255,255,.03)"/>
+        <!-- Top glint -->
+        <ellipse cx="11" cy="18" rx="3.5" ry="2" fill="rgba(255,255,255,.45)" transform="rotate(-28 11 18)"/>
         <!-- Circuit lines -->
-        <line x1="3"  y1="38" x2="12" y2="38" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-        <line x1="48" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-        <line x1="30" y1="4"  x2="30" y2="13" stroke="rgba(255,255,255,.1)"  stroke-width=".8"/>
-        <!-- Checkmark -->
-        <path d="M18 38l9 10 17-18" stroke="rgba(255,140,140,.5)" stroke-width="6"
-              stroke-linecap="round" stroke-linejoin="round" filter="url(#lpCkGlow)"/>
-        <path d="M18 38l9 10 17-18" stroke="white" stroke-width="3.8"
-              stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="3" y1="38" x2="10" y2="38" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <line x1="50" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+        <!-- Checkmark with massive glow -->
+        <path d="M16 38l10 11 18-19" stroke="rgba(255,160,160,.6)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#hGlow)"/>
+        <path d="M16 38l10 11 18-19" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-    </div>
-
-    <!-- Hero text -->
-    <div class="lp-hero-text">
-      <div class="lp-hero-badge"><span class="lp-hero-badge-dot"></span>SYSTEM ONLINE</div>
-      <div class="lp-hero-title">RAKSHAK</div>
-      <p class="lp-hero-sub">Real-time AI safety platform for women.<br>Always watching. Always protecting.</p>
-      <div class="lp-stat-row">
-        <div class="lp-stat"><div class="lp-stat-num">50K+</div><div class="lp-stat-lbl">Users Protected</div></div>
-        <div class="lp-stat"><div class="lp-stat-num">99.9%</div><div class="lp-stat-lbl">Uptime</div></div>
-        <div class="lp-stat"><div class="lp-stat-num">&lt;2s</div><div class="lp-stat-lbl">SOS Response</div></div>
+      
+      <div class="lp-hero-text">
+        <div class="lp-hero-badge"><span class="lp-hero-badge-dot"></span>System Operational</div>
+        <div class="lp-hero-title">RAKSHAK</div>
+        <p class="lp-hero-sub">The world's most advanced AI safety platform.<br>Always watching. Always protecting.</p>
+        
+        <div class="lp-stat-row">
+          <div class="lp-stat">
+            <div class="lp-stat-num">100K</div>
+            <div class="lp-stat-lbl">Secure Nodes</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-num" style="color:#10b981;">99.99%</div>
+            <div class="lp-stat-lbl">Uptime SLA</div>
+          </div>
+          <div class="lp-stat">
+            <div class="lp-stat-num" style="color:#3b82f6;">&lt;1.2s</div>
+            <div class="lp-stat-lbl">SOS Latency</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ═════════ RIGHT PANEL ═════════ -->
+  <!-- RIGHT PANEL -->
   <div class="lp-right">
+    
+    <!-- Top Nav links only visible on desktop -->
+    <div class="lp-right-nav d-none d-lg-flex">
+      <a href="{{ url_for('main.index') }}" class="lp-btn-outline"><i class="bi bi-house me-1"></i> Home</a>
+      <a href="{{ url_for('auth.register') }}" class="lp-btn-solid">Get Protected</a>
+    </div>
+
     <div class="lp-card">
       <div class="lp-card-inner">
-
         <!-- Header -->
-        <div class="lp-card-head">
-          <div class="lp-card-tag"><span class="lp-card-tag-dot"></span>SECURE ACCESS PORTAL</div>
+        <div style="text-align: center; margin-bottom: 30px;">
+          <div class="lp-card-tag"><span class="lp-hero-badge-dot"></span>Secure Access Portal</div>
           <h1 class="lp-welcome">Welcome <span>back.</span></h1>
-          <p class="lp-card-sub">Sign in to your personal safety command center</p>
+          <p class="lp-card-sub">Authenticate to access your central command.</p>
         </div>
 
-        <!-- Feature chips -->
-        <div class="lp-features">
-          <div class="lp-feature-chip">
-            <div class="lp-feature-icon" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);">🛡️</div>
-            <div class="lp-feature-info">
-              <div class="lp-feature-title">One-tap SOS Override</div>
-              <div class="lp-feature-desc">Instant emergency broadcast with GPS lock</div>
-            </div>
-          </div>
-          <div class="lp-feature-chip">
-            <div class="lp-feature-icon" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);">🗺️</div>
-            <div class="lp-feature-info">
-              <div class="lp-feature-title">Live Danger Map</div>
-              <div class="lp-feature-desc">Real-time AI threat intelligence overlay</div>
-            </div>
-          </div>
-          <div class="lp-feature-chip">
-            <div class="lp-feature-icon" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);">📍</div>
-            <div class="lp-feature-info">
-              <div class="lp-feature-title">Safe Walk + ETA Guard</div>
-              <div class="lp-feature-desc">Route monitoring with auto-escalation</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Google Sign-In -->
+        <!-- The Google Button -->
         <a href="{{ url_for('google_auth.google_login') }}" class="lp-google-btn">
-          <svg width="22" height="22" viewBox="0 0 48 48" style="flex-shrink:0">
+          <svg width="24" height="24" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
             <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
           </svg>
-          <span class="lp-google-text">Continue with Google</span>
-          <svg width="16" height="16" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+          <span class="lp-google-text">Authenticate with Google</span>
+          <svg class="lp-google-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
         </a>
 
+        <div class="lp-divider-row">
+          <div class="lp-divider-line"></div>
+          <div class="lp-divider-text">KEY CAPABILITIES</div>
+          <div class="lp-divider-line"></div>
+        </div>
+
+        <!-- Beautiful Feature Cards -->
+        <div class="lp-features">
+          <div class="lp-feature-item">
+            <div class="lp-feature-icon-box lp-fi-red"><i class="bi bi-shield-lock-fill"></i></div>
+            <div class="lp-feature-text">
+              <h4>One-Tap SOS Override</h4>
+              <p>Instant broadcast to authorities & trusted contacts.</p>
+            </div>
+          </div>
+          <div class="lp-feature-item">
+            <div class="lp-feature-icon-box lp-fi-blue"><i class="bi bi-crosshair"></i></div>
+            <div class="lp-feature-text">
+              <h4>Live Danger Map Engine</h4>
+              <p>AI threat-intel mapping routing you away from risk.</p>
+            </div>
+          </div>
+          <div class="lp-feature-item">
+            <div class="lp-feature-icon-box lp-fi-green"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="lp-feature-text">
+              <h4>Safe Walk & ETA Guard</h4>
+              <p>Real-time telemetry tracking with fail-deadly triggers.</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Footer -->
-        <div class="lp-footer">
-          <span class="lp-footer-dot"></span>
-          <span class="lp-footer-text">AES-256 Encrypted · Zero-knowledge architecture</span>
+        <div class="lp-footer-info">
+          <p><span class="lp-hero-badge-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;"></span> Zero-Knowledge Arch · Military-Grade AES-256</p>
+          <!-- Mobile home link fallback -->
+          <div class="d-lg-none mt-3">
+             <a href="{{ url_for('main.index') }}" style="color:rgba(255,255,255,0.4); text-decoration:none; font-size:0.8rem;"><i class="bi bi-arrow-left"></i> Return Home</a>
+          </div>
         </div>
 
       </div>
-
-      <!-- Back to home -->
-      <div style="text-align:center;margin-top:18px;">
-        <a href="{{ url_for('main.index') }}" style="font-size:.78rem;color:rgba(255,255,255,.3);text-decoration:none;letter-spacing:.05em;transition:color .2s;" onmouseover="this.style.color='rgba(255,255,255,.6)'" onmouseout="this.style.color='rgba(255,255,255,.3)'">
-          ← Back to home
-        </a>
-      </div>
     </div>
   </div>
-
 </div>
 
 <script>
-/* ── Particle canvas on left panel ── */
+/* ── Particle Canvas Engine ── */
 (function(){
   const canvas = document.getElementById('lp-particles');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   let W = canvas.width  = canvas.offsetWidth;
   let H = canvas.height = canvas.offsetHeight;
-  window.addEventListener('resize', () => {
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  });
-  const N = 55;
+  window.addEventListener('resize', () => { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; });
+  
+  const N = 70; // High particle density
   const pts = Array.from({length: N}, () => ({
     x: Math.random() * W, y: Math.random() * H,
-    vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
-    r: Math.random() * 1.6 + .4,
-    o: Math.random() * .5 + .15
+    vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4,
+    r: Math.random() * 1.5 + .5, o: Math.random() * .5 + .2
   }));
+  
   function draw() {
     ctx.clearRect(0, 0, W, H);
+    // Draw connections
     for (let i = 0; i < N; i++) {
       const p = pts[i];
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
       if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-      // connect nearby
+      
       for (let j = i+1; j < N; j++) {
         const q = pts[j];
         const dx = p.x - q.x, dy = p.y - q.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 110) {
+        if (dist < 120) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(220,38,38,${(1 - dist/110) * .12})`;
-          ctx.lineWidth = .5;
+          ctx.strokeStyle = `rgba(220,38,38,${(1 - dist/120) * 0.15})`;
+          ctx.lineWidth = 0.6;
           ctx.stroke();
         }
       }
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
       ctx.fillStyle = `rgba(220,38,38,${p.o})`;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(220,38,38,0.8)';
       ctx.fill();
+      ctx.shadowBlur = 0;
     }
     requestAnimationFrame(draw);
   }
