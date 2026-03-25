@@ -251,35 +251,50 @@ def create_app(config_name=None):
     # ── HTTP Error handlers ───────────────────────────────────────────────────────────
     @app.errorhandler(404)
     def not_found(e):
-        from flask import redirect, url_for
+        from flask import redirect, url_for, request as req, jsonify
+        path = req.path or ''
+        # NEVER redirect these — causes infinite loops:
+        # /static/... missing file, /auth/... = login→404→login loop
+        if (path.startswith('/static') or path.startswith('/auth') or
+                path.startswith('/sos') or path.startswith('/ai') or
+                path.startswith('/admin/api') or req.is_json):
+            return jsonify(error='Not found'), 404
         return redirect(url_for('auth.login')), 302
 
     @app.errorhandler(500)
     def internal_error(e):
         """Never show a crash page — redirect back or to login."""
-        from flask import redirect, url_for, flash, request as req
+        from flask import redirect, url_for, flash, request as req, jsonify
         log.error(f'500 on {req.path}: {e}')
+        path = req.path or ''
+        if req.is_json or path.startswith('/sos') or path.startswith('/ai') or path.startswith('/admin/api'):
+            return jsonify(error='Internal server error', success=False), 500
         try:
-            flash('Something went wrong on that page. Please try again.', 'warning')
+            flash('Something went wrong. Please try again.', 'warning')
             referrer = req.referrer
-            if referrer and req.path and req.path not in referrer:
+            if referrer and path not in referrer and '/auth' not in referrer:
                 return redirect(referrer), 302
             return redirect(url_for('auth.login')), 302
         except Exception:
-            from flask import redirect, url_for
             return redirect(url_for('auth.login')), 302
 
     @app.errorhandler(429)
     def ratelimit_handler(e):
-        from flask import redirect, url_for, flash, request as req
+        from flask import redirect, url_for, flash, request as req, jsonify, make_response
         log.warning(f'Rate limit hit on {req.path}')
-        # If this is an API/JSON request, return JSON
-        if req.is_json or req.path.startswith('/sos') or req.path.startswith('/ai') or req.path.startswith('/admin/api'):
-            from flask import jsonify
+        path = req.path or ''
+        if req.is_json or path.startswith('/sos') or path.startswith('/ai') or path.startswith('/admin/api'):
             return jsonify(success=False, error='Too many requests. Please slow down.'), 429
-        # For page requests, redirect gracefully to login to avoid redirect loops
-        flash('You have made too many requests. Please wait a moment and try again.', 'warning')
+        if path.startswith('/auth'):
+            return make_response(
+                '<html><body style="background:#0a0a0f;color:#ff6b6b;font-family:monospace;'
+                'display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">'
+                '<div style="text-align:center"><h2>Rate Limited</h2>'
+                '<p>Too many requests. Wait a moment then try again.</p>'
+                '<a href="/auth/login" style="color:#60a5fa">Try Again</a></div></body></html>', 429)
+        flash('Too many requests. Please wait a moment.', 'warning')
         return redirect(url_for('auth.login')), 302
+
 
     # ── Auto-init DB tables on first run ─────────────────────────────────
     _auto_init_db(app)
