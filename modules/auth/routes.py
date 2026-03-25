@@ -14,7 +14,6 @@ def validate_phone(p):
 
 # ── Register (Google-only — page renders OAuth prompt) ────────────────────────
 @auth_bp.route('/register')
-@limiter.limit('10 per hour')
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
@@ -23,7 +22,6 @@ def register():
 
 # ── Login (Google-only — page renders OAuth prompt) ───────────────────────────
 @auth_bp.route('/login')
-@limiter.limit('20 per hour')
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
