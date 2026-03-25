@@ -263,20 +263,62 @@ def create_app(config_name=None):
 
     @app.errorhandler(500)
     def internal_error(e):
-        """Never show a crash page — redirect back or to login."""
-        from flask import redirect, url_for, flash, request as req, jsonify
+        """Show an inline error page — never redirect (redirect loops)."""
+        from flask import request as req, make_response, jsonify
         log.error(f'500 on {req.path}: {e}')
         path = req.path or ''
         if req.is_json or path.startswith('/sos') or path.startswith('/ai') or path.startswith('/admin/api'):
             return jsonify(error='Internal server error', success=False), 500
-        try:
-            flash('Something went wrong. Please try again.', 'warning')
-            referrer = req.referrer
-            if referrer and path not in referrer and '/auth' not in referrer:
-                return redirect(referrer), 302
-            return redirect(url_for('auth.login')), 302
-        except Exception:
-            return redirect(url_for('auth.login')), 302
+        # Render a premium inline error page — NO redirects, which cause loops
+        html = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Error — RAKSHAK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=Courier+Prime&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#060608;color:#fff;font-family:'Space Grotesk',sans-serif;
+      display:flex;align-items:center;justify-content:center;min-height:100vh;
+      background-image:radial-gradient(ellipse at 50% 50%,rgba(220,38,38,0.05) 0%,transparent 70%);}
+    .card{background:rgba(255,255,255,0.03);border:1px solid rgba(220,38,38,0.25);
+      border-radius:24px;padding:48px 40px;text-align:center;max-width:480px;
+      box-shadow:0 0 60px rgba(220,38,38,0.1),inset 0 1px 0 rgba(255,255,255,0.08);}
+    .icon{font-size:3rem;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(220,38,38,0.6));}
+    h1{font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#fff,#fca5a5);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
+    p{color:rgba(255,255,255,0.5);font-size:0.9rem;line-height:1.7;margin-bottom:28px;
+      font-family:'Courier Prime',monospace;}
+    .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    a{padding:12px 28px;border-radius:12px;font-weight:700;font-size:0.88rem;
+      text-decoration:none;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;}
+    .btn-primary{background:linear-gradient(135deg,rgba(220,38,38,0.25),rgba(220,38,38,0.1));
+      border:1px solid rgba(220,38,38,0.4);color:#f87171;}
+    .btn-primary:hover{background:linear-gradient(135deg,rgba(220,38,38,0.4),rgba(220,38,38,0.2));
+      transform:translateY(-2px);box-shadow:0 8px 20px rgba(220,38,38,0.3);}
+    .btn-secondary{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);}
+    .btn-secondary:hover{border-color:rgba(255,255,255,0.25);color:#fff;transform:translateY(-2px);}
+    .code{font-family:'Courier Prime',monospace;font-size:0.7rem;color:rgba(255,255,255,0.2);
+      margin-top:28px;letter-spacing:0.15em;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">⚠️</div>
+    <h1>System Anomaly Detected</h1>
+    <p>The server encountered an unexpected condition.<br>Our systems have logged this event automatically.</p>
+    <div class="btns">
+      <a href="javascript:history.back()" class="btn-secondary">← Go Back</a>
+      <a href="/dashboard/" class="btn-primary">🛡 Dashboard</a>
+      <a href="/auth/login" class="btn-secondary">Login</a>
+    </div>
+    <div class="code">RAKSHAK · ERROR 500 · AES-256 SECURE</div>
+  </div>
+</body>
+</html>'''
+        return make_response(html, 500)
+
 
     @app.errorhandler(429)
     def ratelimit_handler(e):
