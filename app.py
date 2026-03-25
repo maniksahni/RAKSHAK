@@ -271,8 +271,15 @@ def create_app(config_name=None):
 
     @app.errorhandler(429)
     def ratelimit_handler(e):
-        from flask import jsonify
-        return jsonify(success=False, error='Too many requests. Please slow down.'), 429
+        from flask import redirect, url_for, flash, request as req
+        log.warning(f'Rate limit hit on {req.path}')
+        # If this is an API/JSON request, return JSON
+        if req.is_json or req.path.startswith('/sos') or req.path.startswith('/ai') or req.path.startswith('/admin/api'):
+            from flask import jsonify
+            return jsonify(success=False, error='Too many requests. Please slow down.'), 429
+        # For page requests, redirect gracefully to login to avoid redirect loops
+        flash('You have made too many requests. Please wait a moment and try again.', 'warning')
+        return redirect(url_for('auth.login')), 302
 
     # ── Auto-init DB tables on first run ─────────────────────────────────
     _auto_init_db(app)
