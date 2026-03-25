@@ -227,26 +227,6 @@
     <i class="bi bi-map"></i> <span>Live Map</span>
   </a>
 
-  <hr class="glow-line mx-3">
-  <div class="px-3 mb-2" style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.15em;text-transform:uppercase;">User View</div>
-  <a class="sidebar-link {% if request.endpoint=='dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
-    <i class="bi bi-house"></i> <span>User Dashboard</span>
-  </a>
-  <a class="sidebar-link {% if request.endpoint=='safety_score.index' %}active{% endif %}" href="{{ url_for('safety_score.index') }}">
-    <i class="bi bi-speedometer"></i> <span>Safety Score</span>
-  </a>
-  <a class="sidebar-link {% if request.endpoint=='safety_tips.index' %}active{% endif %}" href="{{ url_for('safety_tips.index') }}">
-    <i class="bi bi-lightbulb-fill"></i> <span>Safety Tips</span>
-  </a>
-  <a class="sidebar-link {% if request.endpoint=='emergency.index' %}active{% endif %}" href="{{ url_for('emergency.index') }}">
-    <i class="bi bi-telephone-fill"></i> <span>Emergency Dial</span>
-  </a>
-  <a class="sidebar-link {% if request.endpoint=='safe_walk.index' %}active{% endif %}" href="{{ url_for('safe_walk.index') }}">
-    <i class="bi bi-geo-alt-fill"></i> <span>Safe Walk</span>
-  </a>
-  <a class="sidebar-link {% if request.endpoint=='fake_call.index' %}active{% endif %}" href="{{ url_for('fake_call.index') }}">
-    <i class="bi bi-phone-vibrate"></i> <span>Fake Call</span>
-  </a>
   {% else %}
   <a class="sidebar-link {% if request.endpoint=='dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
     <i class="bi bi-house"></i> <span>Dashboard</span>
