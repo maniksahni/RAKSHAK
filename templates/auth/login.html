@@ -345,41 +345,11 @@ function startBiometricAuth(e) {
       <div class="lp-orbit lp-orbit-2"></div>
       <div class="lp-orbit lp-orbit-1"></div>
       
-      <!-- Cyber Trishul - The Weapon of Goddess Durga -->
-      <svg class="lp-shield-svg" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
-        <defs>
-          <linearGradient id="lpTG" x1="30" y1="0" x2="30" y2="80" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="20%" stop-color="#ffb3cb"/>
-            <stop offset="55%" stop-color="#f43f5e"/>
-            <stop offset="100%" stop-color="#881337"/>
-          </linearGradient>
-          <filter id="lpTGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <filter id="lpJGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <style>
-          .lp-t-jewel{animation:lpJPulse 1.8s ease-in-out infinite alternate;transform-origin:30px 43px}
-          @keyframes lpJPulse{from{opacity:.5;transform:scale(.8)}to{opacity:1;transform:scale(1.2)}}
-          .lp-prong{filter:drop-shadow(0 0 10px rgba(244,63,94,.8))}
-        </style>
-        <!-- Mega ambient aura -->
-        <ellipse cx="30" cy="46" rx="28" ry="22" fill="rgba(244,63,94,0.2)" filter="url(#lpTGlow)"/>
-        <!-- Staff -->
-        <rect x="26.5" y="45" width="7" height="30" rx="3.5" fill="url(#lpTG)"/>
-        <!-- Crossbar -->
-        <rect x="10" y="42" width="40" height="6" rx="3" fill="url(#lpTG)" filter="url(#lpTGlow)"/>
-        <!-- Center Prong -->
-        <path class="lp-prong" d="M25,42 L30,3 L35,42 Z" fill="url(#lpTG)"/>
-        <path d="M28.8,42 L30,8 L31.2,42 Z" fill="rgba(255,255,255,0.45)"/>
-        <!-- Left Prong -->
-        <path class="lp-prong" d="M22,44 C19,35 8,27 8,17 C8,8 17,6 22,12 C26,17 26,32 22,43 Z" fill="url(#lpTG)"/>
-        <path d="M21,43 C19,35 10,28 10,19 C10,12 17,10.5 21,15 C24,19 24,32 21,43 Z" fill="rgba(255,255,255,0.2)"/>
-        <!-- Right Prong -->
-        <path class="lp-prong" d="M38,44 C41,35 52,27 52,17 C52,8 43,6 38,12 C34,17 34,32 38,43 Z" fill="url(#lpTG)"/>
-        <path d="M39,43 C41,35 50,28 50,19 C50,12 43,10.5 39,15 C36,19 36,32 39,43 Z" fill="rgba(255,255,255,0.2)"/>
-        <!-- Pulsing Center Jewel -->
-        <polygon class="lp-t-jewel" points="30,38 35,43 30,48 25,43" fill="#ffffff" filter="url(#lpJGlow)"/>
-      </svg>
+      <!-- Cyber Trishul Logo -->
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;width:220px;height:220px;margin-bottom:2rem;">
+        <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(244,63,94,0.3) 0%,transparent 70%);animation:corePulse 3s ease-in-out infinite alternate;"></div>
+        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="180" height="180" style="position:relative;z-index:2;filter:drop-shadow(0 0 30px rgba(244,63,94,1)) drop-shadow(0 0 60px rgba(244,63,94,0.4));object-fit:contain;animation:floatAssembly 6s ease-in-out infinite;">
+      </div>
       
       <div class="lp-hero-text">
         <div class="lp-hero-badge"><span class="lp-hero-badge-dot"></span>System Operational</div>
