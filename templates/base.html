@@ -44,19 +44,19 @@
     body { border: none !important; margin: 0; padding: 0; }
     .global-hud-anchor {
       position: fixed; inset: 0; pointer-events: none; z-index: 99999;
-      box-shadow: inset 0 0 100px rgba(220,38,38,0.05); border: 1px solid rgba(220,38,38,0.2);
+      box-shadow: inset 0 0 100px rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.2);
     }
     .ghud-top-label {
       position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      background: rgba(220,38,38,0.2); border-bottom: 1px solid rgba(220,38,38,0.4);
+      background: rgba(244,63,94,0.2); border-bottom: 1px solid rgba(244,63,94,0.4);
       padding: 2px 20px; border-radius: 0 0 8px 8px; font-family: 'Courier New', monospace;
-      font-size: 0.6rem; color: #ef4444; font-weight: 800; letter-spacing: 0.3em;
-      text-shadow: 0 0 5px #ef4444; backdrop-filter: blur(5px);
+      font-size: 0.6rem; color: #f43f5e; font-weight: 800; letter-spacing: 0.3em;
+      text-shadow: 0 0 5px #f43f5e; backdrop-filter: blur(5px);
     }
     .ghud-scanline {
       position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(220,38,38,0.8), transparent);
-      box-shadow: 0 0 10px rgba(220,38,38,0.5);
+      background: linear-gradient(90deg, transparent, rgba(244,63,94,0.8), transparent);
+      box-shadow: 0 0 10px rgba(244,63,94,0.5);
       animation: globalRadarScan 8s linear infinite; opacity: 0.4;
     }
     @keyframes globalRadarScan {
@@ -66,19 +66,28 @@
       100% { top: 100%; opacity: 0; }
     }
     .ghud-bracket {
-      position: absolute; width: 30px; height: 30px; border: 2px solid #ef4444; opacity: 0.3;
+      position: absolute; width: 30px; height: 30px; border: 2px solid #f43f5e; opacity: 0.3;
       transition: all 0.3s;
     }
     .ghud-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
     .ghud-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
     .ghud-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
     .ghud-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+    /* ── VALKYRIE FEMME-TECH OVERRIDE ── */
+    :root {
+      /* Overriding military anti-terror red to Cyber-Magenta / Rose Gold */
+      --red-primary: #f43f5e !important;
+      --red-soft: rgba(244, 63, 94, 0.15) !important;
+      --red-glow: rgba(244, 63, 94, 0.4) !important;
+      --red-dark: #be123c !important;
+    }
   </style>
 </head>
 <body>
   <!-- ── PERSISTENT SYSTEM UPLINK HUD ── -->
   <div class="global-hud-anchor">
-    <div class="ghud-top-label">RAKSHAK // CLASSIFIED OPERATIONS // DEFCON 3</div>
+    <div class="ghud-top-label">RAKSHAK // ADVANCED WOMEN'S SAFETY // DEFCON 3</div>
     <div class="ghud-scanline"></div>
     <div class="ghud-bracket ghud-tl"></div><div class="ghud-bracket ghud-tr"></div>
     <div class="ghud-bracket ghud-bl"></div><div class="ghud-bracket ghud-br"></div>
@@ -201,33 +210,31 @@
         <div class="rksb-shield-ring"></div>
         <svg class="rksb-svg" width="52" height="60" viewBox="0 0 60 70" fill="none">
           <defs>
-            <radialGradient id="sbRG1" cx="38%" cy="28%" r="68%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="40%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
-            <linearGradient id="sbLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.55)"/><stop offset="55%" stop-color="rgba(255,255,255,.04)"/><stop offset="100%" stop-color="rgba(0,0,0,.25)"/></linearGradient>
-            <radialGradient id="sbRG3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,80,80,.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
-            <filter id="sbCkGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="sbBodyGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <radialGradient id="sbRG1" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#ff7eb3"/><stop offset="50%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#700b27"/></radialGradient>
+            <linearGradient id="sbLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.6)"/><stop offset="40%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.4)"/></linearGradient>
+            <radialGradient id="sbRG3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,100,150,.3)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></radialGradient>
+            <filter id="sbBodyGlow"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
           </defs>
-          <!-- Drop shadow -->
-          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="rgba(180,0,0,.35)" transform="translate(2,4) scale(.94)" filter="url(#sbBodyGlow)"/>
-          <!-- Main body -->
-          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#sbRG1)"/>
-          <!-- Center depth -->
-          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#sbRG3)"/>
-          <!-- Gloss -->
-          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" fill="url(#sbLG2)"/>
-          <!-- Border -->
-          <path d="M30 4L3 16v22c0 20 14.5 37 27 42 12.5-5 27-22 27-42V16L30 4z" stroke="rgba(255,200,200,.5)" stroke-width="1.2" fill="none"/>
-          <!-- Inner frame -->
-          <path d="M30 13L11 22v15c0 13 10 25 19 29 9-4 19-16 19-29V22L30 13z" stroke="rgba(255,255,255,.14)" stroke-width=".9" fill="rgba(255,255,255,.03)"/>
-          <!-- Glint -->
-          <ellipse cx="11" cy="18" rx="4" ry="2.2" fill="rgba(255,255,255,.38)" transform="rotate(-28 11 18)"/>
-          <!-- Circuit accent lines -->
-          <line x1="3" y1="38" x2="12" y2="38" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-          <line x1="48" y1="38" x2="57" y2="38" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-          <line x1="30" y1="4" x2="30" y2="13" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
-          <!-- Checkmark glow -->
-          <path d="M18 38l9 10 17-18" stroke="rgba(255,140,140,.45)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" filter="url(#sbCkGlow)"/>
-          <path d="M18 38l9 10 17-18" stroke="white" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Drop shadow glow -->
+          <path d="M30 4 L8 16 V32 C8 48 20 62 30 68 C40 62 52 48 52 32 V16 L30 4 Z" fill="rgba(244,63,94,.4)" transform="translate(0,2) scale(.96)" filter="url(#sbBodyGlow)"/>
+          
+          <!-- Outer Cyber Shield Base -->
+          <path d="M30 4 L6 16 V34 C6 50 18 64 30 70 C42 64 54 50 54 34 V16 L30 4 Z" fill="url(#sbRG1)"/>
+          <path d="M30 4 L6 16 V34 C6 50 18 64 30 70 C42 64 54 50 54 34 V16 L30 4 Z" fill="url(#sbRG3)"/>
+          <path d="M30 4 L6 16 V34 C6 50 18 64 30 70 C42 64 54 50 54 34 V16 L30 4 Z" fill="url(#sbLG2)"/>
+          <!-- Outer Shield Border -->
+          <path d="M30 4 L6 16 V34 C6 50 18 64 30 70 C42 64 54 50 54 34 V16 L30 4 Z" stroke="rgba(255,220,230,.6)" stroke-width="1.5" fill="none"/>
+          
+          <!-- Elegant Lotus Vectors inside the Shield -->
+          <path d="M30 20 C25 25 20 35 30 45 C40 35 35 25 30 20 Z" fill="rgba(255,255,255,0.9)" filter="drop-shadow(0 0 8px rgba(255,255,255,0.5))"/>
+          <path d="M26 30 C15 35 15 45 30 45 C25 45 20 40 26 30 Z" fill="rgba(255,200,220,0.85)"/>
+          <path d="M34 30 C45 35 45 45 30 45 C35 45 40 40 34 30 Z" fill="rgba(255,200,220,0.85)"/>
+          
+          <!-- Crystal core -->
+          <polygon points="30,16 34,26 30,34 26,26" fill="rgba(255,255,255,0.95)" filter="drop-shadow(0 0 10px #ffffff)"/>
+          
+          <!-- Protective Inner Frame -->
+          <path d="M30 11 L12 20 V33 C12 45 21 56 30 60 C39 56 48 45 48 33 V20 L30 11 Z" stroke="rgba(255,255,255,.2)" stroke-width="1" fill="transparent"/>
         </svg>
       </div>
 
@@ -352,63 +359,31 @@
       <div class="rk-logo-scan"></div>
       <svg width="42" height="48" viewBox="0 0 42 50" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <!-- Deep metallic red body -->
-          <linearGradient id="lgP-base" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#ff5252"/><stop offset="28%" stop-color="#e02020"/>
-            <stop offset="62%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#4c0707"/>
-          </linearGradient>
-          <!-- Gloss top highlight -->
-          <linearGradient id="lgP-gloss" x1="21" y1="2" x2="21" y2="30" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="rgba(255,255,255,.55)"/><stop offset="45%" stop-color="rgba(255,255,255,.12)"/>
-            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-          </linearGradient>
-          <!-- Left metallic rim light -->
-          <linearGradient id="lgP-rim" x1="0" y1="25" x2="42" y2="25" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="rgba(255,180,180,.38)"/><stop offset="22%" stop-color="rgba(255,255,255,0)"/>
-            <stop offset="80%" stop-color="rgba(0,0,0,0)"/><stop offset="100%" stop-color="rgba(0,0,0,.25)"/>
-          </linearGradient>
-          <!-- Center radial depth -->
-          <radialGradient id="lgP-depth" cx="55%" cy="42%" r="45%">
-            <stop offset="0%" stop-color="rgba(255,100,100,.2)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+          <radialGradient id="lgP-base" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#ff7eb3"/><stop offset="50%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#700b27"/>
           </radialGradient>
-          <!-- Inner frame gradient -->
-          <linearGradient id="lgP-inner" x1="21" y1="10" x2="21" y2="46" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="rgba(255,255,255,.1)"/><stop offset="100%" stop-color="rgba(0,0,0,.18)"/>
+          <linearGradient id="lgP-gloss" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(255,255,255,.6)"/><stop offset="40%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.4)"/>
           </linearGradient>
-          <!-- Metallic border gradient -->
-          <linearGradient id="lgP-bdr" x1="0" y1="0" x2="42" y2="50" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="rgba(255,210,210,.7)"/><stop offset="35%" stop-color="rgba(255,120,120,.35)"/>
-            <stop offset="70%" stop-color="rgba(180,30,30,.2)"/><stop offset="100%" stop-color="rgba(80,0,0,.3)"/>
-          </linearGradient>
-          <!-- Check glow -->
-          <filter id="lgP-ckglow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+          <filter id="lgP-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
-        <!-- Shadow base (pure depth) -->
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="rgba(0,0,0,.18)" transform="translate(1,2)"/>
-        <!-- Main body -->
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgP-base)"/>
-        <!-- Depth center -->
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgP-depth)"/>
-        <!-- Rim light -->
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgP-rim)"/>
-        <!-- Top gloss -->
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" fill="url(#lgP-gloss)"/>
-        <!-- Metallic border -->
-        <path d="M21 3L2 12v16c0 14 10.5 26.5 19 29.5 8.5-3 19-15.5 19-29.5V12L21 3z" stroke="url(#lgP-bdr)" stroke-width="1" fill="none"/>
-        <!-- Inner shield frame -->
-        <path d="M21 9L8 16v11c0 9.8 7 18.2 13 21 6-2.8 13-11.2 13-21V16L21 9z" stroke="rgba(255,255,255,.14)" stroke-width=".8" fill="url(#lgP-inner)"/>
-        <!-- Subtle hex/circuit details -->
-        <line x1="2" y1="28" x2="8" y2="28" stroke="rgba(255,255,255,.07)" stroke-width=".6"/>
-        <line x1="34" y1="28" x2="40" y2="28" stroke="rgba(255,255,255,.07)" stroke-width=".6"/>
-        <line x1="21" y1="9" x2="21" y2="3" stroke="rgba(255,255,255,.07)" stroke-width=".6"/>
-        <!-- Top corner glint -->
-        <ellipse cx="8" cy="13" rx="2.5" ry="1.5" fill="rgba(255,255,255,.3)" transform="rotate(-25 8 13)"/>
-        <!-- Premium checkmark with glow -->
-        <path d="M13 28l6 6.5 12-13" stroke="rgba(255,255,255,.35)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#lgP-ckglow)"/>
-        <path d="M13 28l6 6.5 12-13" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        
+        <!-- Drop shadow / Glow Base -->
+        <path d="M21 3 L5 11 V25 C5 36 14 46 21 50 C28 46 37 36 37 25 V11 L21 3 Z" fill="rgba(244,63,94,.4)" transform="translate(0,1) scale(.95)" filter="url(#lgP-glow)"/>
+        
+        <!-- Main Shield Body -->
+        <path d="M21 3 L3 11 V25 C3 37 11 47 21 51 C31 47 39 37 39 25 V11 L21 3 Z" fill="url(#lgP-base)"/>
+        <path d="M21 3 L3 11 V25 C3 37 11 47 21 51 C31 47 39 37 39 25 V11 L21 3 Z" fill="url(#lgP-gloss)"/>
+        <path d="M21 3 L3 11 V25 C3 37 11 47 21 51 C31 47 39 37 39 25 V11 L21 3 Z" stroke="rgba(255,200,220,.7)" stroke-width="1.2" fill="none"/>
+        
+        <!-- Mini Lotus -->
+        <path d="M21 15 C17 19 14 26 21 33 C28 26 25 19 21 15 Z" fill="rgba(255,255,255,0.95)" filter="drop-shadow(0 0 5px rgba(255,255,255,0.6))"/>
+        <path d="M18 22 C10 26 10 33 21 33 C17 33 14 29 18 22 Z" fill="rgba(255,200,220,0.85)"/>
+        <path d="M24 22 C32 26 32 33 21 33 C25 33 28 29 24 22 Z" fill="rgba(255,200,220,0.85)"/>
+        <polygon points="21,11 24,19 21,24 18,19" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)"/>
       </svg>
     </div>
     <div class="rk-logo-text-wrap">
