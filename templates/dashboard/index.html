@@ -924,6 +924,84 @@
       </div>
     </div>
   </div>
+  <!-- ══ Valkyrie Voice Shield Interface ══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 animate-in" style="animation-delay: 0.1s;">
+      <div class="glass-card p-4" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;border:1px solid rgba(244,63,94,0.3);box-shadow:inset 0 0 30px rgba(244,63,94,0.1), 0 10px 30px rgba(0,0,0,0.5);">
+        <!-- Animated AI Waves -->
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at center, rgba(244,63,94,0.15), transparent 70%);opacity:0.6;animation:pulsePulse 3s ease-in-out infinite;"></div>
+        
+        <div class="d-flex align-items-center justify-content-between mb-3" style="position:relative;z-index:2;">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-mic-fill" style="color:#f43f5e;font-size:1.2rem;text-shadow:0 0 10px #f43f5e;"></i>
+            <h6 style="margin:0;font-family:var(--font-display);font-weight:800;letter-spacing:0.1em;color:#fff;">VALKYRIE VOICE GUARDIAN</h6>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span style="font-size:0.65rem;color:#f43f5e;font-family:'Courier New',monospace;font-weight:700;animation:blink 2s infinite;">AI STANDBY</span>
+          </div>
+        </div>
+        
+        <div class="d-flex flex-column align-items-center py-4" style="position:relative;z-index:2;">
+          <button id="valkyrie-mic-btn" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg, #e11d48, #9f1239);border:none;box-shadow:0 0 0 0 rgba(244,63,94,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s;position:relative;" onclick="toggleValkyrie()">
+            <div style="position:absolute;inset:-10px;border-radius:50%;border:2px dashed rgba(244,63,94,0.5);animation:radarScan 10s linear infinite;"></div>
+            <i class="bi bi-soundwave" style="font-size:2.2rem;color:#fff;"></i>
+          </button>
+          
+          <div id="valkyrie-visualizer" style="display:none;align-items:center;gap:4px;margin-top:20px;height:24px;">
+            <div class="vw-bar" style="animation-duration: 0.4s;"></div>
+            <div class="vw-bar" style="animation-duration: 0.6s;"></div>
+            <div class="vw-bar" style="animation-duration: 0.3s;"></div>
+            <div class="vw-bar" style="animation-duration: 0.7s;"></div>
+            <div class="vw-bar" style="animation-duration: 0.5s;"></div>
+            <div class="vw-bar" style="animation-duration: 0.35s;"></div>
+          </div>
+
+          <div id="valkyrie-status" style="margin-top:20px;font-family:'Courier New',monospace;font-size:0.85rem;color:rgba(255,255,255,0.6);letter-spacing:0.05em;text-align:center;">
+            SYSTEM STANDBY. TAP TO ACTIVATE VOICE SHIELD.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+  .vw-bar { width:4px;background:#f43f5e;border-radius:2px;animation:vWave ease-in-out infinite alternate;box-shadow:0 0 6px #f43f5e; }
+  @keyframes vWave { 0% { height:4px; } 100% { height:24px; } }
+  .valkyrie-listening { animation:vPulse 1.5s infinite !important; }
+  @keyframes vPulse {
+    0% { box-shadow:0 0 0 0 rgba(244,63,94,0.6), 0 0 30px rgba(244,63,94,0.4); transform:scale(1.05); }
+    70% { box-shadow:0 0 0 25px rgba(244,63,94,0), 0 0 50px rgba(244,63,94,0.1); }
+    100% { box-shadow:0 0 0 0 rgba(244,63,94,0), 0 0 30px rgba(244,63,94,0); transform:scale(1); }
+  }
+  @keyframes pulsePulse { 0%,100%{opacity:0.3} 50%{opacity:0.6} }
+  </style>
+  <script>
+  let valkActive = false;
+  let synth = window.speechSynthesis;
+  function toggleValkyrie() {
+    const btn = document.getElementById('valkyrie-mic-btn');
+    const stat = document.getElementById('valkyrie-status');
+    const vis = document.getElementById('valkyrie-visualizer');
+    
+    if(!valkActive) {
+      valkActive = true;
+      btn.classList.add('valkyrie-listening');
+      stat.innerHTML = "<span style='color:#f43f5e;'>LISTENING FOR 'HELP' OR 'RAKSHAK SOS'...</span>";
+      vis.style.display = 'flex';
+      
+      let msg = new SpeechSynthesisUtterance("Valkyrie protocol active. I am monitoring your environment.");
+      msg.rate = 1.0;
+      msg.pitch = 1.2;
+      synth.speak(msg);
+    } else {
+      valkActive = false;
+      btn.classList.remove('valkyrie-listening');
+      stat.innerHTML = "SYSTEM STANDBY. TAP TO ACTIVATE VOICE SHIELD.";
+      vis.style.display = 'none';
+      synth.cancel();
+    }
+  }
+  </script>
 
   <!-- ══ Emergency Quick Dial Grid ══ -->
   <div class="row g-4 mb-4">
