@@ -56,9 +56,9 @@ function initScrollReveal() {
   });
 }
 
-// ── Leaflet Map ─────────────────────────────────────────────────────────────
+// ── Ultra Premium Leaflet Map Engine ──────────────────────────────────────────
 function initMap(dangerZones) {
-  dashMap = L.map('map', { zoomControl: true, attributionControl: false });
+  dashMap = L.map('map', { zoomControl: false, attributionControl: false });
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     maxZoom: 19
@@ -66,43 +66,66 @@ function initMap(dangerZones) {
 
   dashMap.setView([20.5937, 78.9629], 5); // Default: India
 
-  // Add danger zones as glowing markers
+  // Dynamic HUD Coordinate Tracking
+  dashMap.on('mousemove', (e) => {
+    const elLat = document.getElementById('map-target-lat');
+    const elLng = document.getElementById('map-target-lng');
+    if(elLat) elLat.textContent = `LAT: ${e.latlng.lat.toFixed(5)}`;
+    if(elLng) elLng.textContent = `LNG: ${e.latlng.lng.toFixed(5)}`;
+  });
+  dashMap.on('move', () => {
+    const center = dashMap.getCenter();
+    const elLat = document.getElementById('map-target-lat');
+    const elLng = document.getElementById('map-target-lng');
+    if(!document.querySelector(':hover')) { // Update to center if mouse is not over
+      if(elLat) elLat.textContent = `LAT: ${center.lat.toFixed(5)}`;
+      if(elLng) elLng.textContent = `LNG: ${center.lng.toFixed(5)}`;
+    }
+  });
+
+  // Add danger zones as glowing tactical nodes
   if (dangerZones) {
     dangerZones.forEach(zone => {
-      const colors = { high: '#dc2626', medium: '#f6ad55', low: '#48bb78' };
-      const color = colors[zone.severity] || '#dc2626';
-
       const icon = L.divIcon({
         className: '',
-        html: `<div style="width:16px;height:16px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.3);box-shadow:0 0 12px ${color},0 0 24px ${color}44;animation:sos-pulse 2s infinite;"></div>`,
-        iconSize: [16, 16],
-        iconAnchor: [8, 8],
+        html: `<div style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;position:relative;">
+                 <div style="position:absolute;width:100%;height:100%;border:1px solid #fff;border-radius:50%;animation:sos-pulse 1.5s infinite;"></div>
+                 <div style="width:6px;height:6px;background:#fff;border-radius:50%;box-shadow:0 0 10px #fff;"></div>
+               </div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
       });
       L.marker([zone.latitude, zone.longitude], { icon })
-        .bindPopup(`<div style="font-family:Inter,sans-serif;">
-          <strong style="color:#dc2626;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'DANGER'}</strong><br>
-          <span style="color:#a0aec0;font-size:0.8rem;">${zone.description || ''}</span><br>
-          <span class="pill pill-${zone.severity}" style="font-size:0.7rem;">${zone.severity}</span>
-        </div>`)
+        .bindPopup(`<div style="font-family:'Space Grotesk',sans-serif;background:rgba(10,10,15,0.9);border:1px solid #dc2626;padding:8px;border-radius:6px;color:#fff;">
+          <strong style="color:#ef4444;letter-spacing:0.1em;border-bottom:1px solid rgba(220,38,38,0.3);padding-bottom:4px;display:block;margin-bottom:6px;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'THREAT DETECTED'}</strong>
+          <span style="color:rgba(255,255,255,0.7);font-size:0.75rem;font-family:'Courier New',monospace;">${zone.description || 'Verified danger zone'}</span><br>
+          <div style="margin-top:6px;background:rgba(220,38,38,0.2);color:#ef4444;font-size:0.65rem;padding:2px 6px;display:inline-block;border-radius:4px;font-weight:700;">${zone.severity.toUpperCase()} PRIORITY</div>
+        </div>`, { closeButton: false, className: 'tactical-popup' })
         .addTo(dashMap);
     });
   }
 
-  // Locate user
+  // Locate user with targeting reticle
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       currentLat = pos.coords.latitude;
       currentLng = pos.coords.longitude;
-      dashMap.setView([currentLat, currentLng], 14);
+      dashMap.setView([currentLat, currentLng], 15);
 
       const userIcon = L.divIcon({
         className: '',
-        html: `<div style="width:20px;height:20px;border-radius:50%;background:#4299e1;border:3px solid rgba(255,255,255,0.8);box-shadow:0 0 16px #4299e1,0 0 32px #4299e144;"></div>`,
-        iconSize: [20, 20],
-        iconAnchor: [10, 10],
+        html: `<div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                 <div style="position:absolute;width:100%;height:100%;border:2px dashed #3b82f6;border-radius:50%;animation:radarSpin 8s linear infinite;"></div>
+                 <div style="position:absolute;width:20px;height:20px;border:2px solid #60a5fa;border-radius:50%;"></div>
+                 <div style="position:absolute;width:2px;height:2px;background:#fff;box-shadow:0 0 10px #fff;"></div>
+                 <div style="position:absolute;top:-5px;bottom:-5px;width:1px;background:rgba(59,130,246,0.6);"></div>
+                 <div style="position:absolute;left:-5px;right:-5px;height:1px;background:rgba(59,130,246,0.6);"></div>
+               </div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
       });
       userMarker = L.marker([currentLat, currentLng], { icon: userIcon })
-        .bindPopup('<strong>📍 You are here</strong>')
+        .bindPopup('<strong style="font-family:\'Space Grotesk\',sans-serif;color:#3b82f6;letter-spacing:0.1em;">ASSET LOCATED</strong>', { closeButton: false, className: 'tactical-popup' })
         .addTo(dashMap);
 
       checkProximity(currentLat, currentLng);
