@@ -252,6 +252,86 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 {% endblock %}
 
 {% block content %}
+
+<!-- ══ BIOMETRIC SCANNER OVERLAY ══ -->
+<div id="biometric-overlay" style="
+  display:none; position:fixed; inset:0; z-index:999999;
+  background:rgba(5,2,8,0.95); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+  flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Courier New',monospace; transition:opacity .3s;
+">
+  <!-- Scan lines background -->
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(244,63,94,.05) 2px,rgba(244,63,94,.05) 4px);pointer-events:none;z-index:0;"></div>
+  
+  <div style="position:relative;z-index:10;text-align:center;">
+    <!-- Thumbprint / Iris graphic -->
+    <div style="margin:0 auto 30px;width:120px;height:120px;position:relative;">
+      <div style="position:absolute;inset:-20px;border-radius:50%;border:2px dashed rgba(244,63,94,.5);animation:spinOuter 8s linear infinite;"></div>
+      <div style="position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(244,63,94,.8);border-left-color:transparent;border-right-color:transparent;animation:spinInner 3s linear infinite;"></div>
+      
+      <!-- The passing laser -->
+      <div style="position:absolute;top:0;left:-20px;right:-20px;height:2px;background:#f43f5e;box-shadow:0 0 15px #f43f5e;animation:laserScan 2s ease-in-out infinite alternate;"></div>
+      
+      <i class="bi bi-fingerprint" style="font-size:5rem;color:rgba(244,63,94,.8);filter:drop-shadow(0 0 10px rgba(244,63,94,.5));"></i>
+    </div>
+    
+    <div style="font-size:1.2rem;font-weight:700;color:#fff;letter-spacing:.2em;margin-bottom:8px;text-transform:uppercase;" id="bio-title">
+      AWAITING BIOMETRICS
+    </div>
+    <div style="font-size:.8rem;color:rgba(244,63,94,.8);letter-spacing:.1em;" id="bio-sub">
+      PLEASE HOLD STILL...
+    </div>
+    
+    <div style="width:240px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin:30px auto 0;overflow:hidden;position:relative;">
+      <div id="bio-progress" style="position:absolute;top:0;left:0;height:100%;width:0%;background:linear-gradient(90deg,#f43f5e,#ffb3cb);transition:width .1s linear;"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes spinOuter { 100% { transform:rotate(360deg); } }
+@keyframes spinInner { 100% { transform:rotate(-360deg); } }
+@keyframes laserScan { 0% { top:-10px; } 100% { top:130px; } }
+</style>
+
+<script>
+function startBiometricAuth(e) {
+  e.preventDefault();
+  var targetUrl = e.currentTarget.href;
+  var overlay = document.getElementById('biometric-overlay');
+  var prog = document.getElementById('bio-progress');
+  var title = document.getElementById('bio-title');
+  var sub = document.getElementById('bio-sub');
+  
+  overlay.style.display = 'flex';
+  
+  var w = 0;
+  var interval = setInterval(function() {
+    w += Math.random() * 8;
+    if(w > 50 && w < 60) {
+      sub.textContent = "VERIFYING VALKYRIE IDENTITY...";
+    }
+    if(w >= 100) {
+      w = 100;
+      clearInterval(interval);
+      title.textContent = "IDENTITY CONFIRMED";
+      title.style.color = "#22c55e";
+      sub.textContent = "ACCESS GRANTED";
+      sub.style.color = "#22c55e";
+      
+      // Flash green
+      document.querySelector('.bi-fingerprint').style.color = "#22c55e";
+      document.querySelector('.bi-fingerprint').style.filter = "drop-shadow(0 0 15px #22c55e)";
+      
+      setTimeout(function() {
+        window.location.href = targetUrl;
+      }, 600);
+    }
+    prog.style.width = w + '%';
+  }, 100);
+}
+</script>
+
 <div class="login-root">
 
   <!-- LEFT PANEL -->
@@ -343,7 +423,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
         </div>
 
         <!-- The Google Button -->
-        <a href="{{ url_for('google_auth.google_login') }}" class="lp-google-btn">
+        <a href="{{ url_for('google_auth.google_login') }}" class="lp-google-btn" onclick="startBiometricAuth(event)">
           <svg width="24" height="24" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>

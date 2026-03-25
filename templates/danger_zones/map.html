@@ -37,9 +37,9 @@
 /* ── RADAR SWEEP OVERLAY ─────────────────────────────────────────────────── */
 .radar-sweep {
   position: absolute; inset: -50%;
-  background: conic-gradient(from 0deg, transparent 70%, rgba(59,130,246,0.1) 90%, rgba(59,130,246,0.2) 100%);
+  background: conic-gradient(from 0deg, transparent 70%, rgba(244,63,94,0.1) 90%, rgba(244,63,94,0.2) 100%);
   border-radius: 50%;
-  animation: radarScan 8s linear infinite;
+  animation: radarScan 4s linear infinite;
   pointer-events: none; z-index: 400;
 }
 @keyframes radarScan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -71,13 +71,13 @@
 .breach-status-ring {
   width: 10px; height: 10px; border-radius: 50%;
   background: var(--red-primary);
-  box-shadow: 0 0 0 0 rgba(239,68,68,0.4);
+  box-shadow: 0 0 0 0 rgba(244,63,94,0.4);
   animation: breachPulse 2s ease-out infinite;
 }
 @keyframes breachPulse {
-  0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
-  70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
-  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+  0% { box-shadow: 0 0 0 0 rgba(244,63,94,0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(244,63,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(244,63,94,0); }
 }
 
 /* ── CROSSHAIR ───────────────────────────────────────────────────────────── */
@@ -147,9 +147,9 @@
 }
 .surveillance-icon {
   width: 54px; height: 54px; border-radius: 16px;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05));
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  box-shadow: 0 0 25px rgba(239, 68, 68, 0.15), inset 0 0 15px rgba(239, 68, 68, 0.08);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(244, 63, 94, 0.05));
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  box-shadow: 0 0 25px rgba(244, 63, 94, 0.15), inset 0 0 15px rgba(244, 63, 94, 0.08);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; position: relative;
 }
@@ -616,6 +616,37 @@
      ═══════════════════════════════════════════════════════════════════════════ -->
 <div class="map-wrapper">
   <div id="map">
+
+<!-- ══ TACTICAL HUD OVERLAY ══ -->
+<div style="position:absolute;inset:0;pointer-events:none;z-index:450;overflow:hidden;">
+  <!-- Cyber grid overlay -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(244,63,94,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(244,63,94,.03) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);"></div>
+  
+  <!-- Corner brackets -->
+  <div style="position:absolute;top:20px;left:20px;width:40px;height:40px;border-top:2px solid rgba(244,63,94,.4);border-left:2px solid rgba(244,63,94,.4);"></div>
+  <div style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-top:2px solid rgba(244,63,94,.4);border-right:2px solid rgba(244,63,94,.4);"></div>
+  <div style="position:absolute;bottom:20px;left:20px;width:40px;height:40px;border-bottom:2px solid rgba(244,63,94,.4);border-left:2px solid rgba(244,63,94,.4);"></div>
+  <div style="position:absolute;bottom:20px;right:20px;width:40px;height:40px;border-bottom:2px solid rgba(244,63,94,.4);border-right:2px solid rgba(244,63,94,.4);"></div>
+
+  <!-- Central targeting reticle -->
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;border:1px dashed rgba(244,63,94,.15);border-radius:50%;animation:spinOuter 20s linear infinite;"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border:1px solid rgba(244,63,94,.1);border-radius:50%;"></div>
+  
+  <!-- Scanning horizontal laser -->
+  <div style="position:absolute;left:0;right:0;height:1px;background:rgba(244,63,94,.4);box-shadow:0 0 10px rgba(244,63,94,.5);animation:scanV 4s ease-in-out infinite alternate;"></div>
+  
+  <!-- Telemetry Data Overlay -->
+  <div style="position:absolute;bottom:30px;left:30px;font-family:'Courier New',monospace;font-size:.65rem;color:rgba(244,63,94,.6);letter-spacing:.1em;text-transform:uppercase;">
+    <div>SYS_ID: VALKYRIE_MAP_ENG_v4</div>
+    <div>ALTITUDE: 140M MSL</div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#22c55e;border-radius:50%;animation:blink 1s infinite;"></span> SAT_LINK_NOMINAL</div>
+  </div>
+</div>
+<style>
+@keyframes scanV { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+@keyframes spinOuter { 100% { transform:translate(-50%,-50%) rotate(360deg); } }
+</style>
+
     <!-- Radar sweep -->
     <div class="radar-sweep"></div>
 
