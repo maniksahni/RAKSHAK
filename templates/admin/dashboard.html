@@ -2,6 +2,53 @@
 {% block title %}Admin Dashboard — RAKSHAK{% endblock %}
 
 {% block extra_css %}
+
+<style>
+  /* ── HUD Crosshairs ── */
+  .user-db-container .hud-bracket-tl, .user-db-container .hud-bracket-tr,
+  .user-db-container .hud-bracket-bl, .user-db-container .hud-bracket-br {
+    position:absolute; width: 30px; height: 30px; border: 2px solid rgba(244,63,94,0.8); z-index: 10;
+  }
+  .hud-bracket-tl { top:0; left:0; border-right:none !important; border-bottom:none !important; border-radius: 12px 0 0 0; }
+  .hud-bracket-tr { top:0; right:0; border-left:none !important; border-bottom:none !important; border-radius: 0 12px 0 0; }
+  .hud-bracket-bl { bottom:0; left:0; border-right:none !important; border-top:none !important; border-radius: 0 0 0 12px; }
+  .hud-bracket-br { bottom:0; right:0; border-left:none !important; border-top:none !important; border-radius: 0 0 12px 0; }
+
+  /* ── Scanlines & Radar ── */
+  .scan-line-horizontal {
+    position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(244,63,94,0.5), transparent);
+    animation: scanHScan 4s linear infinite; pointer-events: none; z-index: 5;
+  }
+  @keyframes scanHScan { 0% { top: -10px; } 100% { top: 110%; } }
+  @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+  @keyframes radarSweep { 100% { transform: rotate(360deg); } }
+
+  /* ── Table Row Cyber Glow ── */
+  .cyber-grid-table tbody tr {
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    cursor: pointer;
+  }
+  .cyber-grid-table tbody tr:hover {
+    background: rgba(244,63,94,0.08) !important;
+    box-shadow: inset 0 0 20px rgba(244,63,94,0.1);
+    transform: scale(1.01) translateZ(0);
+    z-index: 10;
+  }
+  .cyber-grid-table tbody tr:hover td {
+    color: #fff !important;
+    text-shadow: 0 0 10px rgba(244,63,94,0.5);
+  }
+  .btn-holographic {
+    background: transparent; color: #f43f5e; border: 1px solid rgba(244,63,94,0.5);
+    box-shadow: 0 0 10px rgba(244,63,94,0.1); transition: 0.3s;
+  }
+  .btn-holographic:hover {
+    background: rgba(244,63,94,0.2); box-shadow: 0 0 20px rgba(244,63,94,0.4), inset 0 0 10px rgba(244,63,94,0.2);
+    text-shadow: 0 0 8px #fff; color: #fff;
+  }
+</style>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/premium-upgrade.css') }}?v=3">
 <style>
@@ -460,7 +507,9 @@
       <h5 class="section-header"><i class="bi bi-people-fill me-2" style="color:var(--red-primary);"></i>Network Operatives DATABASE</h5>
       <input type="text" id="user-search" placeholder="Query ID/Name..." class="search-input" style="font-family:'Courier New',monospace; border-radius:4px; box-shadow:inset 0 0 10px rgba(0,0,0,0.5);" oninput="searchUsers(this.value)">
     </div>
-    <div class="glass-card overflow-hidden" style="border-radius:8px; border:1px solid rgba(244,63,94,0.2); background:transparent !important;">
+    <div class="position-relative overflow-hidden user-db-container" style="border-radius:12px; border:1px solid rgba(244,63,94,0.3); background:linear-gradient(180deg, rgba(20,5,10,0.8), rgba(5,2,8,0.95)); box-shadow:0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(244,63,94,0.05);">
+    <div class="hud-bracket-tl"></div><div class="hud-bracket-tr"></div><div class="hud-bracket-bl"></div><div class="hud-bracket-br"></div>
+    <div class="scan-line-horizontal"></div>
       <div class="table-responsive" style="background:transparent !important;">
         <table class="table cyber-grid-table mb-0" id="users-table" style="--bs-table-bg:transparent;--bs-table-color:rgba(255,255,255,0.8);background-color:transparent !important;">
           <thead>
@@ -476,7 +525,12 @@
             </tr>
           </thead>
           <tbody id="users-tbody">
-            <tr><td colspan="8"><div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Establishing secure connection to database...</p></div></td></tr>
+            <tr><td colspan="8">
+              <div class="empty-state" style="padding:50px;text-align:center;">
+                <div style="width:60px;height:60px;margin:0 auto 20px;border-radius:50%;border-top:2px solid #f43f5e;border-bottom:2px solid transparent;border-left:2px solid transparent;border-right:2px solid transparent;animation:spinSlow 1s linear infinite;"></div>
+                <p style="font-family:'Courier New',monospace;color:rgba(255,255,255,0.7);letter-spacing:0.15em;font-size:0.8rem;text-transform:uppercase;">Decrypting User Matrix...</p>
+              </div>
+            </td></tr>
           </tbody>
         </table>
       </div>
@@ -490,7 +544,12 @@
       <button onclick="loadPendingZones()" class="btn-glass" style="font-size:0.85rem;padding:6px 14px;"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
     </div>
     <div id="pending-zones-list" class="row g-3">
-      <div class="col-12"><div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Loading...</p></div></div>
+      <div class="col-12">
+        <div class="empty-state" style="padding:30px;text-align:center;">
+          <div style="width:40px;height:40px;margin:0 auto 10px;border:1px dashed #f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:spinSlow 4s linear infinite;"><i class="bi bi-geo-alt" style="font-size:1rem;color:#f59e0b;animation:none;"></i></div>
+          <p style="font-family:'Courier New',monospace;color:rgba(246,173,85,0.7);letter-spacing:0.1em;font-size:0.75rem;text-transform:uppercase;margin:0;">Scanning Grid for Hostile Zones...</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -541,6 +600,14 @@
           <span id="dos-phone" style="font-size:.85rem;color:var(--text-secondary);"></span>
         </div>
       </div>
+    </div>
+    
+    <!-- Radar Block -->
+    <div style="background:rgba(20,10,15,0.6);border:1px solid rgba(244,63,94,.1);border-radius:50%;width:120px;height:120px;margin:30px auto;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 30px rgba(244,63,94,.1);">
+      <div style="position:absolute;width:100%;height:100%;border-radius:50%;border:1px dashed rgba(244,63,94,.3);animation:spinSlow 10s linear infinite;"></div>
+      <div style="position:absolute;width:60%;height:60%;border-radius:50%;border:1px solid rgba(244,63,94,.5);"></div>
+      <div class="radar-line" style="position:absolute;width:50%;height:2px;background:linear-gradient(90deg,transparent,#f43f5e);right:50%;transform-origin:right center;animation:radarSweep 2s infinite linear;"></div>
+      <i class="bi bi-crosshair" style="color:#f43f5e;font-size:1.5rem;"></i>
     </div>
     
     <!-- Telemetry Block -->
@@ -594,7 +661,7 @@
   #customDossierOverlay.show { display: block !important; opacity: 1 !important; }
 </style>
 
-<script src="{{ url_for('static', filename='js/admin.js') }}?v=7"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}?v=8"></script>
 <script>
 /* Real-time clock */
 (function(){
