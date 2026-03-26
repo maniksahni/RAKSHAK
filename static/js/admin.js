@@ -258,7 +258,10 @@ async function loadAnalytics() {
   }
 }
 
+
 // ── User Management ───────────────────────────────────────────────────────────
+window.currentDossierId = null;
+
 async function loadUsers(q='') {
   try {
     const url = '/admin/users' + (q ? `?q=${encodeURIComponent(q)}` : '');
@@ -266,29 +269,95 @@ async function loadUsers(q='') {
     const tbody = document.getElementById('users-tbody');
     if (!resp.success || !tbody) return;
 
+    // Cache user data globally for the modal
+    if (!window.globalUsersMap) window.globalUsersMap = {};
+    
     if (!resp.users.length) {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="bi bi-people"></i><p>No users found.</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="bi bi-people"></i><p>No operatives found on this frequency.</p></div></td></tr>`;
       return;
     }
 
-    tbody.innerHTML = resp.users.map((u,i) => `
-      <tr>
-        <td style="color:var(--text-muted);font-size:0.8rem;">${i+1}</td>
-        <td><div style="font-weight:600;font-size:0.9rem;">${u.full_name}</div></td>
-        <td style="font-size:0.82rem;color:var(--text-secondary);">${u.email}</td>
-        <td style="font-size:0.82rem;">${u.phone}</td>
-        <td><span class="pill pill-${u.role==='admin'?'resolved':'pending'}" style="font-size:0.7rem;">${u.role}</span></td>
-        <td><span class="pill pill-${u.risk_level}" style="font-size:0.7rem;">${u.risk_level}</span></td>
-        <td><span class="pill pill-${u.is_active?'approved':'rejected'}" style="font-size:0.7rem;">${u.is_active?'Active':'Inactive'}</span></td>
-        <td>
-          <button onclick="toggleUser(${u.id},${u.is_active})" class="btn-glass" style="font-size:0.75rem;padding:4px 10px;">
-            ${u.is_active ? 'Deactivate' : 'Activate'}
+    tbody.innerHTML = resp.users.map((u,i) => {
+      window.globalUsersMap[u.id] = u;
+      
+      const roleColor = u.role === 'admin' ? '#f43f5e' : (u.role === 'trusted_contact' ? '#818cf8' : '#22c55e');
+      const riskClass = u.risk_level === 'high' ? 'danger' : (u.risk_level === 'medium' ? 'amber' : 'green');
+      const statusIcon = u.is_active ? '<i class="bi bi-check-circle-fill" style="color:#22c55e;"></i> ACTIVE' : '<i class="bi bi-slash-circle-fill" style="color:#f43f5e;"></i> LOCKED';
+      
+      return `
+      <tr style="cursor:pointer;" onclick="openDossier(${u.id})">
+        <td style="font-family:'Courier New',monospace;font-size:0.7rem;color:var(--text-muted);vertical-align:middle;">#${u.id}</td>
+        <td style="vertical-align:middle;">
+          <div class="d-flex align-items-center gap-2">
+            <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;">${u.full_name[0].toUpperCase()}</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:-.01em;">${u.full_name}</div>
+          </div>
+        </td>
+        <td style="font-size:0.8rem;color:var(--text-secondary);font-family:'Courier New',monospace;vertical-align:middle;">${u.email}</td>
+        <td style="font-size:0.8rem;font-family:'Courier New',monospace;vertical-align:middle;">${u.phone}</td>
+        <td style="vertical-align:middle;">
+          <span style="font-size:0.65rem;border:1px solid ${roleColor}40;background:${roleColor}10;color:${roleColor};padding:4px 10px;border-radius:20px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;">${u.role.replace('_',' ')}</span>
+        </td>
+        <td style="vertical-align:middle;">
+          <span class="threat-op-val" style="font-size:0.75rem;color:var(--accent-${riskClass});"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent-${riskClass});margin-right:4px;box-shadow:0 0 5px var(--accent-${riskClass});"></span>${u.risk_level.toUpperCase()}</span>
+        </td>
+        <td style="vertical-align:middle;font-size:0.7rem;font-weight:700;letter-spacing:.05em;">${statusIcon}</td>
+        <td style="vertical-align:middle;">
+          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" onclick="event.stopPropagation();openDossier(${u.id})">
+            ACCESS DOSSIER <i class="bi bi-box-arrow-in-up-right ms-1"></i>
           </button>
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
   } catch(e) {
     console.warn('[RAKSHAK] Load users failed:', e);
   }
+}
+
+window.openDossier = function(uid) {
+  const u = window.globalUsersMap[uid];
+  if(!u) return;
+  window.currentDossierId = uid;
+  
+  document.getElementById('dos-avatar').textContent = u.full_name[0].toUpperCase();
+  document.getElementById('dos-name').textContent = u.full_name;
+  document.getElementById('dos-id').textContent = 'UID: ' + u.id;
+  document.getElementById('dos-email').textContent = u.email;
+  document.getElementById('dos-phone').textContent = u.phone;
+  
+  const riskColor = u.risk_level === 'high' ? '#f43f5e' : (u.risk_level === 'medium' ? '#f59e0b' : '#22c55e');
+  const roleColor = u.role === 'admin' ? '#f43f5e' : (u.role === 'trusted_contact' ? '#818cf8' : '#22c55e');
+  
+  const riskEl = document.getElementById('dos-risk');
+  riskEl.textContent = u.risk_level.toUpperCase();
+  riskEl.style.color = riskColor;
+  
+  const roleEl = document.getElementById('dos-role');
+  roleEl.textContent = u.role.replace('_',' ');
+  roleEl.style.color = roleColor;
+  
+  const statusEl = document.getElementById('dos-status');
+  statusEl.textContent = u.is_active ? 'ACTIVE' : 'LOCKED';
+  statusEl.style.color = u.is_active ? '#22c55e' : '#f43f5e';
+  
+  const pingEl = document.getElementById('dos-ping');
+  const d = u.last_ping ? new Date(u.last_ping) : null;
+  pingEl.textContent = d ? d.toLocaleString() : 'NO SIGNAL';
+  
+  const toggleBtn = document.getElementById('dos-btn-toggle');
+  if(u.is_active) {
+    toggleBtn.innerHTML = '<i class="bi bi-sign-stop me-2"></i>Lock Access';
+    toggleBtn.style.color = '#f43f5e';
+    toggleBtn.style.borderColor = 'rgba(244,63,94,.4)';
+  } else {
+    toggleBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Restore Access';
+    toggleBtn.style.color = '#22c55e';
+    toggleBtn.style.borderColor = 'rgba(34,197,94,.4)';
+  }
+  
+  // Show Modal
+  const modal = new bootstrap.Modal(document.getElementById('dossierModal'));
+  modal.show();
 }
 
 let searchTimeout;
@@ -297,11 +366,29 @@ function searchUsers(q) {
   searchTimeout = setTimeout(() => loadUsers(q), 400);
 }
 
-async function toggleUser(uid, currentlyActive) {
-  const resp = await postJSON(`/admin/users/${uid}/toggle`);
+window.toggleUser = async function(uid) {
+  const resp = await fetch(`/admin/users/${uid}/toggle`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  }).then(r=>r.json());
   if (resp.success) {
-    showToast(resp.is_active ? 'User activated.' : 'User deactivated.', 'info');
+    showToast(resp.is_active ? 'System Access Restored.' : 'System Access Locked.', 'info');
     loadUsers();
+    // Refresh modal if open
+    setTimeout(()=>{ if(window.globalUsersMap[uid]) { window.globalUsersMap[uid].is_active = resp.is_active; openDossier(uid); } }, 500);
+  } else showToast(resp.error||'Failed','error');
+}
+
+window.changeRole = async function(uid, role) {
+  const resp = await fetch(`/admin/users/${uid}/change-role`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({role: role})
+  }).then(r=>r.json());
+  if (resp.success) {
+    showToast(`Role upgraded to ${role}.`, 'info');
+    loadUsers();
+    setTimeout(()=>{ if(window.globalUsersMap[uid]) { window.globalUsersMap[uid].role = role; openDossier(uid); } }, 500);
   } else showToast(resp.error||'Failed','error');
 }
 
