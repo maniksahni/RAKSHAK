@@ -351,13 +351,19 @@
     <i class="bi bi-map"></i> <span>Live Map</span>
   </a>
 
-  {% else %}
+  <hr class="glow-line mx-3 my-2" style="opacity:0.3;">
+  <div style="font-size:0.6rem;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;margin:4px 12px 8px;">Operative Features</div>
+  {% endif %}
+
+  <!-- Core User Tools (Visible to Admins & Users) -->
   <a class="sidebar-link {% if request.endpoint=='dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
-    <i class="bi bi-house"></i> <span>Dashboard</span>
+    <i class="bi bi-house"></i> <span>User Dashboard</span>
   </a>
+  {% if not current_user.is_admin %}
   <a class="sidebar-link {% if request.endpoint=='danger.map_view' %}active{% endif %}" href="{{ url_for('danger.map_view') }}">
     <i class="bi bi-map-fill"></i> <span>Danger Map</span>
   </a>
+  {% endif %}
   <a class="sidebar-link {% if request.endpoint=='auth.profile' %}active{% endif %}" href="{{ url_for('auth.profile') }}">
     <i class="bi bi-person-circle"></i> <span>My Profile</span>
   </a>
@@ -379,7 +385,6 @@
   <a class="sidebar-link {% if request.endpoint=='fake_call.index' %}active{% endif %}" href="{{ url_for('fake_call.index') }}">
     <i class="bi bi-phone-vibrate"></i> <span>Fake Call</span>
   </a>
-  {% endif %}
 
   <hr class="glow-line mx-3">
   <a class="sidebar-link text-danger" href="{{ url_for('auth.logout') }}">
