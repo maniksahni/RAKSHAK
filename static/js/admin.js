@@ -273,7 +273,14 @@ async function loadUsers(q='') {
     if (!window.globalUsersMap) window.globalUsersMap = {};
     
     if (!resp.users.length) {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="bi bi-people"></i><p>No operatives found on this frequency.</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8">
+        <div class="empty-state" style="padding:40px;text-align:center;">
+          <div style="width:80px;height:80px;border-radius:50%;border:1px dashed rgba(244,63,94,.5);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;animation:spinSlow 10s linear infinite;">
+            <i class="bi bi-radar" style="font-size:2rem;color:#f43f5e;animation:none;"></i>
+          </div>
+          <p style="font-family:'Courier New',monospace;color:rgba(255,255,255,0.5);letter-spacing:0.1em;font-size:0.8rem;text-transform:uppercase;">No operatives found on this frequency.</p>
+        </div>
+      </td></tr>`;
       return;
     }
 
@@ -306,7 +313,7 @@ async function loadUsers(q='') {
         </td>
         <td style="vertical-align:middle;font-size:0.7rem;font-weight:700;letter-spacing:.05em;">${statusIcon}</td>
         <td style="vertical-align:middle;">
-          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" onclick="openDossier(${u.id})">
+          <button class="btn-holographic" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" onclick="openDossier(${u.id})">
             ACCESS DOSSIER <i class="bi bi-box-arrow-in-up-right ms-1"></i>
           </button>
         </td>
@@ -416,7 +423,14 @@ async function loadPendingZones() {
     if (!container) return;
 
     if (!resp.success || !resp.zones.length) {
-      container.innerHTML = `<div class="col-12"><div class="empty-state"><i class="bi bi-check-circle"></i><p>No pending zones. All clear!</p></div></div>`;
+      container.innerHTML = `<div class="col-12">
+      <div class="empty-state" style="padding:30px;text-align:center;">
+        <div style="width:40px;height:40px;margin:0 auto 10px;border-radius:50%;background:rgba(34,197,94,0.1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(34,197,94,0.2);">
+          <i class="bi bi-shield-check" style="font-size:1.5rem;color:#22c55e;"></i>
+        </div>
+        <p style="font-family:'Courier New',monospace;color:rgba(34,197,94,0.7);letter-spacing:0.1em;font-size:0.75rem;text-transform:uppercase;margin:0;">Grid Secure. No Active Hostile Zones.</p>
+      </div>
+    </div>`;
       return;
     }
 
