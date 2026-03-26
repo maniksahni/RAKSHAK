@@ -496,6 +496,10 @@
 
 </div>
 
+
+{% endblock %}
+
+{% block extra_js %}
 <!-- ══ OPERATIVE DOSSIER MODAL ══ -->
 <div class="modal fade" id="dossierModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -582,13 +586,11 @@
     </div>
   </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script src="{{ url_for('static', filename='js/admin.js') }}?v=3"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}?v=4"></script>
 <script>
 /* Real-time clock */
 (function(){
