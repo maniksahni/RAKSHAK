@@ -40,39 +40,7 @@
     ::-webkit-scrollbar-track { background: rgba(5,5,10,0.9); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(220,38,38,0.5); }
-    /* ── GLOBAL OMNIPRESENT TACTICAL HUD ── */
-    body { border: none !important; margin: 0; padding: 0; }
-    .global-hud-anchor {
-      position: fixed; inset: 0; pointer-events: none; z-index: 99999;
-      box-shadow: inset 0 0 100px rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.2);
-    }
-    .ghud-top-label {
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      background: rgba(244,63,94,0.2); border-bottom: 1px solid rgba(244,63,94,0.4);
-      padding: 2px 20px; border-radius: 0 0 8px 8px; font-family: 'Courier New', monospace;
-      font-size: 0.6rem; color: #f43f5e; font-weight: 800; letter-spacing: 0.3em;
-      text-shadow: 0 0 5px #f43f5e; backdrop-filter: blur(5px);
-    }
-    .ghud-scanline {
-      position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(244,63,94,0.8), transparent);
-      box-shadow: 0 0 10px rgba(244,63,94,0.5);
-      animation: globalRadarScan 8s linear infinite; opacity: 0.4;
-    }
-    @keyframes globalRadarScan {
-      0% { top: 0; opacity: 0; }
-      10% { opacity: 0.5; }
-      90% { opacity: 0.5; }
-      100% { top: 100%; opacity: 0; }
-    }
-    .ghud-bracket {
-      position: absolute; width: 30px; height: 30px; border: 2px solid #f43f5e; opacity: 0.3;
-      transition: all 0.3s;
-    }
-    .ghud-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
-    .ghud-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
-    .ghud-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
-    .ghud-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+    body { margin: 0; padding: 0; }
 
     /* ── VALKYRIE FEMME-TECH OVERRIDE ── */
     :root {
@@ -184,13 +152,7 @@
 })();
 </script>
 
-  <!-- ── PERSISTENT SYSTEM UPLINK HUD ── -->
-  <div class="global-hud-anchor">
-    <div class="ghud-top-label">RAKSHAK // ADVANCED WOMEN'S SAFETY // DEFCON 3</div>
-    <div class="ghud-scanline"></div>
-    <div class="ghud-bracket ghud-tl"></div><div class="ghud-bracket ghud-tr"></div>
-    <div class="ghud-bracket ghud-bl"></div><div class="ghud-bracket ghud-br"></div>
-  </div>
+
 
   <!-- ── GLOBAL PANIC SOS LOGIC ─────────────────────────────────────────────── -->
   <script>
