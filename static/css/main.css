@@ -517,33 +517,30 @@ h1,h2,h3,h4,h5,h6 {
   top: 0;
   left: 0;
   z-index: 101;
-  padding: 1.5rem 0 5rem;
+  padding: 0.8rem 0 2rem;
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
   transform: translateZ(0);
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(244,63,94,0.3) transparent;
+  scrollbar-width: none;
 }
-.sidebar::-webkit-scrollbar { width: 3px; }
-.sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: rgba(244,63,94,0.4); border-radius: 3px; }
+.sidebar::-webkit-scrollbar { display: none; }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 24px;
+  gap: 12px;
+  padding: 7px 18px;
   color: var(--text-secondary);
   text-decoration: none;
   font-weight: 500;
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
   position: relative;
-  margin: 4px 12px;
-  border-radius: 14px;
+  margin: 2px 10px;
+  border-radius: 12px;
 }
 .sidebar-link:hover, .sidebar-link.active {
   color: #fff;
