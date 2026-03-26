@@ -67,27 +67,38 @@
 .sos-btn:active { transform: scale(0.96) !important; }
 
 /* ── PREMIUM TABLE OVERHAUL ── */
-.cyber-grid-table { border-collapse: separate; border-spacing: 0; width: 100%; }
+/* Force override Bootstrap's white table backgrounds */
+.cyber-grid-table,
+.cyber-grid-table.table {
+  border-collapse: separate; border-spacing: 0; width: 100%;
+  --bs-table-bg: transparent !important;
+  --bs-table-striped-bg: transparent !important;
+  --bs-table-hover-bg: rgba(244,63,94,0.06) !important;
+  --bs-table-color: rgba(255,255,255,0.8) !important;
+  background-color: transparent !important;
+  color: rgba(255,255,255,0.8) !important;
+}
 .cyber-grid-table thead tr {
-  background: linear-gradient(90deg, rgba(244,63,94,0.08), rgba(244,63,94,0.04), transparent);
+  background: linear-gradient(90deg, rgba(244,63,94,0.08), rgba(244,63,94,0.04), transparent) !important;
   border-bottom: 1px solid rgba(244,63,94,0.2);
 }
 .cyber-grid-table thead th {
   font-family: 'Courier New', monospace; font-size: 0.62rem; font-weight: 800;
-  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,63,94,0.8);
-  padding: 14px 16px; border: none; white-space: nowrap;
+  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,63,94,0.8) !important;
+  padding: 14px 16px; border: none !important; white-space: nowrap;
+  background-color: transparent !important;
 }
 .cyber-grid-table tbody td {
-  padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.03);
-  font-size: 0.84rem; color: rgba(255,255,255,0.75); transition: all 0.2s;
-  vertical-align: middle;
+  padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.03) !important;
+  font-size: 0.84rem; color: rgba(255,255,255,0.75) !important; transition: all 0.2s;
+  vertical-align: middle; background-color: transparent !important;
 }
 .cyber-grid-table tbody tr {
   transition: background 0.25s, transform 0.25s;
-  position: relative;
+  position: relative; background-color: transparent !important;
 }
-.cyber-grid-table tbody tr:hover { background: rgba(244,63,94,0.04) !important; }
-.cyber-grid-table tbody tr:hover td { color: rgba(255,255,255,0.95); }
+.cyber-grid-table tbody tr:hover { background: rgba(244,63,94,0.06) !important; }
+.cyber-grid-table tbody tr:hover td { color: rgba(255,255,255,0.95) !important; }
 
 /* ── ULTRA STAT CARDS ── */
 .stat-card {
