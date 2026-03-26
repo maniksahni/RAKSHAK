@@ -306,7 +306,7 @@ async function loadUsers(q='') {
         </td>
         <td style="vertical-align:middle;font-size:0.7rem;font-weight:700;letter-spacing:.05em;">${statusIcon}</td>
         <td style="vertical-align:middle;">
-          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" data-bs-toggle="modal" data-bs-target="#dossierModal" onclick="openDossier(${u.id})">
+          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" onclick="openDossier(${u.id})">
             ACCESS DOSSIER <i class="bi bi-box-arrow-in-up-right ms-1"></i>
           </button>
         </td>
@@ -362,7 +362,18 @@ window.openDossier = function(uid) {
     toggleBtn.style.borderColor = 'rgba(34,197,94,.4)';
   }
   
-  // Modal is now handled natively via Bootstrap data-bs-toggle
+  // Open the custom side-panel dossier
+  const sidePanel = document.getElementById('customDossierPanel');
+  const overlay   = document.getElementById('customDossierOverlay');
+  if (sidePanel) sidePanel.classList.add('open');
+  if (overlay) overlay.classList.add('show');
+}
+
+window.closeDossier = function() {
+  const sidePanel = document.getElementById('customDossierPanel');
+  const overlay   = document.getElementById('customDossierOverlay');
+  if (sidePanel) sidePanel.classList.remove('open');
+  if (overlay) overlay.classList.remove('show');
 }
 
 let searchTimeout;
