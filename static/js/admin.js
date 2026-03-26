@@ -306,7 +306,7 @@ async function loadUsers(q='') {
         </td>
         <td style="vertical-align:middle;font-size:0.7rem;font-weight:700;letter-spacing:.05em;">${statusIcon}</td>
         <td style="vertical-align:middle;">
-          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" data-bs-toggle="modal" data-bs-target="#dossierModal" onclick="event.stopPropagation();openDossier(${u.id})">
+          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" data-bs-toggle="modal" data-bs-target="#dossierModal" onclick="openDossier(${u.id})">
             ACCESS DOSSIER <i class="bi bi-box-arrow-in-up-right ms-1"></i>
           </button>
         </td>
