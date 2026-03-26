@@ -3,7 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/premium-upgrade.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/premium-upgrade.css') }}?v=3">
 <style>
 /* ════════════════════════════════════════════════
    ULTRA-PREMIUM ADMIN DASHBOARD CSS
@@ -460,9 +460,9 @@
       <h5 class="section-header"><i class="bi bi-people-fill me-2" style="color:var(--red-primary);"></i>Network Operatives DATABASE</h5>
       <input type="text" id="user-search" placeholder="Query ID/Name..." class="search-input" style="font-family:'Courier New',monospace; border-radius:4px; box-shadow:inset 0 0 10px rgba(0,0,0,0.5);" oninput="searchUsers(this.value)">
     </div>
-    <div class="glass-card overflow-hidden" style="border-radius:8px; border:1px solid rgba(244,63,94,0.2);">
-      <div class="table-responsive">
-        <table class="table cyber-grid-table mb-0" id="users-table">
+    <div class="glass-card overflow-hidden" style="border-radius:8px; border:1px solid rgba(244,63,94,0.2); background:transparent !important;">
+      <div class="table-responsive" style="background:transparent !important;">
+        <table class="table cyber-grid-table mb-0" id="users-table" style="--bs-table-bg:transparent;--bs-table-color:rgba(255,255,255,0.8);background-color:transparent !important;">
           <thead>
             <tr>
               <th>UID</th>
