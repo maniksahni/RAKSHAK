@@ -306,7 +306,7 @@ async function loadUsers(q='') {
         </td>
         <td style="vertical-align:middle;font-size:0.7rem;font-weight:700;letter-spacing:.05em;">${statusIcon}</td>
         <td style="vertical-align:middle;">
-          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" onclick="event.stopPropagation();openDossier(${u.id})">
+          <button class="btn-rakshak" style="font-size:0.7rem;padding:4px 12px;border-radius:8px;" data-bs-toggle="modal" data-bs-target="#dossierModal" onclick="event.stopPropagation();openDossier(${u.id})">
             ACCESS DOSSIER <i class="bi bi-box-arrow-in-up-right ms-1"></i>
           </button>
         </td>
@@ -362,17 +362,7 @@ window.openDossier = function(uid) {
     toggleBtn.style.borderColor = 'rgba(34,197,94,.4)';
   }
   
-  // Show Modal
-  try {
-    const modalEl = document.getElementById('dossierModal');
-    let modalInstance = bootstrap.Modal.getInstance(modalEl);
-    if (!modalInstance) {
-      modalInstance = new bootstrap.Modal(modalEl);
-    }
-    modalInstance.show();
-  } catch (e) {
-    console.error('Failed to open modal:', e);
-  }
+  // Modal is now handled natively via Bootstrap data-bs-toggle
 }
 
 let searchTimeout;
