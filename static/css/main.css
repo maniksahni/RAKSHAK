@@ -517,7 +517,7 @@ h1,h2,h3,h4,h5,h6 {
   top: 0;
   left: 0;
   z-index: 101;
-  padding: 0.8rem 0 2rem;
+  padding: 0.8rem 0 5rem;
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
   transform: translateZ(0);
