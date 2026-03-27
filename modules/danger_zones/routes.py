@@ -160,7 +160,19 @@ def check_proximity():
         except ValueError as ve:
             return jsonify(success=False, error=str(ve)), 400
 
-        zones = query_db("SELECT * FROM danger_zones WHERE status='approved'")
+        # Bounding box pre-filter (~500m ≈ 0.0045° lat, lon varies by cos(lat))
+        delta_lat = 500.0 / 111_320.0
+        delta_lng = 500.0 / (111_320.0 * max(math.cos(math.radians(user_lat)), 0.01))
+
+        zones = query_db(
+            """SELECT id, latitude, longitude, zone_type, description, severity
+               FROM danger_zones
+               WHERE status='approved'
+                 AND latitude  BETWEEN %s AND %s
+                 AND longitude BETWEEN %s AND %s""",
+            (user_lat - delta_lat, user_lat + delta_lat,
+             user_lng - delta_lng, user_lng + delta_lng)
+        )
         nearby = []
         for z in zones:
             dist = haversine_distance(

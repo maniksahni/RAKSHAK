@@ -92,25 +92,25 @@ def analytics():
         # Peak hours distribution
         peak_hours = query_db(
             """SELECT HOUR(created_at) as hour, COUNT(*) as count
-               FROM sos_alerts GROUP BY HOUR(created_at) ORDER BY hour"""
+               FROM sos_alerts GROUP BY HOUR(created_at) ORDER BY hour LIMIT 24"""
         )
 
         # Risk level distribution
         risk_dist = query_db(
             """SELECT risk_level, COUNT(*) as count
                FROM users WHERE role='user' AND is_active=TRUE
-               GROUP BY risk_level"""
+               GROUP BY risk_level LIMIT 50"""
         )
 
         # Alert status distribution
         alert_status = query_db(
-            """SELECT status, COUNT(*) as count FROM sos_alerts GROUP BY status"""
+            """SELECT status, COUNT(*) as count FROM sos_alerts GROUP BY status LIMIT 50"""
         )
 
         # Zone type distribution
         zone_types = query_db(
             """SELECT zone_type, COUNT(*) as count
-               FROM danger_zones WHERE status='approved' GROUP BY zone_type"""
+               FROM danger_zones WHERE status='approved' GROUP BY zone_type LIMIT 50"""
         )
 
         def serialize(rows):
@@ -217,7 +217,7 @@ def pending_zones():
         zones = query_db(
             """SELECT dz.*, u.full_name as reporter_name, u.email as reporter_email
                FROM danger_zones dz JOIN users u ON dz.reported_by=u.id
-               WHERE dz.status='pending' ORDER BY dz.created_at DESC"""
+               WHERE dz.status='pending' ORDER BY dz.created_at DESC LIMIT 100"""
         )
         result = []
         for z in zones:

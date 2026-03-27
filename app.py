@@ -70,7 +70,8 @@ def _scheduled_check_missed():
                     logger.info(f'User {u["id"]} risk → {risk} (missed={missed})')
 
                     if missed == AUTO_SOS_THRESHOLD:
-                        _trigger_auto_sos_bg(u['id'])
+                        from modules.sos.auto_sos import trigger_auto_sos
+                        trigger_auto_sos(u['id'], socketio)
 
                 except Exception as e:
                     logger.error(f'Scheduler: error processing user {u["id"]}: {e}')
@@ -78,61 +79,6 @@ def _scheduled_check_missed():
     except Exception as e:
         log.error(f'Scheduler job _scheduled_check_missed crashed: {e}')
 
-
-def _trigger_auto_sos_bg(user_id):
-    """Background-safe auto-SOS trigger (no request context needed)."""
-    try:
-        from models import query_db, log_audit
-        from socket_events import emit_sos_alert
-        from healer import logger
-
-        last_ping = query_db(
-            """SELECT latitude, longitude FROM ping_logs
-               WHERE user_id=%s AND latitude IS NOT NULL
-               ORDER BY created_at DESC LIMIT 1""",
-            (user_id,), one=True
-        )
-        lat = float(last_ping['latitude'])  if last_ping else 0.0
-        lng = float(last_ping['longitude']) if last_ping else 0.0
-
-        alert_id = query_db(
-            """INSERT INTO sos_alerts
-               (user_id, latitude, longitude, trigger_type, message)
-               VALUES (%s, %s, %s, 'auto_ai',
-                       'Auto-triggered: No heartbeat detected for 6+ minutes')""",
-            (user_id, lat, lng), commit=True
-        )
-        query_db(
-            "INSERT INTO ping_logs (user_id, ping_type) VALUES (%s,'auto_sos')",
-            (user_id,), commit=True
-        )
-        log_audit(user_id, 'auto_sos_triggered', 'sos_alerts', alert_id)
-
-        contacts = query_db(
-            'SELECT contact_email FROM trusted_contacts WHERE user_id=%s', (user_id,)
-        )
-        contact_ids = []
-        for c in contacts:
-            cu = query_db('SELECT id FROM users WHERE email=%s',
-                          (c['contact_email'],), one=True)
-            if cu:
-                contact_ids.append(cu['id'])
-
-        user_info = query_db('SELECT full_name FROM users WHERE id=%s',
-                             (user_id,), one=True)
-        name = user_info['full_name'] if user_info else 'User'
-
-        emit_sos_alert(socketio, {
-            'id': alert_id, 'user_id': user_id,
-            'latitude': lat, 'longitude': lng,
-            'trigger_type': 'auto_ai',
-            'message': f'AUTO SOS: {name} stopped responding'
-        }, contact_ids, user_id)
-
-        logger.warning(f'Auto-SOS fired for user {user_id} (alert #{alert_id})')
-
-    except Exception as e:
-        log.error(f'Auto-SOS failed for user {user_id}: {e}')
 
 
 # App context manager for background jobs
