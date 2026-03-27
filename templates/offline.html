@@ -4,149 +4,246 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIGNAL LOST — RAKSHAK</title>
-  <meta name="theme-color" content="#dc2626">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0a0a0f">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --red: #dc2626; --green: #22c55e; --blue: #3b82f6; --bg: #050508; }
+    :root { --red: #dc2626; --green: #22c55e; --blue: #3b82f6; --bg: #0a0a0f; --purple: #8b5cf6; }
 
     body {
       background: var(--bg); color: #fff; min-height: 100vh;
-      font-family: 'Inter', sans-serif; overflow: hidden;
+      font-family: 'Inter', sans-serif; overflow-x: hidden;
       display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
     }
 
     /* BG grid */
     body::before {
       content: ''; position: fixed; inset: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
-      background-size: 60px 60px; pointer-events: none; z-index: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+      background-size: 50px 50px; pointer-events: none; z-index: 0;
     }
 
-    /* ambient glow */
     body::after {
       content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(circle at 50% 50%, transparent 40%, #05050a 100%),
-                  radial-gradient(circle at top right, rgba(59,130,246,0.1), transparent 60%);
+      background: radial-gradient(circle at 50% 30%, rgba(139,92,246,0.08), transparent 60%),
+                  radial-gradient(circle at 80% 80%, rgba(220,38,38,0.06), transparent 50%);
     }
 
-    .page { position: relative; z-index: 1; text-align: center; padding: 3rem; max-width: 560px; width: 100%; border-radius:24px; background:rgba(255,255,255,0.02); backdrop-filter:blur(40px); border:1px solid rgba(255,255,255,0.05); box-shadow:0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1); }
+    .page {
+      position: relative; z-index: 1; text-align: center; padding: 2.5rem;
+      max-width: 520px; width: 95%; border-radius: 24px;
+      background: rgba(255,255,255,0.02); backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
 
-    /* Radar */
-    .radar-wrapper { position: relative; width: 160px; height: 160px; margin: 0 auto 2rem; border-radius:50%; background:rgba(255,255,255,0.02); box-shadow:inset 0 0 20px rgba(59,130,246,0.1); border:1px solid rgba(255,255,255,0.05); }
-    .radar-ring {
-      position: absolute; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      border: 1px solid rgba(59,130,246,0.2);
+    /* Shield SVG Animation */
+    .shield-container { position: relative; width: 140px; height: 140px; margin: 0 auto 2rem; }
+    .shield-svg { width: 100%; height: 100%; }
+    .shield-pulse-ring {
+      position: absolute; inset: -15px; border-radius: 50%;
+      border: 2px solid rgba(139,92,246,0.3);
+      animation: shieldPulse 2.5s ease-out infinite;
     }
-    .radar-ring:nth-child(1) { width:100%;height:100%; }
-    .radar-ring:nth-child(2) { width:70%;height:70%; }
-    .radar-ring:nth-child(3) { width:40%;height:40%; }
-    .radar-sweep {
-      position:absolute;width:50%;height:2px;top:50%;left:50%;transform-origin:left center;
-      animation:spin 4s linear infinite;
+    .shield-pulse-ring:nth-child(2) { animation-delay: 0.8s; }
+    .shield-pulse-ring:nth-child(3) { animation-delay: 1.6s; }
+    @keyframes shieldPulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+    .shield-scan-line {
+      position: absolute; left: 10%; right: 10%; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent);
+      animation: shieldScan 3s ease-in-out infinite;
     }
-    .radar-sweep::before {
-      content:'';position:absolute;width:100%;height:100%;
-      background:linear-gradient(90deg,#8b5cf6,transparent);box-shadow:0 0 12px rgba(139,92,246,0.5);
+    @keyframes shieldScan { 0% { top: 15%; } 50% { top: 80%; } 100% { top: 15%; } }
+
+    /* Signal wave */
+    .signal-wave {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     }
-    .radar-center {
-      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-      width:12px;height:12px;border-radius:50%;background:#8b5cf6;
-      box-shadow:0 0 20px rgba(139,92,246,0.8);animation:pulse 2s ease-in-out infinite;
+    .signal-wave span {
+      display: inline-block; width: 3px; height: 12px; margin: 0 2px;
+      background: rgba(139,92,246,0.5); border-radius: 3px;
+      animation: wave 1.2s ease-in-out infinite;
     }
-    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-    @keyframes pulse { 50%{transform:translate(-50%,-50%) scale(1.3);opacity:0.6} }
-    .radar-blip {
-      position:absolute;width:6px;height:6px;border-radius:50%;background:#3b82f6;opacity:0;
-      animation:blip 4s ease-out infinite;
-    }
-    .radar-blip:nth-child(6){top:30%;left:60%;animation-delay:.4s;}
-    .radar-blip:nth-child(7){top:70%;left:35%;animation-delay:1.5s;}
-    @keyframes blip {0%{opacity:0;transform:scale(0)}20%{opacity:1;transform:scale(1.5)}100%{opacity:0;transform:scale(0)}}
+    .signal-wave span:nth-child(1) { animation-delay: 0s; height: 8px; }
+    .signal-wave span:nth-child(2) { animation-delay: 0.1s; height: 14px; }
+    .signal-wave span:nth-child(3) { animation-delay: 0.2s; height: 20px; }
+    .signal-wave span:nth-child(4) { animation-delay: 0.3s; height: 14px; }
+    .signal-wave span:nth-child(5) { animation-delay: 0.4s; height: 8px; }
+    @keyframes wave { 0%,100% { transform: scaleY(0.5); opacity: 0.3; } 50% { transform: scaleY(1.2); opacity: 1; } }
 
     /* Status badge */
     .signal-badge {
-      display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:50px;
-      border:1px solid rgba(139,92,246,0.3);background:rgba(139,92,246,0.1);
-      font-size:0.75rem;font-weight:600;letter-spacing:0.1em;color:#c4b5fd;
-      margin-bottom:1.5rem;
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px;
+      border-radius: 50px; border: 1px solid rgba(220,38,38,0.3);
+      background: rgba(220,38,38,0.08); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.12em; color: #fca5a5; margin-bottom: 1.5rem;
+      font-family: 'Space Grotesk', sans-serif;
     }
-    .badge-dot { width:8px;height:8px;border-radius:50%;background:#a78bfa;animation:blink 1.5s ease-in-out infinite;box-shadow:0 0 8px #a78bfa; }
-    @keyframes blink { 50%{opacity:0.3;} }
+    .badge-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--red); animation: blink 1s ease-in-out infinite;
+      box-shadow: 0 0 10px var(--red);
+    }
+    @keyframes blink { 50% { opacity: 0.2; } }
 
     h1 {
-      font-size: 2.8rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem;
-      background: linear-gradient(180deg, #fff 40%, rgba(255,255,255,0.5) 100%);
+      font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 900;
+      letter-spacing: -0.03em; margin-bottom: 0.5rem;
+      background: linear-gradient(180deg, #fff 40%, rgba(255,255,255,0.4));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
+    .subtitle { font-size: 0.9rem; color: rgba(255,255,255,0.45); line-height: 1.7; margin-bottom: 1.5rem; }
 
-    .subtitle { font-size:0.95rem;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:2rem; font-weight:400; }
+    /* Last Known Location */
+    .location-bar {
+      background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.15);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 10px; font-size: 0.8rem;
+    }
+    .location-bar .loc-icon { color: var(--purple); font-size: 1.1rem; }
+    .location-bar .loc-text { color: rgba(255,255,255,0.6); flex: 1; text-align: left; }
+    .location-bar .loc-time { color: rgba(255,255,255,0.3); font-size: 0.7rem; font-family: 'Space Grotesk', sans-serif; }
 
     /* Terminal log */
     .terminal-log {
-      background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
-      border-radius:12px;padding:16px;margin-bottom:2rem;text-align:left;
-      font-family:'Inter', sans-serif;font-size:0.8rem;line-height:1.8em;
-      color:rgba(255,255,255,0.6);max-height:120px;overflow:hidden;
+      background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; padding: 0; margin-bottom: 1.5rem; text-align: left;
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.75rem;
+      line-height: 1.9; color: rgba(255,255,255,0.5); max-height: 130px;
+      overflow: hidden;
     }
-    .log-line { display:flex;gap:12px;animation:logIn .3s ease both; align-items:center; }
-    @keyframes logIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
-    .log-ts { color:rgba(255,255,255,0.3); font-size:0.75rem; }
-    .log-err { color:#ef4444; font-weight:600; }
-    .log-ok  { color:#22c55e; font-weight:600; }
-    .log-warn { color:#f59e0b; font-weight:600; }
+    .terminal-header {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+      background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .terminal-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .terminal-dot.red { background: #ff5f56; }
+    .terminal-dot.yellow { background: #ffbd2e; }
+    .terminal-dot.green { background: #27c93f; }
+    .terminal-body { padding: 10px 14px; }
+    .log-line { display: flex; gap: 10px; animation: logIn .3s ease both; align-items: baseline; }
+    @keyframes logIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+    .log-ts { color: rgba(255,255,255,0.2); font-size: 0.68rem; min-width: 55px; }
+    .log-err { color: #ef4444; font-weight: 700; }
+    .log-ok  { color: #22c55e; font-weight: 700; }
+    .log-warn { color: #f59e0b; font-weight: 700; }
 
-    /* Metric chips */
-    .metrics { display:flex;gap:12px;justify-content:center;margin-bottom:2rem;flex-wrap:wrap; }
+    /* Metrics */
+    .metrics { display: flex; gap: 10px; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .metric {
-      background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);
-      border-radius:12px;padding:12px 20px;text-align:center;min-width:100px;
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px; padding: 12px 18px; text-align: center; min-width: 90px; flex: 1;
     }
-    .metric-val { font-size:1.5rem;font-weight:800;color:#fff;display:block; letter-spacing:-0.02em; }
-    .metric-val.green { color:#22c55e; }
-    .metric-lbl { font-size:0.65rem;letter-spacing:0.05em;text-transform:uppercase;color:rgba(255,255,255,0.4); font-weight:600;}
+    .metric-val {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 900;
+      color: #fff; display: block; letter-spacing: -0.02em;
+    }
+    .metric-val.green { color: var(--green); }
+    .metric-val.red { color: var(--red); }
+    .metric-lbl { font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.3); font-weight: 700; }
+
+    /* SOS Button */
+    .btn-sos {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 36px; border: 2px solid var(--red); border-radius: 50px;
+      background: rgba(220,38,38,0.15); color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem; font-weight: 900; letter-spacing: 0.05em; cursor: pointer;
+      transition: all 0.3s; box-shadow: 0 0 20px rgba(220,38,38,0.2);
+      animation: sosPulse 2s ease-in-out infinite; width: 100%; margin-bottom: 12px;
+    }
+    .btn-sos:hover { background: rgba(220,38,38,0.3); box-shadow: 0 0 40px rgba(220,38,38,0.4); transform: translateY(-2px); }
+    .btn-sos:active { transform: translateY(0); }
+    .btn-sos.queued { background: rgba(246,173,85,0.15); border-color: #f59e0b; color: #fbbf24; animation: none; }
+    @keyframes sosPulse { 0%,100% { box-shadow: 0 0 15px rgba(220,38,38,0.2); } 50% { box-shadow: 0 0 30px rgba(220,38,38,0.5); } }
 
     /* Retry button */
     .btn-retry {
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      padding:14px 36px;border:none;border-radius:50px;
-      background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;
-      font-size:0.95rem;font-weight:700;letter-spacing:0.02em;cursor:pointer;
-      transition:all 0.3s;box-shadow:0 4px 20px rgba(59,130,246,0.3);
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 30px; border: 1px solid rgba(59,130,246,0.3); border-radius: 50px;
+      background: rgba(59,130,246,0.08); color: var(--blue);
+      font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: all 0.3s; width: 100%;
     }
-    .btn-retry:hover { transform:translateY(-2px);box-shadow:0 8px 30px rgba(59,130,246,0.4); }
-    .btn-retry:active { transform:translateY(0); }
+    .btn-retry:hover { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.5); transform: translateY(-2px); }
+    .btn-retry.loading { pointer-events: none; opacity: 0.6; }
 
-    .footer-note { margin-top:2rem;font-size:0.75rem;color:rgba(255,255,255,0.2); font-weight:500; }
+    /* Toast */
+    .toast-notification {
+      position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%);
+      background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3);
+      backdrop-filter: blur(20px); border-radius: 50px; padding: 12px 24px;
+      font-size: 0.85rem; font-weight: 600; color: var(--green); z-index: 100;
+      transition: bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .toast-notification.show { bottom: 30px; }
+
+    .footer-note {
+      margin-top: 1.5rem; font-size: 0.65rem; color: rgba(255,255,255,0.15);
+      font-weight: 600; letter-spacing: 0.1em; font-family: 'Space Grotesk', sans-serif;
+    }
+
+    @media (max-width: 480px) {
+      .page { padding: 2rem 1.5rem; }
+      h1 { font-size: 1.8rem; }
+      .shield-container { width: 110px; height: 110px; }
+    }
   </style>
 </head>
 <body>
+
 <div class="page">
 
-  <!-- Radar -->
-  <div class="radar-wrapper">
-    <div class="radar-ring"></div>
-    <div class="radar-ring"></div>
-    <div class="radar-ring"></div>
-    <div class="radar-sweep"></div>
-    <div class="radar-blip"></div>
-    <div class="radar-blip"></div>
-    <div class="radar-center"></div>
+  <!-- Animated Shield -->
+  <div class="shield-container">
+    <div class="shield-pulse-ring"></div>
+    <div class="shield-pulse-ring"></div>
+    <div class="shield-pulse-ring"></div>
+    <div class="shield-scan-line"></div>
+    <svg class="shield-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.4"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 8 L85 25 L85 55 C85 75 50 95 50 95 C50 95 15 75 15 55 L15 25 Z"
+            fill="url(#shieldGrad)" stroke="rgba(139,92,246,0.6)" stroke-width="1.5"/>
+      <text x="50" y="58" text-anchor="middle" font-size="22" font-weight="bold" fill="white" font-family="sans-serif" opacity="0.9">R</text>
+    </svg>
+    <div class="signal-wave" style="bottom: -20px; left: 50%; transform: translateX(-50%); position: absolute;">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
   </div>
 
   <!-- Status Badge -->
-  <div class="signal-badge"><div class="badge-dot"></div> SIGNAL LOST &sdot; UPLINK SEVERED</div>
+  <div class="signal-badge"><div class="badge-dot"></div> SIGNAL LOST &middot; UPLINK SEVERED</div>
 
   <h1>You're Offline</h1>
-  <p class="subtitle">RAKSHAK has lost network connectivity.<br>Emergency core modules are operating in standby mode.</p>
+  <p class="subtitle">RAKSHAK has lost network connectivity.<br>Emergency core modules operating in standby.</p>
 
-  <!-- Live terminal log -->
+  <!-- Last Known Location -->
+  <div class="location-bar" id="location-bar" style="display:none;">
+    <span class="loc-icon">&#9678;</span>
+    <span class="loc-text" id="loc-text">Acquiring...</span>
+    <span class="loc-time" id="loc-time"></span>
+  </div>
+
+  <!-- Terminal Log -->
   <div class="terminal-log" id="terminal-log">
-    <div class="log-line"><span class="log-ts">00:00:01</span><span class="log-err">ERR</span><span>Connection refused · dns_probe_finished_no_internet</span></div>
-    <div class="log-line"><span class="log-ts">00:00:02</span><span class="log-warn">WRN</span><span>Retry attempt [1/∞] · exponential backoff applied</span></div>
-    <div class="log-line"><span class="log-ts">00:00:04</span><span class="log-err">ERR</span><span>GPS beacon: NO UPLINK · local cache active</span></div>
-    <div class="log-line"><span class="log-ts">00:00:06</span><span class="log-ok">INF</span><span>Emergency contacts cached · SOS queue armed</span></div>
-    <div class="log-line"><span class="log-ts">00:00:08</span><span class="log-warn">WRN</span><span>Satellite relay: DEGRADED · reconnecting...</span></div>
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left:8px;font-size:0.65rem;color:rgba(255,255,255,0.3);letter-spacing:0.1em;">RAKSHAK DIAG</span>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+      <div class="log-line"><span class="log-ts">00:00:01</span><span class="log-err">ERR</span><span>Connection refused · dns_probe_finished_no_internet</span></div>
+      <div class="log-line"><span class="log-ts">00:00:02</span><span class="log-warn">WRN</span><span>Retry attempt [1] · exponential backoff</span></div>
+      <div class="log-line"><span class="log-ts">00:00:04</span><span class="log-ok">INF</span><span>Emergency contacts cached · SOS queue armed</span></div>
+    </div>
   </div>
 
   <!-- Metrics -->
@@ -157,60 +254,179 @@
     </div>
     <div class="metric">
       <span class="metric-val" id="offline-secs">0</span>
-      <span class="metric-lbl">Seconds Offline</span>
+      <span class="metric-lbl">Sec Offline</span>
     </div>
     <div class="metric">
-      <span class="metric-val green">✓</span>
+      <span class="metric-val green">&#10003;</span>
       <span class="metric-lbl">SOS Armed</span>
     </div>
   </div>
 
-  <!-- Retry Button -->
-  <button class="btn-retry" id="retry-btn" onclick="attemptRetry()">
-    <i>↺</i> Reconnect to RAKSHAK
+  <!-- SOS Emergency Button -->
+  <button class="btn-sos" id="sos-btn" onclick="triggerOfflineSOS()">
+    &#9888; SOS EMERGENCY
   </button>
 
-  <div class="footer-note">RAKSHAK Safety System · Offline Mode · v3.0</div>
+  <!-- Retry Button -->
+  <button class="btn-retry" id="retry-btn" onclick="attemptRetry()">
+    &#8634; Reconnect to RAKSHAK
+  </button>
+
+  <div class="footer-note">RAKSHAK SAFETY SYSTEM &middot; OFFLINE MODE &middot; v3.0</div>
 </div>
+
+<!-- Toast -->
+<div class="toast-notification" id="toast"></div>
 
 <script>
 let retries = 0, elapsed = 0;
 const retryEl = document.getElementById('retry-count');
 const secsEl = document.getElementById('offline-secs');
-const logEl = document.getElementById('terminal-log');
+const logBody = document.getElementById('terminal-body');
 
-setInterval(() => {
-  elapsed++;
-  secsEl.textContent = elapsed;
-}, 1000);
+// Offline timer
+setInterval(() => { elapsed++; secsEl.textContent = elapsed; }, 1000);
 
 function addLog(type, msg) {
-  const ts = String(Math.floor(elapsed/60)).padStart(2,'0') + ':' + String(elapsed%60).padStart(2,'0') + ':' + String(Date.now()%60).padStart(2,'0');
+  const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
+  const ss = String(elapsed % 60).padStart(2, '0');
   const line = document.createElement('div');
   line.className = 'log-line';
   const cls = type === 'ERR' ? 'log-err' : type === 'OK' ? 'log-ok' : 'log-warn';
-  line.innerHTML = `<span class="log-ts">${ts}</span><span class="${cls}">${type}</span><span>${msg}</span>`;
-  logEl.appendChild(line);
-  logEl.scrollTop = logEl.scrollHeight;
+  line.innerHTML = '<span class="log-ts">' + mm + ':' + ss + '</span><span class="' + cls + '">' + type + '</span><span>' + msg + '</span>';
+  logBody.appendChild(line);
+  logBody.scrollTop = logBody.scrollHeight;
 }
 
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Retry connection
 function attemptRetry() {
+  const btn = document.getElementById('retry-btn');
+  btn.classList.add('loading');
+  btn.innerHTML = '&#8987; Probing...';
   retries++;
   retryEl.textContent = retries;
-  addLog('WRN', `Retry attempt [${retries}] initiated by operator`);
-  setTimeout(() => {
-    addLog('WRN', 'Probing network gateway...');
-    setTimeout(() => window.location.reload(), 800);
-  }, 400);
+  addLog('WRN', 'Retry [' + retries + '] initiated by operator');
+
+  fetch('/', { method: 'HEAD', cache: 'no-store' })
+    .then(() => {
+      addLog('OK', 'Gateway responding · reloading...');
+      setTimeout(() => window.location.reload(), 500);
+    })
+    .catch(() => {
+      addLog('ERR', 'Still offline · holding position');
+      btn.classList.remove('loading');
+      btn.innerHTML = '&#8634; Reconnect to RAKSHAK';
+    });
 }
 
-/* Auto-retry every 30s */
+// Offline SOS
+function triggerOfflineSOS() {
+  const btn = document.getElementById('sos-btn');
+
+  // Get location if available
+  let lat = null, lng = null;
+  const cached = localStorage.getItem('rakshak_last_location');
+  if (cached) {
+    try { const loc = JSON.parse(cached); lat = loc.lat; lng = loc.lng; } catch(e) {}
+  }
+
+  const sosData = {
+    type: 'sos',
+    timestamp: new Date().toISOString(),
+    latitude: lat,
+    longitude: lng,
+    offline: true
+  };
+
+  // Store in localStorage queue
+  const queue = JSON.parse(localStorage.getItem('rakshak_sos_queue') || '[]');
+  queue.push(sosData);
+  localStorage.setItem('rakshak_sos_queue', JSON.stringify(queue));
+
+  // Forward to service worker
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage('FLUSH_SOS_QUEUE');
+  }
+
+  // Try to send (will be caught by SW and queued)
+  fetch('/sos/trigger', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(sosData)
+  }).catch(() => {});
+
+  // Vibrate
+  if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
+
+  // Update UI
+  btn.classList.add('queued');
+  btn.innerHTML = '&#9888; SOS QUEUED — WILL SEND WHEN ONLINE';
+  addLog('OK', 'SOS queued · will transmit on reconnect');
+  showToast('SOS Emergency queued for delivery');
+
+  // Update metric
+  const sosMetric = document.querySelector('.metric-val.green');
+  if (sosMetric) { sosMetric.textContent = '1'; sosMetric.classList.remove('green'); sosMetric.classList.add('red'); }
+}
+
+// Last Known Location
+(function() {
+  const bar = document.getElementById('location-bar');
+  const text = document.getElementById('loc-text');
+  const time = document.getElementById('loc-time');
+
+  const cached = localStorage.getItem('rakshak_last_location');
+  if (cached) {
+    try {
+      const loc = JSON.parse(cached);
+      bar.style.display = 'flex';
+      text.textContent = loc.lat.toFixed(5) + ', ' + loc.lng.toFixed(5);
+      if (loc.timestamp) {
+        const ago = Math.round((Date.now() - new Date(loc.timestamp).getTime()) / 60000);
+        time.textContent = ago < 1 ? 'just now' : ago + 'm ago';
+      }
+    } catch(e) {}
+  }
+
+  // Try to get fresh location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      bar.style.display = 'flex';
+      text.textContent = pos.coords.latitude.toFixed(5) + ', ' + pos.coords.longitude.toFixed(5);
+      time.textContent = 'live';
+      localStorage.setItem('rakshak_last_location', JSON.stringify({
+        lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: new Date().toISOString()
+      }));
+    }, () => {}, { timeout: 5000, maximumAge: 300000 });
+  }
+})();
+
+// Auto-retry every 30s
 setInterval(() => {
   retries++;
   retryEl.textContent = retries;
-  addLog('WRN', `Auto-retry [${retries}] · polling network status`);
-  fetch('/').then(() => { addLog('OK', 'Gateway responding · reloading...'); setTimeout(() => window.location.reload(), 500); }).catch(() => addLog('ERR', 'Still offline · holding position'));
+  addLog('WRN', 'Auto-retry [' + retries + '] · polling network');
+  fetch('/', { method: 'HEAD', cache: 'no-store' })
+    .then(() => { addLog('OK', 'Gateway online · reloading...'); setTimeout(() => window.location.reload(), 500); })
+    .catch(() => addLog('ERR', 'Still offline · holding position'));
 }, 30000);
+
+// Listen for SW messages
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SOS_SENT') {
+      showToast('SOS delivered successfully!');
+      addLog('OK', 'SOS transmitted to command center');
+    }
+  });
+}
 </script>
 </body>
 </html>

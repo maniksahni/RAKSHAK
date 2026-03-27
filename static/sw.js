@@ -1,12 +1,17 @@
-// ── RAKSHAK Service Worker v1.0 ─────────────────────────────────────────────
-// Network-first for API, cache-first for static assets, offline fallback, push
+// ── RAKSHAK Service Worker v2.0.0 ───────────────────────────────────────────
+// Multi-cache strategy, SOS background sync, enhanced push notifications
 
-const CACHE_NAME = 'rakshak-v1';
-const OFFLINE_URL = '/offline';
+const SW_VERSION = '2.0.0';
+const CACHE_STATIC  = 'rakshak-static-v2';
+const CACHE_DYNAMIC = 'rakshak-dynamic-v2';
+const CACHE_API     = 'rakshak-api-v2';
+const OFFLINE_URL   = '/offline';
 
-// Static assets to pre-cache on install
+// Static app shell to pre-cache
 const PRECACHE_ASSETS = [
   '/',
+  '/dashboard/',
+  '/login/',
   '/static/css/main.css',
   '/static/js/dashboard.js',
   '/static/js/admin.js',
@@ -18,30 +23,29 @@ const PRECACHE_ASSETS = [
 // ── INSTALL: pre-cache static shell ─────────────────────────────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching app shell');
+    caches.open(CACHE_STATIC).then((cache) => {
+      console.log(`[SW ${SW_VERSION}] Pre-caching app shell`);
       return cache.addAll(PRECACHE_ASSETS);
     })
   );
-  // Activate immediately, don't wait for old SW to die
   self.skipWaiting();
 });
 
 // ── ACTIVATE: purge old caches ──────────────────────────────────────────────
 self.addEventListener('activate', (event) => {
+  const currentCaches = [CACHE_STATIC, CACHE_DYNAMIC, CACHE_API];
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => name !== CACHE_NAME)
+          .filter((name) => !currentCaches.includes(name))
           .map((name) => {
-            console.log('[SW] Deleting old cache:', name);
+            console.log(`[SW ${SW_VERSION}] Purging old cache:`, name);
             return caches.delete(name);
           })
       );
     })
   );
-  // Claim all open tabs immediately
   self.clients.claim();
 });
 
@@ -50,42 +54,120 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests (POST for SOS, etc.)
+  // Handle failed SOS POST requests with background sync queue
+  if (request.method === 'POST' && url.pathname.includes('/sos/')) {
+    event.respondWith(handleSosPost(request));
+    return;
+  }
+
+  // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // Skip WebSocket upgrades (SocketIO)
+  // Skip WebSocket upgrades
   if (request.headers.get('Upgrade') === 'websocket') return;
 
-  // API / dynamic routes  ->  network-first
+  // API / dynamic routes -> network-first (cached in CACHE_API)
   if (isApiOrDynamic(url)) {
-    event.respondWith(networkFirst(request));
+    event.respondWith(networkFirst(request, CACHE_API));
     return;
   }
 
-  // Static assets  ->  cache-first
+  // Static assets -> cache-first (cached in CACHE_STATIC)
   if (isStaticAsset(url)) {
-    event.respondWith(cacheFirst(request));
+    event.respondWith(cacheFirst(request, CACHE_STATIC));
     return;
   }
 
-  // HTML pages  ->  network-first with offline fallback
+  // HTML pages -> network-first with offline fallback (cached in CACHE_DYNAMIC)
   event.respondWith(networkFirstWithOfflineFallback(request));
 });
 
-// ── Strategy: network-first (API calls) ─────────────────────────────────────
-async function networkFirst(request) {
+// ── SOS Background Sync ────────────────────────────────────────────────────
+async function handleSosPost(request) {
+  try {
+    const response = await fetch(request.clone());
+    // Notify clients of successful SOS
+    notifyClients({ type: 'SOS_SENT', status: 'delivered' });
+    return response;
+  } catch (err) {
+    // Queue the SOS for later delivery
+    const body = await request.clone().text();
+    const sosQueue = await caches.open('rakshak-sos-queue');
+    const queueKey = new Request(`/_sos_queue/${Date.now()}`);
+    await sosQueue.put(queueKey, new Response(body, {
+      headers: {
+        'Content-Type': request.headers.get('Content-Type') || 'application/json',
+        'X-Original-URL': request.url,
+        'X-Queued-At': new Date().toISOString()
+      }
+    }));
+
+    // Register for background sync
+    if (self.registration.sync) {
+      await self.registration.sync.register('flush-sos-queue');
+    }
+
+    // Notify clients SOS is queued
+    notifyClients({ type: 'SOS_QUEUED', message: 'SOS saved offline — will send when connected' });
+
+    return new Response(JSON.stringify({
+      status: 'queued',
+      message: 'SOS queued for delivery when connection restores'
+    }), {
+      status: 202,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ── Background Sync: flush SOS queue ────────────────────────────────────────
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'flush-sos-queue') {
+    event.waitUntil(flushSosQueue());
+  }
+});
+
+async function flushSosQueue() {
+  const sosQueue = await caches.open('rakshak-sos-queue');
+  const keys = await sosQueue.keys();
+
+  for (const key of keys) {
+    const cached = await sosQueue.match(key);
+    if (!cached) continue;
+
+    const body = await cached.text();
+    const originalUrl = cached.headers.get('X-Original-URL');
+    const contentType = cached.headers.get('Content-Type');
+
+    try {
+      const response = await fetch(originalUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': contentType },
+        body: body
+      });
+
+      if (response.ok) {
+        await sosQueue.delete(key);
+        notifyClients({ type: 'SOS_SENT', status: 'delivered', url: originalUrl });
+      }
+    } catch (err) {
+      console.log(`[SW] SOS retry failed for ${originalUrl}, keeping in queue`);
+    }
+  }
+}
+
+// ── Strategy: network-first ─────────────────────────────────────────────────
+async function networkFirst(request, cacheName) {
   try {
     const response = await fetch(request);
-    // Cache successful API responses for offline reads
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
+      const cache = await caches.open(cacheName);
       cache.put(request, response.clone());
     }
     return response;
   } catch (err) {
     const cached = await caches.match(request);
     if (cached) return cached;
-    // For API calls with no cache, return a JSON error
     return new Response(
       JSON.stringify({ error: 'offline', message: 'No network connection' }),
       { status: 503, headers: { 'Content-Type': 'application/json' } }
@@ -93,30 +175,29 @@ async function networkFirst(request) {
   }
 }
 
-// ── Strategy: cache-first (static assets) ───────────────────────────────────
-async function cacheFirst(request) {
+// ── Strategy: cache-first ───────────────────────────────────────────────────
+async function cacheFirst(request, cacheName) {
   const cached = await caches.match(request);
   if (cached) return cached;
 
   try {
     const response = await fetch(request);
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
+      const cache = await caches.open(cacheName);
       cache.put(request, response.clone());
     }
     return response;
   } catch (err) {
-    // Return empty response for non-critical assets
     return new Response('', { status: 408, statusText: 'Offline' });
   }
 }
 
-// ── Strategy: network-first with offline fallback (HTML pages) ──────────────
+// ── Strategy: network-first with offline fallback ───────────────────────────
 async function networkFirstWithOfflineFallback(request) {
   try {
     const response = await fetch(request);
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
+      const cache = await caches.open(CACHE_DYNAMIC);
       cache.put(request, response.clone());
     }
     return response;
@@ -124,7 +205,6 @@ async function networkFirstWithOfflineFallback(request) {
     const cached = await caches.match(request);
     if (cached) return cached;
 
-    // Serve the offline fallback page
     const offlinePage = await caches.match(OFFLINE_URL);
     if (offlinePage) return offlinePage;
 
@@ -155,18 +235,23 @@ function isStaticAsset(url) {
   );
 }
 
-// ── PUSH NOTIFICATIONS: SOS alerts ──────────────────────────────────────────
+// ── Client messaging ────────────────────────────────────────────────────────
+async function notifyClients(data) {
+  const clients = await self.clients.matchAll({ type: 'window' });
+  clients.forEach(client => client.postMessage(data));
+}
+
+// ── PUSH NOTIFICATIONS: type-based routing ──────────────────────────────────
 self.addEventListener('push', (event) => {
   let data = {
-    title: 'RAKSHAK SOS ALERT',
-    body: 'Emergency alert triggered nearby.',
-    icon: '/static/icons/icon-192.png',
-    badge: '/static/icons/badge-72.png',
-    tag: 'sos-alert',
-    requireInteraction: true,
-    vibrate: [200, 100, 200, 100, 400],
+    title: 'RAKSHAK ALERT',
+    body: 'New safety notification.',
+    icon: '/static/manifest.json',
+    tag: 'rakshak-alert',
+    requireInteraction: false,
+    vibrate: [200, 100, 200],
     actions: [
-      { action: 'view', title: 'View Alert' },
+      { action: 'view', title: 'View' },
       { action: 'dismiss', title: 'Dismiss' },
     ],
   };
@@ -175,6 +260,22 @@ self.addEventListener('push', (event) => {
     try {
       const payload = event.data.json();
       data = { ...data, ...payload };
+
+      // Type-based notification styling
+      if (payload.type === 'sos') {
+        data.title = 'SOS EMERGENCY ALERT';
+        data.requireInteraction = true;
+        data.vibrate = [500, 200, 500, 200, 500, 200, 1000];
+        data.tag = 'sos-emergency';
+        data.actions = [
+          { action: 'view', title: 'View Alert' },
+          { action: 'call', title: 'Call 112' },
+        ];
+      } else if (payload.type === 'safewalk') {
+        data.title = 'SAFE WALK UPDATE';
+        data.vibrate = [100, 50, 100];
+        data.tag = 'safewalk-update';
+      }
     } catch (e) {
       data.body = event.data.text();
     }
@@ -199,24 +300,39 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const action = event.action;
-  let targetUrl = '/dashboard/';
 
-  if (action === 'view' && event.notification.data && event.notification.data.url) {
-    targetUrl = event.notification.data.url;
-  } else if (action === 'dismiss') {
+  // Emergency call action
+  if (action === 'call') {
+    event.waitUntil(self.clients.openWindow('tel:112'));
     return;
   }
 
+  if (action === 'dismiss') return;
+
+  let targetUrl = '/dashboard/';
+  if (event.notification.data && event.notification.data.url) {
+    targetUrl = event.notification.data.url;
+  }
+
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
-      // Focus existing tab if open
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
       for (const client of windowClients) {
         if (client.url.includes('/dashboard') && 'focus' in client) {
           return client.focus();
         }
       }
-      // Otherwise open a new tab
-      return clients.openWindow(targetUrl);
+      return self.clients.openWindow(targetUrl);
     })
   );
+});
+
+// ── MESSAGE HANDLER: commands from main app ─────────────────────────────────
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+  } else if (event.data === 'GET_VERSION') {
+    event.source.postMessage({ type: 'SW_VERSION', version: SW_VERSION });
+  } else if (event.data === 'FLUSH_SOS_QUEUE') {
+    flushSosQueue();
+  }
 });
