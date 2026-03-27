@@ -314,7 +314,7 @@
     </div>
     {% endif %}
 
-    <!-- ── Area Safety Status ── -->
+    <!-- ── Area Safety Status (always visible) ── -->
     <div class="sb-area-status" id="sb-area-status">
       <div class="sb-area-header">
         <span class="sb-area-icon" id="sb-area-icon">
@@ -331,99 +331,111 @@
       </div>
     </div>
 
-    <!-- ── Mini Threat Radar ── -->
-    <div class="sb-radar-wrap">
-      <div class="sb-radar-label">THREAT RADAR · <span id="sb-radar-count">0</span> NEARBY</div>
-      <div class="sb-radar">
-        <svg viewBox="0 0 100 100" class="sb-radar-svg">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(220,38,38,0.1)" stroke-width="0.5"/>
-          <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(220,38,38,0.08)" stroke-width="0.5"/>
-          <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(220,38,38,0.06)" stroke-width="0.5"/>
-          <line x1="50" y1="5" x2="50" y2="95" stroke="rgba(220,38,38,0.06)" stroke-width="0.3"/>
-          <line x1="5" y1="50" x2="95" y2="50" stroke="rgba(220,38,38,0.06)" stroke-width="0.3"/>
-          <!-- sweep -->
-          <path d="M50,50 L50,5 A45,45 0 0,1 88,25 Z" fill="url(#sbSweep)" class="sb-sweep"/>
-          <!-- dynamic blips injected by JS -->
-          <g id="sb-radar-blips"></g>
-          <defs>
-            <linearGradient id="sbSweep" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="rgba(220,38,38,0.25)"/>
-              <stop offset="100%" stop-color="transparent"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="sb-radar-center-dot"></div>
+    <!-- ── Tabbed Console ── -->
+    <div class="sb-console">
+      <div class="sb-console-tabs">
+        <button class="sb-tab active" data-tab="radar" title="Threat Radar">
+          <i class="bi bi-broadcast-pin"></i>
+          <span class="sb-tab-badge" id="sb-radar-count">0</span>
+        </button>
+        <button class="sb-tab" data-tab="vitals" title="System Vitals">
+          <i class="bi bi-activity"></i>
+        </button>
+        <button class="sb-tab" data-tab="intel" title="Live Intel">
+          <i class="bi bi-rss"></i>
+          <span class="sb-tab-live-dot"></span>
+        </button>
+        <button class="sb-tab" data-tab="stats" title="Stats Grid">
+          <i class="bi bi-grid-3x3-gap"></i>
+        </button>
+      </div>
+
+      <!-- TAB: Radar -->
+      <div class="sb-tab-panel active" id="sb-panel-radar">
+        <div class="sb-radar">
+          <svg viewBox="0 0 100 100" class="sb-radar-svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(220,38,38,0.1)" stroke-width="0.5"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(220,38,38,0.08)" stroke-width="0.5"/>
+            <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(220,38,38,0.06)" stroke-width="0.5"/>
+            <line x1="50" y1="5" x2="50" y2="95" stroke="rgba(220,38,38,0.06)" stroke-width="0.3"/>
+            <line x1="5" y1="50" x2="95" y2="50" stroke="rgba(220,38,38,0.06)" stroke-width="0.3"/>
+            <path d="M50,50 L50,5 A45,45 0 0,1 88,25 Z" fill="url(#sbSweep)" class="sb-sweep"/>
+            <g id="sb-radar-blips"></g>
+            <defs>
+              <linearGradient id="sbSweep" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="rgba(220,38,38,0.25)"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="sb-radar-center-dot"></div>
+        </div>
+      </div>
+
+      <!-- TAB: Vitals -->
+      <div class="sb-tab-panel" id="sb-panel-vitals">
+        <div class="sb-vital-row">
+          <span class="sb-vital-name"><i class="bi bi-battery-charging" id="sb-bat-icon"></i></span>
+          <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" id="sb-bat-fill" style="width:100%"></div></div>
+          <span class="sb-vital-val" id="sb-bat">100%</span>
+        </div>
+        <div class="sb-vital-row">
+          <span class="sb-vital-name">GPS</span>
+          <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-blue" id="sb-gps-fill" style="width:0%"></div></div>
+          <span class="sb-vital-val" id="sb-gps">---</span>
+        </div>
+        <div class="sb-vital-row">
+          <span class="sb-vital-name">NET</span>
+          <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-amber" id="sb-net-fill" style="width:12%"></div></div>
+          <span class="sb-vital-val" id="sb-net">---</span>
+        </div>
+        <div class="sb-vital-row">
+          <span class="sb-vital-name">ENC</span>
+          <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" style="width:100%"></div></div>
+          <span class="sb-vital-val">AES</span>
+        </div>
+      </div>
+
+      <!-- TAB: Intel -->
+      <div class="sb-tab-panel" id="sb-panel-intel">
+        <div class="sb-intel-feed" id="sb-intel-feed">
+          <div class="sb-intel-item"><span class="sb-intel-dot sb-dot-green"></span>SHIELD NOMINAL</div>
+          <div class="sb-intel-item"><span class="sb-intel-dot sb-dot-blue"></span>AES-256 ACTIVE</div>
+          <div class="sb-intel-item"><span class="sb-intel-dot sb-dot-amber"></span>SCANNING AREA...</div>
+        </div>
+      </div>
+
+      <!-- TAB: Stats -->
+      <div class="sb-tab-panel" id="sb-panel-stats">
+        <div class="sb-stats-grid">
+          <div class="sb-stat-cell">
+            <div class="sb-stat-num" id="sb-uptime">99.9<span class="sb-stat-unit">%</span></div>
+            <div class="sb-stat-lbl">UPTIME</div>
+          </div>
+          <div class="sb-stat-cell">
+            <div class="sb-stat-num" id="sb-latency">--<span class="sb-stat-unit">ms</span></div>
+            <div class="sb-stat-lbl">LATENCY</div>
+          </div>
+          <div class="sb-stat-cell">
+            <div class="sb-stat-num sb-stat-live" id="sb-shields">{{ current_user.trusted_contacts|default([])|length }}</div>
+            <div class="sb-stat-lbl">SHIELDS</div>
+          </div>
+          <div class="sb-stat-cell">
+            <div class="sb-stat-num sb-stat-threats" id="sb-threats">0</div>
+            <div class="sb-stat-lbl">THREATS</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- ── System Vitals ── -->
-    <div class="sb-vitals">
-      <div class="sb-vital-label">SYSTEM VITALS</div>
-      <div class="sb-vital-row">
-        <span class="sb-vital-name"><i class="bi bi-battery-charging" id="sb-bat-icon"></i></span>
-        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" id="sb-bat-fill" style="width:100%"></div></div>
-        <span class="sb-vital-val" id="sb-bat">100%</span>
-      </div>
-      <div class="sb-vital-row">
-        <span class="sb-vital-name">GPS</span>
-        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-blue" id="sb-gps-fill" style="width:0%"></div></div>
-        <span class="sb-vital-val" id="sb-gps">---</span>
-      </div>
-      <div class="sb-vital-row">
-        <span class="sb-vital-name">NET</span>
-        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-amber" id="sb-net-fill" style="width:12%"></div></div>
-        <span class="sb-vital-val" id="sb-net">---</span>
-      </div>
-      <div class="sb-vital-row">
-        <span class="sb-vital-name">ENC</span>
-        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" style="width:100%"></div></div>
-        <span class="sb-vital-val">AES</span>
-      </div>
-    </div>
-
-    <!-- ── Intel Ticker ── -->
-    <div class="sb-ticker-wrap">
-      <div class="sb-ticker-label"><span class="sb-ticker-dot"></span> LIVE INTEL</div>
-      <div class="sb-ticker-scroll">
-        <div id="threat-ticker" class="sb-ticker-text"></div>
-      </div>
-    </div>
-
-    <!-- ── Quick Stats Grid ── -->
-    <div class="sb-stats-grid">
-      <div class="sb-stat-cell">
-        <div class="sb-stat-num" id="sb-uptime">99.9<span class="sb-stat-unit">%</span></div>
-        <div class="sb-stat-lbl">UPTIME</div>
-      </div>
-      <div class="sb-stat-cell">
-        <div class="sb-stat-num" id="sb-latency">--<span class="sb-stat-unit">ms</span></div>
-        <div class="sb-stat-lbl">LATENCY</div>
-      </div>
-      <div class="sb-stat-cell">
-        <div class="sb-stat-num sb-stat-live" id="sb-shields">{{ current_user.trusted_contacts|default([])|length }}</div>
-        <div class="sb-stat-lbl">SHIELDS</div>
-      </div>
-      <div class="sb-stat-cell">
-        <div class="sb-stat-num sb-stat-threats" id="sb-threats">0</div>
-        <div class="sb-stat-lbl">THREATS</div>
-      </div>
-    </div>
-
-    <!-- ── Connection + Status Footer ── -->
+    <!-- ── Connection Footer (always visible) ── -->
     <div class="sb-status-footer">
       <div class="sb-status-row">
         <div class="sb-status-dot-live" id="sb-conn-dot"></div>
         <span class="sb-status-text" id="sb-conn-text">CONNECTING...</span>
       </div>
       <div class="sb-status-bars">
-        <div class="sb-sbar sb-sbar-1"></div>
-        <div class="sb-sbar sb-sbar-2"></div>
-        <div class="sb-sbar sb-sbar-3"></div>
-        <div class="sb-sbar sb-sbar-4"></div>
-        <div class="sb-sbar sb-sbar-5"></div>
-        <div class="sb-sbar sb-sbar-6"></div>
-        <div class="sb-sbar sb-sbar-7"></div>
-        <div class="sb-sbar sb-sbar-8"></div>
+        <div class="sb-sbar sb-sbar-1"></div><div class="sb-sbar sb-sbar-2"></div><div class="sb-sbar sb-sbar-3"></div><div class="sb-sbar sb-sbar-4"></div><div class="sb-sbar sb-sbar-5"></div><div class="sb-sbar sb-sbar-6"></div><div class="sb-sbar sb-sbar-7"></div><div class="sb-sbar sb-sbar-8"></div>
       </div>
       <div class="sb-version">v3.2 · RAILWAY CLOUD</div>
     </div>
@@ -437,7 +449,7 @@
 
 <!-- Sidebar HUD Styles -->
 <style>
-.sb-hud{margin:0 8px 8px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;border-top:1px solid rgba(244,63,94,.08);padding-top:8px;}
+.sb-hud{margin:0 8px 6px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;border-top:1px solid rgba(244,63,94,.08);padding-top:6px;}
 
 /* ── Quick Actions ── */
 .sb-quick-actions{display:flex;gap:3px;}
@@ -484,10 +496,29 @@
 .area-caution .sb-area-bar{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
 .area-danger .sb-area-bar{background:linear-gradient(90deg,#dc2626,#f87171);}
 
-/* ── Radar ── */
-.sb-radar-wrap{background:rgba(5,5,15,.6);border:1px solid rgba(220,38,38,.12);border-radius:6px;padding:6px;position:relative;overflow:hidden;}
-.sb-radar-label{font-size:.45rem;letter-spacing:.15em;color:rgba(220,38,38,.6);font-weight:700;margin-bottom:2px;text-align:center;}
-.sb-radar{position:relative;width:100%;aspect-ratio:1;max-width:110px;margin:0 auto;}
+/* ── Tabbed Console ── */
+.sb-console{background:rgba(5,5,15,.65);border:1px solid rgba(244,63,94,.1);border-radius:8px;overflow:hidden;}
+.sb-console-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.04);position:relative;}
+.sb-console-tabs::after{content:'';position:absolute;bottom:0;left:0;height:1px;background:var(--red-primary);width:25%;transition:transform .3s cubic-bezier(.22,1,.36,1);box-shadow:0 0 8px rgba(244,63,94,.4);}
+.sb-console-tabs[data-active="0"]::after{transform:translateX(0)}
+.sb-console-tabs[data-active="1"]::after{transform:translateX(100%)}
+.sb-console-tabs[data-active="2"]::after{transform:translateX(200%)}
+.sb-console-tabs[data-active="3"]::after{transform:translateX(300%)}
+.sb-tab{flex:1;background:none;border:none;padding:7px 4px;cursor:pointer;color:rgba(255,255,255,.3);font-size:.7rem;transition:all .25s;position:relative;display:flex;align-items:center;justify-content:center;gap:4px;}
+.sb-tab:hover{color:rgba(255,255,255,.6);background:rgba(255,255,255,.02);}
+.sb-tab.active{color:var(--red-primary);}
+.sb-tab-badge{font-size:.42rem;font-weight:800;background:rgba(220,38,38,.2);color:#f87171;padding:0 4px;border-radius:6px;line-height:1.4;min-width:12px;text-align:center;}
+.sb-tab.active .sb-tab-badge{background:rgba(220,38,38,.3);color:#fff;}
+.sb-tab-live-dot{width:4px;height:4px;border-radius:50%;background:#dc2626;box-shadow:0 0 6px #dc2626;animation:sbTickerBlink 1.5s ease-in-out infinite;}
+@keyframes sbTickerBlink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Tab Panels */
+.sb-tab-panel{display:none;padding:8px;animation:sbPanelIn .25s ease-out;}
+.sb-tab-panel.active{display:block;}
+@keyframes sbPanelIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Radar (inside tab) ── */
+.sb-radar{position:relative;width:100%;aspect-ratio:1;max-width:120px;margin:0 auto;}
 .sb-radar-svg{width:100%;height:100%;}
 .sb-sweep{transform-origin:50% 50%;animation:sbRadarSweep 4s linear infinite;}
 .sb-blip{animation:sbBlipPulse 2s ease-in-out infinite;}
@@ -495,43 +526,43 @@
 @keyframes sbRadarSweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes sbBlipPulse{0%,100%{opacity:.3;r:1.5}50%{opacity:1;r:2.5}}
 
-/* ── Vitals ── */
-.sb-vitals{background:rgba(5,5,15,.6);border:1px solid rgba(220,38,38,.1);border-radius:6px;padding:5px 8px;}
-.sb-vital-label{font-size:.42rem;letter-spacing:.18em;color:rgba(220,38,38,.5);font-weight:700;margin-bottom:3px;}
-.sb-vital-row{display:flex;align-items:center;gap:5px;margin-bottom:2px;}
+/* ── Vitals (inside tab) ── */
+.sb-vital-row{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
 .sb-vital-row:last-child{margin-bottom:0;}
-.sb-vital-name{font-size:.48rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.35);width:22px;letter-spacing:.08em;display:flex;align-items:center;}
-.sb-vital-name i{font-size:.58rem;}
-.sb-vital-bar{flex:1;height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.sb-vital-name{font-size:.5rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.35);width:22px;letter-spacing:.08em;display:flex;align-items:center;}
+.sb-vital-name i{font-size:.6rem;}
+.sb-vital-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
 .sb-vital-fill{height:100%;border-radius:2px;transition:width 1s ease;}
 .sb-fill-green{background:linear-gradient(90deg,#22c55e,#4ade80);box-shadow:0 0 4px rgba(34,197,94,.3);}
 .sb-fill-amber{background:linear-gradient(90deg,#f59e0b,#fbbf24);box-shadow:0 0 4px rgba(245,158,11,.3);}
 .sb-fill-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 4px rgba(59,130,246,.3);}
 .sb-fill-red{background:linear-gradient(90deg,#dc2626,#f87171);box-shadow:0 0 4px rgba(220,38,38,.3);}
-.sb-vital-val{font-size:.44rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.4);width:28px;text-align:right;}
+.sb-vital-val{font-size:.48rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.45);width:28px;text-align:right;}
 
-/* ── Ticker ── */
-.sb-ticker-wrap{background:rgba(244,63,94,.04);border:1px solid rgba(244,63,94,.12);border-radius:6px;padding:4px 8px;overflow:hidden;}
-.sb-ticker-label{font-size:.42rem;letter-spacing:.18em;color:rgba(244,63,94,.6);font-weight:700;display:flex;align-items:center;gap:4px;margin-bottom:2px;}
-.sb-ticker-dot{width:4px;height:4px;border-radius:50%;background:#dc2626;box-shadow:0 0 6px #dc2626;animation:sbTickerBlink 1.5s ease-in-out infinite;}
-@keyframes sbTickerBlink{0%,100%{opacity:1}50%{opacity:.3}}
-.sb-ticker-scroll{overflow:hidden;height:12px;}
-.sb-ticker-text{font-size:.5rem;color:rgba(255,255,255,.45);white-space:nowrap;font-family:'Courier New',monospace;animation:tickerScroll 25s linear infinite;}
-@keyframes tickerScroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+/* ── Intel Feed (inside tab) ── */
+.sb-intel-feed{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto;scrollbar-width:none;}
+.sb-intel-feed::-webkit-scrollbar{display:none;}
+.sb-intel-item{display:flex;align-items:center;gap:6px;font-size:.5rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.45);padding:3px 4px;border-radius:4px;background:rgba(255,255,255,.02);border-left:2px solid rgba(255,255,255,.06);transition:all .2s;}
+.sb-intel-item:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);}
+.sb-intel-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;}
+.sb-dot-red{background:#dc2626;box-shadow:0 0 4px #dc2626;}
+.sb-dot-amber{background:#f59e0b;box-shadow:0 0 4px #f59e0b;}
+.sb-dot-green{background:#22c55e;box-shadow:0 0 4px #22c55e;}
+.sb-dot-blue{background:#3b82f6;box-shadow:0 0 4px #3b82f6;}
 
-/* ── Stats Grid ── */
-.sb-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
-.sb-stat-cell{background:rgba(5,5,15,.5);border:1px solid rgba(220,38,38,.08);border-radius:5px;padding:4px 3px;text-align:center;transition:border-color .3s;}
-.sb-stat-cell:hover{border-color:rgba(220,38,38,.2);}
-.sb-stat-num{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.8);font-family:var(--font-display);line-height:1;transition:color .3s;}
+/* ── Stats Grid (inside tab) ── */
+.sb-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.sb-stat-cell{background:rgba(255,255,255,.02);border:1px solid rgba(220,38,38,.06);border-radius:6px;padding:6px 4px;text-align:center;transition:all .25s;}
+.sb-stat-cell:hover{border-color:rgba(220,38,38,.18);background:rgba(255,255,255,.04);}
+.sb-stat-num{font-size:.8rem;font-weight:800;color:rgba(255,255,255,.8);font-family:var(--font-display);line-height:1;transition:color .3s;}
 .sb-stat-unit{font-size:.42rem;opacity:.5;}
-.sb-stat-lbl{font-size:.38rem;letter-spacing:.15em;color:rgba(255,255,255,.25);margin-top:1px;}
+.sb-stat-lbl{font-size:.4rem;letter-spacing:.15em;color:rgba(255,255,255,.25);margin-top:2px;}
 .sb-stat-live{color:#22c55e;text-shadow:0 0 8px rgba(34,197,94,.4);}
 .sb-stat-threats{color:rgba(255,255,255,.8);transition:color .3s,text-shadow .3s;}
 .sb-stat-threats.has-threats{color:#dc2626;text-shadow:0 0 8px rgba(220,38,38,.4);animation:sbBlipPulse 2s ease-in-out infinite;}
 
 /* ── Status Footer ── */
-.sb-status-footer{background:rgba(5,5,15,.4);border:1px solid rgba(34,197,94,.1);border-radius:6px;padding:4px 8px;text-align:center;transition:border-color .5s;}
+.sb-status-footer{background:rgba(5,5,15,.4);border:1px solid rgba(34,197,94,.08);border-radius:6px;padding:4px 8px;text-align:center;transition:border-color .5s;}
 .sb-status-footer.conn-lost{border-color:rgba(220,38,38,.2);}
 .sb-status-row{display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:2px;}
 .sb-status-dot-live{width:4px;height:4px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:sbTickerBlink 2s ease-in-out infinite;transition:background .3s,box-shadow .3s;}
@@ -554,39 +585,54 @@
 
 /* ── Mobile Responsive ── */
 @media(max-width:991px){
-  .sb-hud{margin:6px 8px 10px;gap:6px;}
-  .sb-qa-btn{padding:6px 3px;}
-  .sb-qa-btn i{font-size:.8rem;}
-  .sb-qa-btn span{font-size:.42rem;}
-  .sb-area-score{font-size:.95rem;}
-  .sb-radar{max-width:120px;}
-  .sb-stat-num{font-size:.75rem;}
-}
-@media(max-width:575px){
-  .sb-quick-actions{gap:3px;}
-  .sb-stats-grid{gap:3px;}
-  .sb-stat-cell{padding:4px 3px;}
+  .sb-hud{margin:0 6px 6px;gap:4px;}
+  .sb-qa-btn{padding:4px 2px;}
+  .sb-qa-btn i{font-size:.7rem;}
+  .sb-area-score{font-size:.85rem;}
+  .sb-console{border-radius:6px;}
+  .sb-tab{padding:5px 3px;font-size:.6rem;}
+  .sb-radar{max-width:100px;}
 }
 </style>
 
 <script>
 (function(){
-  /* ── HUD State ── */
-  var _hudPos = null;   // {lat, lng}
-  var _hudZones = [];   // nearby danger zones cache
-  var _hudScore = null;  // safety score cache
-
-  /* ── Intel Ticker — starts with defaults, updated by real data ── */
-  var tickerItems = [
-    'SHIELD NOMINAL — All nodes OK',
-    'VALKYRIE PROTOCOL — ARMED',
-    'ENCRYPTION — AES-256 ACTIVE',
-  ];
-  var tickerEl = document.getElementById('threat-ticker');
-  function renderTicker() {
-    if (tickerEl) tickerEl.textContent = tickerItems.join('   ///   ');
+  /* ── Tab Switching ── */
+  var tabsWrap = document.querySelector('.sb-console-tabs');
+  if (tabsWrap) {
+    tabsWrap.setAttribute('data-active', '0');
+    tabsWrap.querySelectorAll('.sb-tab').forEach(function(tab, i) {
+      tab.addEventListener('click', function() {
+        // Toggle active tab
+        tabsWrap.querySelectorAll('.sb-tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        tabsWrap.setAttribute('data-active', i);
+        // Toggle panel
+        var target = tab.getAttribute('data-tab');
+        document.querySelectorAll('.sb-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        var panel = document.getElementById('sb-panel-' + target);
+        if (panel) panel.classList.add('active');
+      });
+    });
   }
-  renderTicker();
+
+  /* ── HUD State ── */
+  var _hudPos = null;
+  var _hudZones = [];
+  var _hudScore = null;
+
+  /* ── Intel Feed ── */
+  var intelFeed = document.getElementById('sb-intel-feed');
+  function addIntelItem(text, color) {
+    if (!intelFeed) return;
+    var item = document.createElement('div');
+    item.className = 'sb-intel-item';
+    item.style.animation = 'sbPanelIn .3s ease-out';
+    item.innerHTML = '<span class="sb-intel-dot sb-dot-' + (color || 'blue') + '"></span>' + text;
+    intelFeed.insertBefore(item, intelFeed.firstChild);
+    // Keep max 12 items
+    while (intelFeed.children.length > 12) intelFeed.removeChild(intelFeed.lastChild);
+  }
 
   /* ── Battery API ── */
   if (navigator.getBattery) {
@@ -695,10 +741,9 @@
         if (level) level.textContent = txt;
         if (icon) icon.innerHTML = '<i class="bi ' + ico + '"></i>';
 
-        // Update ticker with real advisory
+        // Add advisory to intel feed
         if (d.advisory) {
-          tickerItems[0] = 'AREA — ' + d.advisory.toUpperCase();
-          renderTicker();
+          addIntelItem('AREA — ' + d.advisory.toUpperCase(), _hudScore >= 70 ? 'green' : _hudScore >= 40 ? 'amber' : 'red');
         }
       }).catch(function() {});
   }
@@ -769,20 +814,15 @@
   }
 
   function updateTickerFromZones() {
-    // Build real intel from zones
-    var items = [];
     _hudZones.slice(0, 3).forEach(function(z) {
       var dist = z.distance_km ? z.distance_km.toFixed(1) + 'km' : 'nearby';
       var type = (z.zone_type || 'unknown').toUpperCase();
-      items.push('ZONE — ' + type + ' · ' + dist);
+      var sev = (z.severity || z.zone_type || '').toLowerCase();
+      var color = sev === 'high' || sev === 'harassment' ? 'red' : sev === 'medium' || sev === 'theft' ? 'amber' : 'green';
+      addIntelItem('ZONE — ' + type + ' · ' + dist, color);
     });
-    // Append time-based intel
     var h = new Date().getHours();
-    if (h >= 22 || h < 5) items.push('NIGHT RISK ELEVATED — 22:00-05:00');
-    items.push('SHIELD NOMINAL — All nodes OK');
-    items.push('ENCRYPTION — AES-256 ACTIVE');
-    tickerItems = items;
-    renderTicker();
+    if (h >= 22 || h < 5) addIntelItem('NIGHT RISK ELEVATED — 22:00-05:00', 'amber');
   }
 
   /* ── Connection Status ── */
