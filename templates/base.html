@@ -257,56 +257,209 @@
     <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
   </a>
 
-  <!-- ── Live Threat Intel Ticker ── -->
-  <div style="margin:8px 12px 16px;padding:8px 12px;background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:10px;overflow:hidden;">
-    <div style="font-size:.55rem;letter-spacing:.2em;color:rgba(244,63,94,.7);font-weight:700;margin-bottom:6px;">⚡ LIVE INTEL FEED</div>
-    <div style="overflow:hidden;height:16px;">
-      <div id="threat-ticker" style="font-size:.65rem;color:rgba(255,255,255,.5);white-space:nowrap;font-family:'Courier New',monospace;animation:tickerScroll 20s linear infinite;"></div>
-    </div>
-  </div>
-  <style>
-    @keyframes tickerScroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
-  </style>
-  <script>
-    (function(){
-      var alerts = [
-        '🔴 HIGH RISK ZONE FLAGGED — Sector 7 · 2.1km',
-        '🟡 SOS ALERT RESOLVED — Agent #4821 safe',
-        '🟢 SAFE WALK COMPLETED — 1.8km logged',
-        '🔴 NIGHT RISK ELEVATED — 23:00-05:00',
-        '🟡 DANGER ZONE UPDATED — Kohat Rd',
-        '🟢 SHIELD SYSTEM NOMINAL — All nodes OK',
-        '🔴 COMMUNITY INCIDENT — Reported 14 min ago',
-        '🟢 VALKYRIE PROTOCOL — ARMED & ACTIVE',
-      ];
-      document.getElementById('threat-ticker').textContent = alerts.join('   |   ');
-    })();
-  </script>
+  <!-- ══ Sidebar HUD Panel ══ -->
+  <div class="sb-hud">
 
-  <!-- Sidebar footer — enhanced -->
-  <div class="sidebar-footer" style="flex-direction:column;gap:8px;align-items:flex-start;">
-    <div class="d-flex align-items-center gap-2">
-      <div class="sidebar-status-dot"></div>
-      <span>System Online</span>
+    <!-- Mini Threat Radar -->
+    <div class="sb-radar-wrap">
+      <div class="sb-radar-label">THREAT RADAR</div>
+      <div class="sb-radar">
+        <svg viewBox="0 0 100 100" class="sb-radar-svg">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(220,38,38,0.1)" stroke-width="0.5"/>
+          <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(220,38,38,0.08)" stroke-width="0.5"/>
+          <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(220,38,38,0.06)" stroke-width="0.5"/>
+          <line x1="50" y1="5" x2="50" y2="95" stroke="rgba(220,38,38,0.06)" stroke-width="0.3"/>
+          <line x1="5" y1="50" x2="95" y2="50" stroke="rgba(220,38,38,0.06)" stroke-width="0.3"/>
+          <!-- sweep -->
+          <path d="M50,50 L50,5 A45,45 0 0,1 88,25 Z" fill="url(#sbSweep)" class="sb-sweep"/>
+          <!-- blips -->
+          <circle cx="35" cy="28" r="2" fill="#dc2626" opacity="0.9" class="sb-blip"/>
+          <circle cx="68" cy="40" r="1.5" fill="#f59e0b" opacity="0.8" class="sb-blip" style="animation-delay:.4s"/>
+          <circle cx="42" cy="62" r="1.5" fill="#22c55e" opacity="0.7" class="sb-blip" style="animation-delay:.8s"/>
+          <circle cx="72" cy="70" r="2" fill="#dc2626" opacity="0.6" class="sb-blip" style="animation-delay:1.2s"/>
+          <defs>
+            <linearGradient id="sbSweep" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="rgba(220,38,38,0.25)"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="sb-radar-center-dot"></div>
+      </div>
     </div>
-    <div style="width:100%;display:flex;gap:4px;">
-      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-green);opacity:0.6;animation:barPulseG 3s ease-in-out infinite;"></div>
-      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-green);opacity:0.4;animation:barPulseG 3s .5s ease-in-out infinite;"></div>
-      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-blue);opacity:0.5;animation:barPulseG 3s 1s ease-in-out infinite;"></div>
-      <div style="flex:1;height:2px;border-radius:2px;background:var(--accent-green);opacity:0.3;animation:barPulseG 3s 1.5s ease-in-out infinite;"></div>
+
+    <!-- System Vitals -->
+    <div class="sb-vitals">
+      <div class="sb-vital-label">SYSTEM VITALS</div>
+      <div class="sb-vital-row">
+        <span class="sb-vital-name">CPU</span>
+        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" style="width:23%"></div></div>
+        <span class="sb-vital-val" id="sb-cpu">23%</span>
+      </div>
+      <div class="sb-vital-row">
+        <span class="sb-vital-name">MEM</span>
+        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-amber" style="width:58%"></div></div>
+        <span class="sb-vital-val" id="sb-mem">58%</span>
+      </div>
+      <div class="sb-vital-row">
+        <span class="sb-vital-name">NET</span>
+        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-blue" style="width:12%"></div></div>
+        <span class="sb-vital-val" id="sb-net">12ms</span>
+      </div>
+      <div class="sb-vital-row">
+        <span class="sb-vital-name">ENC</span>
+        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" style="width:100%"></div></div>
+        <span class="sb-vital-val">AES</span>
+      </div>
     </div>
+
+    <!-- Intel Ticker -->
+    <div class="sb-ticker-wrap">
+      <div class="sb-ticker-label"><span class="sb-ticker-dot"></span> LIVE INTEL</div>
+      <div class="sb-ticker-scroll">
+        <div id="threat-ticker" class="sb-ticker-text"></div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="sb-stats-grid">
+      <div class="sb-stat-cell">
+        <div class="sb-stat-num" id="sb-uptime">99.9<span class="sb-stat-unit">%</span></div>
+        <div class="sb-stat-lbl">UPTIME</div>
+      </div>
+      <div class="sb-stat-cell">
+        <div class="sb-stat-num" id="sb-latency">0.8<span class="sb-stat-unit">s</span></div>
+        <div class="sb-stat-lbl">LATENCY</div>
+      </div>
+      <div class="sb-stat-cell">
+        <div class="sb-stat-num sb-stat-live" id="sb-shields">6</div>
+        <div class="sb-stat-lbl">SHIELDS</div>
+      </div>
+      <div class="sb-stat-cell">
+        <div class="sb-stat-num" id="sb-threats">0</div>
+        <div class="sb-stat-lbl">THREATS</div>
+      </div>
+    </div>
+
+    <!-- Status Footer -->
+    <div class="sb-status-footer">
+      <div class="sb-status-row">
+        <div class="sb-status-dot-live"></div>
+        <span class="sb-status-text">ALL SYSTEMS OPERATIONAL</span>
+      </div>
+      <div class="sb-status-bars">
+        <div class="sb-sbar sb-sbar-1"></div>
+        <div class="sb-sbar sb-sbar-2"></div>
+        <div class="sb-sbar sb-sbar-3"></div>
+        <div class="sb-sbar sb-sbar-4"></div>
+        <div class="sb-sbar sb-sbar-5"></div>
+        <div class="sb-sbar sb-sbar-6"></div>
+        <div class="sb-sbar sb-sbar-7"></div>
+        <div class="sb-sbar sb-sbar-8"></div>
+      </div>
+      <div class="sb-version">v3.1 · RAILWAY CLOUD</div>
+    </div>
+
   </div>
 
-  <!-- Sidebar animated background -->
-  <div style="position:absolute;bottom:0;left:0;right:0;height:120px;pointer-events:none;overflow:hidden;">
-    <div style="position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(220,38,38,0.04) 0%,transparent 70%);animation:sidebarGlow 6s ease-in-out infinite;"></div>
-  </div>
+  <!-- Sidebar scan line -->
+  <div class="sb-scanline"></div>
 
 </aside>
+
+<!-- Sidebar HUD Styles -->
 <style>
-@keyframes barPulseG { 0%,100%{opacity:0.3;transform:scaleX(0.8)} 50%{opacity:0.8;transform:scaleX(1)} }
-@keyframes sidebarGlow { 0%,100%{opacity:0.4;transform:translateX(-50%) scale(1)} 50%{opacity:0.8;transform:translateX(-50%) scale(1.2)} }
+.sb-hud{margin:6px 10px 10px;display:flex;flex-direction:column;gap:8px;}
+
+/* Radar */
+.sb-radar-wrap{background:rgba(5,5,15,.6);border:1px solid rgba(220,38,38,.12);border-radius:8px;padding:8px;position:relative;overflow:hidden;}
+.sb-radar-label{font-size:.5rem;letter-spacing:.2em;color:rgba(220,38,38,.6);font-weight:700;margin-bottom:4px;text-align:center;}
+.sb-radar{position:relative;width:100%;aspect-ratio:1;max-width:140px;margin:0 auto;}
+.sb-radar-svg{width:100%;height:100%;}
+.sb-sweep{transform-origin:50% 50%;animation:sbRadarSweep 4s linear infinite;}
+.sb-blip{animation:sbBlipPulse 2s ease-in-out infinite;}
+.sb-radar-center-dot{position:absolute;top:50%;left:50%;width:4px;height:4px;background:#dc2626;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 6px #dc2626,0 0 12px rgba(220,38,38,.4);}
+@keyframes sbRadarSweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes sbBlipPulse{0%,100%{opacity:.3;r:1.5}50%{opacity:1;r:2.5}}
+
+/* Vitals */
+.sb-vitals{background:rgba(5,5,15,.6);border:1px solid rgba(220,38,38,.1);border-radius:8px;padding:8px 10px;}
+.sb-vital-label{font-size:.5rem;letter-spacing:.18em;color:rgba(220,38,38,.5);font-weight:700;margin-bottom:6px;}
+.sb-vital-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.sb-vital-row:last-child{margin-bottom:0;}
+.sb-vital-name{font-size:.55rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.35);width:24px;letter-spacing:.08em;}
+.sb-vital-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.sb-vital-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+.sb-fill-green{background:linear-gradient(90deg,#22c55e,#4ade80);box-shadow:0 0 4px rgba(34,197,94,.3);}
+.sb-fill-amber{background:linear-gradient(90deg,#f59e0b,#fbbf24);box-shadow:0 0 4px rgba(245,158,11,.3);}
+.sb-fill-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 4px rgba(59,130,246,.3);}
+.sb-fill-red{background:linear-gradient(90deg,#dc2626,#f87171);box-shadow:0 0 4px rgba(220,38,38,.3);}
+.sb-vital-val{font-size:.5rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.4);width:26px;text-align:right;}
+
+/* Ticker */
+.sb-ticker-wrap{background:rgba(244,63,94,.04);border:1px solid rgba(244,63,94,.12);border-radius:8px;padding:6px 10px;overflow:hidden;}
+.sb-ticker-label{font-size:.5rem;letter-spacing:.18em;color:rgba(244,63,94,.6);font-weight:700;display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+.sb-ticker-dot{width:5px;height:5px;border-radius:50%;background:#dc2626;box-shadow:0 0 6px #dc2626;animation:sbTickerBlink 1.5s ease-in-out infinite;}
+@keyframes sbTickerBlink{0%,100%{opacity:1}50%{opacity:.3}}
+.sb-ticker-scroll{overflow:hidden;height:14px;}
+.sb-ticker-text{font-size:.58rem;color:rgba(255,255,255,.45);white-space:nowrap;font-family:'Courier New',monospace;animation:tickerScroll 25s linear infinite;}
+@keyframes tickerScroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+
+/* Stats Grid */
+.sb-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.sb-stat-cell{background:rgba(5,5,15,.5);border:1px solid rgba(220,38,38,.08);border-radius:6px;padding:6px 4px;text-align:center;}
+.sb-stat-num{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.8);font-family:var(--font-display);line-height:1;}
+.sb-stat-unit{font-size:.5rem;opacity:.5;}
+.sb-stat-lbl{font-size:.42rem;letter-spacing:.15em;color:rgba(255,255,255,.25);margin-top:2px;}
+.sb-stat-live{color:#22c55e;text-shadow:0 0 8px rgba(34,197,94,.4);}
+
+/* Status Footer */
+.sb-status-footer{background:rgba(5,5,15,.4);border:1px solid rgba(34,197,94,.1);border-radius:8px;padding:6px 10px;text-align:center;}
+.sb-status-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px;}
+.sb-status-dot-live{width:5px;height:5px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:sbTickerBlink 2s ease-in-out infinite;}
+.sb-status-text{font-size:.48rem;letter-spacing:.15em;color:rgba(34,197,94,.7);font-weight:700;}
+.sb-status-bars{display:flex;gap:3px;justify-content:center;margin-bottom:3px;}
+.sb-sbar{width:14px;height:2px;border-radius:1px;animation:sbBarPulse 2.5s ease-in-out infinite;}
+.sb-sbar-1,.sb-sbar-2,.sb-sbar-8{background:#22c55e;opacity:.5;}
+.sb-sbar-3,.sb-sbar-6{background:#22c55e;opacity:.7;animation-delay:.3s;}
+.sb-sbar-4,.sb-sbar-5{background:#3b82f6;opacity:.6;animation-delay:.6s;}
+.sb-sbar-7{background:#22c55e;opacity:.4;animation-delay:.9s;}
+@keyframes sbBarPulse{0%,100%{opacity:.25;transform:scaleX(.7)}50%{opacity:.8;transform:scaleX(1)}}
+.sb-version{font-size:.42rem;letter-spacing:.12em;color:rgba(255,255,255,.15);}
+
+/* Sidebar scan line */
+.sb-scanline{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,.15),transparent);animation:sbScanDown 8s linear infinite;pointer-events:none;z-index:10;}
+@keyframes sbScanDown{0%{top:0}100%{top:100%}}
 </style>
+
+<script>
+(function(){
+  // Intel ticker
+  var alerts=[
+    'HIGH RISK ZONE — Sector 7 · 2.1km',
+    'SOS RESOLVED — Agent #4821 safe',
+    'SAFE WALK — 1.8km logged',
+    'NIGHT RISK ELEVATED — 23:00-05:00',
+    'ZONE UPDATE — Kohat Rd flagged',
+    'SHIELD NOMINAL — All nodes OK',
+    'INCIDENT — Reported 14 min ago',
+    'VALKYRIE PROTOCOL — ARMED',
+  ];
+  var el=document.getElementById('threat-ticker');
+  if(el) el.textContent=alerts.join('   ///   ');
+
+  // Animate vitals randomly
+  function animateVitals(){
+    var cpu=15+Math.random()*30,mem=40+Math.random()*30,net=8+Math.random()*40;
+    var cpuEl=document.getElementById('sb-cpu'),memEl=document.getElementById('sb-mem'),netEl=document.getElementById('sb-net');
+    if(cpuEl){cpuEl.textContent=Math.round(cpu)+'%';cpuEl.previousElementSibling.querySelector('.sb-vital-fill').style.width=cpu+'%';}
+    if(memEl){memEl.textContent=Math.round(mem)+'%';memEl.previousElementSibling.querySelector('.sb-vital-fill').style.width=mem+'%';}
+    if(netEl){netEl.textContent=Math.round(net)+'ms';netEl.previousElementSibling.querySelector('.sb-vital-fill').style.width=Math.min(net*2,100)+'%';}
+  }
+  setInterval(animateVitals,3000);
+  setTimeout(animateVitals,500);
+})();
+</script>
 {% else %}
 <!-- Public Navbar -->
 <style>
