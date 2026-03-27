@@ -115,8 +115,7 @@ def calculate_safety_score(lat, lng):
     # ── Time-of-day adjustment ───────────────────────────────────────────────
     time_mult, time_advisory = _time_advisory()
 
-    raw_score = 100 - danger_zone_penalty - recent_sos_penalty
-    adjusted_score = raw_score / time_mult
+    adjusted_score = 100 - (danger_zone_penalty + recent_sos_penalty) * time_mult
     final_score = max(10, min(100, round(adjusted_score)))
 
     return {
@@ -178,10 +177,10 @@ def area_report():
         hourly = []
         for h in range(24):
             mult, advisory = _time_advisory(h)
-            base = 100 - result['danger_zone_penalty'] - result['recent_sos_penalty']
+            penalty = (result['danger_zone_penalty'] + result['recent_sos_penalty']) * mult
             hourly.append({
                 'hour': h,
-                'score': max(10, min(100, round(base / mult))),
+                'score': max(10, min(100, round(100 - penalty))),
                 'label': f'{h:02d}:00',
             })
 

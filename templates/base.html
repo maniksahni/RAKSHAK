@@ -60,28 +60,24 @@
 
   <!-- ── GLOBAL PANIC SOS LOGIC ─────────────────────────────────────────────── -->
   <script>
-  window.triggerGlobalSOS = function() {
-    if(!confirm("ENGAGE GLOBAL S.O.S PROTOCOL? This will lock your GPS coordinates and broadcast to all trusted contacts.")) return;
+  /* ── Internal: actually fire the SOS network request ──────────────── */
+  window._fireGlobalSOS = function() {
     if(typeof showLoading === 'function') showLoading("DEPLOYING EMERGENCY OVERRIDES...", ["VERIFYING CLEARANCE", "ACQUIRING SATELLITE LOCK", "BROADCASTING DISTRESS SIGNAL"]);
-    
-    // Quick fallback if audio exists
     if(window.tacticalAnnounce) tacticalAnnounce("S O S Override Authorized. Broadcast transmitting.");
 
     navigator.geolocation.getCurrentPosition(pos => {
       fetch('/sos/trigger', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ 
-          latitude: pos.coords.latitude, 
-          longitude: pos.coords.longitude, 
-          trigger_type: 'navbar_panic', 
-          accuracy: pos.coords.accuracy 
+        body: JSON.stringify({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          trigger_type: 'navbar_panic',
+          accuracy: pos.coords.accuracy
         })
       }).then(r => r.json()).then(d => {
         document.getElementById('loading-overlay').style.display = 'none';
         if(d.success) {
           if(typeof showToast === 'function') showToast("SOS ALERT BROADCASTED SECURELY", "sos");
-          // Optionally redirect to history if needed
-          // window.location.href = "{{ url_for('sos.history') if 'sos.history' else '#' }}";
         } else {
           if(typeof showToast === 'function') showToast(d.error || "SOS FAILED", "error");
         }
@@ -93,6 +89,41 @@
       document.getElementById('loading-overlay').style.display = 'none';
       if(typeof showToast === 'function') showToast("GPS ACCESS DENIED. LOCATION DATA LOST.", "error");
     }, {enableHighAccuracy: true, timeout: 8000});
+  };
+
+  /* ── 3-second auto-confirm countdown for navbar SOS button ───────── */
+  window._navSosTimer = null;
+  window.triggerGlobalSOS = function() {
+    var overlay = document.getElementById('sos-countdown-overlay');
+    var numEl   = document.getElementById('sos-countdown-number');
+    var cancelBtn = document.getElementById('sos-countdown-cancel');
+    if(!overlay || !numEl) { window._fireGlobalSOS(); return; }
+
+    var seconds = 3;
+    numEl.textContent = seconds;
+    overlay.style.display = 'flex';
+    overlay.classList.add('sos-pulse');
+
+    function cleanup() {
+      clearInterval(window._navSosTimer);
+      window._navSosTimer = null;
+      overlay.style.display = 'none';
+      overlay.classList.remove('sos-pulse');
+    }
+
+    // Cancel handler (clone to remove old listeners)
+    var newCancel = cancelBtn.cloneNode(true);
+    cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+    newCancel.addEventListener('click', function() { cleanup(); });
+
+    window._navSosTimer = setInterval(function() {
+      seconds--;
+      numEl.textContent = seconds;
+      if(seconds <= 0) {
+        cleanup();
+        window._fireGlobalSOS();
+      }
+    }, 1000);
   };
   </script>
 <!-- ────────────────────────────────────────────────────────────────────────── -->

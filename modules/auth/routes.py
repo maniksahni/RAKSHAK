@@ -9,7 +9,18 @@ auth_bp = Blueprint('auth', __name__)
 
 
 def validate_phone(p):
-    return re.match(r'^\d{10}$', p.strip())
+    p = p.strip()
+    if not re.match(r'^\d{10}$', p):
+        return False
+    # Reject numbers where all digits are the same (e.g. 0000000000)
+    if len(set(p)) == 1:
+        return False
+    return True
+
+
+def validate_email(e):
+    """Basic email format validation."""
+    return re.match(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$', e.strip())
 
 
 # ── Register (Google-only — page renders OAuth prompt) ────────────────────────
@@ -92,6 +103,10 @@ def add_contact():
 
         if not all([name, email, phone]):
             return jsonify(success=False, error='All fields are required.'), 400
+        if not validate_email(email):
+            return jsonify(success=False, error='Invalid email address.'), 400
+        if not validate_phone(phone):
+            return jsonify(success=False, error='Invalid phone number. Must be 10 digits and not all the same digit.'), 400
 
         cid = query_db(
             """INSERT INTO trusted_contacts (user_id, contact_name, contact_email, contact_phone, relationship)

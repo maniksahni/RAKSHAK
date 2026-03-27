@@ -99,14 +99,17 @@ def trigger_sos():
                 raw_lng = last_ping['longitude']
                 message += " [LOCATION EST: LAST KNOWN]"
             else:
-                raw_lat = 0.0
-                raw_lng = 0.0
-                message += " [LOCATION UNKNOWN]"
+                raw_lat = None
+                raw_lng = None
+                message += " [LOCATION UNAVAILABLE]"
 
-        try:
-            lat, lng = validate_coords(raw_lat, raw_lng)
-        except ValueError as ve:
-            return jsonify(success=False, error=str(ve)), 400
+        # Validate coordinates if available; leave as NULL when location is unavailable
+        lat, lng = None, None
+        if raw_lat is not None and raw_lng is not None:
+            try:
+                lat, lng = validate_coords(raw_lat, raw_lng)
+            except ValueError as ve:
+                return jsonify(success=False, error=str(ve)), 400
 
         # Clamp accuracy to sane range
         try:
@@ -142,7 +145,7 @@ def trigger_sos():
                        VALUES (%s, %s, %s, 'sos', %s)""",
                     (cu['id'],
                      f'🚨 SOS Alert from {current_user.full_name}',
-                     f'{current_user.full_name} triggered an SOS at {address or f"{lat},{lng}"}',
+                     f'{current_user.full_name} triggered an SOS at {address or (f"{lat},{lng}" if lat is not None else "unknown location")}',
                      alert_id),
                     commit=True
                 )
