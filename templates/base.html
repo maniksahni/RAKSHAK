@@ -291,9 +291,44 @@
   <!-- ══ Sidebar HUD Panel ══ -->
   <div class="sb-hud">
 
-    <!-- Mini Threat Radar -->
+    {% if not current_user.is_admin %}
+    <!-- ── Quick Actions ── -->
+    <div class="sb-quick-actions">
+      <button class="sb-qa-btn sb-qa-sos" onclick="triggerGlobalSOS()" title="Emergency SOS">
+        <i class="bi bi-shield-exclamation"></i>
+        <span>SOS</span>
+      </button>
+      <a class="sb-qa-btn sb-qa-walk" href="{{ url_for('safe_walk.index') }}" title="Safe Walk">
+        <i class="bi bi-geo-alt-fill"></i>
+        <span>WALK</span>
+      </a>
+      <a class="sb-qa-btn sb-qa-call" href="{{ url_for('fake_call.index') }}" title="Fake Call">
+        <i class="bi bi-phone-vibrate"></i>
+        <span>CALL</span>
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- ── Area Safety Status ── -->
+    <div class="sb-area-status" id="sb-area-status">
+      <div class="sb-area-header">
+        <span class="sb-area-icon" id="sb-area-icon">
+          <i class="bi bi-crosshair"></i>
+        </span>
+        <div class="sb-area-info">
+          <div class="sb-area-label">AREA STATUS</div>
+          <div class="sb-area-level" id="sb-area-level">SCANNING...</div>
+        </div>
+        <div class="sb-area-score" id="sb-area-score">--</div>
+      </div>
+      <div class="sb-area-bar-wrap">
+        <div class="sb-area-bar" id="sb-area-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- ── Mini Threat Radar ── -->
     <div class="sb-radar-wrap">
-      <div class="sb-radar-label">THREAT RADAR</div>
+      <div class="sb-radar-label">THREAT RADAR · <span id="sb-radar-count">0</span> NEARBY</div>
       <div class="sb-radar">
         <svg viewBox="0 0 100 100" class="sb-radar-svg">
           <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(220,38,38,0.1)" stroke-width="0.5"/>
@@ -303,11 +338,8 @@
           <line x1="5" y1="50" x2="95" y2="50" stroke="rgba(220,38,38,0.06)" stroke-width="0.3"/>
           <!-- sweep -->
           <path d="M50,50 L50,5 A45,45 0 0,1 88,25 Z" fill="url(#sbSweep)" class="sb-sweep"/>
-          <!-- blips -->
-          <circle cx="35" cy="28" r="2" fill="#dc2626" opacity="0.9" class="sb-blip"/>
-          <circle cx="68" cy="40" r="1.5" fill="#f59e0b" opacity="0.8" class="sb-blip" style="animation-delay:.4s"/>
-          <circle cx="42" cy="62" r="1.5" fill="#22c55e" opacity="0.7" class="sb-blip" style="animation-delay:.8s"/>
-          <circle cx="72" cy="70" r="2" fill="#dc2626" opacity="0.6" class="sb-blip" style="animation-delay:1.2s"/>
+          <!-- dynamic blips injected by JS -->
+          <g id="sb-radar-blips"></g>
           <defs>
             <linearGradient id="sbSweep" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="rgba(220,38,38,0.25)"/>
@@ -319,23 +351,23 @@
       </div>
     </div>
 
-    <!-- System Vitals -->
+    <!-- ── System Vitals ── -->
     <div class="sb-vitals">
       <div class="sb-vital-label">SYSTEM VITALS</div>
       <div class="sb-vital-row">
-        <span class="sb-vital-name">CPU</span>
-        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" style="width:23%"></div></div>
-        <span class="sb-vital-val" id="sb-cpu">23%</span>
+        <span class="sb-vital-name"><i class="bi bi-battery-charging" id="sb-bat-icon"></i></span>
+        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-green" id="sb-bat-fill" style="width:100%"></div></div>
+        <span class="sb-vital-val" id="sb-bat">100%</span>
       </div>
       <div class="sb-vital-row">
-        <span class="sb-vital-name">MEM</span>
-        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-amber" style="width:58%"></div></div>
-        <span class="sb-vital-val" id="sb-mem">58%</span>
+        <span class="sb-vital-name">GPS</span>
+        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-blue" id="sb-gps-fill" style="width:0%"></div></div>
+        <span class="sb-vital-val" id="sb-gps">---</span>
       </div>
       <div class="sb-vital-row">
         <span class="sb-vital-name">NET</span>
-        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-blue" style="width:12%"></div></div>
-        <span class="sb-vital-val" id="sb-net">12ms</span>
+        <div class="sb-vital-bar"><div class="sb-vital-fill sb-fill-amber" id="sb-net-fill" style="width:12%"></div></div>
+        <span class="sb-vital-val" id="sb-net">---</span>
       </div>
       <div class="sb-vital-row">
         <span class="sb-vital-name">ENC</span>
@@ -344,7 +376,7 @@
       </div>
     </div>
 
-    <!-- Intel Ticker -->
+    <!-- ── Intel Ticker ── -->
     <div class="sb-ticker-wrap">
       <div class="sb-ticker-label"><span class="sb-ticker-dot"></span> LIVE INTEL</div>
       <div class="sb-ticker-scroll">
@@ -352,31 +384,31 @@
       </div>
     </div>
 
-    <!-- Quick Stats Grid -->
+    <!-- ── Quick Stats Grid ── -->
     <div class="sb-stats-grid">
       <div class="sb-stat-cell">
         <div class="sb-stat-num" id="sb-uptime">99.9<span class="sb-stat-unit">%</span></div>
         <div class="sb-stat-lbl">UPTIME</div>
       </div>
       <div class="sb-stat-cell">
-        <div class="sb-stat-num" id="sb-latency">0.8<span class="sb-stat-unit">s</span></div>
+        <div class="sb-stat-num" id="sb-latency">--<span class="sb-stat-unit">ms</span></div>
         <div class="sb-stat-lbl">LATENCY</div>
       </div>
       <div class="sb-stat-cell">
-        <div class="sb-stat-num sb-stat-live" id="sb-shields">6</div>
+        <div class="sb-stat-num sb-stat-live" id="sb-shields">{{ current_user.trusted_contacts|default([])|length }}</div>
         <div class="sb-stat-lbl">SHIELDS</div>
       </div>
       <div class="sb-stat-cell">
-        <div class="sb-stat-num" id="sb-threats">0</div>
+        <div class="sb-stat-num sb-stat-threats" id="sb-threats">0</div>
         <div class="sb-stat-lbl">THREATS</div>
       </div>
     </div>
 
-    <!-- Status Footer -->
+    <!-- ── Connection + Status Footer ── -->
     <div class="sb-status-footer">
       <div class="sb-status-row">
-        <div class="sb-status-dot-live"></div>
-        <span class="sb-status-text">ALL SYSTEMS OPERATIONAL</span>
+        <div class="sb-status-dot-live" id="sb-conn-dot"></div>
+        <span class="sb-status-text" id="sb-conn-text">CONNECTING...</span>
       </div>
       <div class="sb-status-bars">
         <div class="sb-sbar sb-sbar-1"></div>
@@ -388,7 +420,7 @@
         <div class="sb-sbar sb-sbar-7"></div>
         <div class="sb-sbar sb-sbar-8"></div>
       </div>
-      <div class="sb-version">v3.1 · RAILWAY CLOUD</div>
+      <div class="sb-version">v3.2 · RAILWAY CLOUD</div>
     </div>
 
   </div>
@@ -402,32 +434,78 @@
 <style>
 .sb-hud{margin:6px 10px 10px;display:flex;flex-direction:column;gap:8px;}
 
-/* Radar */
+/* ── Quick Actions ── */
+.sb-quick-actions{display:flex;gap:4px;}
+.sb-qa-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(5,5,15,.5);color:rgba(255,255,255,.6);font-size:.5rem;font-weight:700;letter-spacing:.1em;text-decoration:none;cursor:pointer;transition:all .25s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;}
+.sb-qa-btn i{font-size:.9rem;transition:transform .25s;}
+.sb-qa-btn:hover{color:#fff;transform:translateY(-1px);}
+.sb-qa-btn:hover i{transform:scale(1.15);}
+.sb-qa-btn::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .25s;border-radius:7px;}
+.sb-qa-sos{border-color:rgba(220,38,38,.2);}
+.sb-qa-sos:hover{border-color:rgba(220,38,38,.5);background:rgba(220,38,38,.12);color:#f87171;}
+.sb-qa-sos::after{background:radial-gradient(circle at center,rgba(220,38,38,.15),transparent 70%);}
+.sb-qa-sos:hover::after{opacity:1;}
+.sb-qa-sos i{color:#dc2626;}
+.sb-qa-walk{border-color:rgba(59,130,246,.15);}
+.sb-qa-walk:hover{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:#60a5fa;}
+.sb-qa-walk i{color:#3b82f6;}
+.sb-qa-call{border-color:rgba(34,197,94,.15);}
+.sb-qa-call:hover{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.1);color:#4ade80;}
+.sb-qa-call i{color:#22c55e;}
+
+/* ── Area Safety Status ── */
+.sb-area-status{background:rgba(5,5,15,.6);border:1px solid rgba(220,38,38,.1);border-radius:8px;padding:8px 10px;transition:border-color .5s;}
+.sb-area-status.area-safe{border-color:rgba(34,197,94,.25);}
+.sb-area-status.area-caution{border-color:rgba(245,158,11,.25);}
+.sb-area-status.area-danger{border-color:rgba(220,38,38,.3);}
+.sb-area-header{display:flex;align-items:center;gap:8px;}
+.sb-area-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);transition:all .5s;}
+.area-safe .sb-area-icon{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#22c55e;box-shadow:0 0 10px rgba(34,197,94,.15);}
+.area-caution .sb-area-icon{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#f59e0b;box-shadow:0 0 10px rgba(245,158,11,.15);}
+.area-danger .sb-area-icon{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.3);color:#dc2626;box-shadow:0 0 10px rgba(220,38,38,.2);}
+.sb-area-info{flex:1;min-width:0;}
+.sb-area-label{font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.3);font-weight:700;}
+.sb-area-level{font-size:.62rem;font-weight:800;color:rgba(255,255,255,.7);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.area-safe .sb-area-level{color:#4ade80;}
+.area-caution .sb-area-level{color:#fbbf24;}
+.area-danger .sb-area-level{color:#f87171;}
+.sb-area-score{font-size:1.1rem;font-weight:900;font-family:var(--font-display);color:rgba(255,255,255,.6);line-height:1;min-width:28px;text-align:right;}
+.area-safe .sb-area-score{color:#22c55e;text-shadow:0 0 10px rgba(34,197,94,.3);}
+.area-caution .sb-area-score{color:#f59e0b;text-shadow:0 0 10px rgba(245,158,11,.3);}
+.area-danger .sb-area-score{color:#dc2626;text-shadow:0 0 10px rgba(220,38,38,.4);}
+.sb-area-bar-wrap{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:6px;overflow:hidden;}
+.sb-area-bar{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.22,1,.36,1),background .5s;}
+.area-safe .sb-area-bar{background:linear-gradient(90deg,#22c55e,#4ade80);}
+.area-caution .sb-area-bar{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.area-danger .sb-area-bar{background:linear-gradient(90deg,#dc2626,#f87171);}
+
+/* ── Radar ── */
 .sb-radar-wrap{background:rgba(5,5,15,.6);border:1px solid rgba(220,38,38,.12);border-radius:8px;padding:8px;position:relative;overflow:hidden;}
-.sb-radar-label{font-size:.5rem;letter-spacing:.2em;color:rgba(220,38,38,.6);font-weight:700;margin-bottom:4px;text-align:center;}
+.sb-radar-label{font-size:.5rem;letter-spacing:.15em;color:rgba(220,38,38,.6);font-weight:700;margin-bottom:4px;text-align:center;}
 .sb-radar{position:relative;width:100%;aspect-ratio:1;max-width:140px;margin:0 auto;}
 .sb-radar-svg{width:100%;height:100%;}
 .sb-sweep{transform-origin:50% 50%;animation:sbRadarSweep 4s linear infinite;}
 .sb-blip{animation:sbBlipPulse 2s ease-in-out infinite;}
-.sb-radar-center-dot{position:absolute;top:50%;left:50%;width:4px;height:4px;background:#dc2626;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 6px #dc2626,0 0 12px rgba(220,38,38,.4);}
+.sb-radar-center-dot{position:absolute;top:50%;left:50%;width:5px;height:5px;background:var(--red-primary);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 6px var(--red-primary),0 0 14px rgba(244,63,94,.4);}
 @keyframes sbRadarSweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes sbBlipPulse{0%,100%{opacity:.3;r:1.5}50%{opacity:1;r:2.5}}
 
-/* Vitals */
+/* ── Vitals ── */
 .sb-vitals{background:rgba(5,5,15,.6);border:1px solid rgba(220,38,38,.1);border-radius:8px;padding:8px 10px;}
 .sb-vital-label{font-size:.5rem;letter-spacing:.18em;color:rgba(220,38,38,.5);font-weight:700;margin-bottom:6px;}
 .sb-vital-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
 .sb-vital-row:last-child{margin-bottom:0;}
-.sb-vital-name{font-size:.55rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.35);width:24px;letter-spacing:.08em;}
+.sb-vital-name{font-size:.55rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.35);width:24px;letter-spacing:.08em;display:flex;align-items:center;}
+.sb-vital-name i{font-size:.65rem;}
 .sb-vital-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
 .sb-vital-fill{height:100%;border-radius:2px;transition:width 1s ease;}
 .sb-fill-green{background:linear-gradient(90deg,#22c55e,#4ade80);box-shadow:0 0 4px rgba(34,197,94,.3);}
 .sb-fill-amber{background:linear-gradient(90deg,#f59e0b,#fbbf24);box-shadow:0 0 4px rgba(245,158,11,.3);}
 .sb-fill-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 4px rgba(59,130,246,.3);}
 .sb-fill-red{background:linear-gradient(90deg,#dc2626,#f87171);box-shadow:0 0 4px rgba(220,38,38,.3);}
-.sb-vital-val{font-size:.5rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.4);width:26px;text-align:right;}
+.sb-vital-val{font-size:.5rem;font-family:'Courier New',monospace;color:rgba(255,255,255,.4);width:30px;text-align:right;}
 
-/* Ticker */
+/* ── Ticker ── */
 .sb-ticker-wrap{background:rgba(244,63,94,.04);border:1px solid rgba(244,63,94,.12);border-radius:8px;padding:6px 10px;overflow:hidden;}
 .sb-ticker-label{font-size:.5rem;letter-spacing:.18em;color:rgba(244,63,94,.6);font-weight:700;display:flex;align-items:center;gap:5px;margin-bottom:4px;}
 .sb-ticker-dot{width:5px;height:5px;border-radius:50%;background:#dc2626;box-shadow:0 0 6px #dc2626;animation:sbTickerBlink 1.5s ease-in-out infinite;}
@@ -436,19 +514,26 @@
 .sb-ticker-text{font-size:.58rem;color:rgba(255,255,255,.45);white-space:nowrap;font-family:'Courier New',monospace;animation:tickerScroll 25s linear infinite;}
 @keyframes tickerScroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
-/* Stats Grid */
+/* ── Stats Grid ── */
 .sb-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
-.sb-stat-cell{background:rgba(5,5,15,.5);border:1px solid rgba(220,38,38,.08);border-radius:6px;padding:6px 4px;text-align:center;}
-.sb-stat-num{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.8);font-family:var(--font-display);line-height:1;}
+.sb-stat-cell{background:rgba(5,5,15,.5);border:1px solid rgba(220,38,38,.08);border-radius:6px;padding:6px 4px;text-align:center;transition:border-color .3s;}
+.sb-stat-cell:hover{border-color:rgba(220,38,38,.2);}
+.sb-stat-num{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.8);font-family:var(--font-display);line-height:1;transition:color .3s;}
 .sb-stat-unit{font-size:.5rem;opacity:.5;}
 .sb-stat-lbl{font-size:.42rem;letter-spacing:.15em;color:rgba(255,255,255,.25);margin-top:2px;}
 .sb-stat-live{color:#22c55e;text-shadow:0 0 8px rgba(34,197,94,.4);}
+.sb-stat-threats{color:rgba(255,255,255,.8);transition:color .3s,text-shadow .3s;}
+.sb-stat-threats.has-threats{color:#dc2626;text-shadow:0 0 8px rgba(220,38,38,.4);animation:sbBlipPulse 2s ease-in-out infinite;}
 
-/* Status Footer */
-.sb-status-footer{background:rgba(5,5,15,.4);border:1px solid rgba(34,197,94,.1);border-radius:8px;padding:6px 10px;text-align:center;}
+/* ── Status Footer ── */
+.sb-status-footer{background:rgba(5,5,15,.4);border:1px solid rgba(34,197,94,.1);border-radius:8px;padding:6px 10px;text-align:center;transition:border-color .5s;}
+.sb-status-footer.conn-lost{border-color:rgba(220,38,38,.2);}
 .sb-status-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px;}
-.sb-status-dot-live{width:5px;height:5px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:sbTickerBlink 2s ease-in-out infinite;}
-.sb-status-text{font-size:.48rem;letter-spacing:.15em;color:rgba(34,197,94,.7);font-weight:700;}
+.sb-status-dot-live{width:5px;height:5px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:sbTickerBlink 2s ease-in-out infinite;transition:background .3s,box-shadow .3s;}
+.sb-status-dot-live.conn-lost{background:#dc2626;box-shadow:0 0 6px #dc2626;}
+.sb-status-dot-live.conn-pending{background:#f59e0b;box-shadow:0 0 6px #f59e0b;}
+.sb-status-text{font-size:.48rem;letter-spacing:.15em;color:rgba(34,197,94,.7);font-weight:700;transition:color .3s;}
+.conn-lost .sb-status-text{color:rgba(220,38,38,.7);}
 .sb-status-bars{display:flex;gap:3px;justify-content:center;margin-bottom:3px;}
 .sb-sbar{width:14px;height:2px;border-radius:1px;animation:sbBarPulse 2.5s ease-in-out infinite;}
 .sb-sbar-1,.sb-sbar-2,.sb-sbar-8{background:#22c55e;opacity:.5;}
@@ -458,37 +543,288 @@
 @keyframes sbBarPulse{0%,100%{opacity:.25;transform:scaleX(.7)}50%{opacity:.8;transform:scaleX(1)}}
 .sb-version{font-size:.42rem;letter-spacing:.12em;color:rgba(255,255,255,.15);}
 
-/* Sidebar scan line */
+/* ── Sidebar scan line ── */
 .sb-scanline{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,.15),transparent);animation:sbScanDown 8s linear infinite;pointer-events:none;z-index:10;}
 @keyframes sbScanDown{0%{top:0}100%{top:100%}}
+
+/* ── Mobile Responsive ── */
+@media(max-width:991px){
+  .sb-hud{margin:6px 8px 10px;gap:6px;}
+  .sb-qa-btn{padding:6px 3px;}
+  .sb-qa-btn i{font-size:.8rem;}
+  .sb-qa-btn span{font-size:.42rem;}
+  .sb-area-score{font-size:.95rem;}
+  .sb-radar{max-width:120px;}
+  .sb-stat-num{font-size:.75rem;}
+}
+@media(max-width:575px){
+  .sb-quick-actions{gap:3px;}
+  .sb-stats-grid{gap:3px;}
+  .sb-stat-cell{padding:4px 3px;}
+}
 </style>
 
 <script>
 (function(){
-  // Intel ticker
-  var alerts=[
-    'HIGH RISK ZONE — Sector 7 · 2.1km',
-    'SOS RESOLVED — Agent #4821 safe',
-    'SAFE WALK — 1.8km logged',
-    'NIGHT RISK ELEVATED — 23:00-05:00',
-    'ZONE UPDATE — Kohat Rd flagged',
-    'SHIELD NOMINAL — All nodes OK',
-    'INCIDENT — Reported 14 min ago',
-    'VALKYRIE PROTOCOL — ARMED',
-  ];
-  var el=document.getElementById('threat-ticker');
-  if(el) el.textContent=alerts.join('   ///   ');
+  /* ── HUD State ── */
+  var _hudPos = null;   // {lat, lng}
+  var _hudZones = [];   // nearby danger zones cache
+  var _hudScore = null;  // safety score cache
 
-  // Animate vitals randomly
-  function animateVitals(){
-    var cpu=15+Math.random()*30,mem=40+Math.random()*30,net=8+Math.random()*40;
-    var cpuEl=document.getElementById('sb-cpu'),memEl=document.getElementById('sb-mem'),netEl=document.getElementById('sb-net');
-    if(cpuEl){cpuEl.textContent=Math.round(cpu)+'%';cpuEl.previousElementSibling.querySelector('.sb-vital-fill').style.width=cpu+'%';}
-    if(memEl){memEl.textContent=Math.round(mem)+'%';memEl.previousElementSibling.querySelector('.sb-vital-fill').style.width=mem+'%';}
-    if(netEl){netEl.textContent=Math.round(net)+'ms';netEl.previousElementSibling.querySelector('.sb-vital-fill').style.width=Math.min(net*2,100)+'%';}
+  /* ── Intel Ticker — starts with defaults, updated by real data ── */
+  var tickerItems = [
+    'SHIELD NOMINAL — All nodes OK',
+    'VALKYRIE PROTOCOL — ARMED',
+    'ENCRYPTION — AES-256 ACTIVE',
+  ];
+  var tickerEl = document.getElementById('threat-ticker');
+  function renderTicker() {
+    if (tickerEl) tickerEl.textContent = tickerItems.join('   ///   ');
   }
-  setInterval(animateVitals,3000);
-  setTimeout(animateVitals,500);
+  renderTicker();
+
+  /* ── Battery API ── */
+  if (navigator.getBattery) {
+    navigator.getBattery().then(function(bat) {
+      function updateBat() {
+        var pct = Math.round(bat.level * 100);
+        var batVal = document.getElementById('sb-bat');
+        var batFill = document.getElementById('sb-bat-fill');
+        var batIcon = document.getElementById('sb-bat-icon');
+        if (batVal) batVal.textContent = pct + '%';
+        if (batFill) {
+          batFill.style.width = pct + '%';
+          // Color shifts based on level
+          batFill.className = 'sb-vital-fill ' + (pct > 50 ? 'sb-fill-green' : pct > 20 ? 'sb-fill-amber' : 'sb-fill-red');
+        }
+        if (batIcon) {
+          batIcon.className = bat.charging ? 'bi bi-battery-charging' :
+            pct > 75 ? 'bi bi-battery-full' : pct > 50 ? 'bi bi-battery-half' : 'bi bi-battery';
+          batIcon.style.color = pct > 50 ? '#22c55e' : pct > 20 ? '#f59e0b' : '#dc2626';
+        }
+      }
+      updateBat();
+      bat.addEventListener('levelchange', updateBat);
+      bat.addEventListener('chargingchange', updateBat);
+    });
+  }
+
+  /* ── GPS + Network Vitals ── */
+  function updateGPS() {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      _hudPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      var acc = pos.coords.accuracy;
+      var gpsVal = document.getElementById('sb-gps');
+      var gpsFill = document.getElementById('sb-gps-fill');
+      var quality = Math.max(0, Math.min(100, Math.round(100 - (acc - 5) / 2)));
+      if (gpsVal) gpsVal.textContent = quality + '%';
+      if (gpsFill) {
+        gpsFill.style.width = quality + '%';
+        gpsFill.className = 'sb-vital-fill ' + (quality > 70 ? 'sb-fill-blue' : quality > 40 ? 'sb-fill-amber' : 'sb-fill-red');
+      }
+      // Trigger dependent updates
+      fetchSafetyScore();
+      fetchNearbyZones();
+    }, function() {
+      var gpsVal = document.getElementById('sb-gps');
+      if (gpsVal) gpsVal.textContent = 'OFF';
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+  }
+
+  function updateNetwork() {
+    var netVal = document.getElementById('sb-net');
+    var netFill = document.getElementById('sb-net-fill');
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn) {
+      var rtt = conn.rtt || 0;
+      var type = (conn.effectiveType || '').toUpperCase();
+      if (netVal) netVal.textContent = rtt ? rtt + 'ms' : type || '---';
+      if (netFill) {
+        var w = rtt ? Math.max(5, Math.min(100, 100 - rtt)) : 60;
+        netFill.style.width = w + '%';
+        netFill.className = 'sb-vital-fill ' + (rtt < 100 ? 'sb-fill-green' : rtt < 300 ? 'sb-fill-amber' : 'sb-fill-red');
+      }
+    } else if (navigator.onLine) {
+      // Measure latency with a ping to /health
+      var t0 = performance.now();
+      fetch('/health', { method: 'HEAD', cache: 'no-store' }).then(function() {
+        var ms = Math.round(performance.now() - t0);
+        if (netVal) netVal.textContent = ms + 'ms';
+        if (netFill) {
+          netFill.style.width = Math.max(5, Math.min(100, 100 - ms / 3)) + '%';
+          netFill.className = 'sb-vital-fill ' + (ms < 200 ? 'sb-fill-green' : ms < 500 ? 'sb-fill-amber' : 'sb-fill-red');
+        }
+        // Update latency stat
+        var latEl = document.getElementById('sb-latency');
+        if (latEl) latEl.innerHTML = ms + '<span class="sb-stat-unit">ms</span>';
+      }).catch(function() {
+        if (netVal) netVal.textContent = 'ERR';
+      });
+    }
+  }
+
+  /* ── Safety Score API ── */
+  function fetchSafetyScore() {
+    if (!_hudPos) return;
+    fetch('/safety-score/calculate?latitude=' + _hudPos.lat + '&longitude=' + _hudPos.lng)
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.success) return;
+        _hudScore = d.safety_score;
+        var wrap = document.getElementById('sb-area-status');
+        var level = document.getElementById('sb-area-level');
+        var score = document.getElementById('sb-area-score');
+        var bar = document.getElementById('sb-area-bar');
+        var icon = document.getElementById('sb-area-icon');
+
+        if (score) score.textContent = _hudScore;
+        if (bar) bar.style.width = _hudScore + '%';
+
+        // Classify
+        var cls, txt, ico;
+        if (_hudScore >= 70) { cls = 'area-safe'; txt = 'SECTOR CLEAR'; ico = 'bi-shield-check'; }
+        else if (_hudScore >= 40) { cls = 'area-caution'; txt = 'ELEVATED RISK'; ico = 'bi-exclamation-triangle'; }
+        else { cls = 'area-danger'; txt = 'HIGH THREAT'; ico = 'bi-shield-exclamation'; }
+
+        if (wrap) { wrap.className = 'sb-area-status ' + cls; }
+        if (level) level.textContent = txt;
+        if (icon) icon.innerHTML = '<i class="bi ' + ico + '"></i>';
+
+        // Update ticker with real advisory
+        if (d.advisory) {
+          tickerItems[0] = 'AREA — ' + d.advisory.toUpperCase();
+          renderTicker();
+        }
+      }).catch(function() {});
+  }
+
+  /* ── Nearby Danger Zones → Radar Blips ── */
+  function fetchNearbyZones() {
+    if (!_hudPos) return;
+    fetch('/danger-zones/proximity?latitude=' + _hudPos.lat + '&longitude=' + _hudPos.lng)
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.success) return;
+        _hudZones = d.zones || d.nearby_zones || [];
+        renderRadarBlips();
+        updateThreatCount();
+        updateTickerFromZones();
+      }).catch(function() {});
+  }
+
+  function renderRadarBlips() {
+    var g = document.getElementById('sb-radar-blips');
+    var countEl = document.getElementById('sb-radar-count');
+    if (!g) return;
+    g.innerHTML = '';
+    if (countEl) countEl.textContent = _hudZones.length;
+
+    _hudZones.forEach(function(z, i) {
+      // Map real distance/bearing to radar coordinates (50,50 center, 45 radius)
+      var angle = (i * 137.5 + 30) * Math.PI / 180; // golden angle spread
+      var dist = z.distance_km ? Math.min(z.distance_km / 5, 1) : 0.5 + Math.random() * 0.4;
+      var r = 10 + dist * 35;
+      var cx = 50 + Math.cos(angle) * r;
+      var cy = 50 + Math.sin(angle) * r;
+      var sev = (z.severity || z.zone_type || '').toLowerCase();
+      var color = sev === 'high' || sev === 'harassment' ? '#dc2626' :
+                  sev === 'medium' || sev === 'theft' ? '#f59e0b' : '#22c55e';
+      var size = sev === 'high' || sev === 'harassment' ? 2.5 : 1.8;
+
+      var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', size);
+      c.setAttribute('fill', color);
+      c.setAttribute('opacity', '0.85');
+      c.setAttribute('class', 'sb-blip');
+      c.style.animationDelay = (i * 0.3) + 's';
+      g.appendChild(c);
+    });
+
+    // If no real zones, show 1 green "clear" blip
+    if (_hudZones.length === 0) {
+      var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', '55'); c.setAttribute('cy', '38');
+      c.setAttribute('r', '1.5'); c.setAttribute('fill', '#22c55e');
+      c.setAttribute('opacity', '0.5'); c.setAttribute('class', 'sb-blip');
+      g.appendChild(c);
+    }
+  }
+
+  function updateThreatCount() {
+    var el = document.getElementById('sb-threats');
+    if (!el) return;
+    el.textContent = _hudZones.length;
+    if (_hudZones.length > 0) {
+      el.classList.add('has-threats');
+    } else {
+      el.classList.remove('has-threats');
+    }
+  }
+
+  function updateTickerFromZones() {
+    // Build real intel from zones
+    var items = [];
+    _hudZones.slice(0, 3).forEach(function(z) {
+      var dist = z.distance_km ? z.distance_km.toFixed(1) + 'km' : 'nearby';
+      var type = (z.zone_type || 'unknown').toUpperCase();
+      items.push('ZONE — ' + type + ' · ' + dist);
+    });
+    // Append time-based intel
+    var h = new Date().getHours();
+    if (h >= 22 || h < 5) items.push('NIGHT RISK ELEVATED — 22:00-05:00');
+    items.push('SHIELD NOMINAL — All nodes OK');
+    items.push('ENCRYPTION — AES-256 ACTIVE');
+    tickerItems = items;
+    renderTicker();
+  }
+
+  /* ── Connection Status ── */
+  function updateConnStatus(state) {
+    var dot = document.getElementById('sb-conn-dot');
+    var text = document.getElementById('sb-conn-text');
+    var footer = document.querySelector('.sb-status-footer');
+    if (state === 'connected') {
+      if (dot) { dot.className = 'sb-status-dot-live'; }
+      if (text) { text.textContent = 'ALL SYSTEMS OPERATIONAL'; }
+      if (footer) { footer.classList.remove('conn-lost'); }
+    } else if (state === 'disconnected') {
+      if (dot) { dot.className = 'sb-status-dot-live conn-lost'; }
+      if (text) { text.textContent = 'CONNECTION LOST'; }
+      if (footer) { footer.classList.add('conn-lost'); }
+    } else {
+      if (dot) { dot.className = 'sb-status-dot-live conn-pending'; }
+      if (text) { text.textContent = 'CONNECTING...'; }
+    }
+  }
+
+  // Wire to socket events (socket is defined later, so defer)
+  setTimeout(function() {
+    if (typeof socket !== 'undefined') {
+      socket.on('connect', function() { updateConnStatus('connected'); });
+      socket.on('disconnect', function() { updateConnStatus('disconnected'); });
+      socket.on('connect_error', function() { updateConnStatus('disconnected'); });
+      // If already connected
+      if (socket.connected) updateConnStatus('connected');
+    }
+    // Online/offline fallback
+    window.addEventListener('online', function() { updateConnStatus('connected'); });
+    window.addEventListener('offline', function() { updateConnStatus('disconnected'); });
+  }, 500);
+
+  /* ── Expose refresh for socket events ── */
+  window._hudRefreshZones = function() {
+    fetchNearbyZones();
+    fetchSafetyScore();
+  };
+
+  /* ── Init & Refresh Cycles ── */
+  updateGPS();
+  updateNetwork();
+  setInterval(updateGPS, 30000);      // GPS every 30s
+  setInterval(updateNetwork, 15000);  // Network every 15s
+  setInterval(window._hudRefreshZones, 60000); // Zones + score every 60s
 })();
 </script>
 {% else %}
@@ -881,19 +1217,37 @@ socket.on('connected', (data) => {
 socket.on('new_alert', (data) => {
   showToast(`SOS Alert from ${data.alert.user_id}!`, 'sos', 8000);
   updateNotifCount(1);
+  // Refresh HUD threat data
+  if (typeof _hudRefreshZones === 'function') _hudRefreshZones();
 });
 
 socket.on('new_sos', (data) => {
   showToast(`New SOS Alert received!`, 'sos', 8000);
   if (typeof onNewSos === 'function') onNewSos(data);
+  // Flash the threat count
+  const tc = document.getElementById('sb-threats');
+  if (tc) { tc.classList.add('has-threats'); tc.textContent = parseInt(tc.textContent||0) + 1; }
 });
 
 socket.on('risk_update', (data) => {
   if (typeof onRiskUpdate === 'function') onRiskUpdate(data);
+  // Update sidebar area score if present
+  if (data && data.risk_level) {
+    const lvl = document.getElementById('sb-area-level');
+    const wrap = document.getElementById('sb-area-status');
+    if (lvl && wrap) {
+      const cls = data.risk_level === 'low' ? 'area-safe' : data.risk_level === 'medium' ? 'area-caution' : 'area-danger';
+      const txt = data.risk_level === 'low' ? 'SECTOR CLEAR' : data.risk_level === 'medium' ? 'ELEVATED RISK' : 'HIGH THREAT';
+      wrap.className = 'sb-area-status ' + cls;
+      lvl.textContent = txt;
+    }
+  }
 });
 
 socket.on('new_danger_zone', (data) => {
   if (typeof onNewDangerZone === 'function') onNewDangerZone(data);
+  // Refresh radar blips when new zone reported
+  if (typeof _hudRefreshZones === 'function') _hudRefreshZones();
 });
 
 // Notification counter
