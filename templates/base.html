@@ -291,10 +291,7 @@
     <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
   </a>
 
-  <div class="nav-spacer"></div>
-  </div><!-- /sidebar-nav-scroll -->
-
-  <!-- ══ Sidebar HUD Panel ══ -->
+  <!-- ══ Sidebar HUD Panel (inside scroll) ══ -->
   <div class="sb-hud">
 
     {% if not current_user.is_admin %}
@@ -442,6 +439,8 @@
     </div>
 
   </div>
+
+  </div><!-- /sidebar-nav-scroll -->
 
   <!-- Sidebar scan line -->
   <div class="sb-scanline"></div>
