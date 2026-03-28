@@ -1528,30 +1528,74 @@ h1,h2,h3,h4,h5,h6 {
   transform:translateX(3px)!important;
 }
 /* ── Icon base styles ── */
-.sidebar-link i{width:24px!important;text-align:center;font-size:1.08rem!important;transition:all .4s cubic-bezier(.22,1,.36,1)!important}
-.sidebar-link:hover i{transform:scale(1.18)!important}
+.sidebar-link i{width:26px!important;text-align:center;font-size:1.15rem!important;transition:all .4s cubic-bezier(.22,1,.36,1)!important}
+.sidebar-link:hover i{transform:scale(1.22)!important}
 .sidebar-link span{position:relative;z-index:1}
-/* ── Color-coded icons — vivid at rest ── */
-.sidebar-link .bi-speedometer2,.sidebar-link .bi-house{color:rgba(244,63,94,.75)!important;filter:drop-shadow(0 0 4px rgba(244,63,94,.2))!important}
-.sidebar-link .bi-people{color:rgba(129,140,248,.75)!important;filter:drop-shadow(0 0 4px rgba(99,102,241,.2))!important}
-.sidebar-link .bi-geo-alt,.sidebar-link .bi-geo-alt-fill{color:rgba(251,191,36,.75)!important;filter:drop-shadow(0 0 4px rgba(245,158,11,.2))!important}
-.sidebar-link .bi-bar-chart,.sidebar-link .bi-speedometer{color:rgba(52,211,153,.75)!important;filter:drop-shadow(0 0 4px rgba(16,185,129,.2))!important}
-.sidebar-link .bi-map,.sidebar-link .bi-map-fill{color:rgba(96,165,250,.75)!important;filter:drop-shadow(0 0 4px rgba(59,130,246,.2))!important}
-.sidebar-link .bi-person-circle{color:rgba(167,139,250,.75)!important;filter:drop-shadow(0 0 4px rgba(139,92,246,.2))!important}
-.sidebar-link .bi-clock-history{color:rgba(251,191,36,.75)!important;filter:drop-shadow(0 0 4px rgba(245,158,11,.2))!important}
-.sidebar-link .bi-lightbulb-fill{color:rgba(253,224,71,.8)!important;filter:drop-shadow(0 0 5px rgba(250,204,21,.25))!important}
-.sidebar-link .bi-telephone-fill{color:rgba(74,222,128,.75)!important;filter:drop-shadow(0 0 4px rgba(34,197,94,.2))!important}
-.sidebar-link .bi-phone-vibrate{color:rgba(129,140,248,.75)!important;filter:drop-shadow(0 0 4px rgba(99,102,241,.2))!important}
-.sidebar-link .bi-box-arrow-right{color:rgba(248,113,113,.75)!important;filter:drop-shadow(0 0 4px rgba(220,38,38,.2))!important}
-/* ── Hover icons — full brightness + strong glow ── */
-.sidebar-link:hover .bi-speedometer2,.sidebar-link:hover .bi-house{color:rgba(244,63,94,1)!important;filter:drop-shadow(0 0 12px rgba(244,63,94,.5))!important}
-.sidebar-link:hover .bi-people{color:rgba(129,140,248,1)!important;filter:drop-shadow(0 0 12px rgba(99,102,241,.5))!important}
-.sidebar-link:hover .bi-geo-alt,.sidebar-link:hover .bi-geo-alt-fill{color:rgba(251,191,36,1)!important;filter:drop-shadow(0 0 12px rgba(245,158,11,.5))!important}
-.sidebar-link:hover .bi-bar-chart,.sidebar-link:hover .bi-speedometer{color:rgba(52,211,153,1)!important;filter:drop-shadow(0 0 12px rgba(16,185,129,.5))!important}
-.sidebar-link:hover .bi-map,.sidebar-link:hover .bi-map-fill{color:rgba(96,165,250,1)!important;filter:drop-shadow(0 0 12px rgba(59,130,246,.5))!important}
-.sidebar-link:hover .bi-person-circle{color:rgba(167,139,250,1)!important;filter:drop-shadow(0 0 12px rgba(139,92,246,.5))!important}
-.sidebar-link:hover .bi-lightbulb-fill{color:rgba(253,224,71,1)!important;filter:drop-shadow(0 0 12px rgba(250,204,21,.5))!important}
-.sidebar-link:hover .bi-telephone-fill{color:rgba(74,222,128,1)!important;filter:drop-shadow(0 0 12px rgba(34,197,94,.5))!important}
+
+/* ── Color-tinted link backgrounds + vivid icons ── */
+/* Dashboard / Home — rose */
+.sidebar-link:has(.bi-speedometer2),.sidebar-link:has(.bi-house){background:linear-gradient(135deg,rgba(244,63,94,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(244,63,94,.2)!important}
+.sidebar-link:has(.bi-speedometer2):hover,.sidebar-link:has(.bi-house):hover{border-left-color:rgba(244,63,94,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(244,63,94,.1)!important}
+.sidebar-link .bi-speedometer2,.sidebar-link .bi-house{color:rgba(244,63,94,.85)!important;filter:drop-shadow(0 0 6px rgba(244,63,94,.3))!important}
+/* Users — indigo */
+.sidebar-link:has(.bi-people){background:linear-gradient(135deg,rgba(99,102,241,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(99,102,241,.2)!important}
+.sidebar-link:has(.bi-people):hover{border-left-color:rgba(99,102,241,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(99,102,241,.1)!important}
+.sidebar-link .bi-people{color:rgba(129,140,248,.85)!important;filter:drop-shadow(0 0 6px rgba(99,102,241,.3))!important}
+/* Danger Zones — amber */
+.sidebar-link:has(.bi-geo-alt),.sidebar-link:has(.bi-geo-alt-fill){background:linear-gradient(135deg,rgba(245,158,11,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(245,158,11,.2)!important}
+.sidebar-link:has(.bi-geo-alt):hover,.sidebar-link:has(.bi-geo-alt-fill):hover{border-left-color:rgba(245,158,11,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(245,158,11,.1)!important}
+.sidebar-link .bi-geo-alt,.sidebar-link .bi-geo-alt-fill{color:rgba(251,191,36,.85)!important;filter:drop-shadow(0 0 6px rgba(245,158,11,.3))!important}
+/* Analytics — emerald */
+.sidebar-link:has(.bi-bar-chart),.sidebar-link:has(.bi-speedometer){background:linear-gradient(135deg,rgba(16,185,129,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(16,185,129,.2)!important}
+.sidebar-link:has(.bi-bar-chart):hover,.sidebar-link:has(.bi-speedometer):hover{border-left-color:rgba(16,185,129,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(16,185,129,.1)!important}
+.sidebar-link .bi-bar-chart,.sidebar-link .bi-speedometer{color:rgba(52,211,153,.85)!important;filter:drop-shadow(0 0 6px rgba(16,185,129,.3))!important}
+/* Live Map — blue */
+.sidebar-link:has(.bi-map),.sidebar-link:has(.bi-map-fill){background:linear-gradient(135deg,rgba(59,130,246,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(59,130,246,.2)!important}
+.sidebar-link:has(.bi-map):hover,.sidebar-link:has(.bi-map-fill):hover{border-left-color:rgba(59,130,246,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(59,130,246,.1)!important}
+.sidebar-link .bi-map,.sidebar-link .bi-map-fill{color:rgba(96,165,250,.85)!important;filter:drop-shadow(0 0 6px rgba(59,130,246,.3))!important}
+/* Profile — purple */
+.sidebar-link:has(.bi-person-circle){background:linear-gradient(135deg,rgba(139,92,246,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(139,92,246,.2)!important}
+.sidebar-link:has(.bi-person-circle):hover{border-left-color:rgba(139,92,246,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(139,92,246,.1)!important}
+.sidebar-link .bi-person-circle{color:rgba(167,139,250,.85)!important;filter:drop-shadow(0 0 6px rgba(139,92,246,.3))!important}
+/* Alert History — amber */
+.sidebar-link:has(.bi-clock-history){background:linear-gradient(135deg,rgba(245,158,11,.05) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(245,158,11,.2)!important}
+.sidebar-link:has(.bi-clock-history):hover{border-left-color:rgba(245,158,11,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(245,158,11,.1)!important}
+.sidebar-link .bi-clock-history{color:rgba(251,191,36,.85)!important;filter:drop-shadow(0 0 6px rgba(245,158,11,.3))!important}
+/* Safety Tips — yellow */
+.sidebar-link:has(.bi-lightbulb-fill){background:linear-gradient(135deg,rgba(250,204,21,.05) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(250,204,21,.2)!important}
+.sidebar-link:has(.bi-lightbulb-fill):hover{border-left-color:rgba(250,204,21,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(250,204,21,.1)!important}
+.sidebar-link .bi-lightbulb-fill{color:rgba(253,224,71,.9)!important;filter:drop-shadow(0 0 6px rgba(250,204,21,.35))!important}
+/* Emergency Dial — green */
+.sidebar-link:has(.bi-telephone-fill){background:linear-gradient(135deg,rgba(34,197,94,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(34,197,94,.2)!important}
+.sidebar-link:has(.bi-telephone-fill):hover{border-left-color:rgba(34,197,94,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(34,197,94,.1)!important}
+.sidebar-link .bi-telephone-fill{color:rgba(74,222,128,.85)!important;filter:drop-shadow(0 0 6px rgba(34,197,94,.3))!important}
+/* Fake Call — indigo */
+.sidebar-link:has(.bi-phone-vibrate){background:linear-gradient(135deg,rgba(99,102,241,.05) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(99,102,241,.2)!important}
+.sidebar-link:has(.bi-phone-vibrate):hover{border-left-color:rgba(99,102,241,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(99,102,241,.1)!important}
+.sidebar-link .bi-phone-vibrate{color:rgba(129,140,248,.85)!important;filter:drop-shadow(0 0 6px rgba(99,102,241,.3))!important}
+/* Logout — red */
+.sidebar-link:has(.bi-box-arrow-right){background:linear-gradient(135deg,rgba(220,38,38,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(220,38,38,.2)!important}
+.sidebar-link:has(.bi-box-arrow-right):hover{border-left-color:rgba(220,38,38,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(220,38,38,.1)!important}
+.sidebar-link .bi-box-arrow-right{color:rgba(248,113,113,.85)!important;filter:drop-shadow(0 0 6px rgba(220,38,38,.3))!important}
+/* Safety Score — emerald */
+.sidebar-link:has(.bi-shield-check){background:linear-gradient(135deg,rgba(16,185,129,.06) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(16,185,129,.2)!important}
+.sidebar-link:has(.bi-shield-check):hover{border-left-color:rgba(16,185,129,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(16,185,129,.1)!important}
+/* Safe Walk — amber */
+.sidebar-link:has(.bi-signpost-split){background:linear-gradient(135deg,rgba(245,158,11,.05) 0%,rgba(255,255,255,.03) 40%,rgba(255,255,255,.01) 100%)!important;border-left-color:rgba(245,158,11,.2)!important}
+.sidebar-link:has(.bi-signpost-split):hover{border-left-color:rgba(245,158,11,.7)!important;box-shadow:0 6px 28px rgba(0,0,0,.4),0 0 20px rgba(245,158,11,.1)!important}
+
+/* ── Hover icons — full glow ── */
+.sidebar-link:hover .bi-speedometer2,.sidebar-link:hover .bi-house{color:rgba(244,63,94,1)!important;filter:drop-shadow(0 0 14px rgba(244,63,94,.6))!important}
+.sidebar-link:hover .bi-people{color:rgba(129,140,248,1)!important;filter:drop-shadow(0 0 14px rgba(99,102,241,.6))!important}
+.sidebar-link:hover .bi-geo-alt,.sidebar-link:hover .bi-geo-alt-fill{color:rgba(251,191,36,1)!important;filter:drop-shadow(0 0 14px rgba(245,158,11,.6))!important}
+.sidebar-link:hover .bi-bar-chart,.sidebar-link:hover .bi-speedometer{color:rgba(52,211,153,1)!important;filter:drop-shadow(0 0 14px rgba(16,185,129,.6))!important}
+.sidebar-link:hover .bi-map,.sidebar-link:hover .bi-map-fill{color:rgba(96,165,250,1)!important;filter:drop-shadow(0 0 14px rgba(59,130,246,.6))!important}
+.sidebar-link:hover .bi-person-circle{color:rgba(167,139,250,1)!important;filter:drop-shadow(0 0 14px rgba(139,92,246,.6))!important}
+.sidebar-link:hover .bi-lightbulb-fill{color:rgba(253,224,71,1)!important;filter:drop-shadow(0 0 14px rgba(250,204,21,.6))!important}
+.sidebar-link:hover .bi-telephone-fill{color:rgba(74,222,128,1)!important;filter:drop-shadow(0 0 14px rgba(34,197,94,.6))!important}
+.sidebar-link:hover .bi-clock-history{color:rgba(251,191,36,1)!important;filter:drop-shadow(0 0 14px rgba(245,158,11,.6))!important}
+.sidebar-link:hover .bi-phone-vibrate{color:rgba(129,140,248,1)!important;filter:drop-shadow(0 0 14px rgba(99,102,241,.6))!important}
+.sidebar-link:hover .bi-box-arrow-right{color:rgba(248,113,113,1)!important;filter:drop-shadow(0 0 14px rgba(220,38,38,.6))!important}
 
 /* ── Glow line separator — animated ── */
 @keyframes glowLinePulse{0%,100%{opacity:.8;box-shadow:0 0 14px rgba(244,63,94,.12),0 0 4px rgba(244,63,94,.25)}50%{opacity:1;box-shadow:0 0 22px rgba(244,63,94,.2),0 0 6px rgba(244,63,94,.4)}}
