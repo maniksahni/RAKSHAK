@@ -5,26 +5,26 @@
 
 /* ── CSS Variables ─────────────────────────────────────────────────────────── */
 :root {
-  --bg-primary:     #07070a;
-  --bg-secondary:   #0a0a10;
-  --bg-card:        rgba(255,255,255,0.02);
-  --bg-card-hover:  rgba(255,255,255,0.04);
-  --border-glass:   rgba(255,255,255,0.08);
-  --border-red:     rgba(255,255,255,0.2);
+  --bg-primary:     #08070a;
+  --bg-secondary:   #0c0a08;
+  --bg-card:        rgba(212,175,55,0.02);
+  --bg-card-hover:  rgba(212,175,55,0.04);
+  --border-glass:   rgba(212,175,55,0.06);
+  --border-red:     rgba(212,175,55,0.15);
 
-  --red-primary:    #ef4444;
-  --red-glow:       rgba(239, 68, 68, 0.4);
-  --red-soft:       rgba(239, 68, 68, 0.15);
-  --red-dark:       #b91c1c;
+  --red-primary:    #d4af37;
+  --red-glow:       rgba(212, 175, 55, 0.3);
+  --red-soft:       rgba(212, 175, 55, 0.12);
+  --red-dark:       #b8860b;
 
-  --accent-blue:    #3b82f6;
-  --accent-green:   #10b981;
-  --accent-amber:   #f59e0b;
-  --accent-purple:  #8b5cf6;
+  --accent-blue:    #d4af37;
+  --accent-green:   #d4af37;
+  --accent-amber:   #d4af37;
+  --accent-purple:  #b8860b;
 
-  --text-primary:   #ffffff;
-  --text-secondary: rgba(255,255,255,0.7);
-  --text-muted:     rgba(255,255,255,0.45);
+  --text-primary:   #f7e7ce;
+  --text-secondary: rgba(247,231,206,0.7);
+  --text-muted:     rgba(212,175,55,0.45);
 
   --font-body:      'Inter', sans-serif;
   --font-display:   'Space Grotesk', 'Rajdhani', sans-serif;
@@ -34,9 +34,9 @@
   --radius-lg:   28px;
   --radius-xl:   36px;
 
-  --shadow-red:   0 15px 35px rgba(239, 68, 68, 0.15);
-  --shadow-card:  0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-  --shadow-glow:  0 0 60px rgba(255,255,255,0.1);
+  --shadow-red:   0 15px 35px rgba(212, 175, 55, 0.1);
+  --shadow-card:  0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(247,231,206,0.06);
+  --shadow-glow:  0 0 60px rgba(212,175,55,0.08);
   --transition:   all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   
   --sg: 'Space Grotesk', sans-serif;

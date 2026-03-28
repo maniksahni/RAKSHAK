@@ -4,48 +4,48 @@
 {% block extra_css %}
 
 <style>
-  /* ── HUD Crosshairs ── */
+  /* ── HUD Crosshairs — Gold ── */
   .user-db-container .hud-bracket-tl, .user-db-container .hud-bracket-tr,
   .user-db-container .hud-bracket-bl, .user-db-container .hud-bracket-br {
-    position:absolute; width: 30px; height: 30px; border: 2px solid rgba(244,63,94,0.8); z-index: 10;
+    position:absolute; width: 30px; height: 30px; border: 2px solid rgba(212,175,55,0.5); z-index: 10;
   }
   .hud-bracket-tl { top:0; left:0; border-right:none !important; border-bottom:none !important; border-radius: 12px 0 0 0; }
   .hud-bracket-tr { top:0; right:0; border-left:none !important; border-bottom:none !important; border-radius: 0 12px 0 0; }
   .hud-bracket-bl { bottom:0; left:0; border-right:none !important; border-top:none !important; border-radius: 0 0 0 12px; }
   .hud-bracket-br { bottom:0; right:0; border-left:none !important; border-top:none !important; border-radius: 0 0 12px 0; }
 
-  /* ── Scanlines & Radar ── */
+  /* ── Scanlines & Radar — Gold ── */
   .scan-line-horizontal {
-    position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(244,63,94,0.5), transparent);
+    position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.35), transparent);
     animation: scanHScan 4s linear infinite; pointer-events: none; z-index: 5;
   }
   @keyframes scanHScan { 0% { top: -10px; } 100% { top: 110%; } }
   @keyframes spinSlow { 100% { transform: rotate(360deg); } }
   @keyframes radarSweep { 100% { transform: rotate(360deg); } }
 
-  /* ── Table Row Cyber Glow ── */
+  /* ── Table Row Gold Glow ── */
   .cyber-grid-table tbody tr {
     transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     position: relative;
     cursor: pointer;
   }
   .cyber-grid-table tbody tr:hover {
-    background: rgba(244,63,94,0.08) !important;
-    box-shadow: inset 0 0 20px rgba(244,63,94,0.1);
+    background: rgba(212,175,55,0.06) !important;
+    box-shadow: inset 0 0 20px rgba(212,175,55,0.06);
     transform: scale(1.01) translateZ(0);
     z-index: 10;
   }
   .cyber-grid-table tbody tr:hover td {
-    color: #fff !important;
-    text-shadow: 0 0 10px rgba(244,63,94,0.5);
+    color: #f7e7ce !important;
+    text-shadow: 0 0 10px rgba(212,175,55,0.3);
   }
   .btn-holographic {
-    background: transparent; color: #f43f5e; border: 1px solid rgba(244,63,94,0.5);
-    box-shadow: 0 0 10px rgba(244,63,94,0.1); transition: 0.3s;
+    background: transparent; color: #d4af37; border: 1px solid rgba(212,175,55,0.4);
+    box-shadow: 0 0 10px rgba(212,175,55,0.08); transition: 0.3s;
   }
   .btn-holographic:hover {
-    background: rgba(244,63,94,0.2); box-shadow: 0 0 20px rgba(244,63,94,0.4), inset 0 0 10px rgba(244,63,94,0.2);
-    text-shadow: 0 0 8px #fff; color: #fff;
+    background: rgba(212,175,55,0.12); box-shadow: 0 0 20px rgba(212,175,55,0.25), inset 0 0 10px rgba(212,175,55,0.1);
+    text-shadow: 0 0 8px rgba(247,231,206,0.6); color: #f7e7ce;
   }
 </style>
 
@@ -53,7 +53,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/premium-upgrade.css') }}?v=3">
 <style>
 /* ════════════════════════════════════════════════
-   ULTRA-PREMIUM ADMIN DASHBOARD CSS
+   ULTRA-PREMIUM ADMIN DASHBOARD — GOLD LUXURY
    ════════════════════════════════════════════════ */
 .chart-wrapper { position:relative; height:200px; }
 .section-header { font-family:var(--font-display); font-size:1.5rem; font-weight:800; margin:0; letter-spacing:-0.02em; }
@@ -61,41 +61,41 @@
 /* ── HUD ANIMATIONS & EFFECTS ── */
 .admin-greeting { animation: animateIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-/* Premium Live Indicator */
+/* Premium Live Indicator — Gold */
 .live-indicator {
   display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px;
-  border-radius: 50px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 50px; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);
   font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 800;
-  color: #10b981; letter-spacing: 0.15em; text-transform: uppercase;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15); backdrop-filter: blur(10px);
+  color: #d4af37; letter-spacing: 0.15em; text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(212,175,55,0.1); backdrop-filter: blur(10px);
 }
 .live-indicator::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #10b981;
-  box-shadow: 0 0 8px #10b981, 0 0 16px #10b981; animation: statusBlink 1.5s ease-in-out infinite;
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #d4af37;
+  box-shadow: 0 0 8px #d4af37, 0 0 16px rgba(212,175,55,0.5); animation: statusBlink 1.5s ease-in-out infinite;
 }
 @keyframes statusBlink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
 
-/* Ultra-Premium Glass Cards */
+/* Ultra-Premium Glass Cards — Warm Dark */
 .glass-card {
-  background: linear-gradient(145deg, rgba(18,14,28,0.7) 0%, rgba(12,10,20,0.85) 50%, rgba(8,6,14,0.9) 100%);
+  background: linear-gradient(145deg, rgba(20,17,12,0.75) 0%, rgba(14,12,8,0.88) 50%, rgba(10,8,5,0.92) 100%);
   backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255,255,255,0.08); border-top:1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(212,175,55,0.06); border-top:1px solid rgba(247,231,206,0.08);
   border-radius: 22px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+  box-shadow: inset 0 1px 0 rgba(247,231,206,0.05), 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.02);
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s, border-color 0.4s;
 }
 .glass-card:hover {
-  transform: translateY(-3px); border-color: rgba(244,63,94,0.25);
-  box-shadow: 0 24px 50px rgba(0,0,0,0.6), 0 0 30px rgba(244,63,94,0.08), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: translateY(-3px); border-color: rgba(212,175,55,0.2);
+  box-shadow: 0 24px 50px rgba(0,0,0,0.6), 0 0 30px rgba(212,175,55,0.06), inset 0 1px 0 rgba(247,231,206,0.08);
 }
 
-/* ── Animated gradient border for cmd-center ── */
+/* ── Animated gradient border for cmd-center — Gold ── */
 @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
 @keyframes borderRotate { to { --angle: 360deg; } }
 .cmd-center { position:relative; }
 .cmd-center-border-glow {
   position:absolute; inset:-1px; border-radius:25px; z-index:-1; padding:1px;
-  background:conic-gradient(from var(--angle), rgba(244,63,94,0.4), rgba(139,92,246,0.2), rgba(59,130,246,0.15), rgba(244,63,94,0.05), rgba(244,63,94,0.4));
+  background:conic-gradient(from var(--angle), rgba(212,175,55,0.4), rgba(184,134,11,0.2), rgba(247,231,206,0.12), rgba(212,175,55,0.05), rgba(212,175,55,0.4));
   animation:borderRotate 6s linear infinite;
   -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor; mask-composite:exclude;
@@ -112,150 +112,148 @@
 .stat-card:nth-child(5) .stat-number { animation-delay:0.5s }
 .stat-card:nth-child(6) .stat-number { animation-delay:0.6s }
 
-/* ── Section headers gradient text ── */
+/* ── Section headers — gold gradient text ── */
 .section-header {
   font-family:var(--font-display); font-size:1.5rem; font-weight:800; margin:0; letter-spacing:-0.02em;
-  background:linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+  background:linear-gradient(135deg, #f7e7ce 0%, #d4af37 50%, #f7e7ce 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
 }
 
-/* Stat Card — Premium Glass */
+/* Stat Card — Gold Glass */
 .stat-card {
   position: relative; padding: 18px 16px; border-radius: 18px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.01) 100%);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-top: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(145deg, rgba(212,175,55,0.04) 0%, rgba(184,134,11,0.02) 50%, rgba(247,231,206,0.008) 100%);
+  border: 1px solid rgba(212,175,55,0.08);
+  border-top: 2px solid rgba(212,175,55,0.2);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden; z-index: 1;
   backdrop-filter: blur(12px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(247,231,206,0.04);
 }
 .stat-card::before {
-  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 60%);
+  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(212,175,55,0.06), transparent 60%);
   opacity: 0; transition: opacity 0.4s; z-index: -1;
 }
-.stat-card:hover { transform: translateY(-4px) scale(1.02); }
+.stat-card:hover { transform: translateY(-4px) scale(1.02); border-color: rgba(212,175,55,0.3); box-shadow: 0 0 30px rgba(212,175,55,0.1), 0 8px 24px rgba(0,0,0,0.4); }
 .stat-card:hover::before { opacity: 1; }
-.stat-card .stat-number { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 800; line-height: 1; margin-bottom: 6px; transition: all 0.3s; filter: drop-shadow(0 0 6px currentColor); }
-.stat-card:hover .stat-number { transform: scale(1.08); filter: drop-shadow(0 0 16px currentColor); }
-.stat-card .stat-label { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; }
+.stat-card .stat-number { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 800; line-height: 1; margin-bottom: 6px; transition: all 0.3s; color: #d4af37 !important; filter: drop-shadow(0 0 6px rgba(212,175,55,0.4)); }
+.stat-card:hover .stat-number { transform: scale(1.08); filter: drop-shadow(0 0 16px rgba(212,175,55,0.6)); }
+.stat-card .stat-label { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(212,175,55,0.45); letter-spacing: 0.15em; text-transform: uppercase; }
 
-/* Color Variants — colored top accent + glow */
-.stat-card-danger { border-color: rgba(244,63,94,0.12); border-top:2px solid rgba(244,63,94,0.5); }
-.stat-card-danger:hover { border-color: rgba(244,63,94,0.4); box-shadow: 0 0 30px rgba(244,63,94,0.15), 0 8px 24px rgba(0,0,0,0.4); }
-.stat-card-amber { border-color: rgba(246,173,85,0.12); border-top:2px solid rgba(246,173,85,0.5); }
-.stat-card-amber:hover { border-color: rgba(246,173,85,0.4); box-shadow: 0 0 30px rgba(246,173,85,0.15), 0 8px 24px rgba(0,0,0,0.4); }
-.stat-card-green { border-color: rgba(16,185,129,0.12); border-top:2px solid rgba(16,185,129,0.5); }
-.stat-card-green:hover { border-color: rgba(16,185,129,0.4); box-shadow: 0 0 30px rgba(16,185,129,0.15), 0 8px 24px rgba(0,0,0,0.4); }
-.stat-card-blue { border-color: rgba(59,130,246,0.12); border-top:2px solid rgba(59,130,246,0.5); }
-.stat-card-blue:hover { border-color: rgba(59,130,246,0.4); box-shadow: 0 0 30px rgba(59,130,246,0.15), 0 8px 24px rgba(0,0,0,0.4); }
+/* All stat card variants — unified gold (no RGB rainbow) */
+.stat-card-danger, .stat-card-amber, .stat-card-green, .stat-card-blue {
+  border-color: rgba(212,175,55,0.08); border-top: 2px solid rgba(212,175,55,0.25);
+}
+.stat-card-danger:hover, .stat-card-amber:hover, .stat-card-green:hover, .stat-card-blue:hover {
+  border-color: rgba(212,175,55,0.35); box-shadow: 0 0 30px rgba(212,175,55,0.12), 0 8px 24px rgba(0,0,0,0.4);
+}
 
 
-/* Central Command Header — Premium v2 */
+/* Central Command Header — Gold Luxury */
 .cmd-center {
-  background: linear-gradient(145deg, rgba(18,14,28,0.92) 0%, rgba(10,8,18,0.95) 50%, rgba(6,4,12,0.98) 100%);
-  backdrop-filter: blur(40px); border: 1px solid rgba(244,63,94,0.15); border-radius: 18px;
+  background: linear-gradient(145deg, rgba(20,17,12,0.94) 0%, rgba(14,12,8,0.96) 50%, rgba(10,8,5,0.98) 100%);
+  backdrop-filter: blur(40px); border: 1px solid rgba(212,175,55,0.12); border-radius: 18px;
   padding: 1rem 1.4rem; position: relative; overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 40px rgba(0,0,0,0.5), inset 0 0 60px rgba(244,63,94,0.04), 0 0 0 1px rgba(255,255,255,0.03);
+  box-shadow: inset 0 1px 0 rgba(247,231,206,0.06), 0 12px 40px rgba(0,0,0,0.5), inset 0 0 60px rgba(212,175,55,0.02), 0 0 0 1px rgba(212,175,55,0.03);
 }
 .cmd-center::before {
   content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle at 30% 50%, rgba(244,63,94,0.06) 0%, transparent 40%), radial-gradient(circle at 80% 50%, rgba(139,92,246,0.04) 0%, transparent 40%);
+  background: radial-gradient(circle at 30% 50%, rgba(212,175,55,0.04) 0%, transparent 40%), radial-gradient(circle at 80% 50%, rgba(184,134,11,0.03) 0%, transparent 40%);
   pointer-events: none; z-index: 0; animation: corePulse 10s ease-in-out infinite alternate;
 }
-/* Corner accent lines */
+/* Corner accent lines — gold */
 .cmd-center::after {
   content:''; position:absolute; top:0; right:0; width:120px; height:120px;
-  background:linear-gradient(225deg, rgba(244,63,94,0.08) 0%, transparent 60%);
+  background:linear-gradient(225deg, rgba(212,175,55,0.06) 0%, transparent 60%);
   pointer-events:none; z-index:0;
 }
 .cmd-clock {
   font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 900;
-  color: #fff; letter-spacing: 0.02em; line-height: 1;
-  background:linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.85) 100%);
+  color: #f7e7ce; letter-spacing: 0.02em; line-height: 1;
+  background:linear-gradient(135deg, #f7e7ce 0%, #d4af37 50%, #f7e7ce 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-  filter:drop-shadow(0 0 20px rgba(255,255,255,0.15));
+  filter:drop-shadow(0 0 20px rgba(212,175,55,0.15));
 }
-.cmd-date { font-family: 'Courier New', monospace; font-size: 0.7rem; color: #ff6b6b; letter-spacing: 0.18em; margin-top: 4px; text-shadow:0 0 12px rgba(244,63,94,0.3); }
-.cmd-stat { display: flex; flex-direction: column; align-items: center; padding: 0 1.2rem; border-left: 1px solid rgba(255,255,255,0.06); }
-.cmd-stat-val { font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:800; line-height:1; filter:drop-shadow(0 0 8px currentColor); }
-.cmd-stat-lbl { font-family:'Courier New',monospace; font-size:0.55rem; color:rgba(255,255,255,0.35); letter-spacing:0.15em; text-transform:uppercase; margin-top:4px; }
+.cmd-date { font-family: 'Courier New', monospace; font-size: 0.7rem; color: #d4af37; letter-spacing: 0.18em; margin-top: 4px; text-shadow:0 0 12px rgba(212,175,55,0.25); }
+.cmd-stat { display: flex; flex-direction: column; align-items: center; padding: 0 1.2rem; border-left: 1px solid rgba(212,175,55,0.08); }
+.cmd-stat-val { font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:800; line-height:1; color:#d4af37 !important; filter:drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
+.cmd-stat-lbl { font-family:'Courier New',monospace; font-size:0.55rem; color:rgba(212,175,55,0.4); letter-spacing:0.15em; text-transform:uppercase; margin-top:4px; }
 
-/* Threat Level Bar — Premium v2 */
+/* Threat Level Bar — Gold */
 .threat-level-bar {
-  background: linear-gradient(135deg, rgba(10,6,16,0.95) 0%, rgba(6,4,12,0.98) 100%);
-  border: 1px solid rgba(244,63,94,0.3); border-radius: 14px;
+  background: linear-gradient(135deg, rgba(16,13,8,0.95) 0%, rgba(10,8,5,0.98) 100%);
+  border: 1px solid rgba(212,175,55,0.2); border-radius: 14px;
   padding: 12px 22px; display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 1.5rem; position: relative; overflow: hidden;
-  box-shadow: 0 0 25px rgba(244,63,94,0.12), inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 0 25px rgba(212,175,55,0.06), inset 0 1px 0 rgba(247,231,206,0.04), 0 4px 16px rgba(0,0,0,0.4);
   backdrop-filter: blur(20px);
 }
 .threat-level-bar::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent);
   animation: threatScan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes threatScan { 0% { left: -50%; } 100% { left: 150%; } }
-.threat-level-label { font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; color: #ff6b6b; z-index: 1; }
+.threat-level-label { font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; color: #d4af37; z-index: 1; }
 .threat-segments { display: flex; gap: 4px; z-index: 1; }
-.threat-seg { width: 24px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.06); transition: all 0.5s; }
-.threat-seg.active-amber { background: #fca5a5; box-shadow: 0 0 12px #fca5a5; }
-.threat-seg.active-red { background: #ef4444; box-shadow: 0 0 15px #ef4444; }
+.threat-seg { width: 24px; height: 8px; border-radius: 4px; background: rgba(212,175,55,0.08); transition: all 0.5s; }
+.threat-seg.active-amber { background: #d4af37; box-shadow: 0 0 12px rgba(212,175,55,0.5); }
+.threat-seg.active-red { background: #b8860b; box-shadow: 0 0 15px rgba(184,134,11,0.6); }
 
-/* HUD Brackets Enhancement */
+/* HUD Brackets — Gold */
 .hud-brackets::before, .hud-brackets::after, .hud-bracket-bl::before, .hud-bracket-br::before {
-  content: ''; position: absolute; width: 40px; height: 40px; border-color: rgba(244,63,94,0.6); border-style: solid; pointer-events: none; z-index: 2; transition: all 0.3s;
+  content: ''; position: absolute; width: 40px; height: 40px; border-color: rgba(212,175,55,0.35); border-style: solid; pointer-events: none; z-index: 2; transition: all 0.3s;
 }
 .hud-brackets::before { top: -6px; left: -6px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
 .hud-brackets::after { top: -6px; right: -6px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
 .hud-bracket-bl::before { bottom: -6px; left: -6px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
 .hud-bracket-br::before { bottom: -6px; right: -6px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
 
-/* Table Overhaul */
+/* Table Overhaul — Gold */
 #users-tbody tr { animation: rowIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; transition: background 0.2s; }
-#users-tbody tr:hover { background: rgba(244,63,94,0.05); }
+#users-tbody tr:hover { background: rgba(212,175,55,0.04); }
 .search-input {
-  background: rgba(0,0,0,0.5); border: 1px solid rgba(244,63,94,0.4); border-radius: 12px;
-  color: #ff6b6b; padding: 10px 20px 10px 45px; font-family: 'Courier New', monospace; font-size: 0.85rem;
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(212,175,55,0.3); border-radius: 12px;
+  color: #d4af37; padding: 10px 20px 10px 45px; font-family: 'Courier New', monospace; font-size: 0.85rem;
   transition: all 0.4s; width: 260px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%23ef4444' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%23d4af37' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: 15px center;
 }
-.search-input:focus { border-color: #ef4444; width: 320px; outline: none; box-shadow: 0 0 0 4px rgba(244,63,94,0.15), inset 0 0 20px rgba(0,0,0,0.8); }
+.search-input:focus { border-color: #d4af37; width: 320px; outline: none; box-shadow: 0 0 0 4px rgba(212,175,55,0.1), inset 0 0 20px rgba(0,0,0,0.8); }
 
 /* Vitals Systems Overhaul */
 .sys-health-bar { background: rgba(255,255,255,0.05); border-radius: 50px; overflow: hidden; height: 8px; position: relative; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
 .sys-health-fill { height: 100%; border-radius: 50px; transition: width 1.5s cubic-bezier(0.22,1,0.36,1); position: relative; box-shadow: 0 0 10px currentColor; }
 
-/* Ticker Overhaul */
+/* Ticker Overhaul — Gold */
 .stats-ticker-bar {
-  overflow: hidden; background: linear-gradient(90deg, rgba(244,63,94,0.1), rgba(0,0,0,0.8), rgba(244,63,94,0.1));
-  border-top: 1px solid rgba(244,63,94,0.3); border-bottom: 1px solid rgba(244,63,94,0.3);
-  padding: 10px 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #ff6b6b; letter-spacing: 0.15em; margin-bottom: 2rem; border-radius: 0;
+  overflow: hidden; background: linear-gradient(90deg, rgba(212,175,55,0.05), rgba(0,0,0,0.8), rgba(212,175,55,0.05));
+  border-top: 1px solid rgba(212,175,55,0.15); border-bottom: 1px solid rgba(212,175,55,0.15);
+  padding: 10px 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color: #d4af37; letter-spacing: 0.15em; margin-bottom: 2rem; border-radius: 0;
 }
-.ticker-text { display: inline-block; animation: tickerScroll 25s linear infinite; white-space: nowrap; font-weight: 700; text-shadow: 0 0 10px rgba(244,63,94,0.4); }
+.ticker-text { display: inline-block; animation: tickerScroll 25s linear infinite; white-space: nowrap; font-weight: 700; text-shadow: 0 0 10px rgba(212,175,55,0.25); }
 
-/* Scan Line Overlay */
+/* Scan Line Overlay — Gold */
 .scan-line-overlay {
   position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:9999;
   background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
 }
 .scan-line-overlay::after {
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,transparent 20%,rgba(244,63,94,0.15) 50%,transparent 80%);
+  background:linear-gradient(90deg,transparent 20%,rgba(212,175,55,0.1) 50%,transparent 80%);
   animation:scanDown 8s linear infinite;
 }
 @keyframes scanDown { 0%{top:0} 100%{top:100%} }
 
-/* Radar Scan Overlay (chart bg) */
+/* Radar Scan Overlay — Gold */
 .radar-scan-overlay {
   position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
-  background:radial-gradient(circle at 50% 50%, rgba(244,63,94,0.03) 0%, transparent 70%);
+  background:radial-gradient(circle at 50% 50%, rgba(212,175,55,0.02) 0%, transparent 70%);
 }
 .radar-scan-overlay::before {
   content:'';position:absolute;top:50%;left:50%;width:200%;height:4px;
-  background:linear-gradient(90deg,transparent,rgba(244,63,94,0.2),transparent);
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.12),transparent);
   transform-origin:0 50%;animation:radarSweep 4s linear infinite;
 }
 @keyframes radarSweep { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
@@ -272,16 +270,16 @@
 /* Refresh Ring */
 .refresh-ring {
   width:18px;height:18px;border-radius:50%;
-  border:2px solid rgba(72,187,120,0.3);border-top-color:var(--accent-green);
+  border:2px solid rgba(212,175,55,0.3);border-top-color:#d4af37;
   animation:spinSlow 2s linear infinite;
 }
 @keyframes spinSlow { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
 @keyframes corePulse { 0%{opacity:0.5} 100%{opacity:1} }
 @keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
-/* Map glow border */
-.map-glow { border:1px solid rgba(244,63,94,0.2); box-shadow:0 0 30px rgba(244,63,94,0.08); border-radius:20px; }
-.map-glow:hover { border-color:rgba(244,63,94,0.4); box-shadow:0 0 40px rgba(244,63,94,0.15); }
+/* Map glow border — Gold */
+.map-glow { border:1px solid rgba(212,175,55,0.12); box-shadow:0 0 30px rgba(212,175,55,0.05); border-radius:20px; }
+.map-glow:hover { border-color:rgba(212,175,55,0.3); box-shadow:0 0 40px rgba(212,175,55,0.1); }
 
 /* ── Premium container spacing ── */
 .container-fluid.py-3 { padding:1rem 1.5rem!important; }
@@ -298,58 +296,58 @@
 
 /* (stat-card + cmd-stat styles moved to premium section above) */
 
-/* Alert feed items */
+/* Alert feed items — Gold */
 .alert-feed-item {
-  background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06);
+  background:rgba(212,175,55,0.02); border:1px solid rgba(212,175,55,0.06);
   border-radius:10px; padding:12px; margin-bottom:8px; transition:all 0.3s;
 }
-.alert-feed-item:hover { background:rgba(244,63,94,0.05); border-color:rgba(244,63,94,0.2); }
+.alert-feed-item:hover { background:rgba(212,175,55,0.04); border-color:rgba(212,175,55,0.15); }
 
-/* Pill badges */
+/* Pill badges — Gold monochrome */
 .pill { display:inline-block; padding:2px 8px; border-radius:50px; font-family:'Courier New',monospace; font-weight:700; letter-spacing:0.08em; }
-.pill-active { background:rgba(244,63,94,0.15); color:#f43f5e; border:1px solid rgba(244,63,94,0.3); }
-.pill-resolved { background:rgba(72,187,120,0.1); color:var(--accent-green); border:1px solid rgba(72,187,120,0.2); }
-.pill-sos-button { background:rgba(244,63,94,0.15); color:#f43f5e; }
-.pill-shake-detect { background:rgba(246,173,85,0.15); color:var(--accent-amber); }
-.pill-manual { background:rgba(59,130,246,0.15); color:var(--accent-blue); }
-.pill-voice-trigger { background:rgba(168,85,247,0.15); color:#a855f7; }
+.pill-active { background:rgba(212,175,55,0.12); color:#d4af37; border:1px solid rgba(212,175,55,0.25); }
+.pill-resolved { background:rgba(212,175,55,0.06); color:rgba(247,231,206,0.7); border:1px solid rgba(212,175,55,0.15); }
+.pill-sos-button { background:rgba(212,175,55,0.12); color:#d4af37; }
+.pill-shake-detect { background:rgba(212,175,55,0.1); color:#d4af37; }
+.pill-manual { background:rgba(212,175,55,0.08); color:rgba(247,231,206,0.7); }
+.pill-voice-trigger { background:rgba(212,175,55,0.1); color:#d4af37; }
 
-/* Scan line for user table */
+/* Scan line for user table — Gold */
 .scan-line-horizontal {
   position:absolute; top:0; left:0; right:0; height:2px; z-index:3;
-  background:linear-gradient(90deg,transparent,rgba(244,63,94,0.6),transparent);
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.4),transparent);
   animation:healthSweep 3s linear infinite;
 }
 
-/* HUD bracket corners for table */
-.hud-bracket-tl,.hud-bracket-tr,.hud-bracket-bl2,.hud-bracket-br2 { position:absolute; width:30px; height:30px; border-color:rgba(244,63,94,0.4); border-style:solid; pointer-events:none; z-index:3; }
+/* HUD bracket corners for table — Gold */
+.hud-bracket-tl,.hud-bracket-tr,.hud-bracket-bl2,.hud-bracket-br2 { position:absolute; width:30px; height:30px; border-color:rgba(212,175,55,0.25); border-style:solid; pointer-events:none; z-index:3; }
 .hud-bracket-tl { top:0; left:0; border-width:2px 0 0 2px; }
 .hud-bracket-tr { top:0; right:0; border-width:2px 2px 0 0; }
 
 /* Scan V for dossier */
 @keyframes scanV { 0%{top:0;bottom:auto;height:30%} 50%{top:auto;bottom:0;height:30%} 100%{top:0;bottom:auto;height:30%} }
 
-/* Threat level value badges */
+/* Threat level value badges — Gold */
 .threat-level-value { font-family:'Space Grotesk',sans-serif; font-size:0.85rem; font-weight:800; letter-spacing:0.1em; padding:4px 12px; border-radius:50px; z-index:1; }
-.threat-level-value.low { color:var(--accent-green); background:rgba(72,187,120,0.15); border:1px solid rgba(72,187,120,0.3); }
-.threat-level-value.elevated { color:#fbbf24; background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.3); }
-.threat-level-value.critical { color:#f43f5e; background:rgba(244,63,94,0.2); border:1px solid rgba(244,63,94,0.4); animation:criticalPulse 1.5s ease-in-out infinite; }
-@keyframes criticalPulse { 0%,100%{box-shadow:0 0 10px rgba(244,63,94,0.3)} 50%{box-shadow:0 0 25px rgba(244,63,94,0.6)} }
+.threat-level-value.low { color:#d4af37; background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); }
+.threat-level-value.elevated { color:#d4af37; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); }
+.threat-level-value.critical { color:#f7e7ce; background:rgba(212,175,55,0.2); border:1px solid rgba(212,175,55,0.4); animation:criticalPulse 1.5s ease-in-out infinite; }
+@keyframes criticalPulse { 0%,100%{box-shadow:0 0 10px rgba(212,175,55,0.2)} 50%{box-shadow:0 0 25px rgba(212,175,55,0.45)} }
 
 /* Empty state */
 .empty-state { text-align:center; padding:30px; }
 .empty-state i { font-size:2rem; color:var(--text-muted); display:block; margin-bottom:10px; }
 .empty-state p { color:var(--text-muted); font-size:0.85rem; margin:0; }
 
-/* Cyber table */
+/* Cyber table — Gold */
 .cyber-grid-table th {
   font-family:'Courier New',monospace; font-size:0.65rem; font-weight:700;
-  letter-spacing:0.15em; color:rgba(244,63,94,0.7); border-bottom:1px solid rgba(244,63,94,0.2);
-  padding:14px 12px; text-transform:uppercase; background:rgba(244,63,94,0.03);
+  letter-spacing:0.15em; color:rgba(212,175,55,0.6); border-bottom:1px solid rgba(212,175,55,0.12);
+  padding:14px 12px; text-transform:uppercase; background:rgba(212,175,55,0.02);
 }
 .cyber-grid-table td {
-  font-size:0.82rem; padding:12px; border-bottom:1px solid rgba(255,255,255,0.03);
-  vertical-align:middle;
+  font-size:0.82rem; padding:12px; border-bottom:1px solid rgba(212,175,55,0.04);
+  vertical-align:middle; color:rgba(247,231,206,0.7);
 }
 
 /* Responsive */
@@ -395,24 +393,24 @@
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2" style="position:relative;z-index:1;">
       <!-- Left: Title + subtitle -->
       <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-globe" style="color:var(--red-primary);font-size:1.4rem;filter:drop-shadow(0 0 8px rgba(244,63,94,0.4));"></i>
+        <i class="bi bi-globe" style="color:#d4af37;font-size:1.4rem;filter:drop-shadow(0 0 8px rgba(212,175,55,0.35));"></i>
         <div>
-          <h2 style="font-size:1.3rem; font-family:var(--sg); font-weight:800; letter-spacing:-0.02em; margin:0; background:linear-gradient(135deg, #f43f5e 0%, #fff 50%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Central Command</h2>
-          <p style="color:rgba(255,255,255,0.35);font-size:0.65rem;margin:2px 0 0;font-family:'Courier New',monospace; letter-spacing:0.1em;text-transform:uppercase;">Global Platform Monitoring</p>
+          <h2 style="font-size:1.3rem; font-family:var(--sg); font-weight:800; letter-spacing:-0.02em; margin:0; background:linear-gradient(135deg, #d4af37 0%, #f7e7ce 50%, #d4af37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Central Command</h2>
+          <p style="color:rgba(212,175,55,0.4);font-size:0.65rem;margin:2px 0 0;font-family:'Courier New',monospace; letter-spacing:0.1em;text-transform:uppercase;">Global Platform Monitoring</p>
         </div>
       </div>
       <!-- Center: Stats inline -->
       <div class="d-flex align-items-center gap-3 d-none d-md-flex">
         <div class="cmd-stat" style="border-left:none;padding:0 1rem;">
-          <div class="cmd-stat-val" style="color:var(--accent-green);font-size:1.4rem;">{{ stats.total_users }}</div>
+          <div class="cmd-stat-val" style="font-size:1.4rem;">{{ stats.total_users }}</div>
           <div class="cmd-stat-lbl">Users</div>
         </div>
         <div class="cmd-stat" style="padding:0 1rem;">
-          <div class="cmd-stat-val" style="color:var(--red-primary);font-size:1.4rem;">{{ stats.active_alerts }}</div>
+          <div class="cmd-stat-val" style="font-size:1.4rem;">{{ stats.active_alerts }}</div>
           <div class="cmd-stat-lbl">Active SOS</div>
         </div>
         <div class="cmd-stat" style="padding:0 1rem;">
-          <div class="cmd-stat-val" style="color:var(--accent-amber);font-size:1.4rem;">{{ stats.high_risk_users }}</div>
+          <div class="cmd-stat-val" style="font-size:1.4rem;">{{ stats.high_risk_users }}</div>
           <div class="cmd-stat-lbl">High Risk</div>
         </div>
       </div>
@@ -432,7 +430,7 @@
   <div class="row g-3 mb-4">
     <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
       <div class="stat-card stat-card-blue" style="transform:translateZ(20px);">
-        <div class="stat-number" style="color:var(--accent-blue);">{{ stats.total_users }}</div>
+        <div class="stat-number">{{ stats.total_users }}</div>
         <div class="stat-label">Total Users</div>
       </div>
     </div>
@@ -444,25 +442,25 @@
     </div>
     <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
       <div class="stat-card stat-card-danger" style="transform:translateZ(20px);">
-        <div class="stat-number" style="color:var(--red-primary);">{{ stats.active_alerts }}</div>
+        <div class="stat-number">{{ stats.active_alerts }}</div>
         <div class="stat-label">Active SOS</div>
       </div>
     </div>
     <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
       <div class="stat-card stat-card-amber" style="transform:translateZ(20px);">
-        <div class="stat-number" style="color:var(--accent-amber);">{{ stats.pending_zones }}</div>
+        <div class="stat-number">{{ stats.pending_zones }}</div>
         <div class="stat-label">Pending Zones</div>
       </div>
     </div>
     <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
       <div class="stat-card stat-card-danger" style="transform:translateZ(20px);">
-        <div class="stat-number" style="color:var(--red-primary);">{{ stats.high_risk }}</div>
+        <div class="stat-number">{{ stats.high_risk }}</div>
         <div class="stat-label">High Risk Users</div>
       </div>
     </div>
     <div class="col-6 col-md-4 col-lg-2 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
       <div class="stat-card stat-card-green" style="transform:translateZ(20px);">
-        <div class="stat-number" style="color:var(--accent-green);">LIVE</div>
+        <div class="stat-number">LIVE</div>
         <div class="stat-label">System Status</div>
       </div>
     </div>
@@ -473,7 +471,7 @@
     <div class="col-12 animate-in">
       <div class="glass-card overflow-hidden" style="padding:1.5rem;">
         <div class="d-flex align-items-center justify-content-between mb-3">
-          <span class="section-header" style="font-size:1rem;background:linear-gradient(135deg, rgba(59,130,246,0.9), #fff 60%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;"><i class="bi bi-graph-up-arrow me-2" style="color:var(--accent-blue);-webkit-text-fill-color:var(--accent-blue);"></i>Incident Telemetry (Past 7 Days)</span>
+          <span class="section-header" style="font-size:1rem;"><i class="bi bi-graph-up-arrow me-2" style="color:#d4af37;-webkit-text-fill-color:#d4af37;"></i>Incident Telemetry (Past 7 Days)</span>
           <span style="font-size:0.68rem;color:var(--text-muted);border:1px solid rgba(255,255,255,0.08);padding:4px 12px;border-radius:20px;backdrop-filter:blur(8px);background:rgba(255,255,255,0.03);">Global Data</span>
         </div>
         <div style="height:300px;width:100%;position:relative;">
@@ -488,7 +486,7 @@
     <div class="col-lg-7 animate-in">
       <div class="glass-card overflow-hidden map-glow">
         <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
-          <span class="section-header" style="font-size:1rem;"><i class="bi bi-map me-2" style="color:var(--red-primary);"></i>Live SOS Map</span>
+          <span class="section-header" style="font-size:1rem;"><i class="bi bi-map me-2" style="color:#d4af37;"></i>Live SOS Map</span>
           <span class="live-indicator">TRACKING</span>
         </div>
         <div id="admin-map" style="height:380px;"></div>
@@ -498,7 +496,7 @@
     <div class="col-lg-5 animate-in">
       <div class="glass-card h-100 d-flex flex-column">
         <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--border-glass);">
-          <span class="section-header" style="font-size:1rem;"><i class="bi bi-rss me-2" style="color:var(--red-primary);"></i>Live Alert Feed</span>
+          <span class="section-header" style="font-size:1rem;"><i class="bi bi-rss me-2" style="color:#d4af37;"></i>Live Alert Feed</span>
           <span class="live-indicator" id="live-dot">LIVE</span>
         </div>
         <div id="admin-alert-feed" style="overflow-y:auto;max-height:380px;padding:12px;flex:1;">
@@ -516,7 +514,7 @@
               <span class="pill pill-{{ a.status }}" style="font-size:0.65rem;">{{ a.status }}</span>
               <div class="d-flex gap-1 align-items-center">
                 {% if a.status == 'active' %}
-                <button onclick="adminResolve({{ a.id }})" style="background:none;border:1px solid var(--accent-green);color:var(--accent-green);border-radius:4px;padding:2px 8px;font-size:0.7rem;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='rgba(72,187,120,0.15)'" onmouseout="this.style.background='none'">Resolve</button>
+                <button onclick="adminResolve({{ a.id }})" style="background:none;border:1px solid #d4af37;color:#d4af37;border-radius:4px;padding:2px 8px;font-size:0.7rem;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='rgba(212,175,55,0.15)'" onmouseout="this.style.background='none'">Resolve</button>
                 {% endif %}
                 <span style="font-size:0.7rem;color:var(--text-muted);">{{ a.created_at[11:16] if a.created_at else '' }}</span>
               </div>
@@ -536,12 +534,12 @@
     <div class="col-12 animate-in">
       <div class="glass-card p-4" style="position:relative;overflow:hidden;">
         <!-- Sweep line -->
-        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(72,187,120,0.4),transparent);animation:healthSweep 4s linear infinite;"></div>
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.4),transparent);animation:healthSweep 4s linear infinite;"></div>
         <div class="d-flex align-items-center justify-content-between mb-3">
-          <h5 class="section-header" style="font-size:1rem;"><i class="bi bi-activity me-2" style="color:var(--accent-green);"></i>System Health</h5>
+          <h5 class="section-header" style="font-size:1rem;"><i class="bi bi-activity me-2" style="color:#d4af37;"></i>System Health</h5>
           <div class="d-flex gap-3 align-items-center">
-            <span style="font-size:0.7rem;color:var(--text-muted);">Uptime: <strong style="color:var(--accent-green);" id="uptime-val">99.9%</strong></span>
-            <span style="font-size:0.7rem;color:var(--text-muted);">Latency: <strong style="color:var(--accent-blue);" id="latency-val">42ms</strong></span>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Uptime: <strong style="color:#d4af37;" id="uptime-val">99.9%</strong></span>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Latency: <strong style="color:#d4af37;" id="latency-val">42ms</strong></span>
           </div>
         </div>
         <div class="row g-3">
@@ -549,36 +547,36 @@
             <div style="text-align:center;">
               <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">Threat Engine</div>
               <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
-                <div style="width:98%;height:100%;background:var(--accent-green);border-radius:4px;animation:barPulse 3s ease-in-out infinite;"></div>
+                <div style="width:98%;height:100%;background:#d4af37;border-radius:4px;animation:barPulse 3s ease-in-out infinite;"></div>
               </div>
-              <div style="font-size:0.72rem;color:var(--accent-green);font-weight:600;margin-top:4px;">OPERATIONAL</div>
+              <div style="font-size:0.72rem;color:#d4af37;font-weight:600;margin-top:4px;">OPERATIONAL</div>
             </div>
           </div>
           <div class="col-6 col-md-3">
             <div style="text-align:center;">
               <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">Database</div>
               <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
-                <div style="width:95%;height:100%;background:var(--accent-green);border-radius:4px;"></div>
+                <div style="width:95%;height:100%;background:#d4af37;border-radius:4px;"></div>
               </div>
-              <div style="font-size:0.72rem;color:var(--accent-green);font-weight:600;margin-top:4px;">HEALTHY</div>
+              <div style="font-size:0.72rem;color:#d4af37;font-weight:600;margin-top:4px;">HEALTHY</div>
             </div>
           </div>
           <div class="col-6 col-md-3">
             <div style="text-align:center;">
               <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">WebSocket</div>
               <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
-                <div style="width:100%;height:100%;background:var(--accent-green);border-radius:4px;"></div>
+                <div style="width:100%;height:100%;background:#d4af37;border-radius:4px;"></div>
               </div>
-              <div style="font-size:0.72rem;color:var(--accent-green);font-weight:600;margin-top:4px;">CONNECTED</div>
+              <div style="font-size:0.72rem;color:#d4af37;font-weight:600;margin-top:4px;">CONNECTED</div>
             </div>
           </div>
           <div class="col-6 col-md-3">
             <div style="text-align:center;">
               <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;">GPS Service</div>
               <div style="width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
-                <div style="width:92%;height:100%;background:var(--accent-blue);border-radius:4px;"></div>
+                <div style="width:92%;height:100%;background:#d4af37;border-radius:4px;"></div>
               </div>
-              <div style="font-size:0.72rem;color:var(--accent-blue);font-weight:600;margin-top:4px;">ACTIVE</div>
+              <div style="font-size:0.72rem;color:#d4af37;font-weight:600;margin-top:4px;">ACTIVE</div>
             </div>
           </div>
         </div>
@@ -597,37 +595,37 @@
   <!-- Enhanced System Health with Auto-Refresh -->
   <div class="row g-3 mb-4">
     <div class="col-12 animate-in">
-      <div class="glass-card p-4" style="border:1px solid rgba(72,187,120,0.15); position:relative; overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(72,187,120,0.6),transparent);animation:healthSweep 3s linear infinite;"></div>
+      <div class="glass-card p-4" style="border:1px solid rgba(212,175,55,0.15); position:relative; overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.6),transparent);animation:healthSweep 3s linear infinite;"></div>
         <div class="d-flex align-items-center justify-content-between mb-4">
           <h5 class="section-header" style="font-size:1rem;">
-            <i class="bi bi-cpu-fill me-2" style="color:var(--accent-green);"></i>System Vitals
+            <i class="bi bi-cpu-fill me-2" style="color:#d4af37;"></i>System Vitals
           </h5>
           <div class="d-flex align-items-center gap-3">
             <div class="refresh-ring" title="Auto-refreshing every 30s"></div>
-            <span style="font-size:0.7rem; color:var(--text-muted); font-family:'Courier New', monospace;">AUTO-SYNC: <strong style="color:var(--accent-green);" id="next-refresh">30s</strong></span>
+            <span style="font-size:0.7rem; color:var(--text-muted); font-family:'Courier New', monospace;">AUTO-SYNC: <strong style="color:#d4af37;" id="next-refresh">30s</strong></span>
           </div>
         </div>
         <div class="row g-4">
           <div class="col-6 col-md-3">
             <div style="font-size:0.65rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">DB Engine</div>
-            <div class="sys-health-bar mb-1"><div class="sys-health-fill" data-fill="98" style="width:0%; background:var(--accent-green);"></div></div>
-            <div style="font-size:0.7rem; color:var(--accent-green); font-weight:600;">98% OPTIMAL</div>
+            <div class="sys-health-bar mb-1"><div class="sys-health-fill" data-fill="98" style="width:0%; background:#d4af37;"></div></div>
+            <div style="font-size:0.7rem; color:#d4af37; font-weight:600;">98% OPTIMAL</div>
           </div>
           <div class="col-6 col-md-3">
             <div style="font-size:0.65rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">SOS Pipeline</div>
-            <div class="sys-health-bar mb-1"><div class="sys-health-fill" data-fill="100" style="width:0%; background:var(--accent-blue);"></div></div>
-            <div style="font-size:0.7rem; color:var(--accent-blue); font-weight:600;">100% ARMED</div>
+            <div class="sys-health-bar mb-1"><div class="sys-health-fill" data-fill="100" style="width:0%; background:#d4af37;"></div></div>
+            <div style="font-size:0.7rem; color:#d4af37; font-weight:600;">100% ARMED</div>
           </div>
           <div class="col-6 col-md-3">
             <div style="font-size:0.65rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">Response Time</div>
-            <div class="sys-health-bar mb-1"><div class="sys-health-fill" data-fill="88" style="width:0%; background:var(--accent-amber);"></div></div>
-            <div style="font-size:0.7rem; color:var(--accent-amber); font-weight:600;">88% EFFICIENCY</div>
+            <div class="sys-health-bar mb-1"><div class="sys-health-fill" data-fill="88" style="width:0%; background:#d4af37;"></div></div>
+            <div style="font-size:0.7rem; color:#d4af37; font-weight:600;">88% EFFICIENCY</div>
           </div>
           <div class="col-6 col-md-3">
             <div style="font-size:0.65rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">Relay Network</div>
             <div class="sys-health-bar mb-1"><div class="sys-health-fill" data-fill="95" style="width:0%; background:var(--red-primary);"></div></div>
-            <div style="font-size:0.7rem; color:var(--red-primary); font-weight:600;">95% SATURATED</div>
+            <div style="font-size:0.7rem; color:#d4af37; font-weight:600;">95% SATURATED</div>
           </div>
         </div>
       </div>
@@ -636,14 +634,14 @@
 
   <!-- Analytics Charts -->
   <div id="analytics-section" class="mb-4">
-    <h5 class="section-header mb-3"><i class="bi bi-bar-chart-fill me-2" style="color:var(--red-primary);"></i>Analytics Spectrum</h5>
+    <h5 class="section-header mb-3"><i class="bi bi-bar-chart-fill me-2" style="color:#d4af37;"></i>Analytics Spectrum</h5>
     <div class="row g-4">
       <div class="col-md-6 animate-in">
         <div class="glass-card chart-card p-4 position-relative overflow-hidden">
           <div class="radar-scan-overlay"></div>
           <div class="d-flex align-items-center justify-content-between mb-3 position-relative z-1">
             <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Threat Activity Matrix (14D)</p>
-            <span style="font-size:0.65rem;color:var(--red-primary);background:rgba(244,63,94,0.1);padding:2px 8px;border-radius:50px;font-family:'Courier New', monospace;border:1px solid rgba(244,63,94,0.3);">LIVE SCAN</span>
+            <span style="font-size:0.65rem;color:#d4af37;background:rgba(212,175,55,0.1);padding:2px 8px;border-radius:50px;font-family:'Courier New', monospace;border:1px solid rgba(212,175,55,0.3);">LIVE SCAN</span>
           </div>
           <div class="chart-wrapper position-relative z-1"><canvas id="chart-alerts-day"></canvas></div>
         </div>
@@ -653,7 +651,7 @@
           <div class="radar-scan-overlay"></div>
           <div class="d-flex align-items-center justify-content-between mb-3 position-relative z-1">
             <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Peak Incident Temporal Map</p>
-            <span style="font-size:0.65rem;color:var(--accent-amber);background:rgba(246,173,85,0.08);padding:2px 8px;border-radius:50px;font-family:'Courier New', monospace;border:1px solid rgba(246,173,85,0.3);">24H CYCLE</span>
+            <span style="font-size:0.65rem;color:#d4af37;background:rgba(212,175,55,0.08);padding:2px 8px;border-radius:50px;font-family:'Courier New', monospace;border:1px solid rgba(212,175,55,0.3);">24H CYCLE</span>
           </div>
           <div class="chart-wrapper position-relative z-1"><canvas id="chart-peak-hours"></canvas></div>
         </div>
@@ -663,7 +661,7 @@
           <div class="cyber-grid-bg"></div>
           <div class="d-flex align-items-center justify-content-between mb-3 position-relative z-1">
             <p style="font-size:0.8rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;margin:0;">Global Risk Distribution</p>
-            <span style="font-size:0.65rem;color:var(--accent-green);background:rgba(72,187,120,0.1);padding:2px 8px;border-radius:50px;font-family:'Courier New', monospace;border:1px solid rgba(72,187,120,0.3);">METRICS LOGGED</span>
+            <span style="font-size:0.65rem;color:#d4af37;background:rgba(212,175,55,0.1);padding:2px 8px;border-radius:50px;font-family:'Courier New', monospace;border:1px solid rgba(212,175,55,0.3);">METRICS LOGGED</span>
           </div>
           <div class="chart-wrapper position-relative z-1"><canvas id="chart-risk-dist"></canvas></div>
         </div>
@@ -684,10 +682,10 @@
   <!-- User Management -->
   <div id="users-section" class="mb-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="section-header"><i class="bi bi-people-fill me-2" style="color:var(--red-primary);"></i>Network Operatives DATABASE</h5>
+      <h5 class="section-header"><i class="bi bi-people-fill me-2" style="color:#d4af37;"></i>Network Operatives DATABASE</h5>
       <input type="text" id="user-search" placeholder="Query ID/Name..." class="search-input" style="font-family:'Courier New',monospace; border-radius:4px; box-shadow:inset 0 0 10px rgba(0,0,0,0.5);" oninput="searchUsers(this.value)">
     </div>
-    <div class="position-relative overflow-hidden user-db-container" style="border-radius:12px; border:1px solid rgba(244,63,94,0.3); background:linear-gradient(180deg, rgba(20,5,10,0.8), rgba(5,2,8,0.95)); box-shadow:0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(244,63,94,0.05);">
+    <div class="position-relative overflow-hidden user-db-container" style="border-radius:12px; border:1px solid rgba(212,175,55,0.15); background:linear-gradient(180deg, rgba(18,15,10,0.85), rgba(10,8,5,0.95)); box-shadow:0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(212,175,55,0.02);">
     <div class="hud-bracket-tl"></div><div class="hud-bracket-tr"></div><div class="hud-bracket-bl"></div><div class="hud-bracket-br"></div>
     <div class="scan-line-horizontal"></div>
       <div class="table-responsive" style="background:transparent !important;">
@@ -707,7 +705,7 @@
           <tbody id="users-tbody">
             <tr><td colspan="8">
               <div class="empty-state" style="padding:50px;text-align:center;">
-                <div style="width:60px;height:60px;margin:0 auto 20px;border-radius:50%;border-top:2px solid #f43f5e;border-bottom:2px solid transparent;border-left:2px solid transparent;border-right:2px solid transparent;animation:spinSlow 1s linear infinite;"></div>
+                <div style="width:60px;height:60px;margin:0 auto 20px;border-radius:50%;border-top:2px solid #d4af37;border-bottom:2px solid transparent;border-left:2px solid transparent;border-right:2px solid transparent;animation:spinSlow 1s linear infinite;"></div>
                 <p style="font-family:'Courier New',monospace;color:rgba(255,255,255,0.7);letter-spacing:0.15em;font-size:0.8rem;text-transform:uppercase;">Decrypting User Matrix...</p>
               </div>
             </td></tr>
@@ -720,14 +718,14 @@
   <!-- Danger Zone Approvals -->
   <div id="zones-section" class="mb-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h5 class="section-header"><i class="bi bi-exclamation-triangle-fill me-2" style="color:var(--accent-amber);"></i>Pending Danger Zones</h5>
+      <h5 class="section-header"><i class="bi bi-exclamation-triangle-fill me-2" style="color:#d4af37;"></i>Pending Danger Zones</h5>
       <button onclick="loadPendingZones()" class="btn-glass" style="font-size:0.85rem;padding:6px 14px;"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
     </div>
     <div id="pending-zones-list" class="row g-3">
       <div class="col-12">
         <div class="empty-state" style="padding:30px;text-align:center;">
           <div style="width:40px;height:40px;margin:0 auto 10px;border:1px dashed #f59e0b;border-radius:50%;display:flex;align-items:center;justify-content:center;animation:spinSlow 4s linear infinite;"><i class="bi bi-geo-alt" style="font-size:1rem;color:#f59e0b;animation:none;"></i></div>
-          <p style="font-family:'Courier New',monospace;color:rgba(246,173,85,0.7);letter-spacing:0.1em;font-size:0.75rem;text-transform:uppercase;margin:0;">Scanning Grid for Hostile Zones...</p>
+          <p style="font-family:'Courier New',monospace;color:rgba(212,175,55,0.7);letter-spacing:0.1em;font-size:0.75rem;text-transform:uppercase;margin:0;">Scanning Grid for Hostile Zones...</p>
         </div>
       </div>
     </div>
@@ -747,25 +745,25 @@
 <!-- ══ CUSTOM DOSSIER SIDE PANEL ══ -->
 <div id="customDossierOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);z-index:104990;display:none;opacity:0;transition:opacity 0.4s ease;" onclick="closeDossier()"></div>
 
-<div id="customDossierPanel" style="position:fixed;top:0;right:-600px;width:100%;max-width:550px;height:100vh;background:linear-gradient(145deg,rgba(15,5,10,0.98),rgba(5,2,8,1));border-left:1px solid rgba(244,63,94,0.4);box-shadow:-20px 0 50px rgba(0,0,0,0.8);z-index:105000;transition:right 0.4s cubic-bezier(0.22, 1, 0.36, 1);overflow-y:auto;overflow-x:hidden;">
+<div id="customDossierPanel" style="position:fixed;top:0;right:-600px;width:100%;max-width:550px;height:100vh;background:linear-gradient(145deg,rgba(15,5,10,0.98),rgba(5,2,8,1));border-left:1px solid rgba(212,175,55,0.4);box-shadow:-20px 0 50px rgba(0,0,0,0.8);z-index:105000;transition:right 0.4s cubic-bezier(0.22, 1, 0.36, 1);overflow-y:auto;overflow-x:hidden;">
   <!-- Inner Content wrapper -->
   <div style="padding:40px;position:relative;min-height:100%;">
-    <div style="position:absolute;top:0;left:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,#f43f5e,transparent);animation:scanV 4s ease-in-out infinite alternate;"></div>
+    <div style="position:absolute;top:0;left:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,#d4af37,transparent);animation:scanV 4s ease-in-out infinite alternate;"></div>
     
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h5 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-.02em;">
-        <i class="bi bi-fingerprint me-2" style="color:#f43f5e;"></i>OPERATIVE DOSSIER
+        <i class="bi bi-fingerprint me-2" style="color:#d4af37;"></i>OPERATIVE DOSSIER
       </h5>
       <button onclick="closeDossier()" style="background:transparent;border:none;color:#fff;font-size:1.5rem;cursor:pointer;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"><i class="bi bi-x-circle-fill"></i></button>
     </div>
     
     <!-- Identity Block -->
-    <div style="background:rgba(244,63,94,.05);border:1px solid rgba(244,63,94,.15);border-radius:16px;padding:24px;text-align:center;margin-bottom:24px;">
-      <div style="width:100px;height:100px;border-radius:50%;background:rgba(244,63,94,.1);border:2px solid rgba(244,63,94,.4);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:3rem;font-family:'Space Grotesk',sans-serif;font-weight:900;color:#f43f5e;box-shadow:0 0 30px rgba(244,63,94,.2);" id="dos-avatar">
+    <div style="background:rgba(212,175,55,.05);border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:24px;text-align:center;margin-bottom:24px;">
+      <div style="width:100px;height:100px;border-radius:50%;background:rgba(212,175,55,.1);border:2px solid rgba(212,175,55,.4);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:3rem;font-family:'Space Grotesk',sans-serif;font-weight:900;color:#d4af37;box-shadow:0 0 30px rgba(212,175,55,.2);" id="dos-avatar">
         ?
       </div>
       <h3 id="dos-name" style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:4px;">Loading...</h3>
-      <p id="dos-id" style="font-family:'Courier New',monospace;font-size:.7rem;color:rgba(244,63,94,.8);letter-spacing:.2em;margin-bottom:16px;">UID: ---</p>
+      <p id="dos-id" style="font-family:'Courier New',monospace;font-size:.7rem;color:rgba(212,175,55,.8);letter-spacing:.2em;margin-bottom:16px;">UID: ---</p>
       
       <div class="d-flex flex-column gap-2 text-start mt-4">
         <div class="d-flex align-items-center gap-3">
@@ -780,11 +778,11 @@
     </div>
     
     <!-- Radar Block -->
-    <div style="background:rgba(20,10,15,0.6);border:1px solid rgba(244,63,94,.1);border-radius:50%;width:120px;height:120px;margin:30px auto;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 30px rgba(244,63,94,.1);">
-      <div style="position:absolute;width:100%;height:100%;border-radius:50%;border:1px dashed rgba(244,63,94,.3);animation:spinSlow 10s linear infinite;"></div>
-      <div style="position:absolute;width:60%;height:60%;border-radius:50%;border:1px solid rgba(244,63,94,.5);"></div>
-      <div class="radar-line" style="position:absolute;width:50%;height:2px;background:linear-gradient(90deg,transparent,#f43f5e);right:50%;transform-origin:right center;animation:radarSweep 2s infinite linear;"></div>
-      <i class="bi bi-crosshair" style="color:#f43f5e;font-size:1.5rem;"></i>
+    <div style="background:rgba(20,10,15,0.6);border:1px solid rgba(212,175,55,.1);border-radius:50%;width:120px;height:120px;margin:30px auto;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 30px rgba(212,175,55,.1);">
+      <div style="position:absolute;width:100%;height:100%;border-radius:50%;border:1px dashed rgba(212,175,55,.3);animation:spinSlow 10s linear infinite;"></div>
+      <div style="position:absolute;width:60%;height:60%;border-radius:50%;border:1px solid rgba(212,175,55,.5);"></div>
+      <div class="radar-line" style="position:absolute;width:50%;height:2px;background:linear-gradient(90deg,transparent,#d4af37);right:50%;transform-origin:right center;animation:radarSweep 2s infinite linear;"></div>
+      <i class="bi bi-crosshair" style="color:#d4af37;font-size:1.5rem;"></i>
     </div>
     
     <!-- Telemetry Block -->
@@ -812,20 +810,20 @@
     </div>
     
     <!-- Overrides Block -->
-    <div style="background:rgba(244,63,94,.02);border:1px solid rgba(244,63,94,.2);border-radius:16px;padding:24px;">
-      <div style="font-family:'Courier New',monospace;font-size:.65rem;letter-spacing:.2em;color:rgba(244,63,94,.7);margin-bottom:12px;text-transform:uppercase;">Command Overrides</div>
+    <div style="background:rgba(212,175,55,.02);border:1px solid rgba(212,175,55,.2);border-radius:16px;padding:24px;">
+      <div style="font-family:'Courier New',monospace;font-size:.65rem;letter-spacing:.2em;color:rgba(212,175,55,.7);margin-bottom:12px;text-transform:uppercase;">Command Overrides</div>
       <div class="d-flex flex-column gap-3">
-        <button id="dos-btn-toggle" class="btn-glass w-100" style="font-size:.8rem;padding:12px;border-color:rgba(244,63,94,.4);color:#f43f5e;border-radius:12px;" onclick="window.toggleUser(currentDossierId)">
+        <button id="dos-btn-toggle" class="btn-glass w-100" style="font-size:.8rem;padding:12px;border-color:rgba(212,175,55,.4);color:#d4af37;border-radius:12px;" onclick="window.toggleUser(currentDossierId)">
           <i class="bi bi-power me-2"></i>Toggle Access
         </button>
         <div class="dropdown">
           <button class="btn-glass w-100" type="button" data-bs-toggle="dropdown" style="font-size:.8rem;padding:12px;border-color:rgba(99,102,241,.4);color:#818cf8;border-radius:12px;">
             <i class="bi bi-shield-lock me-2"></i>Set Clearance Level
           </button>
-          <ul class="dropdown-menu dropdown-menu-dark w-100" style="background:rgba(15,5,10,0.95);border:1px solid rgba(244,63,94,0.3);">
+          <ul class="dropdown-menu dropdown-menu-dark w-100" style="background:rgba(15,5,10,0.95);border:1px solid rgba(212,175,55,0.3);">
             <li><a class="dropdown-item" href="#" onclick="window.changeRole(currentDossierId, 'user')">Standard User</a></li>
             <li><a class="dropdown-item" href="#" onclick="window.changeRole(currentDossierId, 'trusted_contact')">Trusted Contact</a></li>
-            <li><a class="dropdown-item" href="#" onclick="window.changeRole(currentDossierId, 'admin')" style="color:#f43f5e;font-weight:700;">Admin / Commander</a></li>
+            <li><a class="dropdown-item" href="#" onclick="window.changeRole(currentDossierId, 'admin')" style="color:#d4af37;font-weight:700;">Admin / Commander</a></li>
           </ul>
         </div>
       </div>
@@ -901,13 +899,13 @@ initAdmin(ADMIN_ALERTS, ADMIN_ZONES);
   
   // Create gradient
   const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
-  gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue fading out
-  gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+  gradient.addColorStop(0, 'rgba(212, 175, 55, 0.35)');
+  gradient.addColorStop(1, 'rgba(212, 175, 55, 0.0)');
   
   // Second gradient for active SOS line
   const redGradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
-  redGradient.addColorStop(0, 'rgba(220, 38, 38, 0.4)');
-  redGradient.addColorStop(1, 'rgba(220, 38, 38, 0.0)');
+  redGradient.addColorStop(0, 'rgba(184, 134, 11, 0.3)');
+  redGradient.addColorStop(1, 'rgba(184, 134, 11, 0.0)');
 
   new Chart(ctx, {
     type: 'line',
@@ -917,27 +915,27 @@ initAdmin(ADMIN_ALERTS, ADMIN_ZONES);
         {
           label: 'System Access / Logins',
           data: [120, 150, 180, 140, 210, 310, 280],
-          borderColor: '#3b82f6',
+          borderColor: '#d4af37',
           backgroundColor: gradient,
           borderWidth: 3,
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: '#1e3a8a',
-          pointBorderColor: '#3b82f6',
+          pointBackgroundColor: '#6b5518',
+          pointBorderColor: '#d4af37',
           pointRadius: 4,
           pointBorderWidth: 2
         },
         {
           label: 'SOS Alerts Triggered',
           data: [12, 19, 15, 8, 22, 45, 30],
-          borderColor: '#f43f5e',
+          borderColor: '#d4af37',
           backgroundColor: redGradient,
           borderWidth: 3,
           borderDash: [5, 5],
           fill: true,
           tension: 0.4,
-          pointBackgroundColor: '#7f1d1d',
-          pointBorderColor: '#f43f5e',
+          pointBackgroundColor: '#5c4a1e',
+          pointBorderColor: '#d4af37',
           pointRadius: 4,
           pointBorderWidth: 2
         }
