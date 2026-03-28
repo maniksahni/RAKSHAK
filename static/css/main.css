@@ -1574,7 +1574,7 @@ h1,h2,h3,h4,h5,h6 {
 
 /* ── Sidebar shimmer sweep — wider + brighter ── */
 @keyframes sbShimmer{0%{transform:translateX(-100%) rotate(12deg)}100%{transform:translateX(500%) rotate(12deg)}}
-.sidebar-nav-scroll{position:relative;overflow:hidden;}
+.sidebar-nav-scroll{position:relative;}
 .sidebar-nav-scroll::after{
   content:'';position:absolute;top:0;left:0;width:80px;height:200%;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.015),rgba(255,255,255,.05),rgba(255,255,255,.015),transparent);
