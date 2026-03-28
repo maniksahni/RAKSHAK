@@ -291,6 +291,24 @@
     <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
   </a>
 
+  <!-- ── Premium Shield Emblem (fills remaining space) ── -->
+  <div class="sb-emblem-wrap">
+    <div class="sb-emblem">
+      <svg viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg" class="sb-emblem-svg">
+        <path d="M40 2L6 20v28c0 22 14 36 34 40 20-4 34-18 34-40V20L40 2z" stroke="url(#emblemGrad)" stroke-width="0.8" fill="none" opacity="0.3"/>
+        <path d="M40 12L14 26v22c0 18 11 29 26 32 15-3 26-14 26-32V26L40 12z" stroke="url(#emblemGrad)" stroke-width="0.5" fill="none" opacity="0.15"/>
+        <text x="40" y="52" text-anchor="middle" fill="url(#emblemGrad)" font-size="10" font-weight="800" letter-spacing="3" font-family="Space Grotesk,sans-serif" opacity="0.2">R</text>
+        <defs>
+          <linearGradient id="emblemGrad" x1="0" y1="0" x2="80" y2="90">
+            <stop offset="0%" stop-color="rgba(244,63,94,0.6)"/>
+            <stop offset="100%" stop-color="rgba(139,92,246,0.3)"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="sb-emblem-text">PROTECTED ZONE</div>
+  </div>
+
   </div><!-- /sidebar-nav-scroll -->
 
   <!-- ══ Sidebar HUD Panel ══ -->
@@ -455,7 +473,7 @@
 
 <!-- Sidebar HUD Styles -->
 <style>
-.sb-hud{margin:0;padding:10px 10px 12px;display:flex;flex-direction:column;gap:7px;flex-shrink:0;flex-grow:1;border-top:none;justify-content:flex-end;position:relative;overflow:hidden;background:linear-gradient(180deg,transparent 0%,rgba(244,63,94,.01) 50%,rgba(139,92,246,.008) 100%);z-index:2;}
+.sb-hud{margin:0;padding:10px 10px 12px;display:flex;flex-direction:column;gap:7px;flex-shrink:0;flex-grow:0;border-top:none;justify-content:flex-end;position:relative;overflow:hidden;background:linear-gradient(180deg,transparent 0%,rgba(244,63,94,.01) 50%,rgba(139,92,246,.008) 100%);z-index:2;}
 /* Ambient glow inside HUD area */
 .sb-hud::before{content:'';position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,94,.06) 0%,rgba(139,92,246,.025) 35%,rgba(99,102,241,.01) 55%,transparent 70%);pointer-events:none;animation:sbAmbientPulse 5s ease-in-out infinite;}
 .sb-hud::after{content:'';position:absolute;top:0;left:8px;right:8px;height:1px;background:linear-gradient(90deg,transparent,rgba(244,63,94,.1),rgba(244,63,94,.25),rgba(244,63,94,.1),transparent);pointer-events:none;box-shadow:0 0 12px rgba(244,63,94,.12),0 1px 0 rgba(255,255,255,.02);}
@@ -603,6 +621,13 @@
 
 /* ── Sidebar ambient particles ── */
 .sb-particles{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.8;}
+
+/* ── Shield Emblem (fills space between nav and HUD) ── */
+.sb-emblem-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60px;position:relative;opacity:.6;}
+.sb-emblem{width:70px;height:80px;position:relative;}
+.sb-emblem-svg{width:100%;height:100%;animation:sbEmblemFloat 6s ease-in-out infinite;}
+@keyframes sbEmblemFloat{0%,100%{transform:translateY(0) scale(1);opacity:.6}50%{transform:translateY(-4px) scale(1.03);opacity:.9}}
+.sb-emblem-text{font-size:.38rem;letter-spacing:.25em;color:rgba(244,63,94,.15);font-weight:700;text-transform:uppercase;margin-top:4px;}
 
 /* ── Mobile Responsive ── */
 @media(max-width:991px){
