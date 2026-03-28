@@ -1430,9 +1430,9 @@ h1,h2,h3,h4,h5,h6 {
 
 /* ── Premium Sidebar ── */
 .sidebar{
-  background:linear-gradient(180deg,rgba(6,6,10,.99) 0%,rgba(4,4,12,.99) 40%,rgba(8,8,16,.97) 100%)!important;
-  border-right:1px solid rgba(244,63,94,.06)!important;
-  box-shadow:4px 0 40px rgba(0,0,0,.7), inset -1px 0 0 rgba(244,63,94,.04)!important;
+  background:linear-gradient(180deg,rgba(8,6,14,.99) 0%,rgba(5,3,10,.995) 50%,rgba(8,6,14,.99) 100%)!important;
+  border-right:none!important;
+  box-shadow:6px 0 50px rgba(0,0,0,.8), 2px 0 20px rgba(244,63,94,.03)!important;
   width:240px!important;
   padding:0!important;
   height:100vh!important;
@@ -1440,33 +1440,40 @@ h1,h2,h3,h4,h5,h6 {
   top:0!important;
   bottom:0!important;
 }
-/* Sidebar active link — red left accent */
+
+/* ── Sidebar nav links — premium glass feel ── */
 .sidebar-link{
   border-left:2px solid transparent;
-  border-radius:10px!important;
+  border-radius:8px!important;
   margin:1px 8px!important;
-  padding:8px 16px!important;
+  padding:9px 16px!important;
   font-size:.82rem!important;
-  transition:all .25s cubic-bezier(.22,1,.36,1)!important;
+  transition:all .3s cubic-bezier(.22,1,.36,1)!important;
   position:relative;
+  letter-spacing:.02em!important;
+  backdrop-filter:blur(0px);
 }
 .sidebar-link.active{
-  background:linear-gradient(90deg,rgba(244,63,94,.09),rgba(244,63,94,.02),transparent)!important;
-  border-left:2px solid #ef4444!important;
-  color:#fff!important;box-shadow:none!important;
+  background:linear-gradient(90deg,rgba(244,63,94,.1),rgba(244,63,94,.03),transparent)!important;
+  border-left:2px solid var(--red-primary)!important;
+  color:#fff!important;
+  box-shadow:0 0 20px rgba(244,63,94,.06), inset 0 0 0 1px rgba(244,63,94,.05)!important;
   padding-left:14px!important;
+  backdrop-filter:blur(8px)!important;
 }
-.sidebar-link.active i{color:#ef4444!important;filter:drop-shadow(0 0 5px rgba(239,68,68,.5))!important;transform:none!important}
+.sidebar-link.active i{color:var(--red-primary)!important;filter:drop-shadow(0 0 6px rgba(244,63,94,.5))!important;transform:none!important}
 .sidebar-link:hover:not(.active){
-  background:rgba(255,255,255,.03)!important;
-  border-left:2px solid rgba(255,255,255,.08)!important;
-  color:rgba(255,255,255,.9)!important;
+  background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.01))!important;
+  border-left:2px solid rgba(255,255,255,.1)!important;
+  color:rgba(255,255,255,.95)!important;
   padding-left:14px!important;
+  box-shadow:0 2px 10px rgba(0,0,0,.15)!important;
 }
-.sidebar-link i{width:20px!important;text-align:center;color:rgba(255,255,255,.4)!important;font-size:1rem!important;transition:all .25s!important}
-.sidebar-link:hover i{color:rgba(255,255,255,.8)!important}
-/* Sidebar glow line */
-.glow-line.mx-3{margin:4px 0!important;background:linear-gradient(90deg,transparent,rgba(244,63,94,.15),transparent)!important}
+.sidebar-link i{width:20px!important;text-align:center;color:rgba(255,255,255,.35)!important;font-size:.95rem!important;transition:all .3s!important}
+.sidebar-link:hover i{color:rgba(255,255,255,.85)!important;transform:scale(1.08)!important}
+
+/* ── Glow line separator ── */
+.glow-line.mx-3{margin:6px 14px!important;background:linear-gradient(90deg,transparent 5%,rgba(244,63,94,.12) 50%,transparent 95%)!important;height:1px!important;border:none!important;opacity:1!important;}
 
 /* main-content offset for narrower sidebar */
 .main-content{margin-left:240px!important}
@@ -1533,8 +1540,9 @@ h1,h2,h3,h4,h5,h6 {
 
 /* ─── SIDEBAR BRAND (.rksb-*) ──────────────────── */
 .rksb-brand-wrap{
-  position:relative;padding:12px 14px 10px;overflow:hidden;
+  position:relative;padding:16px 16px 12px;overflow:hidden;
   margin-bottom:2px;flex-shrink:0;
+  background:linear-gradient(180deg,rgba(244,63,94,.03) 0%,transparent 100%);
 }
 /* Ambient glow orb behind brand */
 .rksb-bg-glow{
@@ -1569,7 +1577,7 @@ h1,h2,h3,h4,h5,h6 {
 /* Text stack */
 .rksb-text{display:flex;flex-direction:column;gap:3px;}
 .rksb-wordmark{
-  font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;
+  font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:800;
   letter-spacing:.2em;line-height:1;
   background:linear-gradient(135deg,#fff 0%,#fde8e8 30%,#fff 60%,rgba(255,255,255,.8) 100%);
   background-size:200% 100%;

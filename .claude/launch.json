@@ -4,8 +4,9 @@
     {
       "name": "rakshak",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["/Users/maniksahni/Desktop/RAKSHAK/wsgi.py"],
-      "port": 5001
+      "runtimeArgs": ["-c", "import os; os.environ['FLASK_ENV']='development'; from app import create_app, socketio; app=create_app('development'); socketio.run(app, host='0.0.0.0', port=5001, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)"],
+      "port": 5001,
+      "cwd": "/Users/maniksahni/Desktop/RAKSHAK"
     }
   ]
 }
