@@ -445,11 +445,20 @@
   <!-- Sidebar scan line -->
   <div class="sb-scanline"></div>
 
+  <!-- Edge glow strip -->
+  <div class="sb-edge-glow"></div>
+
+  <!-- Sidebar ambient particles -->
+  <canvas class="sb-particles" id="sb-particles"></canvas>
+
 </aside>
 
 <!-- Sidebar HUD Styles -->
 <style>
-.sb-hud{margin:0 8px 6px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;border-top:1px solid rgba(244,63,94,.08);padding-top:6px;}
+.sb-hud{margin:0;padding:6px 8px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;flex-grow:1;border-top:1px solid rgba(244,63,94,.08);justify-content:flex-end;position:relative;overflow:hidden;}
+/* Ambient glow inside HUD area */
+.sb-hud::before{content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,94,.04) 0%,transparent 70%);pointer-events:none;animation:sbAmbientPulse 6s ease-in-out infinite;}
+@keyframes sbAmbientPulse{0%,100%{opacity:.4;transform:translateX(-50%) scale(1)}50%{opacity:.8;transform:translateX(-50%) scale(1.3)}}
 
 /* ── Quick Actions ── */
 .sb-quick-actions{display:flex;gap:3px;}
@@ -497,7 +506,7 @@
 .area-danger .sb-area-bar{background:linear-gradient(90deg,#dc2626,#f87171);}
 
 /* ── Tabbed Console ── */
-.sb-console{background:rgba(5,5,15,.65);border:1px solid rgba(244,63,94,.1);border-radius:8px;overflow:hidden;}
+.sb-console{background:linear-gradient(180deg,rgba(5,5,15,.7),rgba(8,4,12,.6));border:1px solid rgba(244,63,94,.1);border-radius:8px;overflow:hidden;position:relative;z-index:1;box-shadow:0 2px 12px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.02);}
 .sb-console-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.04);position:relative;}
 .sb-console-tabs::after{content:'';position:absolute;bottom:0;left:0;height:1px;background:var(--red-primary);width:25%;transition:transform .3s cubic-bezier(.22,1,.36,1);box-shadow:0 0 8px rgba(244,63,94,.4);}
 .sb-console-tabs[data-active="0"]::after{transform:translateX(0)}
@@ -562,7 +571,7 @@
 .sb-stat-threats.has-threats{color:#dc2626;text-shadow:0 0 8px rgba(220,38,38,.4);animation:sbBlipPulse 2s ease-in-out infinite;}
 
 /* ── Status Footer ── */
-.sb-status-footer{background:rgba(5,5,15,.4);border:1px solid rgba(34,197,94,.08);border-radius:6px;padding:4px 8px;text-align:center;transition:border-color .5s;}
+.sb-status-footer{background:linear-gradient(180deg,rgba(5,5,15,.5),rgba(3,3,8,.8));border:1px solid rgba(34,197,94,.08);border-radius:6px;padding:5px 8px 6px;text-align:center;transition:border-color .5s;position:relative;z-index:1;margin-top:auto;box-shadow:0 -4px 16px rgba(0,0,0,.2);}
 .sb-status-footer.conn-lost{border-color:rgba(220,38,38,.2);}
 .sb-status-row{display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:2px;}
 .sb-status-dot-live{width:4px;height:4px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:sbTickerBlink 2s ease-in-out infinite;transition:background .3s,box-shadow .3s;}
@@ -580,8 +589,14 @@
 .sb-version{font-size:.38rem;letter-spacing:.12em;color:rgba(255,255,255,.15);}
 
 /* ── Sidebar scan line ── */
-.sb-scanline{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,.15),transparent);animation:sbScanDown 8s linear infinite;pointer-events:none;z-index:10;}
+.sb-scanline{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(244,63,94,.12),transparent);animation:sbScanDown 8s linear infinite;pointer-events:none;z-index:10;}
 @keyframes sbScanDown{0%{top:0}100%{top:100%}}
+
+/* ── Edge glow strip (right border) ── */
+.sb-edge-glow{position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent 0%,rgba(244,63,94,.15) 30%,rgba(244,63,94,.25) 50%,rgba(244,63,94,.15) 70%,transparent 100%);pointer-events:none;z-index:12;box-shadow:0 0 8px rgba(244,63,94,.1),0 0 20px rgba(244,63,94,.05);}
+
+/* ── Sidebar ambient particles ── */
+.sb-particles{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.6;}
 
 /* ── Mobile Responsive ── */
 @media(max-width:991px){
@@ -615,6 +630,47 @@
       });
     });
   }
+
+  /* ── Sidebar Ambient Particles ── */
+  (function(){
+    var c = document.getElementById('sb-particles');
+    if (!c) return;
+    var ctx = c.getContext('2d');
+    var sidebar = c.closest('.sidebar');
+    var dots = [];
+    function resize() {
+      c.width = sidebar.offsetWidth;
+      c.height = sidebar.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    for (var i = 0; i < 18; i++) {
+      dots.push({
+        x: Math.random() * c.width,
+        y: Math.random() * c.height,
+        r: Math.random() * 1.2 + 0.3,
+        dy: (Math.random() - 0.5) * 0.15,
+        dx: (Math.random() - 0.5) * 0.08,
+        o: Math.random() * 0.3 + 0.05
+      });
+    }
+    function draw() {
+      ctx.clearRect(0, 0, c.width, c.height);
+      dots.forEach(function(d) {
+        d.x += d.dx; d.y += d.dy;
+        if (d.y < 0) d.y = c.height;
+        if (d.y > c.height) d.y = 0;
+        if (d.x < 0) d.x = c.width;
+        if (d.x > c.width) d.x = 0;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(244,63,94,' + d.o + ')';
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
 
   /* ── HUD State ── */
   var _hudPos = null;
