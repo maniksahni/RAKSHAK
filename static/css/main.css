@@ -513,9 +513,11 @@ h1,h2,h3,h4,h5,h6 {
   border-right: 1px solid rgba(255,255,255,0.06);
   width: 250px;
   height: 100vh;
+  height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;
+  bottom: 0;
   z-index: 101;
   padding: 0;
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -528,7 +530,7 @@ h1,h2,h3,h4,h5,h6 {
 .sidebar::-webkit-scrollbar { display: none; }
 /* Scrollable nav section */
 .sidebar-nav-scroll {
-  flex: 1;
+  flex: 1 1 0;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
@@ -1428,11 +1430,15 @@ h1,h2,h3,h4,h5,h6 {
 
 /* ── Premium Sidebar ── */
 .sidebar{
-  background:linear-gradient(180deg,rgba(6,6,10,.99) 0%,rgba(8,8,16,.97) 100%)!important;
-  border-right:1px solid rgba(255,255,255,.04)!important;
-  box-shadow:4px 0 40px rgba(0,0,0,.7)!important;
+  background:linear-gradient(180deg,rgba(6,6,10,.99) 0%,rgba(4,4,12,.99) 40%,rgba(8,8,16,.97) 100%)!important;
+  border-right:1px solid rgba(244,63,94,.06)!important;
+  box-shadow:4px 0 40px rgba(0,0,0,.7), inset -1px 0 0 rgba(244,63,94,.04)!important;
   width:240px!important;
   padding:0!important;
+  height:100vh!important;
+  height:100dvh!important;
+  top:0!important;
+  bottom:0!important;
 }
 /* Sidebar active link — red left accent */
 .sidebar-link{
