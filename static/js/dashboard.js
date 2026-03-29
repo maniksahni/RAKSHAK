@@ -96,10 +96,10 @@ function initMap(dangerZones) {
         iconAnchor: [12, 12],
       });
       L.marker([zone.latitude, zone.longitude], { icon })
-        .bindPopup(`<div style="font-family:'Space Grotesk',sans-serif;background:rgba(10,10,15,0.9);border:1px solid #dc2626;padding:8px;border-radius:6px;color:#fff;">
-          <strong style="color:#ef4444;letter-spacing:0.1em;border-bottom:1px solid rgba(220,38,38,0.3);padding-bottom:4px;display:block;margin-bottom:6px;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'THREAT DETECTED'}</strong>
+        .bindPopup(`<div style="font-family:'Space Grotesk',sans-serif;background:rgba(10,10,15,0.9);border:1px solid #b8860b;padding:8px;border-radius:6px;color:#fff;">
+          <strong style="color:#d4af37;letter-spacing:0.1em;border-bottom:1px solid rgba(184,134,11,0.3);padding-bottom:4px;display:block;margin-bottom:6px;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'THREAT DETECTED'}</strong>
           <span style="color:rgba(255,255,255,0.7);font-size:0.75rem;font-family:'Courier New',monospace;">${zone.description || 'Verified danger zone'}</span><br>
-          <div style="margin-top:6px;background:rgba(220,38,38,0.2);color:#ef4444;font-size:0.65rem;padding:2px 6px;display:inline-block;border-radius:4px;font-weight:700;">${zone.severity.toUpperCase()} PRIORITY</div>
+          <div style="margin-top:6px;background:rgba(184,134,11,0.2);color:#d4af37;font-size:0.65rem;padding:2px 6px;display:inline-block;border-radius:4px;font-weight:700;">${zone.severity.toUpperCase()} PRIORITY</div>
         </div>`, { closeButton: false, className: 'tactical-popup' })
         .addTo(dashMap);
     });
@@ -159,7 +159,7 @@ function startSOSHold(e) {
       sosHoldRAF = requestAnimationFrame(animateRing);
     } else {
       // Hold complete — trigger SOS
-      if (holdStatus) { holdStatus.textContent = 'ACTIVATING...'; holdStatus.style.color = '#dc2626'; }
+      if (holdStatus) { holdStatus.textContent = 'ACTIVATING...'; holdStatus.style.color = '#b8860b'; }
       if (btn) { btn.classList.remove('sos-holding'); btn.classList.add('sos-activated'); }
       setTimeout(() => triggerSOS(), 200);
     }
@@ -298,7 +298,7 @@ async function confirmSOS() {
         const p = document.createElement('p');
         p.className = 'term-line';
         p.innerHTML = lines[i];
-        if(i === 4) p.style.color = '#dc2626'; // Red for CRITICAL
+        if(i === 4) p.style.color = '#b8860b'; // Red for CRITICAL
         container.appendChild(p);
         // Add cursor after last line
         container.appendChild(cursorEl);
@@ -553,7 +553,7 @@ function startMatrixRain(canvas) {
 
     for (let i = 0; i < drops.length; i++) {
       const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillStyle = Math.random() > 0.95 ? '#dc2626' : 'rgba(72, 187, 120, 0.7)';
+      ctx.fillStyle = Math.random() > 0.95 ? '#b8860b' : 'rgba(72, 187, 120, 0.7)';
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
       if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {

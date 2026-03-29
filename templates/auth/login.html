@@ -22,7 +22,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   flex: 0 0 55%; position: relative; display: flex; flex-direction: column;
   align-items: center; justify-content: center; overflow: hidden;
   background: radial-gradient(circle at center, #0a0307 0%, #020104 100%);
-  border-right: 1px solid rgba(244,63,94,0.15);
+  border-right: 1px solid rgba(212,175,55,0.15);
   box-shadow: inset -20px 0 50px rgba(0,0,0,0.8);
 }
 
@@ -30,8 +30,8 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-cyber-grid {
   position: absolute; inset: -50%; pointer-events: none; z-index: 0;
   background-image: 
-    linear-gradient(rgba(244,63,94,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(244,63,94,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(212,175,55,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,175,55,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
   transform: perspective(1000px) rotateX(60deg);
   animation: gridMove 20s linear infinite;
@@ -44,7 +44,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-ambient-core {
   position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
   transform: translate(-50%, -50%); border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(244,63,94,0.15) 0%, rgba(100,5,30,0.05) 40%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(212,175,55,0.15) 0%, rgba(100,5,30,0.05) 40%, transparent 70%);
   animation: corePulse 8s ease-in-out infinite alternate;
   pointer-events: none; z-index: 1;
 }
@@ -69,21 +69,21 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* Orbiting Rings */
 .lp-orbit {
   position: absolute; top: 35%; left: 50%; border-radius: 50%;
-  border: 1px dashed rgba(244,63,94,0.2); transform: translate(-50%, -50%); pointer-events: none;
+  border: 1px dashed rgba(212,175,55,0.2); transform: translate(-50%, -50%); pointer-events: none;
 }
 .lp-orbit-1 { width: 320px; height: 320px; animation: orbitSpin 15s linear infinite; }
-.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(244,63,94,0.1); animation: orbitSpin 25s linear infinite reverse; }
+.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(212,175,55,0.1); animation: orbitSpin 25s linear infinite reverse; }
 .lp-orbit-3 { width: 560px; height: 560px; border-style: dotted; animation: orbitSpin 35s linear infinite; }
 .lp-orbit::after {
   content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
-  background: #f43f5e; box-shadow: 0 0 15px #f43f5e; top: -4px; left: 50%; transform: translateX(-50%);
+  background: #d4af37; box-shadow: 0 0 15px #d4af37; top: -4px; left: 50%; transform: translateX(-50%);
 }
 @keyframes orbitSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
 /* The SVG Shield */
 .lp-shield-svg {
   width: 180px; height: 240px; margin-bottom: 2rem;
-  filter: drop-shadow(0 0 40px rgba(244,63,94,0.7)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+  filter: drop-shadow(0 0 40px rgba(212,175,55,0.7)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
   position: relative; z-index: 10;
   animation: floatAssembly 6s ease-in-out infinite;
 }
@@ -92,21 +92,21 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-hero-text { text-align: center; position: relative; z-index: 10; }
 .lp-hero-badge {
   display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px; border-radius: 30px;
-  background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3);
+  background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3);
   font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700;
   color: #ff7eb3; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
-  box-shadow: 0 0 20px rgba(244,63,94,0.1); backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(212,175,55,0.1); backdrop-filter: blur(10px);
 }
 .lp-hero-badge-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: #f43f5e; box-shadow: 0 0 10px #f43f5e;
+  width: 6px; height: 6px; border-radius: 50%; background: #d4af37; box-shadow: 0 0 10px #d4af37;
   animation: blink 2s ease-in-out infinite;
 }
 .lp-hero-title {
   font-family: 'Space Grotesk', sans-serif; font-size: 4.5rem; font-weight: 900;
   letter-spacing: 0.15em; line-height: 1; margin-bottom: 15px;
-  background: linear-gradient(180deg, #ffffff 0%, #ffb3cb 50%, #f43f5e 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #ffb3cb 50%, #d4af37 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(244,63,94,0.3));
+  filter: drop-shadow(0 4px 12px rgba(212,175,55,0.3));
 }
 .lp-hero-sub {
   font-size: 1.05rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; line-height: 1.6; font-weight: 300;
@@ -123,12 +123,12 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
 }
 .lp-stat::before {
-  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(244,63,94,0.1), transparent);
+  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(212,175,55,0.1), transparent);
   opacity: 0; transition: opacity 0.4s;
 }
-.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(244,63,94,0.2); }
+.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(212,175,55,0.2); }
 .lp-stat:hover::before { opacity: 1; }
-.lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #f43f5e; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
+.lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #d4af37; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
 .lp-stat-lbl { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; position: relative; z-index: 1; }
 
 /* ── RIGHT PANEL: AUTH STATION ── */
@@ -150,11 +150,11 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 .lp-btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); color: #fff; transform: translateY(-2px); }
 .lp-btn-solid {
-  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(244,63,94,0.5);
-  background: rgba(244,63,94,0.15); color: #ff7eb3; font-size: 0.85rem; font-weight: 700; text-decoration: none;
-  transition: all 0.3s; box-shadow: 0 0 15px rgba(244,63,94,0.2);
+  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.5);
+  background: rgba(212,175,55,0.15); color: #ff7eb3; font-size: 0.85rem; font-weight: 700; text-decoration: none;
+  transition: all 0.3s; box-shadow: 0 0 15px rgba(212,175,55,0.2);
 }
-.lp-btn-solid:hover { background: rgba(244,63,94,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(244,63,94,0.4); }
+.lp-btn-solid:hover { background: rgba(212,175,55,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(212,175,55,0.4); }
 
 /* Auth Card Glassmorphism */
 .lp-card { width: 100%; max-width: 480px; position: relative; z-index: 10; animation: cardIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
@@ -170,7 +170,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 .lp-card-inner::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.8), transparent);
   animation: cardScan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes cardScan { 0% { left: -50%; } 100% { left: 150%; } }
@@ -178,11 +178,11 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* Login Header */
 .lp-card-tag {
   display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 20px;
-  background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.2);
+  background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2);
   font-family: 'Courier New', monospace; font-size: 0.65rem; color: #ff7eb3; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;
 }
 .lp-welcome { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.1; }
-.lp-welcome span { background: linear-gradient(90deg, #f43f5e, #ffb3cb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.lp-welcome span { background: linear-gradient(90deg, #d4af37, #ffb3cb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .lp-card-sub { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 35px; }
 
 /* The Google Button */
@@ -224,7 +224,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-feature-icon-box {
   width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
 }
-.lp-fi-red { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; }
+.lp-fi-red { background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); color: #d4af37; }
 .lp-fi-blue { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: #3b82f6; }
 .lp-fi-green { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; }
 .lp-feature-text h4 { font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0 0 2px 0; letter-spacing: 0.01em; }
@@ -242,7 +242,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 @media (max-width: 1024px) {
   body, html { overflow: auto; height: auto; }
   .login-root { flex-direction: column; height: auto; }
-  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(244,63,94,0.15); }
+  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(212,175,55,0.15); }
   .lp-right { padding: 60px 24px; min-height: 100vh; }
   .lp-hero-title { font-size: 3rem; }
   .lp-stat-row { flex-wrap: wrap; }
@@ -261,29 +261,29 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   font-family:'Courier New',monospace; transition:opacity .3s;
 ">
   <!-- Scan lines background -->
-  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(244,63,94,.05) 2px,rgba(244,63,94,.05) 4px);pointer-events:none;z-index:0;"></div>
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(212,175,55,.05) 2px,rgba(212,175,55,.05) 4px);pointer-events:none;z-index:0;"></div>
   
   <div style="position:relative;z-index:10;text-align:center;">
     <!-- Thumbprint / Iris graphic -->
     <div style="margin:0 auto 30px;width:120px;height:120px;position:relative;">
-      <div style="position:absolute;inset:-20px;border-radius:50%;border:2px dashed rgba(244,63,94,.5);animation:spinOuter 8s linear infinite;"></div>
-      <div style="position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(244,63,94,.8);border-left-color:transparent;border-right-color:transparent;animation:spinInner 3s linear infinite;"></div>
+      <div style="position:absolute;inset:-20px;border-radius:50%;border:2px dashed rgba(212,175,55,.5);animation:spinOuter 8s linear infinite;"></div>
+      <div style="position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(212,175,55,.8);border-left-color:transparent;border-right-color:transparent;animation:spinInner 3s linear infinite;"></div>
       
       <!-- The passing laser -->
-      <div style="position:absolute;top:0;left:-20px;right:-20px;height:2px;background:#f43f5e;box-shadow:0 0 15px #f43f5e;animation:laserScan 2s ease-in-out infinite alternate;"></div>
+      <div style="position:absolute;top:0;left:-20px;right:-20px;height:2px;background:#d4af37;box-shadow:0 0 15px #d4af37;animation:laserScan 2s ease-in-out infinite alternate;"></div>
       
-      <i class="bi bi-fingerprint" style="font-size:5rem;color:rgba(244,63,94,.8);filter:drop-shadow(0 0 10px rgba(244,63,94,.5));"></i>
+      <i class="bi bi-fingerprint" style="font-size:5rem;color:rgba(212,175,55,.8);filter:drop-shadow(0 0 10px rgba(212,175,55,.5));"></i>
     </div>
     
     <div style="font-size:1.2rem;font-weight:700;color:#fff;letter-spacing:.2em;margin-bottom:8px;text-transform:uppercase;" id="bio-title">
       AWAITING BIOMETRICS
     </div>
-    <div style="font-size:.8rem;color:rgba(244,63,94,.8);letter-spacing:.1em;" id="bio-sub">
+    <div style="font-size:.8rem;color:rgba(212,175,55,.8);letter-spacing:.1em;" id="bio-sub">
       PLEASE HOLD STILL...
     </div>
     
     <div style="width:240px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin:30px auto 0;overflow:hidden;position:relative;">
-      <div id="bio-progress" style="position:absolute;top:0;left:0;height:100%;width:0%;background:linear-gradient(90deg,#f43f5e,#ffb3cb);transition:width .1s linear;"></div>
+      <div id="bio-progress" style="position:absolute;top:0;left:0;height:100%;width:0%;background:linear-gradient(90deg,#d4af37,#ffb3cb);transition:width .1s linear;"></div>
     </div>
   </div>
 </div>
@@ -347,8 +347,8 @@ function startBiometricAuth(e) {
       
       <!-- Cyber Trishul Logo -->
       <div style="position:relative;display:flex;align-items:center;justify-content:center;width:220px;height:220px;margin-bottom:2rem;">
-        <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(244,63,94,0.3) 0%,transparent 70%);animation:corePulse 3s ease-in-out infinite alternate;"></div>
-        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="180" height="180" style="position:relative;z-index:2;filter:drop-shadow(0 0 30px rgba(244,63,94,1)) drop-shadow(0 0 60px rgba(244,63,94,0.4));object-fit:contain;animation:floatAssembly 6s ease-in-out infinite;">
+        <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.3) 0%,transparent 70%);animation:corePulse 3s ease-in-out infinite alternate;"></div>
+        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="180" height="180" style="position:relative;z-index:2;filter:drop-shadow(0 0 30px rgba(212,175,55,1)) drop-shadow(0 0 60px rgba(212,175,55,0.4));object-fit:contain;animation:floatAssembly 6s ease-in-out infinite;">
       </div>
       
       <div class="lp-hero-text">
@@ -358,7 +358,7 @@ function startBiometricAuth(e) {
         
         <div class="lp-stat-row">
           <div class="lp-stat">
-            <div class="lp-stat-num" style="color:#f43f5e;">10K+</div>
+            <div class="lp-stat-num" style="color:#d4af37;">10K+</div>
             <div class="lp-stat-lbl">Protected Users</div>
           </div>
           <div class="lp-stat">
@@ -482,16 +482,16 @@ function startBiometricAuth(e) {
         if (dist < 120) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(244,63,94,${(1 - dist/120) * 0.15})`;
+          ctx.strokeStyle = `rgba(212,175,55,${(1 - dist/120) * 0.15})`;
           ctx.lineWidth = 0.6;
           ctx.stroke();
         }
       }
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(244,63,94,${p.o})`;
+      ctx.fillStyle = `rgba(212,175,55,${p.o})`;
       ctx.shadowBlur = 10;
-      ctx.shadowColor = 'rgba(244,63,94,0.8)';
+      ctx.shadowColor = 'rgba(212,175,55,0.8)';
       ctx.fill();
       ctx.shadowBlur = 0;
     }

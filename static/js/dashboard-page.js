@@ -75,8 +75,8 @@
     const conn = navigator.connection||navigator.mozConnection||navigator.webkitConnection;
     if (conn && conn.effectiveType) {
       el.textContent = conn.effectiveType.toUpperCase();
-      el.style.color = {'4g':'#22c55e','3g':'#f59e0b','2g':'#f97316','slow-2g':'#ef4444'}[conn.effectiveType]||'var(--white)';
-    } else { el.textContent=navigator.onLine?'ONLINE':'OFFLINE'; el.style.color=navigator.onLine?'#22c55e':'#ef4444'; }
+      el.style.color = {'4g':'#22c55e','3g':'#f59e0b','2g':'#f97316','slow-2g':'#d4af37'}[conn.effectiveType]||'var(--white)';
+    } else { el.textContent=navigator.onLine?'ONLINE':'OFFLINE'; el.style.color=navigator.onLine?'#22c55e':'#d4af37'; }
   }
   updateCmdNet();
   window.addEventListener('online', updateCmdNet); window.addEventListener('offline', updateCmdNet);
@@ -124,7 +124,7 @@ renderTip(0); setInterval(nextTip, 8000);
         const r=card.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-0.5, y=(e.clientY-r.top)/r.height-0.5;
         card.style.transform=`perspective(800px) rotateX(${y*-12}deg) rotateY(${x*12}deg) scale3d(1.02,1.02,1.02)`;
         const inner=card.querySelector('.glass-card,.stat-card');
-        if (inner) inner.style.boxShadow=`${x*20}px ${y*20}px 40px rgba(220,38,38,0.08)`;
+        if (inner) inner.style.boxShadow=`${x*20}px ${y*20}px 40px rgba(184,134,11,0.08)`;
         ticking=false;
       });
     });
@@ -370,7 +370,7 @@ setTimeout(fetchNearbyPlaces, 800);
     const angle=Math.random()*Math.PI*2, radius=30+Math.random()*50;
     particle.style.left=(centerX+Math.cos(angle)*radius)+'px'; particle.style.top=(centerY+Math.sin(angle)*radius)+'px';
     particle.style.width=(2+Math.random()*4)+'px'; particle.style.height=particle.style.width;
-    particle.style.background=`hsl(${Math.random()*20},90%,${50+Math.random()*20}%)`; particle.style.boxShadow='0 0 6px rgba(220,38,38,0.6)';
+    particle.style.background=`hsl(${Math.random()*20},90%,${50+Math.random()*20}%)`; particle.style.boxShadow='0 0 6px rgba(184,134,11,0.6)';
     sosWrap.parentElement.appendChild(particle); particle.addEventListener('animationend',()=>particle.remove());
   }
   sosWrap.addEventListener('mouseenter',()=>{ particleInterval=setInterval(spawnParticle,80); });
@@ -381,15 +381,15 @@ setTimeout(fetchNearbyPlaces, 800);
 (function(){
   const feed=document.getElementById('threat-feed'); if(!feed) return;
   const events=[
-    {sev:'HIGH',  color:'#dc2626',bg:'rgba(220,38,38,0.08)',  border:'rgba(220,38,38,0.2)',  icon:'bi-exclamation-octagon-fill',text:'Unverified assailant reported · Connaught Place, Delhi'},
+    {sev:'HIGH',  color:'#b8860b',bg:'rgba(184,134,11,0.08)',  border:'rgba(184,134,11,0.2)',  icon:'bi-exclamation-octagon-fill',text:'Unverified assailant reported · Connaught Place, Delhi'},
     {sev:'MED',   color:'#f59e0b',bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.2)', icon:'bi-eye-fill',                 text:'Suspicious activity logged · Linking Road, Mumbai'},
-    {sev:'HIGH',  color:'#dc2626',bg:'rgba(220,38,38,0.08)',  border:'rgba(220,38,38,0.2)',  icon:'bi-shield-exclamation',       text:'SOS override triggered · HSR Layout, Bangalore'},
+    {sev:'HIGH',  color:'#b8860b',bg:'rgba(184,134,11,0.08)',  border:'rgba(184,134,11,0.2)',  icon:'bi-shield-exclamation',       text:'SOS override triggered · HSR Layout, Bangalore'},
     {sev:'LOW',   color:'#48bb78',bg:'rgba(72,187,120,0.06)', border:'rgba(72,187,120,0.15)',icon:'bi-check-circle-fill',        text:'Threat resolved · Koregaon Park, Pune'},
     {sev:'MED',   color:'#f59e0b',bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.2)', icon:'bi-geo-alt-fill',             text:'Geofence breach detected · Banjara Hills, Hyderabad'},
     {sev:'CRIT',  color:'#ff3b3b',bg:'rgba(255,59,59,0.1)',   border:'rgba(255,59,59,0.3)',  icon:'bi-broadcast',                text:'Cluster incident — 3 SOS simultaneous · Sector 18, Noida'},
     {sev:'LOW',   color:'#48bb78',bg:'rgba(72,187,120,0.06)', border:'rgba(72,187,120,0.15)',icon:'bi-person-check-fill',        text:'Safe Walk completed · Indiranagar, Bangalore'},
     {sev:'MED',   color:'#f59e0b',bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.2)', icon:'bi-camera-video-fill',        text:'CCTV blackout zone entered · CP Road, Kolkata'},
-    {sev:'HIGH',  color:'#dc2626',bg:'rgba(220,38,38,0.08)',  border:'rgba(220,38,38,0.2)',  icon:'bi-telephone-x-fill',         text:'Missed 3 check-ins · Salt Lake, Kolkata'},
+    {sev:'HIGH',  color:'#b8860b',bg:'rgba(184,134,11,0.08)',  border:'rgba(184,134,11,0.2)',  icon:'bi-telephone-x-fill',         text:'Missed 3 check-ins · Salt Lake, Kolkata'},
     {sev:'INFO',  color:'#3b82f6',bg:'rgba(59,130,246,0.06)', border:'rgba(59,130,246,0.15)',icon:'bi-info-circle-fill',         text:'New danger zone verified · Sarojini Nagar Market, Delhi'},
   ];
   function pushEvent(evt){

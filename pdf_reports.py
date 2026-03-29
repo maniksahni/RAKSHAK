@@ -40,7 +40,7 @@ def generate_sos_report(alert: dict, user: dict, contacts: list) -> BytesIO:
     )
 
     # ── Color Palette ──────────────────────────────────────────────
-    CRIMSON  = colors.HexColor('#dc2626')
+    CRIMSON  = colors.HexColor('#b8860b')
     BLOOD    = colors.HexColor('#991b1b')
     DARK_BG  = colors.HexColor('#0a0a0f')
     STEEL    = colors.HexColor('#cbd5e1')
