@@ -313,11 +313,11 @@ setTimeout(fetchNearbyPlaces, 800);
     if(typeof window.matchMedia==='function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
       requestAnimationFrame(animateParallax); return;
     }
-    currentX+=(mouseX-currentX)*0.055; currentY+=(mouseY-currentY)*0.055;
-    if(grid)grid.style.transform=`translate(${currentX*11}px,${currentY*7}px) perspective(900px) rotateX(${currentY*2}deg) rotateY(${currentX*-2}deg)`;
-    if(orbRed){orbRed.style.marginLeft=`${currentX*26}px`;orbRed.style.marginTop=`${currentY*19}px`;}
-    if(orbBlue){orbBlue.style.marginLeft=`${currentX*-20}px`;orbBlue.style.marginTop=`${currentY*-16}px`;}
-    if(orbPurple){orbPurple.style.marginLeft=`${currentX*16}px`;orbPurple.style.marginTop=`${currentY*13}px`;}
+    currentX+=(mouseX-currentX)*0.058; currentY+=(mouseY-currentY)*0.058;
+    if(grid)grid.style.transform=`translate(${currentX*13}px,${currentY*9}px) perspective(980px) rotateX(${currentY*2.6}deg) rotateY(${currentX*-2.6}deg)`;
+    if(orbRed){orbRed.style.marginLeft=`${currentX*30}px`;orbRed.style.marginTop=`${currentY*22}px`;}
+    if(orbBlue){orbBlue.style.marginLeft=`${currentX*-24}px`;orbBlue.style.marginTop=`${currentY*-18}px`;}
+    if(orbPurple){orbPurple.style.marginLeft=`${currentX*19}px`;orbPurple.style.marginTop=`${currentY*15}px`;}
     requestAnimationFrame(animateParallax);
   }
   requestAnimationFrame(animateParallax);

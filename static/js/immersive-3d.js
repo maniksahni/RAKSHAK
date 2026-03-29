@@ -5,12 +5,12 @@
 (function () {
   'use strict';
 
-  var PERSPECTIVE = 1420;
-  var TILT_MAX_RX = 20;
-  var TILT_MAX_RY = 24;
-  var GLASS_MAX_RX = 11;
-  var GLASS_MAX_RY = 12;
-  var LERP = 0.17;
+  var PERSPECTIVE = 1580;
+  var TILT_MAX_RX = 24;
+  var TILT_MAX_RY = 28;
+  var GLASS_MAX_RX = 14;
+  var GLASS_MAX_RY = 16;
+  var LERP = 0.19;
 
   var states = [];
 
@@ -24,9 +24,11 @@
 
   function resetState(s) {
     s.el.style.transform = '';
+    s.el.style.filter = '';
     if (s.inner) {
       s.inner.style.transform = '';
       s.inner.style.boxShadow = '';
+      s.inner.style.filter = '';
     }
   }
 
@@ -99,7 +101,10 @@
       s.cy += (s.ty - s.cy) * LERP;
       var rx = s.cy * -s.maxRx;
       var ry = s.cx * s.maxRy;
-      var zLift = 6 + (Math.abs(s.cx) + Math.abs(s.cy)) * 10;
+      var rz = s.cx * s.cy * -5.5;
+      if (rz > 5) rz = 5;
+      if (rz < -5) rz = -5;
+      var zLift = 10 + (Math.abs(s.cx) + Math.abs(s.cy)) * 13;
       var t =
         'perspective(' +
         PERSPECTIVE +
@@ -107,19 +112,38 @@
         rx +
         'deg) rotateY(' +
         ry +
+        'deg) rotateZ(' +
+        rz +
         'deg) translateZ(' +
         zLift +
         'px)';
-      if (s.scale3d) t += ' scale3d(1.038,1.038,1.038)';
+      if (s.scale3d) t += ' scale3d(1.045,1.045,1.045)';
       s.el.style.transform = t;
+      var dist = 20 + Math.abs(s.cx) * 16 + Math.abs(s.cy) * 12;
+      s.el.style.filter =
+        'drop-shadow(' +
+        s.cx * -8 +
+        'px ' +
+        (s.cy * -7 + 6) +
+        'px ' +
+        dist +
+        'px rgba(88,28,135,0.22)) drop-shadow(0 ' +
+        (12 + s.cy * -4) +
+        'px 28px rgba(0,0,0,0.35))';
       if (s.inner) {
-        var z = 14 + Math.abs(s.cx) * 14;
+        var z = 18 + Math.abs(s.cx) * 18;
         s.inner.style.transform = 'translateZ(' + z + 'px)';
         s.inner.style.boxShadow =
-          s.cx * -28 +
+          s.cx * -32 +
           'px ' +
-          s.cy * -24 +
-          'px 56px rgba(124,58,237,0.2), 0 18px 44px rgba(0,0,0,0.45), 0 0 1px rgba(255,255,255,0.06)';
+          s.cy * -28 +
+          'px 64px rgba(124,58,237,0.26), 0 22px 52px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)';
+        s.inner.style.setProperty(
+          'filter',
+          'brightness(' +
+            (1.02 + Math.abs(s.cx) * 0.04 + Math.abs(s.cy) * 0.03) +
+            ') saturate(1.08)'
+        );
       }
     });
   }
