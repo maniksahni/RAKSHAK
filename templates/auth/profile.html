@@ -54,7 +54,6 @@
   z-index:-2;
   
 }
-@keyframes avatarBorderSpin { from{transform:rotate(0deg)}to{transform:rotate(360deg)} }
 .avatar-inner {
   width:118px;height:118px;border-radius:50%;
   background:rgba(5,5,8,0.9);
@@ -74,7 +73,6 @@
   
   pointer-events:none;
 }
-@keyframes avatarScan { 0% { transform:translateY(-100%); opacity:0; } 50% { opacity:1; } 100% { transform:translateY(100%); opacity:0; } }
 .avatar-pulse-ring {
   position:absolute;inset:-16px;border-radius:50%;
   border:1px solid rgba(139,92,246,0.3);
@@ -82,7 +80,6 @@
   pointer-events:none;
 }
 .avatar-pulse-ring:nth-child(2) { animation-delay:1s; border:1px solid rgba(139,92,246,0.15); }
-@keyframes pulseRing { 0%{transform:scale(0.9);opacity:0.8;box-shadow:0 0 20px rgba(139,92,246,0.5)} 100%{transform:scale(1.5);opacity:0;box-shadow:none} }
 
 /* ── SECURITY CLEARANCE BADGE ── */
 .clearance-badge {
@@ -95,7 +92,6 @@
   box-shadow:0 0 20px rgba(139,92,246,0.1), inset 0 0 10px rgba(139,92,246,0.1);
   
 }
-@keyframes badgeGlitch { 0%,96%,98%,100%{transform:none;opacity:1} 97%,99%{transform:translate(-2px,1px);opacity:0.8;filter:hue-rotate(90deg)} }
 
 /* ── TACTICAL STATS RING ── */
 .safety-score-container { width:150px;height:150px;position:relative;flex-shrink:0; }

@@ -8,22 +8,6 @@
   from { opacity: 0; transform: translateY(24px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-@keyframes emgPulseRing {
-  0%   { box-shadow: 0 0 0 0 rgba(139,92,246,0.3); }
-  70%  { box-shadow: 0 0 0 12px rgba(139,92,246,0); }
-  100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); }
-}
-@keyframes emgScanline {
-  0%   { top: -100%; }
-  100% { top: 200%; }
-}
-@keyframes emgShake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-2px) rotate(-0.5deg); }
-  40% { transform: translateX(2px) rotate(0.5deg); }
-  60% { transform: translateX(-1px); }
-  80% { transform: translateX(1px); }
-}
 
 /* ── Emergency Command HUD ── */
 .emg-header {
@@ -58,7 +42,6 @@
   
   box-shadow: 0 0 8px rgba(139,92,246,0.7);
 }
-@keyframes threatBlink { 50% { opacity: 0.2; box-shadow: none; } }
 
 /* HUD stat chips */
 .emg-stat-strip {
@@ -92,7 +75,6 @@
   position: absolute; inset: -4px; border-radius: 14px;
   border: 2px solid rgba(139,92,246,0.3); 
 }
-@keyframes locPulse { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.08)} }
 .loc-refresh-btn {
   background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
   color: rgba(255,255,255,0.5); width: 40px; height: 40px; border-radius: 10px;
@@ -130,10 +112,6 @@
   color: #fff; flex-shrink: 0;
   
   box-shadow: 0 0 20px rgba(139,92,246,0.4);
-}
-@keyframes callPulse {
-  0%,100% { box-shadow: 0 0 15px rgba(139,92,246,0.4), 0 0 0 0 rgba(139,92,246,0.2); }
-  50% { box-shadow: 0 0 30px rgba(139,92,246,0.6), 0 0 0 10px rgba(139,92,246,0); }
 }
 .police-desc { color: rgba(255,255,255,0.45); font-size: 0.78rem; margin: 0.75rem 0 0; line-height: 1.5; }
 
