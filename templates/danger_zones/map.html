@@ -39,7 +39,7 @@
   position: absolute; inset: -50%;
   background: conic-gradient(from 0deg, transparent 70%, rgba(139,92,246,0.1) 90%, rgba(139,92,246,0.2) 100%);
   border-radius: 50%;
-  /* anim-removed */
+  
   pointer-events: none; z-index: 400;
 }
 @keyframes radarScan { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -72,7 +72,7 @@
   width: 10px; height: 10px; border-radius: 50%;
   background: var(--red-primary);
   box-shadow: 0 0 0 0 rgba(139,92,246,0.4);
-  /* anim-removed */
+  
 }
 @keyframes breachPulse {
   0% { box-shadow: 0 0 0 0 rgba(139,92,246,0.5); }
@@ -174,7 +174,7 @@
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--accent-green);
   box-shadow: 0 0 8px var(--accent-green), 0 0 16px rgba(139,92,246,0.3);
-  /* anim-removed */
+  
   display: inline-block;
 }
 @keyframes statusBlink {
@@ -322,7 +322,7 @@
   transition: all .3s;
 }
 .legend-dot.pulse-dot {
-  /* anim-removed */
+  
 }
 @keyframes legendDotPulse {
   0%,100% { box-shadow: 0 0 6px currentColor; transform: scale(1); }
@@ -629,17 +629,17 @@
   <div style="position:absolute;bottom:20px;right:20px;width:40px;height:40px;border-bottom:2px solid rgba(139,92,246,.4);border-right:2px solid rgba(139,92,246,.4);"></div>
 
   <!-- Central targeting reticle -->
-  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;border:1px dashed rgba(139,92,246,.15);border-radius:50%;/* anim-removed */"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;border:1px dashed rgba(139,92,246,.15);border-radius:50%;"></div>
   <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border:1px solid rgba(139,92,246,.1);border-radius:50%;"></div>
   
   <!-- Scanning horizontal laser -->
-  <div style="position:absolute;left:0;right:0;height:1px;background:rgba(139,92,246,.4);box-shadow:0 0 10px rgba(139,92,246,.5);/* anim-removed */"></div>
+  <div style="position:absolute;left:0;right:0;height:1px;background:rgba(139,92,246,.4);box-shadow:0 0 10px rgba(139,92,246,.5);"></div>
   
   <!-- Telemetry Data Overlay -->
   <div style="position:absolute;bottom:30px;left:30px;font-family:'Courier New',monospace;font-size:.65rem;color:rgba(139,92,246,.6);letter-spacing:.1em;text-transform:uppercase;">
     <div>SYS_ID: VALKYRIE_MAP_ENG_v4</div>
     <div>ALTITUDE: 140M MSL</div>
-    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#10b981;border-radius:50%;/* anim-removed */"></span> SAT_LINK_NOMINAL</div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#10b981;border-radius:50%;"></span> SAT_LINK_NOMINAL</div>
   </div>
 </div>
 <style>
@@ -679,13 +679,13 @@
   <div class="target-data-panel">
     <div style="font-weight:900;letter-spacing:0.1em;border-bottom:1px solid rgba(139,92,246,0.3);margin-bottom:6px;padding-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
       <span>SYS.TRK.LINK</span>
-      <span style="font-size:0.6rem;/* anim-removed */color:#8b5cf6;">● ACTIVE</span>
+      <span style="font-size:0.6rem;color:#8b5cf6;">● ACTIVE</span>
     </div>
     <div class="d-flex justify-content-between mb-1"><span style="color:rgba(16,185,129,0.6);">LAT:</span> <span id="hud-lat">0.00000</span></div>
     <div class="d-flex justify-content-between mb-1"><span style="color:rgba(139,92,246,0.6);">LNG:</span> <span id="hud-lng">0.00000</span></div>
     <div class="d-flex justify-content-between mb-1"><span style="color:rgba(139,92,246,0.6);">BEARING:</span> <span id="hud-bearing">0.00° N</span></div>
     <div class="d-flex justify-content-between mb-1"><span style="color:rgba(139,92,246,0.6);">ZOOM:</span> <span id="hud-zoom">14.0x</span></div>
-    <div class="d-flex justify-content-between mt-2" style="font-size:0.65rem;color:#7c3aed;"><span>SYNC:</span> <span style="/* anim-removed */">● LINKED</span></div>
+    <div class="d-flex justify-content-between mt-2" style="font-size:0.65rem;color:#7c3aed;"><span>SYNC:</span> <span style="">● LINKED</span></div>
   </div>
 
   <!-- Title bar (inside map) -->
@@ -701,7 +701,7 @@
       </div>
     </div>
     <div style="margin-left:12px;display:flex;align-items:center;gap:6px;">
-      <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-green);/* anim-removed */"></div>
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-green);"></div>
       <span style="font-size:0.65rem;color:var(--accent-green);font-weight:600;letter-spacing:0.1em;">LIVE</span>
     </div>
   </div>
@@ -795,7 +795,7 @@
 <div id="report-modal" class="report-modal-bg">
   <div class="glass-card report-modal-card p-4 p-md-5" style="width:95%;max-width:520px;border-radius:var(--radius-xl);transform-style:preserve-3d;">
 
-    <div style="position:absolute;inset:-2px;border-radius:var(--radius-xl);background:conic-gradient(from 0deg,transparent 60%,var(--red-primary) 80%,transparent 100%);z-index:-1;/* anim-removed */opacity:0.6;"></div>
+    <div style="position:absolute;inset:-2px;border-radius:var(--radius-xl);background:conic-gradient(from 0deg,transparent 60%,var(--red-primary) 80%,transparent 100%);z-index:-1;opacity:0.6;"></div>
 
     <div class="text-center mb-4">
       <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(139,92,246,0.02));border:1px solid rgba(139,92,246,0.3);box-shadow:inset 0 0 20px rgba(139,92,246,0.1),0 0 30px rgba(139,92,246,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">

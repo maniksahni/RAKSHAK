@@ -117,7 +117,7 @@
 
 /* Risk badge — rose-gold pulse */
 .risk-badge {
-  /* anim-removed */
+  
 }
 @keyframes riskBadgePulse {
   0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,0)}
@@ -138,7 +138,7 @@
   position: absolute;
   top: 0; left: -100%; width: 60%; height: 2px;
   background: linear-gradient(90deg,transparent,rgba(139,92,246,.8),transparent);
-  /* anim-removed */
+  
 }
 @keyframes headerScan{0%{left:-60%}100%{left:160%}}
 </style>
@@ -210,10 +210,10 @@
         <!-- Trishul + title -->
         <div style="display:flex;align-items:center;gap:16px;">
           <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="" width="44" height="44"
-            style="filter:drop-shadow(0 0 10px rgba(139,92,246,.8));/* anim-removed */flex-shrink:0;">
+            style="filter:drop-shadow(0 0 10px rgba(139,92,246,.8));flex-shrink:0;">
           <div>
             <div style="font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.25em;color:rgba(139,92,246,.7);margin-bottom:4px;">
-              <span style="/* anim-removed */display:inline-block;">●</span> DAILY INTEL BRIEF // VALKYRIE PROTOCOL
+              <span style="display:inline-block;">●</span> DAILY INTEL BRIEF // VALKYRIE PROTOCOL
             </div>
             <div style="font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;">
               Welcome back, <span style="background:linear-gradient(90deg,#8b5cf6,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ current_user.full_name.split()[0] }}</span>.
@@ -539,7 +539,7 @@
               </div>
               <!-- Online dot -->
               <div style="margin-left:auto; flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;">
-                <div style="width:7px;height:7px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,.8);/* anim-removed */"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,.8);"></div>
                 <div style="font-family:'Courier New',monospace;font-size:.38rem;color:rgba(139,92,246,.5);letter-spacing:.1em;">ACTIVE</div>
               </div>
             </div>
@@ -615,7 +615,7 @@
         </div>
         <!-- Animated security scan bar -->
         <div style="margin-top:16px;height:3px;background:rgba(255,255,255,0.03);border-radius:3px;overflow:hidden;position:relative;">
-          <div id="security-scan-bar" style="position:absolute;width:30%;height:100%;background:linear-gradient(90deg,transparent,var(--accent-green),transparent);border-radius:3px;/* anim-removed */"></div>
+          <div id="security-scan-bar" style="position:absolute;width:30%;height:100%;background:linear-gradient(90deg,transparent,var(--accent-green),transparent);border-radius:3px;"></div>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
           <span style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.08em;">CONTINUOUS MONITORING ACTIVE</span>
@@ -677,7 +677,7 @@
             <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">LIVE ACTIVITY</h6>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-green);/* anim-removed */"></div>
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-green);"></div>
             <span style="font-size:0.68rem;color:var(--text-muted);">Real-time</span>
           </div>
         </div>
@@ -751,7 +751,7 @@
         <!-- Premium Header -->
         <div class="p-3 d-flex align-items-center justify-content-between" style="border-bottom:1px solid rgba(124,58,237,0.15);background:linear-gradient(90deg,rgba(124,58,237,0.06),transparent);">
           <div class="d-flex align-items-center gap-2">
-            <div style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px #8b5cf6;/* anim-removed */"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px #8b5cf6;"></div>
             <h6 style="font-family:var(--font-display);font-size:1rem;font-weight:800;margin:0;letter-spacing:0.05em;color:rgba(255,255,255,0.95);text-shadow:0 0 10px rgba(124,58,237,0.4);">LIVE THREAT TRACKER</h6>
           </div>
           <a href="{{ url_for('danger.map_view') }}" class="btn-danger-glow" style="font-size:0.7rem;padding:4px 12px;border-radius:6px;text-decoration:none;">OPEN UPLINK U.I.</a>
@@ -765,7 +765,7 @@
             .hud-bracket.tl { top:15px;left:15px;border-right:none;border-bottom:none;box-shadow:-2px -2px 10px rgba(124,58,237,0.3); }
             .hud-bracket.br { bottom:15px;right:15px;border-left:none;border-top:none;box-shadow:2px 2px 10px rgba(124,58,237,0.3); }
             .hud-grid { position:absolute;inset:0;z-index:400;pointer-events:none;background-image:linear-gradient(rgba(124,58,237,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.05) 1px,transparent 1px);background-size:40px 40px; }
-            .hud-crosshair { position:absolute;top:50%;left:50%;width:80px;height:80px;transform:translate(-50%,-50%);border:1px dashed rgba(124,58,237,0.2);border-radius:50%;z-index:400;pointer-events:none;/* anim-removed */ }
+            .hud-crosshair { position:absolute;top:50%;left:50%;width:80px;height:80px;transform:translate(-50%,-50%);border:1px dashed rgba(124,58,237,0.2);border-radius:50%;z-index:400;pointer-events:none; }
             .hud-crosshair::before { content:'';position:absolute;top:-5px;left:50%;width:1px;height:10px;background:rgba(124,58,237,0.6); }
             .hud-crosshair::after { content:'';position:absolute;bottom:-5px;left:50%;width:1px;height:10px;background:rgba(124,58,237,0.6); }
             .hud-crosshair-h::before { content:'';position:absolute;left:-5px;top:50%;height:1px;width:10px;background:rgba(124,58,237,0.6); }
@@ -1088,14 +1088,14 @@
   <div class="row g-4 mb-4">
     <div class="col-12 animate-in">
       <div class="glass-card p-4" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;border-left:3px solid var(--red-primary);">
-        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.5),transparent);/* anim-removed */"></div>
+        <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.5),transparent);"></div>
         <div class="d-flex align-items-center justify-content-between mb-3">
           <div class="d-flex align-items-center gap-2">
-            <i class="bi bi-rss-fill" style="color:var(--red-primary);font-size:1.1rem;/* anim-removed */"></i>
+            <i class="bi bi-rss-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
             <h6 style="margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:0.05em;">LIVE THREAT INTELLIGENCE FEED</h6>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <div style="width:6px;height:6px;border-radius:50%;background:var(--red-primary);/* anim-removed */box-shadow:0 0 8px var(--red-primary);"></div>
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--red-primary);box-shadow:0 0 8px var(--red-primary);"></div>
             <span style="font-size:0.68rem;color:var(--red-primary);font-weight:700;letter-spacing:0.1em;">REAL-TIME</span>
           </div>
         </div>
@@ -1110,7 +1110,7 @@
     <div class="col-12 animate-in" style="animation-delay: 0.1s;">
       <div class="glass-card p-4" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;border:1px solid rgba(139,92,246,0.3);box-shadow:inset 0 0 30px rgba(139,92,246,0.1), 0 10px 30px rgba(0,0,0,0.5);">
         <!-- Animated AI Waves -->
-        <div style="position:absolute;inset:0;background:radial-gradient(circle at center, rgba(139,92,246,0.15), transparent 70%);opacity:0.6;/* anim-removed */"></div>
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at center, rgba(139,92,246,0.15), transparent 70%);opacity:0.6;"></div>
         
         <div class="d-flex align-items-center justify-content-between mb-3" style="position:relative;z-index:2;">
           <div class="d-flex align-items-center gap-2">
@@ -1118,13 +1118,13 @@
             <h6 style="margin:0;font-family:var(--font-display);font-weight:800;letter-spacing:0.1em;color:#fff;">VALKYRIE VOICE GUARDIAN</h6>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <span style="font-size:0.65rem;color:#8b5cf6;font-family:'Courier New',monospace;font-weight:700;/* anim-removed */">AI STANDBY</span>
+            <span style="font-size:0.65rem;color:#8b5cf6;font-family:'Courier New',monospace;font-weight:700;">AI STANDBY</span>
           </div>
         </div>
         
         <div class="d-flex flex-column align-items-center py-4" style="position:relative;z-index:2;">
           <button id="valkyrie-mic-btn" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg, #8b5cf6, #7c3aed);border:none;box-shadow:0 0 0 0 rgba(139,92,246,0.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s;position:relative;" onclick="toggleValkyrie()">
-            <div style="position:absolute;inset:-10px;border-radius:50%;border:2px dashed rgba(139,92,246,0.5);/* anim-removed */"></div>
+            <div style="position:absolute;inset:-10px;border-radius:50%;border:2px dashed rgba(139,92,246,0.5);"></div>
             <i class="bi bi-soundwave" style="font-size:2.2rem;color:#fff;"></i>
           </button>
           
@@ -1146,9 +1146,9 @@
   </div>
   
   <style>
-  .vw-bar { width:4px;background:#8b5cf6;border-radius:2px;/* anim-removed */box-shadow:0 0 6px #8b5cf6; }
+  .vw-bar { width:4px;background:#8b5cf6;border-radius:2px;box-shadow:0 0 6px #8b5cf6; }
   @keyframes vWave { 0% { height:4px; } 100% { height:24px; } }
-  .valkyrie-listening { /* anim-removed */ }
+  .valkyrie-listening {  }
   @keyframes vPulse {
     0% { box-shadow:0 0 0 0 rgba(139,92,246,0.6), 0 0 30px rgba(139,92,246,0.4); transform:scale(1.05); }
     70% { box-shadow:0 0 0 25px rgba(139,92,246,0), 0 0 50px rgba(139,92,246,0.1); }
@@ -1256,12 +1256,12 @@
 <div id="sos-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:5000;align-items:center;justify-content:center;">
   <div class="glass-card-red p-5 text-center" style="max-width:420px;width:90%;border-radius:var(--radius-xl);animation:modalSlam .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;">
     <!-- animated red scan line inside modal -->
-    <div style="position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.4),transparent);/* anim-removed */pointer-events:none;"></div>
+    <div style="position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.4),transparent);pointer-events:none;"></div>
 
     <!-- pulsing warning icon -->
     <div style="width:80px;height:80px;border-radius:50%;background:rgba(124,58,237,0.15);border:2px solid rgba(124,58,237,0.5);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;position:relative;">
       <i class="bi bi-exclamation-triangle-fill" style="color:var(--red-primary);font-size:2rem;animation:iconShake 0.5s 0.3s ease-in-out;"></i>
-      <div style="position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(124,58,237,0.3);/* anim-removed */"></div>
+      <div style="position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(124,58,237,0.3);"></div>
     </div>
 
     <h3 style="font-family:var(--font-display);font-size:2rem;font-weight:900;color:var(--red-primary);margin-bottom:0.5rem;letter-spacing:0.05em;">SEND SOS ALERT?</h3>

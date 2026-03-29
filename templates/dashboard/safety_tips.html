@@ -31,19 +31,19 @@
   border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
   padding: 2rem;  position: relative; overflow: hidden;
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3);
-  /* anim-removed */
+  
 }
 .tip-of-day-card::before {
   content: ''; position: absolute; inset: -1px; z-index: -1;
   background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(139,92,246,0.3), rgba(139,92,246,0.3));
   border-radius: inherit; opacity: 1; pointer-events: none;
-  /* anim-removed */ filter:blur(10px);
+   filter:blur(10px);
 }
 @keyframes bgSpinCard { 100% { filter:blur(10px) hue-rotate(360deg); } }
 .tip-of-day-card::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-  transform: skewX(-20deg); /* anim-removed */
+  transform: skewX(-20deg); 
 }
 @keyframes tipSweep { 0%{left:-100%} 100%{left:200%} }
 .totd-icon {
@@ -52,7 +52,7 @@
   background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.05));
   border-radius: 18px; border: 1px solid rgba(139,92,246,0.3);
   box-shadow: 0 10px 30px rgba(139,92,246,0.2);
-  /* anim-removed */
+  
 }
 .totd-badge {
   background: linear-gradient(90deg, #fff, rgba(255,255,255,0.4));
@@ -67,7 +67,7 @@
   position: absolute; top: -60%; left: 50%; transform: translateX(-50%);
   width: 300px; height: 300px; border-radius: 50%;
   background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
-  pointer-events: none; z-index: -1; /* anim-removed */
+  pointer-events: none; z-index: -1; 
 }
 @keyframes spotlightBreathe {
   0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
@@ -196,7 +196,7 @@
           </div>
           <div>
             <div style="font-size:0.75rem;color:var(--red-primary);letter-spacing:0.15em;font-weight:800;font-family:var(--sg);margin-bottom:4px;">
-              <span style="/* anim-removed */">●</span> KNOWLEDGE HUB
+              <span style="">●</span> KNOWLEDGE HUB
             </div>
             <h2 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;font-size:1.8rem;">Safety Library</h2>
           </div>
