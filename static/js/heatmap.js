@@ -107,7 +107,7 @@ async function initHeatmap() {
       // Temp marker
       if (window._tempMarker) heatMap.removeLayer(window._tempMarker);
       window._tempMarker = L.circleMarker([selectedLat, selectedLng], {
-        radius: 10, color: '#b8860b', fillColor: '#b8860b', fillOpacity: 0.5, weight: 2
+        radius: 10, color: '#7c3aed', fillColor: '#7c3aed', fillOpacity: 0.5, weight: 2
       }).addTo(heatMap);
 
       document.getElementById('report-modal').style.display = 'flex';
@@ -126,13 +126,13 @@ async function initHeatmap() {
 
       const userIcon = L.divIcon({
         className: '',
-        html: `<div style="width:18px;height:18px;border-radius:50%;background:#b8860b;border:3px solid rgba(255,255,255,0.9);box-shadow:0 0 16px #b8860b,0 0 32px rgba(184,134,11,0.4);"></div>
-               <div style="position:absolute;top:-4px;left:-4px;width:26px;height:26px;border-radius:50%;border:2px solid rgba(184,134,11,0.4);animation:userPing 2s ease-out infinite;"></div>`,
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:#7c3aed;border:3px solid rgba(255,255,255,0.9);box-shadow:0 0 16px #7c3aed,0 0 32px rgba(124,58,237,0.4);"></div>
+               <div style="position:absolute;top:-4px;left:-4px;width:26px;height:26px;border-radius:50%;border:2px solid rgba(124,58,237,0.4);animation:userPing 2s ease-out infinite;"></div>`,
         iconSize: [18, 18],
         iconAnchor: [9, 9],
       });
       L.marker([userLoc.lat, userLoc.lng], { icon: userIcon })
-        .bindPopup('<strong style="color:#b8860b;">📍 You are here</strong><br><span style="color:#a0aec0;font-size:0.8rem;">GPS location locked</span>')
+        .bindPopup('<strong style="color:#7c3aed;">📍 You are here</strong><br><span style="color:#a0aec0;font-size:0.8rem;">GPS location locked</span>')
         .addTo(heatMap);
 
       // Check proximity
@@ -214,8 +214,8 @@ function loadGlobalHotspots() {
   const heatPoints = [];
 
   GLOBAL_HOTSPOTS.forEach((spot, i) => {
-    const colors = { high:'#b8860b', medium:'#d4af37', low:'#d4af37' };
-    const color = colors[spot.severity] || '#b8860b';
+    const colors = { high:'#7c3aed', medium:'#f59e0b', low:'#8b5cf6' };
+    const color = colors[spot.severity] || '#7c3aed';
     const size = spot.severity === 'high' ? 18 : spot.severity === 'medium' ? 14 : 11;
     const ringDelay = (i * 0.3 % 3).toFixed(1);
 
@@ -276,7 +276,7 @@ function loadGlobalHotspots() {
     blur: 30,
     maxZoom: 10,
     max: 1.0,
-    gradient: { 0.0:'#d4af37', 0.3:'#d4af37', 0.6:'#b8860b', 0.85:'#d4af37', 1.0:'#fff' },
+    gradient: { 0.0:'#8b5cf6', 0.3:'#8b5cf6', 0.6:'#7c3aed', 0.85:'#8b5cf6', 1.0:'#fff' },
   });
   globalHeatLayer.addTo(heatMap);
 }
@@ -288,7 +288,7 @@ function toggleGlobalView() {
 
   if (globalViewActive) {
     heatMap.setView([20, 10], 2);
-    if (btn) { btn.style.borderColor = '#b8860b'; btn.style.color = '#b8860b'; btn.innerHTML = '<i class="bi bi-globe2 me-1" style="color:#b8860b;"></i> Global ON'; }
+    if (btn) { btn.style.borderColor = '#7c3aed'; btn.style.color = '#7c3aed'; btn.innerHTML = '<i class="bi bi-globe2 me-1" style="color:#7c3aed;"></i> Global ON'; }
     showToast('Global danger zones — showing worldwide hotspots', 'warning', 3000);
   } else {
     if (userLoc) heatMap.setView([userLoc.lat, userLoc.lng], 14);
@@ -332,7 +332,7 @@ async function loadHeatmap() {
       blur: 25,
       maxZoom: 17,
       max: 1.0,
-      gradient: { 0.0: '#b8860b', 0.3: '#d4af37', 0.6: '#b8860b', 1.0: '#fff' },
+      gradient: { 0.0: '#7c3aed', 0.3: '#ef4444', 0.6: '#7c3aed', 1.0: '#fff' },
     });
     heatLayer.addTo(heatMap);
   } catch (e) {
@@ -357,8 +357,8 @@ function addZoneMarker(zone, coords) {
   const lng = zone.longitude || (coords && coords[0]);
   if (!lat || !lng) return;
 
-  const colors = { high: '#b8860b', medium: '#d4af37', low: '#d4af37' };
-  const color = colors[zone.severity] || '#b8860b';
+  const colors = { high: '#7c3aed', medium: '#f59e0b', low: '#8b5cf6' };
+  const color = colors[zone.severity] || '#7c3aed';
 
   const icon = L.divIcon({
     className: '',
@@ -379,12 +379,12 @@ function addZoneMarker(zone, coords) {
   const marker = L.marker([lat, lng], { icon }).bindPopup(`
     <div style="font-family:Inter,sans-serif;min-width:180px;">
       <div style="font-size:1.2rem;margin-bottom:4px;">${emoji}</div>
-      <strong style="color:#b8860b;">${(zone.zone_type||'danger').replace(/_/g,' ').toUpperCase()}</strong>
+      <strong style="color:#7c3aed;">${(zone.zone_type||'danger').replace(/_/g,' ').toUpperCase()}</strong>
       <div style="color:#a0aec0;font-size:0.82rem;margin:6px 0;">${zone.description || ''}</div>
       <div style="display:flex;gap:6px;align-items:center;margin-top:4px;">
         <span class="pill pill-${zone.severity}" style="font-size:0.7rem;">${zone.severity}</span>
         <span style="font-size:0.72rem;color:#718096;">👍 ${zone.upvotes||0}</span>
-        <button onclick="upvoteZone(${zone.id}, this)" style="background:rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.3);color:#b8860b;padding:2px 8px;border-radius:4px;font-size:0.7rem;cursor:pointer;">▲ Upvote</button>
+        <button onclick="upvoteZone(${zone.id}, this)" style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);color:#7c3aed;padding:2px 8px;border-radius:4px;font-size:0.7rem;cursor:pointer;">▲ Upvote</button>
       </div>
     </div>
   `);
@@ -399,9 +399,9 @@ async function upvoteZone(zoneId, btn) {
     const res = await postJSON(`/danger-zones/${zoneId}/upvote`);
     if (res.success) {
       btn.textContent = '✓ Done';
-      btn.style.background = 'rgba(212,175,55,0.15)';
-      btn.style.borderColor = 'rgba(212,175,55,0.4)';
-      btn.style.color = '#d4af37';
+      btn.style.background = 'rgba(16,185,129,0.15)';
+      btn.style.borderColor = 'rgba(139,92,246,0.4)';
+      btn.style.color = '#10b981';
       showToast('Zone upvoted — helps others stay safe', 'success');
     } else {
       btn.textContent = res.error || 'Failed';
@@ -433,7 +433,7 @@ function reportZoneMode() {
     showToast('Click on the map to select a danger location', 'info', 3000);
     heatMap.getContainer().style.cursor = 'crosshair';
     // Pulse the map border to indicate active mode
-    heatMap.getContainer().style.boxShadow = '0 0 0 2px var(--red-primary), 0 0 20px rgba(184,134,11,0.2)';
+    heatMap.getContainer().style.boxShadow = '0 0 0 2px var(--red-primary), 0 0 20px rgba(124,58,237,0.2)';
   } else {
     heatMap.getContainer().style.cursor = '';
     heatMap.getContainer().style.boxShadow = '';

@@ -44,7 +44,7 @@
 }
 .alert-table-row::before {
   content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
-  background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.3));
+  background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(139,92,246,0.3));
   transition: width 0.3s cubic-bezier(.22,1,.36,1);
   opacity: 0.8; z-index: 0; pointer-events: none;
 }
@@ -71,7 +71,7 @@
 }
 .history-search:focus {
   border-color:var(--red-primary);outline:none;
-  box-shadow:0 0 0 3px rgba(212,175,55,0.12);width:260px;
+  box-shadow:0 0 0 3px rgba(139,92,246,0.12);width:260px;
 }
 .history-search::placeholder { color:var(--text-muted); }
 
@@ -82,9 +82,9 @@
   align-items:center;gap:4px;
 }
 .action-btn-green { border:1px solid var(--accent-green);color:var(--accent-green); }
-.action-btn-green:hover { background:rgba(212,175,55,0.15); }
+.action-btn-green:hover { background:rgba(139,92,246,0.15); }
 .action-btn-blue { border:1px solid var(--accent-blue);color:var(--accent-blue); }
-.action-btn-blue:hover { background:rgba(184,134,11,0.15); }
+.action-btn-blue:hover { background:rgba(124,58,237,0.15); }
 
 /* ── TIMELINE VIEW ── */
 .timeline-wrap {
@@ -92,14 +92,14 @@
 }
 .timeline-wrap::before {
   content:'';position:absolute;left:21px;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg, var(--red-primary) 0%, rgba(212,175,55,0.2) 100%);
+  background:linear-gradient(180deg, var(--red-primary) 0%, rgba(139,92,246,0.2) 100%);
   border-radius:3px;
-  box-shadow: 0 0 15px rgba(212,175,55,0.5);
+  box-shadow: 0 0 15px rgba(139,92,246,0.5);
   /* anim-removed */
 }
 @keyframes conduitPulse {
   0%, 100% {opacity: 0.7;}
-  50% {opacity: 1; box-shadow: 0 0 25px rgba(212,175,55,0.8);}
+  50% {opacity: 1; box-shadow: 0 0 25px rgba(139,92,246,0.8);}
 }
 .timeline-item {
   position:relative;margin-bottom:24px;opacity:0;
@@ -126,15 +126,15 @@
   border:3px solid var(--bg-dark);z-index:2;
 }
 .timeline-dot-active {
-  background:var(--red-primary);box-shadow:0 0 12px rgba(212,175,55,0.6);
+  background:var(--red-primary);box-shadow:0 0 12px rgba(16,185,129,0.6);
   /* anim-removed */
 }
 .timeline-dot-resolved {
-  background:var(--accent-green);box-shadow:0 0 12px rgba(212,175,55,0.5);
+  background:var(--accent-green);box-shadow:0 0 12px rgba(139,92,246,0.5);
 }
 @keyframes dotPulse {
-  0%,100% { box-shadow:0 0 0 0 rgba(212,175,55,0.4); }
-  50% { box-shadow:0 0 0 8px rgba(212,175,55,0); }
+  0%,100% { box-shadow:0 0 0 0 rgba(139,92,246,0.4); }
+  50% { box-shadow:0 0 0 8px rgba(139,92,246,0); }
 }
 
 /* timeline card */
@@ -150,7 +150,7 @@
 .timeline-card-active::before { background:var(--red-primary); }
 .timeline-card-resolved::before { background:var(--accent-green); }
 .timeline-card:hover {
-  border-color:rgba(212,175,55,0.2);
+  border-color:rgba(139,92,246,0.2);
   transform:translateX(4px);
   box-shadow:0 4px 20px rgba(0,0,0,0.2);
 }
@@ -177,7 +177,7 @@
 }
 .empty-history-icon {
   width:80px;height:80px;border-radius:50%;margin:0 auto 1.5rem;
-  background:rgba(212,175,55,0.08);border:2px solid rgba(212,175,55,0.2);
+  background:rgba(139,92,246,0.08);border:2px solid rgba(139,92,246,0.2);
   display:flex;align-items:center;justify-content:center;
   /* anim-removed */
 }
@@ -190,7 +190,7 @@
 .count-badge {
   display:inline-flex;align-items:center;gap:6px;
   padding:6px 14px;border-radius:50px;font-size:0.8rem;font-weight:700;
-  background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.25);
+  background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);
   color:var(--red-primary);letter-spacing:0.05em;
 }
 
@@ -211,7 +211,7 @@
   color:var(--text-muted);transition:all .2s;
 }
 .filter-pill:hover, .filter-pill.active {
-  background:rgba(212,175,55,0.1);border-color:rgba(212,175,55,0.3);
+  background:rgba(16,185,129,0.1);border-color:rgba(139,92,246,0.3);
   color:var(--red-primary);
 }
 .filter-pill .fpill-count {
@@ -227,8 +227,8 @@
   transition:all .3s;cursor:pointer;
 }
 .map-thumb:hover {
-  border-color:rgba(212,175,55,0.3);
-  box-shadow:0 0 12px rgba(212,175,55,0.15);
+  border-color:rgba(139,92,246,0.3);
+  box-shadow:0 0 12px rgba(139,92,246,0.15);
   transform:scale(1.08);
 }
 .map-thumb img {
@@ -240,43 +240,43 @@
 .map-thumb-pin {
   position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);
   color:var(--red-primary);font-size:0.85rem;
-  filter:drop-shadow(0 0 4px rgba(212,175,55,0.6));
+  filter:drop-shadow(0 0 4px rgba(139,92,246,0.6));
 }
 
 /* ── EXPORT ALL BUTTON ── */
 .btn-export-all {
   display:inline-flex;align-items:center;gap:6px;
   padding:8px 18px;border-radius:6px;font-size:0.78rem;font-weight:600;
-  background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.3);
-  color:#d4af37;cursor:pointer;transition:all .3s;text-decoration:none;
+  background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.3);
+  color:#8b5cf6;cursor:pointer;transition:all .3s;text-decoration:none;
   letter-spacing:0.03em;
 }
 .btn-export-all:hover {
-  background:rgba(212,175,55,0.15);border-color:rgba(212,175,55,0.5);
-  box-shadow:0 0 16px rgba(212,175,55,0.15);color:#c4b5fd;
+  background:rgba(139,92,246,0.15);border-color:rgba(139,92,246,0.5);
+  box-shadow:0 0 16px rgba(139,92,246,0.15);color:#c4b5fd;
   transform:translateY(-1px);
 }
 
 /* ── RESPONSE TIME STAT ── */
-.stat-card-purple .stat-number { color:#d4af37; }
+.stat-card-purple .stat-number { color:#8b5cf6; }
 
 /* ── ENHANCED EMPTY STATE ── */
 .empty-illustration {
   width:120px;height:120px;border-radius:50%;margin:0 auto 2rem;
-  background:linear-gradient(135deg, rgba(212,175,55,0.06), rgba(184,134,11,0.06));
-  border:2px solid rgba(212,175,55,0.15);
+  background:linear-gradient(135deg, rgba(139,92,246,0.06), rgba(124,58,237,0.06));
+  border:2px solid rgba(139,92,246,0.15);
   display:flex;align-items:center;justify-content:center;
   position:relative;
   /* anim-removed */
 }
 .empty-illustration::before {
   content:'';position:absolute;inset:-8px;border-radius:50%;
-  border:1px dashed rgba(212,175,55,0.15);
+  border:1px dashed rgba(139,92,246,0.15);
   /* anim-removed */
 }
 .empty-illustration::after {
   content:'';position:absolute;inset:-16px;border-radius:50%;
-  border:1px dashed rgba(184,134,11,0.1);
+  border:1px dashed rgba(124,58,237,0.1);
   /* anim-removed */
 }
 @keyframes avatarBorderSpin { from{transform:rotate(0deg)}to{transform:rotate(360deg)} }
@@ -411,7 +411,7 @@
             <td class="td-cell d-none d-md-table-cell">
               {% if a.latitude and a.longitude %}
               <div class="map-thumb" onclick="window.open('https://www.google.com/maps?q={{ a.latitude }},{{ a.longitude }}','_blank')" title="Open in Google Maps">
-                <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ a.latitude }},{{ a.longitude }}&zoom=14&size=144x96&scale=2&maptype=roadmap&style=feature:all|element:geometry|color:0x1a1a2e&style=feature:all|element:labels.text.fill|color:0x8a8a8a&style=feature:water|color:0x0a0a1a&key=" alt="map" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.05);\' ><i class=\'bi bi-geo-alt-fill\' style=\'color:var(--red-primary);font-size:1rem;\'></i></div>'">
+                <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ a.latitude }},{{ a.longitude }}&zoom=14&size=144x96&scale=2&maptype=roadmap&style=feature:all|element:geometry|color:0x1a1a2e&style=feature:all|element:labels.text.fill|color:0x8a8a8a&style=feature:water|color:0x0a0a1a&key=" alt="map" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(139,92,246,0.05);\' ><i class=\'bi bi-geo-alt-fill\' style=\'color:var(--red-primary);font-size:1rem;\'></i></div>'">
                 <i class="bi bi-geo-alt-fill map-thumb-pin"></i>
               </div>
               {% else %}
@@ -485,7 +485,7 @@
             </div>
             {% if a.latitude and a.longitude %}
             <div class="map-thumb" onclick="window.open('https://www.google.com/maps?q={{ a.latitude }},{{ a.longitude }}','_blank')" title="Open in Google Maps" style="min-width:60px;">
-              <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ a.latitude }},{{ a.longitude }}&zoom=14&size=120x80&scale=2&maptype=roadmap&style=feature:all|element:geometry|color:0x1a1a2e&style=feature:all|element:labels.text.fill|color:0x8a8a8a&style=feature:water|color:0x0a0a1a&key=" alt="map" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.05);\' ><i class=\'bi bi-geo-alt-fill\' style=\'color:var(--red-primary);font-size:0.8rem;\'></i></div>'">
+              <img src="https://maps.googleapis.com/maps/api/staticmap?center={{ a.latitude }},{{ a.longitude }}&zoom=14&size=120x80&scale=2&maptype=roadmap&style=feature:all|element:geometry|color:0x1a1a2e&style=feature:all|element:labels.text.fill|color:0x8a8a8a&style=feature:water|color:0x0a0a1a&key=" alt="map" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(139,92,246,0.05);\' ><i class=\'bi bi-geo-alt-fill\' style=\'color:var(--red-primary);font-size:0.8rem;\'></i></div>'">
               <i class="bi bi-geo-alt-fill map-thumb-pin"></i>
             </div>
             {% endif %}
@@ -515,7 +515,7 @@
     <div class="empty-history">
       <div class="empty-illustration">
         <div style="text-align:center;">
-          <i class="bi bi-shield-check" style="font-size:2.8rem;color:var(--accent-green);filter:drop-shadow(0 0 12px rgba(212,175,55,0.4));"></i>
+          <i class="bi bi-shield-check" style="font-size:2.8rem;color:var(--accent-green);filter:drop-shadow(0 0 12px rgba(139,92,246,0.4));"></i>
         </div>
       </div>
       <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;margin-bottom:0.5rem;letter-spacing:0.02em;">
@@ -524,15 +524,15 @@
       <p style="font-size:0.95rem;font-weight:500;color:var(--text-secondary);margin-bottom:0.3rem;">No alerts recorded in the system</p>
       <p style="font-size:0.8rem;color:var(--text-muted);max-width:400px;margin:0 auto 1.5rem;">Your safety timeline will populate here when an SOS alert is triggered. All events are logged with timestamps, location data, and forensic hashes.</p>
       <div class="d-flex justify-content-center gap-3 flex-wrap">
-        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:0.72rem;background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);color:var(--accent-green);">
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:0.72rem;background:rgba(239,68,68,0.06);border:1px solid rgba(16,185,129,0.15);color:var(--accent-green);">
           <div style="width:6px;height:6px;border-radius:50%;background:var(--accent-green);/* anim-removed */"></div>
           Shield Active
         </div>
-        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:0.72rem;background:rgba(184,134,11,0.06);border:1px solid rgba(184,134,11,0.15);color:var(--accent-blue);">
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:0.72rem;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.15);color:var(--accent-blue);">
           <i class="bi bi-broadcast" style="font-size:0.6rem;"></i>
           SOS Relay Armed
         </div>
-        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:0.72rem;background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);color:var(--accent-amber);">
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;font-size:0.72rem;background:rgba(239,68,68,0.06);border:1px solid rgba(16,185,129,0.15);color:var(--accent-amber);">
           <i class="bi bi-geo-alt-fill" style="font-size:0.6rem;"></i>
           GPS Tracking On
         </div>
@@ -714,8 +714,8 @@ function filterAlerts(q) {
 <!-- ════════════ EVI-VAULT MODAL ════════════ -->
 <div class="modal fade" id="vaultModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content" style="background:rgba(10,10,15,0.95); border:1px solid var(--accent-amber); box-shadow:0 0 30px rgba(212,175,55,0.15); border-radius:0;">
-      <div class="modal-header" style="border-bottom:1px dashed var(--accent-amber); background:rgba(212,175,55,0.05);">
+    <div class="modal-content" style="background:rgba(10,10,15,0.95); border:1px solid var(--accent-amber); box-shadow:0 0 30px rgba(245,158,11,0.15); border-radius:0;">
+      <div class="modal-header" style="border-bottom:1px dashed var(--accent-amber); background:rgba(245,158,11,0.05);">
         <h5 class="modal-title" style="font-family:'Courier New', monospace; font-weight:700; color:var(--accent-amber); letter-spacing:0.1em;">
           <i class="bi bi-safe-fill me-2"></i>EVIDENCE VAULT TERMINAL
         </h5>
@@ -723,7 +723,7 @@ function filterAlerts(q) {
       </div>
       <div class="modal-body" style="font-family:'Courier New', monospace; font-size:0.8rem; color:var(--text-muted); position:relative; overflow:hidden;">
         <!-- scanline overlay -->
-        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(212,175,55,0) 0%, rgba(212,175,55,0.05) 50%, rgba(212,175,55,0) 100%); background-size:100% 4px; pointer-events:none; z-index:0;"></div>
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(16,185,129,0) 0%, rgba(245,158,11,0.05) 50%, rgba(139,92,246,0) 100%); background-size:100% 4px; pointer-events:none; z-index:0;"></div>
         
         <div id="vault-loader" class="text-center py-5">
           <div class="spinner-border text-warning" role="status"></div>
@@ -745,7 +745,7 @@ function filterAlerts(q) {
               </div>
             </div>
             <div class="col-12">
-              <div class="p-3" style="border:1px solid rgba(212,175,55,0.3); background:rgba(212,175,55,0.05);">
+              <div class="p-3" style="border:1px solid rgba(245,158,11,0.3); background:rgba(139,92,246,0.05);">
                 <div style="color:var(--accent-amber); font-size:0.7rem; margin-bottom:5px;">[ IMMUTABLE_HASH_SHA256 ]</div>
                 <div id="v-hash" style="color:var(--white); word-break:break-all; font-size:0.75rem;"></div>
               </div>

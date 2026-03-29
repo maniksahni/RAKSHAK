@@ -18,39 +18,39 @@
 .dossier-watermark {
   position:absolute;bottom:-10%;right:-5%;
   font-family:'Space Grotesk',sans-serif;font-size:9rem;font-weight:900;
-  color:rgba(212,175,55,0.02);pointer-events:none;transform:rotate(-5deg);
+  color:rgba(139,92,246,0.02);pointer-events:none;transform:rotate(-5deg);
   letter-spacing:-0.05em;z-index:0;
 }
 .classified-stamp {
   position:absolute;top:20px;left:20px;
-  border:3px solid rgba(212,175,55,0.4);border-radius:6px;
-  color:rgba(212,175,55,0.6);font-family:'Courier New',monospace;
+  border:3px solid rgba(139,92,246,0.4);border-radius:6px;
+  color:rgba(139,92,246,0.6);font-family:'Courier New',monospace;
   font-size:1.2rem;font-weight:900;letter-spacing:0.3em;
   padding:4px 16px;transform:rotate(-15deg);pointer-events:none;
-  box-shadow:0 0 15px rgba(212,175,55,0.1), inset 0 0 10px rgba(212,175,55,0.1);
-  text-shadow:0 0 5px rgba(212,175,55,0.4);
+  box-shadow:0 0 15px rgba(139,92,246,0.1), inset 0 0 10px rgba(139,92,246,0.1);
+  text-shadow:0 0 5px rgba(139,92,246,0.4);
   z-index:10;
 }
 
 /* ── BIOMETRIC AVATAR CIRCLE ── */
 .profile-avatar-lg {
   width:130px;height:130px;border-radius:50%;
-  background:linear-gradient(135deg, rgba(212,175,55,0.2), rgba(10,10,15,0.9));
+  background:linear-gradient(135deg, rgba(139,92,246,0.2), rgba(10,10,15,0.9));
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-size:3.5rem;font-weight:900;color:#d4af37;text-shadow:0 0 15px rgba(212,175,55,0.6);
+  font-family:var(--font-display);font-size:3.5rem;font-weight:900;color:#8b5cf6;text-shadow:0 0 15px rgba(139,92,246,0.6);
   position:relative;flex-shrink:0;
   border:2px solid transparent;
   background-clip:padding-box;
-  box-shadow:inset 0 0 30px rgba(212,175,55,0.3);
+  box-shadow:inset 0 0 30px rgba(139,92,246,0.3);
 }
 .profile-avatar-lg::before {
   content:'';position:absolute;inset:-4px;border-radius:50%;
-  background:conic-gradient(from 0deg, transparent 0%, rgba(212,175,55,0.8) 25%, transparent 50%, rgba(212,175,55,0.3) 75%, transparent 100%);
+  background:conic-gradient(from 0deg, transparent 0%, rgba(139,92,246,0.8) 25%, transparent 50%, rgba(139,92,246,0.3) 75%, transparent 100%);
   z-index:-1;
   /* anim-removed */
 }
 .profile-avatar-lg::after {
-  content:'';position:absolute;inset:-10px;border-radius:50%;border:1px dashed rgba(212,175,55,0.3);
+  content:'';position:absolute;inset:-10px;border-radius:50%;border:1px dashed rgba(139,92,246,0.3);
   z-index:-2;
   /* anim-removed */
 }
@@ -64,12 +64,12 @@
 /* HUD Biometric Grid for Avatar */
 .avatar-inner::before {
   content:'';position:absolute;inset:0;
-  background-image:linear-gradient(rgba(212,175,55,0.1) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,0.1) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(139,92,246,0.1) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.1) 1px,transparent 1px);
   background-size:10px 10px;pointer-events:none;
 }
 .avatar-inner::after {
   content:'';position:absolute;inset:0;
-  background:linear-gradient(to bottom, transparent 45%, rgba(212,175,55,0.4) 50%, transparent 55%);
+  background:linear-gradient(to bottom, transparent 45%, rgba(139,92,246,0.4) 50%, transparent 55%);
   background-size:100% 200%;
   /* anim-removed */
   pointer-events:none;
@@ -77,22 +77,22 @@
 @keyframes avatarScan { 0% { transform:translateY(-100%); opacity:0; } 50% { opacity:1; } 100% { transform:translateY(100%); opacity:0; } }
 .avatar-pulse-ring {
   position:absolute;inset:-16px;border-radius:50%;
-  border:1px solid rgba(212,175,55,0.3);
+  border:1px solid rgba(139,92,246,0.3);
   /* anim-removed */
   pointer-events:none;
 }
-.avatar-pulse-ring:nth-child(2) { animation-delay:1s; border:1px solid rgba(212,175,55,0.15); }
-@keyframes pulseRing { 0%{transform:scale(0.9);opacity:0.8;box-shadow:0 0 20px rgba(212,175,55,0.5)} 100%{transform:scale(1.5);opacity:0;box-shadow:none} }
+.avatar-pulse-ring:nth-child(2) { animation-delay:1s; border:1px solid rgba(139,92,246,0.15); }
+@keyframes pulseRing { 0%{transform:scale(0.9);opacity:0.8;box-shadow:0 0 20px rgba(139,92,246,0.5)} 100%{transform:scale(1.5);opacity:0;box-shadow:none} }
 
 /* ── SECURITY CLEARANCE BADGE ── */
 .clearance-badge {
   display:inline-flex;align-items:center;gap:10px;
   padding:10px 24px;border-radius:6px;font-size:0.8rem;font-weight:800;
   letter-spacing:0.2em;text-transform:uppercase;
-  background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.4);
-  color:#d4af37;font-family:var(--font-display);
+  background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.4);
+  color:#8b5cf6;font-family:var(--font-display);
   position:relative;overflow:hidden;
-  box-shadow:0 0 20px rgba(212,175,55,0.1), inset 0 0 10px rgba(212,175,55,0.1);
+  box-shadow:0 0 20px rgba(139,92,246,0.1), inset 0 0 10px rgba(139,92,246,0.1);
   /* anim-removed */
 }
 @keyframes badgeGlitch { 0%,96%,98%,100%{transform:none;opacity:1} 97%,99%{transform:translate(-2px,1px);opacity:0.8;filter:hue-rotate(90deg)} }
@@ -100,36 +100,36 @@
 /* ── TACTICAL STATS RING ── */
 .safety-score-container { width:150px;height:150px;position:relative;flex-shrink:0; }
 .safety-score-container svg {width:100%;height:100%;transform:rotate(-90deg);}
-.score-ring-bg {fill:none;stroke:rgba(212,175,55,0.05);stroke-width:3;}
-.score-ring-track {fill:none;stroke:rgba(212,175,55,0.15);stroke-width:1;}
+.score-ring-bg {fill:none;stroke:rgba(16,185,129,0.05);stroke-width:3;}
+.score-ring-track {fill:none;stroke:rgba(16,185,129,0.15);stroke-width:1;}
 .score-ring-fill {
   fill:none;stroke-width:6;stroke-linecap:square;
   transition:stroke-dashoffset 2s cubic-bezier(.22,1,.36,1);
-  filter:drop-shadow(0 0 10px rgba(212,175,55,0.8));stroke:#d4af37!important;
+  filter:drop-shadow(0 0 10px rgba(16,185,129,0.8));stroke:#10b981!important;
 }
 .safety-score-text { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center; }
-.safety-score-num { font-family:var(--font-display);font-size:2.5rem;font-weight:900;line-height:1;color:#d4af37;text-shadow:0 0 15px rgba(212,175,55,0.5); }
-.safety-score-label {font-size:0.6rem;color:rgba(212,175,55,0.8);letter-spacing:0.2em;margin-top:4px;text-transform:uppercase;font-weight:700;}
+.safety-score-num { font-family:var(--font-display);font-size:2.5rem;font-weight:900;line-height:1;color:#10b981;text-shadow:0 0 15px rgba(16,185,129,0.5); }
+.safety-score-label {font-size:0.6rem;color:rgba(16,185,129,0.8);letter-spacing:0.2em;margin-top:4px;text-transform:uppercase;font-weight:700;}
 
 /* ── SHIELD PROGRESS TACTICAL ── */
-.shield-progress-wrap { background:rgba(10,10,14,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:20px;position:relative;overflow:hidden; }
-.shield-progress-wrap::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#d4af37;box-shadow:0 0 10px #d4af37; }
-.shield-bar-outer { width:100%;height:6px;background:rgba(212,175,55,0.1);position:relative;margin-top:12px; }
-.shield-bar-fill { height:100%;background:#d4af37;box-shadow:0 0 15px #d4af37;position:relative;transition:width 2s cubic-bezier(0,1,0.5,1); }
+.shield-progress-wrap { background:rgba(10,10,14,0.7);border:1px solid rgba(139,92,246,0.2);border-radius:8px;padding:20px;position:relative;overflow:hidden; }
+.shield-progress-wrap::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#8b5cf6;box-shadow:0 0 10px #8b5cf6; }
+.shield-bar-outer { width:100%;height:6px;background:rgba(139,92,246,0.1);position:relative;margin-top:12px; }
+.shield-bar-fill { height:100%;background:#8b5cf6;box-shadow:0 0 15px #8b5cf6;position:relative;transition:width 2s cubic-bezier(0,1,0.5,1); }
 .shield-bar-fill::after { content:'';position:absolute;right:0;top:-4px;bottom:-4px;width:2px;background:#fff;box-shadow:0 0 10px #fff;/* anim-removed */ }
 
 /* ── GLASSMORPHISM CARDS REFINED (BLACK & RED) ── */
 .glass-section {
   background:linear-gradient(135deg,rgba(15,15,20,0.85),rgba(6,6,10,0.95));
   
-  border:1px solid rgba(212,175,55,0.15);
+  border:1px solid rgba(139,92,246,0.15);
   border-radius:8px;
   position:relative;overflow:hidden;
   box-shadow:inset 0 0 40px rgba(0,0,0,0.6), 0 20px 40px rgba(0,0,0,0.6);
 }
 .glass-section::after {
   content:'';position:absolute;top:0;left:0;width:100%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.5),transparent);
+  background:linear-gradient(90deg,transparent,rgba(139,92,246,0.5),transparent);
   opacity:0;transition:opacity 0.3s;
 }
 .glass-section:hover::after { opacity:1; }
@@ -138,52 +138,52 @@
   display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;color:rgba(255,255,255,0.95);
   text-transform:uppercase;
 }
-.glass-section-title i {color:#d4af37;font-size:1.1rem;filter:drop-shadow(0 0 5px rgba(212,175,55,0.5));}
-.glass-section-title .section-line { flex:1;height:1px;background:linear-gradient(90deg, rgba(212,175,55,0.3), transparent); }
+.glass-section-title i {color:#8b5cf6;font-size:1.1rem;filter:drop-shadow(0 0 5px rgba(139,92,246,0.5));}
+.glass-section-title .section-line { flex:1;height:1px;background:linear-gradient(90deg, rgba(139,92,246,0.3), transparent); }
 
 /* Form inputs tactical */
 .form-control-dark { background:rgba(0,0,0,0.4)!important;border:1px solid rgba(255,255,255,0.1)!important;color:#fff!important;border-radius:4px!important;transition:all 0.3s!important; }
-.form-control-dark:focus { border-color:rgba(212,175,55,0.6)!important;box-shadow:inset 0 0 10px rgba(212,175,55,0.1), 0 0 10px rgba(212,175,55,0.1)!important; }
+.form-control-dark:focus { border-color:rgba(139,92,246,0.6)!important;box-shadow:inset 0 0 10px rgba(139,92,246,0.1), 0 0 10px rgba(139,92,246,0.1)!important; }
 .form-label-dark { font-size:0.75rem;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:6px; }
 
 /* ── REDACTED TEXT EFFECT ── */
 .redacted-hover { color:transparent;background:#1a1a1a;position:relative;display:inline-block;transition:all 0s;border-radius:2px; }
-.redacted-hover::after { content:'[CLASSIFIED]';position:absolute;inset:0;color:rgba(212,175,55,0.3);font-size:0.75rem;display:flex;align-items:center;justify-content:center; }
+.redacted-hover::after { content:'[CLASSIFIED]';position:absolute;inset:0;color:rgba(139,92,246,0.3);font-size:0.75rem;display:flex;align-items:center;justify-content:center; }
 .redacted-hover:hover { color:#fff;background:transparent; }
 .redacted-hover:hover::after { display:none; }
 
 /* ── PROFILE STATS TACTICAL ── */
 .profile-stat {
   text-align:center;padding:16px 10px;border-radius:6px;
-  background:rgba(0,0,0,0.4);border:1px solid rgba(212,175,55,0.1);
+  background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.1);
   position:relative;overflow:hidden;
 }
 .profile-stat::before {
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.8),transparent);transform:scaleX(0);transition:transform 0.4s;
+  background:linear-gradient(90deg,transparent,rgba(139,92,246,0.8),transparent);transform:scaleX(0);transition:transform 0.4s;
 }
-.profile-stat:hover { border-color:rgba(212,175,55,0.3);background:rgba(212,175,55,0.05); }
+.profile-stat:hover { border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.05); }
 .profile-stat:hover::before { transform:scaleX(1); }
 .profile-stat-num { font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:#fff;text-shadow:0 0 10px rgba(255,255,255,0.2); }
-.profile-stat-label {font-size:0.6rem;color:rgba(212,175,55,0.8);letter-spacing:0.1em;text-transform:uppercase;font-weight:700;}
+.profile-stat-label {font-size:0.6rem;color:rgba(139,92,246,0.8);letter-spacing:0.1em;text-transform:uppercase;font-weight:700;}
 
 /* ── OPERATIVE NETWORK (Contacts) ── */
 .contact-card {
-  background:rgba(0,0,0,0.5);border:1px solid rgba(212,175,55,0.15);border-radius:6px;padding:16px;
+  background:rgba(0,0,0,0.5);border:1px solid rgba(139,92,246,0.15);border-radius:6px;padding:16px;
   position:relative;overflow:hidden;
   animation:contactSlide .4s cubic-bezier(.22,1,.36,1) both;
 }
-.contact-card::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(212,175,55,0.5);transition:width 0.3s; }
-.contact-card:hover { background:rgba(212,175,55,0.05);border-color:rgba(212,175,55,0.3);transform:translateX(4px); }
-.contact-card:hover::before { width:6px;box-shadow:0 0 15px rgba(212,175,55,0.8);background:#d4af37; }
+.contact-card::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(139,92,246,0.5);transition:width 0.3s; }
+.contact-card:hover { background:rgba(139,92,246,0.05);border-color:rgba(139,92,246,0.3);transform:translateX(4px); }
+.contact-card:hover::before { width:6px;box-shadow:0 0 15px rgba(139,92,246,0.8);background:#8b5cf6; }
 .contact-avatar {
-  background:rgba(212,175,55,0.1);border:1px solid #d4af37;color:#d4af37;text-shadow:0 0 5px #d4af37;box-shadow:inset 0 0 10px rgba(212,175,55,0.2);
+  background:rgba(139,92,246,0.1);border:1px solid #8b5cf6;color:#8b5cf6;text-shadow:0 0 5px #8b5cf6;box-shadow:inset 0 0 10px rgba(139,92,246,0.2);
 }
 .contact-relationship { background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6); }
 
 /* Toggle Fix */
-.cyber-toggle.active { background:rgba(212,175,55,0.15);border-color:rgba(212,175,55,0.4); }
-.cyber-toggle.active::after { left:23px;background:#d4af37;box-shadow:0 0 10px rgba(212,175,55,0.6); }
+.cyber-toggle.active { background:rgba(16,185,129,0.15);border-color:rgba(139,92,246,0.4); }
+.cyber-toggle.active::after { left:23px;background:#10b981;box-shadow:0 0 10px rgba(16,185,129,0.6); }
 </style>
 {% endblock %}
 
@@ -232,7 +232,7 @@
             <span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>
             {{ current_user.risk_level }} RISK PROFILE
           </span>
-          <span class="shield-badge" style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);color:var(--red-primary);border-radius:4px;font-family:var(--font-display);">
+          <span class="shield-badge" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);color:var(--red-primary);border-radius:4px;font-family:var(--font-display);">
             <i class="bi bi-shield-fill-check"></i> SHIELD ACTIVE
           </span>
         </div>
@@ -285,7 +285,7 @@
       <div class="col-4 col-md-2">
         <div class="profile-stat">
           <div class="d-flex align-items-center justify-content-center gap-1">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(212,175,55,0.5);/* anim-removed */"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(139,92,246,0.5);/* anim-removed */"></div>
             <div class="profile-stat-num" style="color:var(--accent-green);font-size:1.1rem;">ON</div>
           </div>
           <div class="profile-stat-label">Shield</div>
@@ -301,18 +301,18 @@
 
     <!-- Cyber Status Chips -->
     <div class="d-flex gap-2 flex-wrap mt-3" style="font-family:'Courier New', monospace; font-size:0.7rem;">
-      <div style="display:flex; align-items:center; gap:6px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-green);">
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-green);">
         <span style="width:5px;height:5px;border-radius:0;background:var(--accent-green);/* anim-removed */"></span>
         SHIELD: ACTIVE
       </div>
-      <div style="display:flex; align-items:center; gap:6px; background:rgba(184,134,11,0.06); border:1px solid rgba(184,134,11,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-blue);">
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(124,58,237,0.06); border:1px solid rgba(124,58,237,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-blue);">
         <span style="width:5px;height:5px;border-radius:0;background:var(--accent-blue);"></span>
         ENCRYPTION: AES-256-GCM
       </div>
-      <div style="display:flex; align-items:center; gap:6px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-amber);">
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(16,185,129,0.06); border:1px solid rgba(139,92,246,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-amber);">
         <i class="bi bi-geo-alt-fill"></i> GPS TRACKING: ON
       </div>
-      <div style="display:flex; align-items:center; gap:6px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); border-radius:3px; padding:5px 12px; color:var(--red-primary);">
+      <div style="display:flex; align-items:center; gap:6px; background:rgba(245,158,11,0.06); border:1px solid rgba(139,92,246,0.2); border-radius:3px; padding:5px 12px; color:var(--red-primary);">
         <i class="bi bi-broadcast"></i> SOS RELAY: ARMED
       </div>
     </div>
@@ -340,7 +340,7 @@
     <!-- Left: Personal Info -->
     <div class="col-lg-6 profile-col-left">
       <div class="glass-section p-4 tilt-card" style="transform-style:preserve-3d;transition:transform 0.1s ease-out;">
-        <div class="glass-section-title" style="transform:translateZ(30px);color:#d4af37;border-bottom:1px solid rgba(212,175,55,0.2);padding-bottom:10px;">
+        <div class="glass-section-title" style="transform:translateZ(30px);color:#ef4444;border-bottom:1px solid rgba(239,68,68,0.2);padding-bottom:10px;">
           <i class="bi bi-fingerprint"></i>
           <span>OPERATIVE IDENTITY FILE</span>
           <div class="section-line"></div>
@@ -368,13 +368,13 @@
           <div style="margin-top:1rem;padding:14px 16px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.015);border:1px solid var(--border-glass);">
             <p style="font-size:0.7rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Authentication Method</p>
             <div class="google-auth-badge">
-              <svg viewBox="0 0 24 24"><path fill="#d4af37" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#b8860b" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#d4af37" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              <svg viewBox="0 0 24 24"><path fill="#8b5cf6" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#7c3aed" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#8b5cf6" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
               <div>
                 <div>Connected with Google</div>
                 <div style="font-size:0.68rem;color:var(--text-muted);font-weight:400;margin-top:1px;">{{ current_user.email }}</div>
               </div>
               <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:#b8860b;box-shadow:0 0 6px rgba(184,134,11,0.5);/* anim-removed */"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:#7c3aed;box-shadow:0 0 6px rgba(124,58,237,0.5);/* anim-removed */"></div>
                 <span style="font-size:0.65rem;color:var(--accent-green);">VERIFIED</span>
               </div>
             </div>
@@ -391,7 +391,7 @@
     <div class="col-lg-6 profile-col-right">
       <div class="glass-section p-4 h-100 d-flex flex-column tilt-card" style="transform-style:preserve-3d;transition:transform 0.1s ease-out;">
         <div class="d-flex align-items-center justify-content-between mb-3" style="transform:translateZ(30px);">
-          <div class="glass-section-title" style="margin-bottom:0;color:#d4af37;text-shadow:0 0 10px rgba(212,175,55,0.5);">
+          <div class="glass-section-title" style="margin-bottom:0;color:#10b981;text-shadow:0 0 10px rgba(16,185,129,0.5);">
             <i class="bi bi-diagram-3-fill"></i>
             <span>LINKED OPERATIVES</span>
           </div>
@@ -427,7 +427,7 @@
           </div>
           {% else %}
           <div class="empty-state" id="no-contacts" style="padding:2rem;">
-            <div style="width:56px;height:56px;border-radius:50%;margin:0 auto 1rem;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.15);display:flex;align-items:center;justify-content:center;">
+            <div style="width:56px;height:56px;border-radius:50%;margin:0 auto 1rem;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15);display:flex;align-items:center;justify-content:center;">
               <i class="bi bi-person-plus" style="font-size:1.3rem;color:var(--red-primary);"></i>
             </div>
             <p style="font-size:0.88rem;">No trusted contacts yet.<br>
@@ -559,9 +559,9 @@
         </div>
 
         <!-- Download My Data -->
-        <div style="padding:20px;border-radius:var(--radius-sm);background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.15);margin-bottom:16px;">
+        <div style="padding:20px;border-radius:var(--radius-sm);background:rgba(239,68,68,0.04);border:1px solid rgba(16,185,129,0.15);margin-bottom:16px;">
           <div style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">
-            <i class="bi bi-cloud-arrow-down me-1" style="color:#d4af37;"></i>Download My Data
+            <i class="bi bi-cloud-arrow-down me-1" style="color:#ef4444;"></i>Download My Data
           </div>
           <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:12px;">Export your alerts, contacts, and evidence vault records as a comprehensive PDF report.</p>
           <a href="{{ url_for('sos.history') }}" class="btn-download-data">
@@ -587,15 +587,15 @@
             </div>
           </div>
 
-          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.15);">
+          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(16,185,129,0.04);border:1px solid rgba(245,158,11,0.15);">
             <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Account Status</div>
             <div style="display:flex;align-items:center;gap:8px;">
-              <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(212,175,55,0.5);/* anim-removed */"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(139,92,246,0.5);/* anim-removed */"></div>
               <span style="font-size:0.85rem;font-weight:700;color:var(--accent-green);letter-spacing:0.05em;">OPERATIONAL</span>
             </div>
           </div>
 
-          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(212,175,55,0.04);border:1px solid rgba(212,175,55,0.12);margin-top:auto;">
+          <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(139,92,246,0.04);border:1px solid rgba(139,92,246,0.12);margin-top:auto;">
             <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Encryption</div>
             <div style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);font-family:'Courier New',monospace;letter-spacing:0.05em;">
               <i class="bi bi-lock-fill me-1" style="color:var(--red-primary);font-size:0.7rem;"></i>AES-256-GCM / TLS 1.3

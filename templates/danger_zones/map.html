@@ -37,7 +37,7 @@
 /* ── RADAR SWEEP OVERLAY ─────────────────────────────────────────────────── */
 .radar-sweep {
   position: absolute; inset: -50%;
-  background: conic-gradient(from 0deg, transparent 70%, rgba(212,175,55,0.1) 90%, rgba(212,175,55,0.2) 100%);
+  background: conic-gradient(from 0deg, transparent 70%, rgba(139,92,246,0.1) 90%, rgba(139,92,246,0.2) 100%);
   border-radius: 50%;
   /* anim-removed */
   pointer-events: none; z-index: 400;
@@ -64,20 +64,20 @@
   font-size: 1rem; font-weight: 800; color: #fff;
   font-family: var(--sg);
 }
-.threat-op-chip.green-chip { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05)); border:1px solid rgba(212,175,55,0.2); }
+.threat-op-chip.green-chip { background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05)); border:1px solid rgba(139,92,246,0.2); }
 .threat-op-chip.green-chip .threat-op-val { color: var(--accent-green); }
 
 /* animated breach ring */
 .breach-status-ring {
   width: 10px; height: 10px; border-radius: 50%;
   background: var(--red-primary);
-  box-shadow: 0 0 0 0 rgba(212,175,55,0.4);
+  box-shadow: 0 0 0 0 rgba(139,92,246,0.4);
   /* anim-removed */
 }
 @keyframes breachPulse {
-  0% { box-shadow: 0 0 0 0 rgba(212,175,55,0.5); }
-  70% { box-shadow: 0 0 0 8px rgba(212,175,55,0); }
-  100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+  0% { box-shadow: 0 0 0 0 rgba(139,92,246,0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(139,92,246,0); }
+  100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); }
 }
 
 /* ── CROSSHAIR ───────────────────────────────────────────────────────────── */
@@ -147,9 +147,9 @@
 }
 .surveillance-icon {
   width: 54px; height: 54px; border-radius: 16px;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  box-shadow: 0 0 25px rgba(212, 175, 55, 0.15), inset 0 0 15px rgba(212, 175, 55, 0.08);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 25px rgba(139,92,246, 0.15), inset 0 0 15px rgba(139, 92, 246, 0.08);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; position: relative;
 }
@@ -159,7 +159,7 @@
   font-family: var(--font-display);
   font-size: 1.35rem; font-weight: 900;
   letter-spacing: 0.12em; text-transform: uppercase;
-  background: linear-gradient(135deg, #fff, #d4af37);
+  background: linear-gradient(135deg, #fff, #8b5cf6);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1.2;
@@ -173,7 +173,7 @@
 .status-blink {
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--accent-green);
-  box-shadow: 0 0 8px var(--accent-green), 0 0 16px rgba(212,175,55,0.3);
+  box-shadow: 0 0 8px var(--accent-green), 0 0 16px rgba(139,92,246,0.3);
   /* anim-removed */
   display: inline-block;
 }
@@ -198,7 +198,7 @@
   letter-spacing: 0.08em; color: var(--text-secondary);
   transition: all 0.3s ease;
 }
-.header-badge:hover { border-color: rgba(212,175,55,0.3); }
+.header-badge:hover { border-color: rgba(139,92,246,0.3); }
 
 /* ── FILTER BUTTONS — ZONE TYPE TOGGLES ──────────────────────────────────── */
 .filter-bar {
@@ -217,21 +217,21 @@
   letter-spacing: 0.03em;
 }
 .filter-pill:hover {
-  border-color: rgba(212,175,55,0.3);
+  border-color: rgba(139,92,246,0.3);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 .filter-pill.active {
-  background: rgba(212,175,55,0.12);
-  border-color: rgba(212,175,55,0.5);
+  background: rgba(16,185,129,0.12);
+  border-color: rgba(139,92,246,0.5);
   color: var(--red-primary);
-  box-shadow: 0 0 15px rgba(212,175,55,0.1);
+  box-shadow: 0 0 15px rgba(139,92,246,0.1);
 }
 .filter-pill.active.filter-all {
-  background: rgba(212,175,55,0.1);
-  border-color: rgba(212,175,55,0.4);
+  background: rgba(16,185,129,0.1);
+  border-color: rgba(139,92,246,0.4);
   color: var(--accent-green);
-  box-shadow: 0 0 15px rgba(212,175,55,0.1);
+  box-shadow: 0 0 15px rgba(139,92,246,0.1);
 }
 .filter-pill i { font-size: 0.8rem; }
 .filter-count {
@@ -242,10 +242,10 @@
   transition: all 0.3s;
 }
 .filter-pill.active .filter-count {
-  background: rgba(212,175,55,0.2);
+  background: rgba(16,185,129,0.2);
 }
 .filter-pill.active.filter-all .filter-count {
-  background: rgba(212,175,55,0.2);
+  background: rgba(16,185,129,0.2);
 }
 
 /* ── FLOATING CONTROLS PANEL ─────────────────────────────────────────────── */
@@ -269,13 +269,13 @@
 }
 .map-ctrl-btn::before {
   content:''; position:absolute; inset:0;
-  background:linear-gradient(135deg, rgba(212,175,55,0.1), transparent);
+  background:linear-gradient(135deg, rgba(139,92,246,0.1), transparent);
   opacity:0; transition:opacity .3s;
 }
 .map-ctrl-btn:hover {
-  border-color: rgba(212,175,55,0.4); color: var(--red-primary);
+  border-color: rgba(139,92,246,0.4); color: var(--red-primary);
   transform: translateX(-3px);
-  box-shadow: 0 0 20px rgba(212,175,55,0.1), inset 0 0 20px rgba(212,175,55,0.03);
+  box-shadow: 0 0 20px rgba(139,92,246,0.1), inset 0 0 20px rgba(139,92,246,0.03);
 }
 .map-ctrl-btn:hover::before { opacity:1; }
 
@@ -290,7 +290,7 @@
 }
 .legend::before {
   content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,0.4), transparent);
 }
 @keyframes slideInLeft {
   from { opacity:0; transform:translateX(-20px); }
@@ -350,22 +350,22 @@
 }
 .map-title-bar::before {
   content: ''; position: absolute; bottom: 0; left: 12px; right: 12px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);
 }
 
 /* ── TARGET DATA PANEL ───────────────────────────────────────────────────── */
 .target-data-panel {
   position: absolute; bottom: 24px; right: 16px; z-index: 1000;
   background: rgba(5,5,10,0.9); 
-  border: 1px solid rgba(212,175,55,0.25); border-radius: 8px;
+  border: 1px solid rgba(139,92,246,0.25); border-radius: 8px;
   padding: 12px 16px; font-family: 'Courier New', Courier, monospace;
   color: var(--accent-green); font-size: 0.75rem; min-width: 220px;
-  box-shadow: 0 0 25px rgba(212,175,55,0.12), 0 8px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 0 25px rgba(139,92,246,0.12), 0 8px 32px rgba(0,0,0,0.4);
   transition: all 0.3s ease;
 }
 .target-data-panel:hover {
-  border-color: rgba(212,175,55,0.4);
-  box-shadow: 0 0 30px rgba(212,175,55,0.2), 0 8px 32px rgba(0,0,0,0.5);
+  border-color: rgba(139,92,246,0.4);
+  box-shadow: 0 0 30px rgba(139,92,246,0.2), 0 8px 32px rgba(0,0,0,0.5);
 }
 
 /* ── REPORT MODAL ────────────────────────────────────────────────────────── */
@@ -398,21 +398,21 @@
 .leaflet-popup-content-wrapper {
   background: rgba(10,10,20,0.92) !important;
   
-  border: 1px solid rgba(212,175,55,0.25) !important;
+  border: 1px solid rgba(139,92,246,0.25) !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,175,55,0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(139,92,246,0.08) !important;
   color: #e2e8f0 !important;
   overflow: hidden;
   position: relative;
 }
 .leaflet-popup-content-wrapper::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, #d4af37, #d4af37, #d4af37);
+  background: linear-gradient(90deg, #8b5cf6, #6366f1, #3b82f6);
   opacity: 0.8;
 }
 .leaflet-popup-tip {
   background: rgba(10,10,20,0.92) !important;
-  border: 1px solid rgba(212,175,55,0.25) !important;
+  border: 1px solid rgba(139,92,246,0.25) !important;
   border-top: none !important; border-left: none !important;
   box-shadow: none !important;
 }
@@ -427,7 +427,7 @@
   transition: color 0.2s !important;
 }
 .leaflet-popup-close-button:hover {
-  color: #d4af37 !important;
+  color:#8b5cf6 !important;
 }
 
 /* ── GLOBAL UTILITY ANIMATIONS ───────────────────────────────────────────── */
@@ -437,8 +437,8 @@
 }
 
 @keyframes glowPulse {
-  0%,100% { box-shadow: 0 0 5px rgba(212,175,55,0.2); }
-  50% { box-shadow: 0 0 20px rgba(212,175,55,0.4), 0 0 40px rgba(212,175,55,0.1); }
+  0%,100% { box-shadow: 0 0 5px rgba(139,92,246,0.2); }
+  50% { box-shadow: 0 0 20px rgba(139,92,246,0.4), 0 0 40px rgba(139,92,246,0.1); }
 }
 
 /* ── RESPONSIVE — MOBILE STACKING ────────────────────────────────────────── */
@@ -549,34 +549,34 @@
 <div class="stats-bar">
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-geo-alt-fill" style="color:#d4af37;font-size:0.7rem;"></i>
+      <i class="bi bi-geo-alt-fill" style="color:#10b981;font-size:0.7rem;"></i>
       Total Zones
     </div>
-    <div class="stat-value" style="color:#d4af37;" id="stat-total-zones">--</div>
+    <div class="stat-value" style="color:#8b5cf6;" id="stat-total-zones">--</div>
     <div class="stat-sub">Global + Community</div>
   </div>
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-exclamation-triangle-fill" style="color:#d4af37;font-size:0.7rem;"></i>
+      <i class="bi bi-exclamation-triangle-fill" style="color:#8b5cf6;font-size:0.7rem;"></i>
       Active Threats
     </div>
-    <div class="stat-value" style="color:#d4af37;" id="stat-active-threats">--</div>
+    <div class="stat-value" style="color:#10b981;" id="stat-active-threats">--</div>
     <div class="stat-sub">High severity</div>
   </div>
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-shield-fill-check" style="color:#d4af37;font-size:0.7rem;"></i>
+      <i class="bi bi-shield-fill-check" style="color:#10b981;font-size:0.7rem;"></i>
       Safe Areas
     </div>
-    <div class="stat-value" style="color:#d4af37;" id="stat-safe-areas">--</div>
+    <div class="stat-value" style="color:#10b981;" id="stat-safe-areas">--</div>
     <div class="stat-sub">Low risk zones</div>
   </div>
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-clock-fill" style="color:#b8860b;font-size:0.7rem;"></i>
+      <i class="bi bi-clock-fill" style="color:#7c3aed;font-size:0.7rem;"></i>
       Last Updated
     </div>
-    <div class="stat-value" style="color:#b8860b;font-size:1rem;" id="stat-last-updated">--:--</div>
+    <div class="stat-value" style="color:#7c3aed;font-size:1rem;" id="stat-last-updated">--:--</div>
     <div class="stat-sub" id="stat-update-label">Syncing...</div>
   </div>
 </div>
@@ -620,26 +620,26 @@
 <!-- ══ TACTICAL HUD OVERLAY ══ -->
 <div style="position:absolute;inset:0;pointer-events:none;z-index:450;overflow:hidden;">
   <!-- Cyber grid overlay -->
-  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.03) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(16,185,129,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,.03) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);"></div>
   
   <!-- Corner brackets -->
-  <div style="position:absolute;top:20px;left:20px;width:40px;height:40px;border-top:2px solid rgba(212,175,55,.4);border-left:2px solid rgba(212,175,55,.4);"></div>
-  <div style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-top:2px solid rgba(212,175,55,.4);border-right:2px solid rgba(212,175,55,.4);"></div>
-  <div style="position:absolute;bottom:20px;left:20px;width:40px;height:40px;border-bottom:2px solid rgba(212,175,55,.4);border-left:2px solid rgba(212,175,55,.4);"></div>
-  <div style="position:absolute;bottom:20px;right:20px;width:40px;height:40px;border-bottom:2px solid rgba(212,175,55,.4);border-right:2px solid rgba(212,175,55,.4);"></div>
+  <div style="position:absolute;top:20px;left:20px;width:40px;height:40px;border-top:2px solid rgba(139,92,246,.4);border-left:2px solid rgba(139,92,246,.4);"></div>
+  <div style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-top:2px solid rgba(139,92,246,.4);border-right:2px solid rgba(139,92,246,.4);"></div>
+  <div style="position:absolute;bottom:20px;left:20px;width:40px;height:40px;border-bottom:2px solid rgba(139,92,246,.4);border-left:2px solid rgba(139,92,246,.4);"></div>
+  <div style="position:absolute;bottom:20px;right:20px;width:40px;height:40px;border-bottom:2px solid rgba(139,92,246,.4);border-right:2px solid rgba(139,92,246,.4);"></div>
 
   <!-- Central targeting reticle -->
-  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;border:1px dashed rgba(212,175,55,.15);border-radius:50%;/* anim-removed */"></div>
-  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border:1px solid rgba(212,175,55,.1);border-radius:50%;"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;border:1px dashed rgba(139,92,246,.15);border-radius:50%;/* anim-removed */"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border:1px solid rgba(139,92,246,.1);border-radius:50%;"></div>
   
   <!-- Scanning horizontal laser -->
-  <div style="position:absolute;left:0;right:0;height:1px;background:rgba(212,175,55,.4);box-shadow:0 0 10px rgba(212,175,55,.5);/* anim-removed */"></div>
+  <div style="position:absolute;left:0;right:0;height:1px;background:rgba(139,92,246,.4);box-shadow:0 0 10px rgba(139,92,246,.5);/* anim-removed */"></div>
   
   <!-- Telemetry Data Overlay -->
-  <div style="position:absolute;bottom:30px;left:30px;font-family:'Courier New',monospace;font-size:.65rem;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase;">
+  <div style="position:absolute;bottom:30px;left:30px;font-family:'Courier New',monospace;font-size:.65rem;color:rgba(139,92,246,.6);letter-spacing:.1em;text-transform:uppercase;">
     <div>SYS_ID: VALKYRIE_MAP_ENG_v4</div>
     <div>ALTITUDE: 140M MSL</div>
-    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#d4af37;border-radius:50%;/* anim-removed */"></span> SAT_LINK_NOMINAL</div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#10b981;border-radius:50%;/* anim-removed */"></span> SAT_LINK_NOMINAL</div>
   </div>
 </div>
 <style>
@@ -677,20 +677,20 @@
 
   <!-- Live Target Telemetry Panel -->
   <div class="target-data-panel">
-    <div style="font-weight:900;letter-spacing:0.1em;border-bottom:1px solid rgba(212,175,55,0.3);margin-bottom:6px;padding-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-weight:900;letter-spacing:0.1em;border-bottom:1px solid rgba(139,92,246,0.3);margin-bottom:6px;padding-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
       <span>SYS.TRK.LINK</span>
-      <span style="font-size:0.6rem;/* anim-removed */color:#d4af37;">● ACTIVE</span>
+      <span style="font-size:0.6rem;/* anim-removed */color:#8b5cf6;">● ACTIVE</span>
     </div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">LAT:</span> <span id="hud-lat">0.00000</span></div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">LNG:</span> <span id="hud-lng">0.00000</span></div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">BEARING:</span> <span id="hud-bearing">0.00° N</span></div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">ZOOM:</span> <span id="hud-zoom">14.0x</span></div>
-    <div class="d-flex justify-content-between mt-2" style="font-size:0.65rem;color:#b8860b;"><span>SYNC:</span> <span style="/* anim-removed */">● LINKED</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(16,185,129,0.6);">LAT:</span> <span id="hud-lat">0.00000</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(139,92,246,0.6);">LNG:</span> <span id="hud-lng">0.00000</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(139,92,246,0.6);">BEARING:</span> <span id="hud-bearing">0.00° N</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(139,92,246,0.6);">ZOOM:</span> <span id="hud-zoom">14.0x</span></div>
+    <div class="d-flex justify-content-between mt-2" style="font-size:0.65rem;color:#7c3aed;"><span>SYNC:</span> <span style="/* anim-removed */">● LINKED</span></div>
   </div>
 
   <!-- Title bar (inside map) -->
   <div class="map-title-bar">
-    <div style="width:36px;height:36px;border-radius:10px;background:rgba(212,175,55,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div style="width:36px;height:36px;border-radius:10px;background:rgba(139,92,246,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
       <i class="bi bi-map-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
     </div>
     <div>
@@ -733,7 +733,7 @@
 
   <!-- Controls -->
   <div class="map-controls">
-    <button class="map-ctrl-btn" id="global-toggle-btn" onclick="toggleGlobalView()" style="border-color:rgba(184,134,11,0.15);">
+    <button class="map-ctrl-btn" id="global-toggle-btn" onclick="toggleGlobalView()" style="border-color:rgba(124,58,237,0.15);">
       <i class="bi bi-globe2 me-1" style="color:var(--accent-blue);"></i> Global View
     </button>
     <button class="map-ctrl-btn" onclick="toggleGlobalMarkers()">
@@ -759,15 +759,15 @@
       <i class="bi bi-shield-fill-exclamation"></i> THREAT LEVELS
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;color:#d4af37;"></span>
+      <span class="legend-dot pulse-dot" style="background:#10b981;box-shadow:0 0 6px #f59e0b;color:#8b5cf6;"></span>
       <span>High Risk</span>
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;color:#d4af37;animation-delay:0.4s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#8b5cf6;box-shadow:0 0 6px #8b5cf6;color:#8b5cf6;animation-delay:0.4s;"></span>
       <span>Medium</span>
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;color:#d4af37;animation-delay:0.8s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#f59e0b;box-shadow:0 0 6px #8b5cf6;color:#8b5cf6;animation-delay:0.8s;"></span>
       <span>Low Risk</span>
     </div>
     <div class="legend-divider"></div>
@@ -775,15 +775,15 @@
       <i class="bi bi-pin-map-fill" style="color:var(--accent-blue);"></i> MARKERS
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#b8860b;box-shadow:0 0 8px #b8860b;color:#b8860b;animation-delay:1.2s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#7c3aed;box-shadow:0 0 8px #7c3aed;color:#7c3aed;animation-delay:1.2s;"></span>
       <span>Your Location</span>
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;color:#d4af37;animation-delay:1.6s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#8b5cf6;box-shadow:0 0 8px #8b5cf6;color:#8b5cf6;animation-delay:1.6s;"></span>
       <span>Global Hotspot</span>
     </div>
     <div class="legend-item" style="margin-bottom:0;">
-      <span class="legend-dot" style="background:rgba(212,175,55,0.5);border:2px solid #d4af37;color:#d4af37;width:10px;height:10px;"></span>
+      <span class="legend-dot" style="background:rgba(16,185,129,0.5);border:2px solid #8b5cf6;color:#8b5cf6;width:10px;height:10px;"></span>
       <span>Community Report</span>
     </div>
   </div>
@@ -798,7 +798,7 @@
     <div style="position:absolute;inset:-2px;border-radius:var(--radius-xl);background:conic-gradient(from 0deg,transparent 60%,var(--red-primary) 80%,transparent 100%);z-index:-1;/* anim-removed */opacity:0.6;"></div>
 
     <div class="text-center mb-4">
-      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(212,175,55,0.02));border:1px solid rgba(212,175,55,0.3);box-shadow:inset 0 0 20px rgba(212,175,55,0.1),0 0 30px rgba(212,175,55,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">
+      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(139,92,246,0.02));border:1px solid rgba(139,92,246,0.3);box-shadow:inset 0 0 20px rgba(139,92,246,0.1),0 0 30px rgba(139,92,246,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">
         <i class="bi bi-exclamation-triangle-fill"></i>
       </div>
       <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;letter-spacing:1px;color:#fff;">Report Danger Zone</h3>
@@ -848,7 +848,7 @@
      ═══════════════════════════════════════════════════════════════════════════ -->
 <div id="proximity-modal" class="proximity-float">
   <div class="glass-card-red p-3 d-flex align-items-center gap-3" style="border-radius:var(--radius-md);">
-    <div style="width:40px;height:40px;border-radius:10px;background:rgba(212,175,55,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
       <i class="bi bi-exclamation-triangle-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
     </div>
     <div style="flex:1;">
@@ -940,8 +940,8 @@ function filterZones(type, btn) {
     GLOBAL_HOTSPOTS.forEach((spot, i) => {
       if (type !== 'all' && spot.type !== type) return;
 
-      const colors = { high:'#d4af37', medium:'#d4af37', low:'#d4af37' };
-      const color = colors[spot.severity] || '#d4af37';
+      const colors = { high:'#10b981', medium:'#f59e0b', low:'#8b5cf6' };
+      const color = colors[spot.severity] || '#8b5cf6';
       const size = spot.severity === 'high' ? 18 : spot.severity === 'medium' ? 14 : 11;
       const ringDelay = (i * 0.3 % 3).toFixed(1);
 
@@ -982,7 +982,7 @@ function filterZones(type, btn) {
     if (heatPoints.length > 0) {
       window.globalHeatLayer = L.heatLayer(heatPoints, {
         radius: 40, blur: 30, maxZoom: 10, max: 1.0,
-        gradient: { 0.0:'#d4af37', 0.3:'#d4af37', 0.6:'#d4af37', 0.85:'#d4af37', 1.0:'#fff' },
+        gradient: { 0.0:'#8b5cf6', 0.3:'#8b5cf6', 0.6:'#8b5cf6', 0.85:'#8b5cf6', 1.0:'#fff' },
       });
       globalHeatLayer.addTo(heatMap);
     }

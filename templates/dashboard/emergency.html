@@ -9,9 +9,9 @@
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes emgPulseRing {
-  0%   { box-shadow: 0 0 0 0 rgba(212,175,55,0.3); }
-  70%  { box-shadow: 0 0 0 12px rgba(212,175,55,0); }
-  100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+  0%   { box-shadow: 0 0 0 0 rgba(139,92,246,0.3); }
+  70%  { box-shadow: 0 0 0 12px rgba(139,92,246,0); }
+  100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); }
 }
 @keyframes emgScanline {
   0%   { top: -100%; }
@@ -42,21 +42,21 @@
 }
 .emg-scanline {
   position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: radial-gradient(circle at top right, rgba(212,175,55,0.15), transparent 50%);
+  background: radial-gradient(circle at top right, rgba(139,92,246,0.15), transparent 50%);
   border-radius: 20px;
 }
 /* Threat level blink indicator */
 .threat-badge {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 5px 14px; border-radius: 3px;
-  background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.4);
+  background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.4);
   font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em;
   color: var(--red-primary); font-family: 'Courier New', monospace;
 }
 .threat-dot {
   width: 7px; height: 7px; border-radius: 50%; background: var(--red-primary);
   /* anim-removed */
-  box-shadow: 0 0 8px rgba(212,175,55,0.7);
+  box-shadow: 0 0 8px rgba(139,92,246,0.7);
 }
 @keyframes threatBlink { 50% { opacity: 0.2; box-shadow: none; } }
 
@@ -75,22 +75,22 @@
 
 /* Location Card */
 .location-card {
-  background: rgba(5,5,10,0.8); border: 1px solid rgba(212,175,55,0.2);
+  background: rgba(5,5,10,0.8); border: 1px solid rgba(139,92,246,0.2);
   border-radius: 14px; padding: 1.25rem; 
   position: relative; overflow: hidden;
 }
 .location-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,0.5), transparent);
 }
 .loc-icon-wrap {
   position: relative; width: 48px; height: 48px;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(212,175,55,0.1); border-radius: 12px; flex-shrink: 0;
+  background: rgba(139,92,246,0.1); border-radius: 12px; flex-shrink: 0;
 }
 .loc-pulse {
   position: absolute; inset: -4px; border-radius: 14px;
-  border: 2px solid rgba(212,175,55,0.3); /* anim-removed */
+  border: 2px solid rgba(139,92,246,0.3); /* anim-removed */
 }
 @keyframes locPulse { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.08)} }
 .loc-refresh-btn {
@@ -99,13 +99,13 @@
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all 0.3s;
 }
-.loc-refresh-btn:hover { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.3); color: #b8860b; }
+.loc-refresh-btn:hover { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.3); color:#7c3aed; }
 
 /* Police Card */
 .police-card {
   display: block; text-decoration: none;
-  background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.02) 100%);
-  border: 1px solid rgba(212,175,55,0.3); border-radius: 20px; 
+  background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(139,92,246,0.02) 100%);
+  border: 1px solid rgba(139,92,246,0.3); border-radius: 20px; 
   padding: 1.5rem; transition: all 0.35s cubic-bezier(.22,1,.36,1);
   position: relative; overflow: hidden;
   box-shadow: 0 4px 30px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
@@ -115,8 +115,8 @@
 .police-card::after { display:none; }
 .police-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 50px rgba(212,175,55,0.2), inset 0 1px 0 rgba(212,175,55,0.2);
-  border-color: rgba(212,175,55,0.5); background: rgba(212,175,55,0.08);
+  box-shadow: 0 12px 50px rgba(139,92,246,0.2), inset 0 1px 0 rgba(139,92,246,0.2);
+  border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.08);
 }
 .police-card:active { transform: scale(0.98); }
 .police-icon {
@@ -125,41 +125,41 @@
   flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);
 }
 .police-call-icon {
-  width: 56px; height: 56px; background: linear-gradient(135deg, #b8860b, #b8860b);
+  width: 56px; height: 56px; background: linear-gradient(135deg, #7c3aed, #7c3aed);
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
   color: #fff; flex-shrink: 0;
   /* anim-removed */
-  box-shadow: 0 0 20px rgba(212,175,55,0.4);
+  box-shadow: 0 0 20px rgba(139,92,246,0.4);
 }
 @keyframes callPulse {
-  0%,100% { box-shadow: 0 0 15px rgba(212,175,55,0.4), 0 0 0 0 rgba(212,175,55,0.2); }
-  50% { box-shadow: 0 0 30px rgba(212,175,55,0.6), 0 0 0 10px rgba(212,175,55,0); }
+  0%,100% { box-shadow: 0 0 15px rgba(139,92,246,0.4), 0 0 0 0 rgba(139,92,246,0.2); }
+  50% { box-shadow: 0 0 30px rgba(139,92,246,0.6), 0 0 0 10px rgba(139,92,246,0); }
 }
 .police-desc { color: rgba(255,255,255,0.45); font-size: 0.78rem; margin: 0.75rem 0 0; line-height: 1.5; }
 
 /* Women Helpline */
 .women-card {
   display: block; text-decoration: none;
-  background: linear-gradient(135deg, rgba(212,175,55,0.13) 0%, rgba(212,175,55,0.04) 100%);
-  border: 1px solid rgba(212,175,55,0.35); border-radius: 16px; padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(139,92,246,0.13) 0%, rgba(139,92,246,0.04) 100%);
+  border: 1px solid rgba(139,92,246,0.35); border-radius: 16px; padding: 1.25rem;
   transition: all 0.35s cubic-bezier(.22,1,.36,1); position: relative; overflow: hidden;
   animation: animateIn .4s .2s cubic-bezier(.22,1,.36,1) both;
 }
 .women-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 40px rgba(212,175,55,0.25); border-color: rgba(212,175,55,0.6);
+  box-shadow: 0 8px 40px rgba(139,92,246,0.25); border-color: rgba(139,92,246,0.6);
 }
 .women-card:active { transform: scale(0.98); }
 .women-icon {
-  width: 56px; height: 56px; background: rgba(212,175,55,0.12);
+  width: 56px; height: 56px; background: rgba(139,92,246,0.12);
   border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; border: 1px solid rgba(212,175,55,0.25);
+  flex-shrink: 0; border: 1px solid rgba(139,92,246,0.25);
 }
 .women-call-icon {
-  width: 50px; height: 50px; background: linear-gradient(135deg, #d4af37, #b8860b);
+  width: 50px; height: 50px; background: linear-gradient(135deg, #8b5cf6, #7c3aed);
   border-radius: 50%; display: flex; align-items: center; justify-content: center;
   color: #fff; flex-shrink: 0;
-  box-shadow: 0 0 25px rgba(212,175,55,0.5);
+  box-shadow: 0 0 25px rgba(139,92,246,0.5);
   /* anim-removed */
 }
 .women-desc { color: rgba(255,255,255,0.4); font-size: 0.75rem; margin: 0.75rem 0 0; line-height: 1.4; }
@@ -186,25 +186,25 @@
 .em-card:nth-child(n+9) { animation-delay: 0.5s; }
 .em-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: var(--card-color, #b8860b); transform: scaleX(0); transform-origin: left;
+  background: var(--card-color, #7c3aed); transform: scaleX(0); transform-origin: left;
   transition: transform .35s cubic-bezier(.22,1,.36,1);
 }
 .em-card:hover::before { transform: scaleX(1); }
 .em-card:hover {
-  border-color: color-mix(in srgb, var(--card-color, #b8860b) 35%, transparent);
+  border-color: color-mix(in srgb, var(--card-color, #7c3aed) 35%, transparent);
   background: rgba(255,255,255,0.04); transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 0 0 1px color-mix(in srgb, var(--card-color, #b8860b) 15%, transparent);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 0 0 1px color-mix(in srgb, var(--card-color, #7c3aed) 15%, transparent);
 }
 .em-icon {
   font-size: 1.6rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-  background: color-mix(in srgb, var(--card-color,#b8860b) 12%, transparent);
+  background: color-mix(in srgb, var(--card-color,#7c3aed) 12%, transparent);
   border-radius: 12px; flex-shrink: 0;
-  border: 1px solid color-mix(in srgb, var(--card-color,#b8860b) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--card-color,#7c3aed) 20%, transparent);
   transition: box-shadow .3s;
 }
-.em-card:hover .em-icon { box-shadow: 0 0 15px color-mix(in srgb, var(--card-color,#b8860b) 40%, transparent); }
+.em-card:hover .em-icon { box-shadow: 0 0 15px color-mix(in srgb, var(--card-color,#7c3aed) 40%, transparent); }
 .em-name { color: #fff; font-size: 0.95rem; font-weight: 700; line-height: 1.2; }
-.em-number { color: var(--card-color,#b8860b); font-size: 1rem; font-weight: 800; font-family: monospace; margin-top: 1px; }
+.em-number { color: var(--card-color,#7c3aed); font-size: 1rem; font-weight: 800; font-family: monospace; margin-top: 1px; }
 .em-desc { color: rgba(255,255,255,0.4); font-size: 0.78rem; line-height: 1.5; margin: 0 0 0.75rem; }
 .em-copy-btn {
   background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
@@ -213,18 +213,18 @@
   cursor: pointer; transition: all 0.3s; font-size: 0.85rem; flex-shrink: 0;
 }
 .em-copy-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-.em-copy-btn.copied { background: rgba(212,175,55,0.15); border-color: rgba(212,175,55,0.3); color: #d4af37; }
+.em-copy-btn.copied { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.3); color:#8b5cf6; }
 .em-call-btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%; padding: 10px;
-  background: color-mix(in srgb, var(--btn-color,#b8860b) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--btn-color,#b8860b) 30%, transparent);
-  border-radius: 10px; color: var(--btn-color,#b8860b); font-size: 0.85rem;
+  background: color-mix(in srgb, var(--btn-color,#7c3aed) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn-color,#7c3aed) 30%, transparent);
+  border-radius: 10px; color: var(--btn-color,#7c3aed); font-size: 0.85rem;
   font-weight: 700; text-decoration: none; transition: all 0.3s;
 }
 .em-call-btn:hover {
-  background: color-mix(in srgb, var(--btn-color,#b8860b) 25%, transparent);
-  box-shadow: 0 4px 20px color-mix(in srgb, var(--btn-color,#b8860b) 25%, transparent);
+  background: color-mix(in srgb, var(--btn-color,#7c3aed) 25%, transparent);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--btn-color,#7c3aed) 25%, transparent);
   color: #fff;
 }
 .em-call-btn:active { transform: scale(0.97); }
@@ -240,7 +240,7 @@
     <div class="d-flex align-items-start justify-content-between flex-wrap gap-3" style="position:relative;z-index:2;">
       <div>
         <div class="d-flex align-items-center gap-3 mb-2">
-          <div style="width:44px;height:44px;border-radius:12px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.35);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.35);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
             <i class="bi bi-telephone-fill" style="color:var(--red-primary);"></i>
           </div>
           <div>
@@ -268,7 +268,7 @@
   <div class="location-card mb-4" id="location-card" style="animation: emgSlideUp 0.4s 0.05s cubic-bezier(.22,1,.36,1) both;">
     <div class="d-flex align-items-center gap-3 flex-wrap">
       <div class="loc-icon-wrap">
-        <i class="bi bi-geo-alt-fill" style="color:#b8860b;font-size:1.3rem;"></i>
+        <i class="bi bi-geo-alt-fill" style="color:#7c3aed;font-size:1.3rem;"></i>
         <div class="loc-pulse"></div>
       </div>
       <div style="flex:1;min-width:200px;">
@@ -338,7 +338,7 @@
 
   <!-- ── All Emergency Numbers Grid ───────────────────────────────────────── -->
   <h5 style="color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:1rem;">
-    <i class="bi bi-grid-3x3-gap-fill" style="color:#b8860b;"></i> All Emergency Numbers
+    <i class="bi bi-grid-3x3-gap-fill" style="color:#7c3aed;"></i> All Emergency Numbers
   </h5>
 
   <div class="emergency-grid" id="emergency-grid">
@@ -404,7 +404,7 @@ function refreshLocation() {
       const acc = Math.round(pos.coords.accuracy);
       coordsEl.textContent = lat + ', ' + lng + ' (accuracy: ~' + acc + 'm)';
       textEl.textContent = 'Location detected — share these coordinates with emergency services';
-      textEl.style.color = '#d4af37';
+      textEl.style.color = '#ef4444';
     },
     function(err) {
       if (err.code === 1) {
@@ -412,7 +412,7 @@ function refreshLocation() {
       } else {
         textEl.textContent = 'Unable to detect location. Please share manually.';
       }
-      textEl.style.color = '#d4af37';
+      textEl.style.color = '#8b5cf6';
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
   );
@@ -452,7 +452,7 @@ function copyCoordinates() {
   if (!coords) { if (typeof showToast === 'function') showToast('No coordinates detected yet', 'warning'); return; }
   navigator.clipboard.writeText(coords).then(function() {
     var btn = document.getElementById('loc-copy-btn');
-    btn.innerHTML = '<i class="bi bi-check-lg" style="color:#d4af37;"></i>';
+    btn.innerHTML = '<i class="bi bi-check-lg" style="color:#8b5cf6;"></i>';
     setTimeout(function() { btn.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000);
     if (typeof showToast === 'function') showToast('Coordinates copied!', 'success');
   });
@@ -494,7 +494,7 @@ var _origGeoSuccess = null;
         detectedLng = pos.coords.longitude;
         coordsEl.textContent = lat + ', ' + lng + ' (accuracy: ~' + acc + 'm)';
         textEl.textContent = 'Location detected — share coordinates with emergency services';
-        textEl.style.color = '#d4af37';
+        textEl.style.color = '#ef4444';
 
         /* Show accuracy bar */
         var accBar = document.getElementById('loc-accuracy-bar');
@@ -504,9 +504,9 @@ var _origGeoSuccess = null;
         var pct = Math.max(5, Math.min(100, 100 - (acc / 10)));
         accFill.style.width = pct + '%';
         accText.textContent = '~' + acc + 'm';
-        if (acc < 20) { accFill.style.background = '#d4af37'; }
-        else if (acc < 100) { accFill.style.background = '#d4af37'; }
-        else { accFill.style.background = '#b8860b'; }
+        if (acc < 20) { accFill.style.background = '#8b5cf6'; }
+        else if (acc < 100) { accFill.style.background = '#8b5cf6'; }
+        else { accFill.style.background = '#7c3aed'; }
       },
       function(err) {
         if (err.code === 1) {
@@ -514,7 +514,7 @@ var _origGeoSuccess = null;
         } else {
           textEl.textContent = 'Unable to detect location. Please share manually.';
         }
-        textEl.style.color = '#d4af37';
+        textEl.style.color = '#8b5cf6';
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );

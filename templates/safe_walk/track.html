@@ -10,9 +10,9 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --red: #d4af37; --green: #d4af37; --cyan: #d4af37; --blue: #d4af37; --amber: #d4af37;
-      --bg: #030305; --card: rgba(212,175,55,0.03);
-      --border: rgba(212,175,55,0.15);
+      --red: #ef4444; --green: #8b5cf6; --cyan: #8b5cf6; --blue: #8b5cf6; --amber: #f59e0b;
+      --bg: #030305; --card: rgba(245,158,11,0.03);
+      --border: rgba(139,92,246,0.15);
     }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -23,7 +23,7 @@
     /* Scanline overlay & Grid */
     body::before {
       content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background-image:linear-gradient(rgba(212,175,55,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,0.05) 1px,transparent 1px);
+      background-image:linear-gradient(rgba(139,92,246,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.05) 1px,transparent 1px);
       background-size:25px 25px;
     }
     body::after {
@@ -33,7 +33,7 @@
 
     /* ── HEADER ── */
     .track-header {
-      background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(10,10,15,0.95));
+      background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(10,10,15,0.95));
       border-bottom: 1px solid var(--border);
       padding: 20px 24px; display: flex; align-items: center; gap: 20px;
       position: relative; z-index:10;
@@ -49,22 +49,22 @@
     .track-header::after {
       content: 'ASSET UPLINK'; position: absolute; right: -5px; top: -5px;
       font-family:'Space Grotesk',sans-serif;
-      font-size: 5rem; font-weight: 900; color: rgba(212,175,55,0.03);
+      font-size: 5rem; font-weight: 900; color: rgba(139,92,246,0.03);
       letter-spacing: 0.05em; pointer-events: none;
     }
     .logo-box {
       width: 54px; height: 54px; border-radius: 8px; flex-shrink: 0;
-      background: rgba(212,175,55,0.1);
+      background: rgba(139,92,246,0.1);
       border: 1px solid var(--cyan);
       display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color:var(--cyan);
-      box-shadow: 0 0 15px rgba(212,175,55,0.2), inset 0 0 10px rgba(212,175,55,0.2);
+      box-shadow: 0 0 15px rgba(139,92,246,0.2), inset 0 0 10px rgba(139,92,246,0.2);
       /* anim-removed */
     }
-    @keyframes pulseLogo { 0%,100%{box-shadow:0 0 15px rgba(212,175,55,0.2);} 50%{box-shadow:0 0 25px rgba(212,175,55,0.5);} }
+    @keyframes pulseLogo { 0%,100%{box-shadow:0 0 15px rgba(139,92,246,0.2);} 50%{box-shadow:0 0 25px rgba(139,92,246,0.5);} }
     .header-badge {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 6px 14px; border-radius: 4px;
-      background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.4);
+      background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.4);
       font-size: 0.65rem; font-weight: 800; letter-spacing: 0.15em;
       color: var(--cyan); font-family: 'Space Grotesk', sans-serif; margin-bottom: 6px; text-transform:uppercase;
     }
@@ -95,8 +95,8 @@
     .status-label { text-transform: uppercase; letter-spacing: 0.15em; font-weight: 800; font-family: 'Courier New', monospace; font-size: 0.75rem; }
     .status-label.active     { color: var(--cyan); }
     .status-label.completed  { color: var(--green); }
-    .status-label.overdue    { color: #d4af37; }
-    .status-label.sos_triggered { color: #d4af37; }
+    .status-label.overdue    { color:#8b5cf6; }
+    .status-label.sos_triggered { color: #ef4444; }
     
     .status-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.15); }
     .status-meta { font-size: 0.7rem; color: rgba(255,255,255,0.4); font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
@@ -109,13 +109,13 @@
     /* HUD Overlay */
     .hud-overlay { position:absolute;inset:0;pointer-events:none;z-index:400; }
     .hud-bracket { position:absolute;width:40px;height:40px;border:2px solid var(--cyan);z-index:400;opacity:0.6; }
-    .hud-bracket.tl { top:20px;left:20px;border-right:none;border-bottom:none;box-shadow:-2px -2px 10px rgba(212,175,55,0.3); }
-    .hud-bracket.tr { top:20px;right:20px;border-left:none;border-bottom:none;box-shadow:2px -2px 10px rgba(212,175,55,0.3); }
-    .hud-bracket.bl { bottom:20px;left:20px;border-right:none;border-top:none;box-shadow:-2px 2px 10px rgba(212,175,55,0.3); }
-    .hud-bracket.br { bottom:20px;right:20px;border-left:none;border-top:none;box-shadow:2px 2px 10px rgba(212,175,55,0.3); }
+    .hud-bracket.tl { top:20px;left:20px;border-right:none;border-bottom:none;box-shadow:-2px -2px 10px rgba(139,92,246,0.3); }
+    .hud-bracket.tr { top:20px;right:20px;border-left:none;border-bottom:none;box-shadow:2px -2px 10px rgba(139,92,246,0.3); }
+    .hud-bracket.bl { bottom:20px;left:20px;border-right:none;border-top:none;box-shadow:-2px 2px 10px rgba(139,92,246,0.3); }
+    .hud-bracket.br { bottom:20px;right:20px;border-left:none;border-top:none;box-shadow:2px 2px 10px rgba(139,92,246,0.3); }
     
     /* Crosshair sweep */
-    .hud-sweep { position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);border-radius:50%;border:1px dashed rgba(212,175,55,0.2);/* anim-removed */ }
+    .hud-sweep { position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);border-radius:50%;border:1px dashed rgba(139,92,246,0.2);/* anim-removed */ }
     @keyframes radarSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 
     /* ── FOOTER TELEMETRY ── */
@@ -127,17 +127,17 @@
     }
     .track-footer::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent);
     }
     .info-block { display: flex; flex-direction: column; gap: 6px; }
     .info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.4); font-weight:700; font-family:'Space Grotesk',sans-serif; }
     .info-value { font-size: 1.1rem; font-weight: 800; color: #fff; letter-spacing:0.02em; font-family:'Courier New',monospace; }
-    .info-value.cyan { color: var(--cyan); text-shadow:0 0 10px rgba(212,175,55,0.5); }
+    .info-value.cyan { color: var(--cyan); text-shadow:0 0 10px rgba(139,92,246,0.5); }
     .powered-by {
       margin-left: auto; font-size: 0.75rem; color: rgba(255,255,255,0.3);
       font-weight:600; display: flex; align-items: center; gap: 8px; letter-spacing:0.05em; text-transform:uppercase;
     }
-    .powered-by span { color: rgba(184,134,11,0.9); font-weight: 900; letter-spacing:0.2em; }
+    .powered-by span { color: rgba(124,58,237,0.9); font-weight: 900; letter-spacing:0.2em; }
     
     /* Ensure Leaflet popups inside tactical map get filtered correctly */
     .tactical-map-layer .leaflet-popup-content-wrapper { background:rgba(0,0,0,0.8); border:1px solid #fff; border-radius:0; color:#fff; font-family:'Courier New',monospace; font-weight:700; }
@@ -151,7 +151,7 @@
     <div class="logo-box"><i class="bi bi-crosshair"></i></div>
     <div>
       <div class="header-badge"><div class="badge-dot"></div> SECURE UPLINK ESTABLISHED</div>
-      <div class="header-title"><span style="color:var(--cyan);text-shadow:0 0 10px rgba(212,175,55,0.5);">{{ person_name }}</span> IS DEPLOYED</div>
+      <div class="header-title"><span style="color:var(--cyan);text-shadow:0 0 10px rgba(16,185,129,0.5);">{{ person_name }}</span> IS DEPLOYED</div>
       <div class="header-sub" id="glitch-text">NETWORK: ENCRYPTED // END-TO-END SECURE</div>
     </div>
     <div class="header-clock">

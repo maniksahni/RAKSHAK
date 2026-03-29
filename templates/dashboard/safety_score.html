@@ -63,9 +63,9 @@
     letter-spacing: 0.08em;
     margin-top: 12px;
   }
-  .ss-score-green { background: rgba(212,175,55,0.15); color: #d4af37; }
-  .ss-score-amber { background: rgba(212,175,55,0.15); color: #d4af37; }
-  .ss-score-red   { background: rgba(212,175,55,0.15); color: #d4af37; }
+  .ss-score-green { background: rgba(139,92,246,0.15); color:#8b5cf6; }
+  .ss-score-amber { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .ss-score-red   { background: rgba(139,92,246,0.15); color:#8b5cf6; }
 
   /* Breakdown */
   .ss-breakdown-item {
@@ -96,9 +96,9 @@
     border-radius: 50%;
     flex-shrink: 0;
   }
-  .ss-sev-high   { background: #d4af37; box-shadow: 0 0 8px rgba(212,175,55,0.5); }
-  .ss-sev-medium { background: #d4af37; box-shadow: 0 0 8px rgba(212,175,55,0.4); }
-  .ss-sev-low    { background: #d4af37; box-shadow: 0 0 8px rgba(212,175,55,0.4); }
+  .ss-sev-high   { background:#8b5cf6; box-shadow: 0 0 8px rgba(139,92,246,0.5); }
+  .ss-sev-medium { background: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.4); }
+  .ss-sev-low    { background:#8b5cf6; box-shadow: 0 0 8px rgba(139,92,246,0.4); }
   .ss-zone-text  { flex: 1; font-size: 0.85rem; color: var(--text-secondary, #ccc); }
   .ss-zone-dist  { font-size: 0.75rem; color: var(--text-muted, #888); white-space: nowrap; }
 
@@ -114,12 +114,12 @@
     outline: none;
     transition: border-color 0.2s;
   }
-  .ss-location-input:focus { border-color: rgba(212,175,55,0.4); }
+  .ss-location-input:focus { border-color: rgba(139,92,246,0.4); }
   .ss-location-input::placeholder { color: rgba(255,255,255,0.25); }
 
   .ss-btn {
     padding: 10px 24px;
-    background: linear-gradient(135deg, #d4af37, #b8860b);
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -129,7 +129,7 @@
     letter-spacing: 0.05em;
     transition: opacity 0.2s;
   }
-  .ss-btn:hover { opacity: 0.85; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212,175,55,0.4); }
+  .ss-btn:hover { opacity: 0.85; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139,92,246,0.4); }
   .ss-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* Advisory */
@@ -173,8 +173,8 @@
     from { height: 0; }
   }
   @keyframes ssGaugePulse {
-    0%, 100% { filter: drop-shadow(0 0 8px rgba(212,175,55,0.2)); }
-    50% { filter: drop-shadow(0 0 16px rgba(212,175,55,0.4)); }
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(139,92,246,0.2)); }
+    50% { filter: drop-shadow(0 0 16px rgba(139,92,246,0.4)); }
   }
   .ss-card { animation: ssFadeUp 0.5s cubic-bezier(.22,1,.36,1) both; }
   .ss-card:nth-child(2) { animation-delay: 0.1s; }
@@ -266,12 +266,12 @@
 {% block content %}
 <div class="ss-page">
   <!-- ── Threat Assessment Command Header ── -->
-  <div style="background:linear-gradient(135deg,rgba(184,134,11,0.08),rgba(5,5,10,0.92));border:1px solid rgba(184,134,11,0.2);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden;">
-    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(184,134,11,0.5),transparent);"></div>
+  <div style="background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(5,5,10,0.92));border:1px solid rgba(124,58,237,0.2);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,0.5),transparent);"></div>
     <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.1) 2px,rgba(0,0,0,0.1) 4px);pointer-events:none;border-radius:16px;"></div>
     <div style="position:relative;z-index:2;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-        <div style="width:44px;height:44px;border-radius:12px;background:rgba(184,134,11,0.12);border:1px solid rgba(184,134,11,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
           <i class="bi bi-speedometer2" style="color:var(--accent-blue);"></i>
         </div>
         <div>
@@ -283,17 +283,17 @@
       </div>
       <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 12px;">Real-time safety analysis — AI-powered danger zone correlation engine</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;font-family:'Courier New',monospace;font-size:0.68rem;">
-        <span style="padding:4px 10px;background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.2);border-radius:3px;color:var(--accent-blue);">AI MODEL: ACTIVE</span>
-        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--accent-green);">LIVE DB: SYNCED</span>
-        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--accent-amber);">TIME MULTIPLIER: ON</span>
-        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--red-primary);">RADIUS: 5KM</span>
+        <span style="padding:4px 10px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:3px;color:var(--accent-blue);">AI MODEL: ACTIVE</span>
+        <span style="padding:4px 10px;background:rgba(239,68,68,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:3px;color:var(--accent-green);">LIVE DB: SYNCED</span>
+        <span style="padding:4px 10px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:3px;color:var(--accent-amber);">TIME MULTIPLIER: ON</span>
+        <span style="padding:4px 10px;background:rgba(245,158,11,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:3px;color:var(--red-primary);">RADIUS: 5KM</span>
       </div>
     </div>
   </div>
 
   <!-- Getting Location state -->
   <div id="ss-loading-state" class="ss-card" style="text-align:center;padding:60px 20px;">
-    <div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(184,134,11,0.2);border-top-color:var(--accent-blue);/* anim-removed */margin:0 auto 16px;"></div>
+    <div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(124,58,237,0.2);border-top-color:var(--accent-blue);/* anim-removed */margin:0 auto 16px;"></div>
     <div style="font-size:0.9rem;color:var(--text-secondary);font-family:'Courier New',monospace;letter-spacing:0.05em;">Acquiring GPS coordinates...</div>
     <div style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">Scanning threat database for your location</div>
   </div>
@@ -321,31 +321,31 @@
       <div class="ss-card">
         <div class="ss-card-title">Score Breakdown</div>
         <div class="ss-breakdown-item">
-          <span class="ss-breakdown-label"><i class="bi bi-shield-check" style="color:#d4af37;margin-right:8px;"></i>Base Score</span>
+          <span class="ss-breakdown-label"><i class="bi bi-shield-check" style="color:#ef4444;margin-right:8px;"></i>Base Score</span>
           <div class="d-flex align-items-center">
-            <span class="ss-breakdown-value" style="color:#d4af37;">100</span>
-            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" style="width:100%;background:#d4af37;"></div></div>
+            <span class="ss-breakdown-value" style="color:#10b981;">100</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" style="width:100%;background:#f59e0b;"></div></div>
           </div>
         </div>
         <div class="ss-breakdown-item">
-          <span class="ss-breakdown-label"><i class="bi bi-geo-alt-fill" style="color:#d4af37;margin-right:8px;"></i>Danger Zone Penalty</span>
+          <span class="ss-breakdown-label"><i class="bi bi-geo-alt-fill" style="color:#8b5cf6;margin-right:8px;"></i>Danger Zone Penalty</span>
           <div class="d-flex align-items-center">
-            <span class="ss-breakdown-value" style="color:#d4af37;" id="ss-dz-penalty">-0</span>
-            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-dz-bar" style="width:0%;background:#d4af37;"></div></div>
+            <span class="ss-breakdown-value" style="color:#ef4444;" id="ss-dz-penalty">-0</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-dz-bar" style="width:0%;background:#8b5cf6;"></div></div>
           </div>
         </div>
         <div class="ss-breakdown-item">
-          <span class="ss-breakdown-label"><i class="bi bi-exclamation-triangle-fill" style="color:#d4af37;margin-right:8px;"></i>Recent SOS Alerts</span>
+          <span class="ss-breakdown-label"><i class="bi bi-exclamation-triangle-fill" style="color:#8b5cf6;margin-right:8px;"></i>Recent SOS Alerts</span>
           <div class="d-flex align-items-center">
-            <span class="ss-breakdown-value" style="color:#d4af37;" id="ss-sos-penalty">-0</span>
-            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-sos-bar" style="width:0%;background:#d4af37;"></div></div>
+            <span class="ss-breakdown-value" style="color:#ef4444;" id="ss-sos-penalty">-0</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-sos-bar" style="width:0%;background:#ef4444;"></div></div>
           </div>
         </div>
         <div class="ss-breakdown-item">
-          <span class="ss-breakdown-label"><i class="bi bi-clock" style="color:#d4af37;margin-right:8px;"></i>Time Multiplier</span>
+          <span class="ss-breakdown-label"><i class="bi bi-clock" style="color:#8b5cf6;margin-right:8px;"></i>Time Multiplier</span>
           <div class="d-flex align-items-center">
-            <span class="ss-breakdown-value" style="color:#d4af37;" id="ss-time-mult">x1.0</span>
-            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-time-bar" style="width:0%;background:#d4af37;"></div></div>
+            <span class="ss-breakdown-value" style="color:#8b5cf6;" id="ss-time-mult">x1.0</span>
+            <div class="ss-breakdown-bar-wrap"><div class="ss-breakdown-bar-fill" id="ss-time-bar" style="width:0%;background:#8b5cf6;"></div></div>
           </div>
         </div>
         <div class="ss-breakdown-item" style="border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;">
@@ -369,7 +369,7 @@
 
     <!-- Improvement Suggestions -->
     <div class="ss-card">
-      <div class="ss-card-title"><i class="bi bi-lightbulb me-2" style="color:#d4af37;"></i>Improvement Suggestions</div>
+      <div class="ss-card-title"><i class="bi bi-lightbulb me-2" style="color:#8b5cf6;"></i>Improvement Suggestions</div>
       <div id="ss-suggestions">
         <!-- Populated by JS based on score -->
       </div>
@@ -379,7 +379,7 @@
     <div class="ss-card">
       <div class="ss-card-title">Time-of-Day Advisory</div>
       <div class="ss-advisory" id="ss-advisory">
-        <i class="bi bi-sun ss-advisory-icon" style="color:#d4af37;"></i>
+        <i class="bi bi-sun ss-advisory-icon" style="color:#8b5cf6;"></i>
         <span>Loading advisory...</span>
       </div>
     </div>
@@ -394,7 +394,7 @@
 
     <!-- Community Alerts Nearby -->
     <div class="ss-card">
-      <div class="ss-card-title"><i class="bi bi-broadcast me-2" style="color:#d4af37;"></i>Community Alerts Nearby</div>
+      <div class="ss-card-title"><i class="bi bi-broadcast me-2" style="color:#ef4444;"></i>Community Alerts Nearby</div>
       <div id="ss-nearby-alerts" style="max-height:220px;overflow-y:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.04);">
         <div class="ss-empty"><i class="bi bi-broadcast"></i>Check a location to see nearby incidents</div>
       </div>
@@ -435,9 +435,9 @@
 
     // Color
     var color;
-    if (score > 70) { color = '#d4af37'; }
-    else if (score >= 40) { color = '#d4af37'; }
-    else { color = '#d4af37'; }
+    if (score > 70) { color = '#10b981'; }
+    else if (score >= 40) { color = '#8b5cf6'; }
+    else { color = '#8b5cf6'; }
     gaugeRing.setAttribute('stroke', color);
     gaugeNum.textContent = score;
     gaugeNum.setAttribute('fill', color);
@@ -477,7 +477,7 @@
         return '<div class="ss-trend-bar-col"><div class="ss-trend-bar" style="height:4px;background:rgba(255,255,255,0.04);" data-value="--"></div><div class="ss-trend-label">--</div></div>';
       }
       var h = Math.max(8, (entry.score / 100) * 100);
-      var color = entry.score > 70 ? '#d4af37' : (entry.score >= 40 ? '#d4af37' : '#d4af37');
+      var color = entry.score > 70 ? '#8b5cf6' : (entry.score >= 40 ? '#8b5cf6' : '#8b5cf6');
       var label = entry.time ? new Date(entry.time).toLocaleDateString([], {month:'short', day:'numeric'}) : '';
       return '<div class="ss-trend-bar-col">' +
         '<div class="ss-trend-bar" style="height:' + h + 'px;background:' + color + ';" data-value="' + entry.score + '"></div>' +
@@ -492,41 +492,41 @@
 
     if (data.danger_zone_penalty > 0) {
       suggestions.push({
-        icon: 'bi-geo-alt', iconBg: 'rgba(212,175,55,0.12)', iconColor: '#d4af37',
+        icon: 'bi-geo-alt', iconBg: 'rgba(239,68,68,0.12)', iconColor: '#ef4444',
         title: 'Avoid Nearby Danger Zones',
         desc: 'Your location is near reported danger zones. Consider moving to well-lit, populated areas.',
-        impact: '+' + Math.min(20, data.danger_zone_penalty) + ' pts', impactBg: 'rgba(212,175,55,0.1)', impactColor: '#d4af37'
+        impact: '+' + Math.min(20, data.danger_zone_penalty) + ' pts', impactBg: 'rgba(239,68,68,0.1)', impactColor: '#ef4444'
       });
     }
     if (data.recent_sos_penalty > 0) {
       suggestions.push({
-        icon: 'bi-exclamation-triangle', iconBg: 'rgba(212,175,55,0.12)', iconColor: '#d4af37',
+        icon: 'bi-exclamation-triangle', iconBg: 'rgba(239,68,68,0.12)', iconColor: '#ef4444',
         title: 'Be Alert — Recent SOS Activity',
         desc: data.recent_sos_count + ' SOS alert(s) were triggered nearby. Stay aware of your surroundings.',
-        impact: '+' + Math.min(15, data.recent_sos_penalty) + ' pts', impactBg: 'rgba(212,175,55,0.1)', impactColor: '#d4af37'
+        impact: '+' + Math.min(15, data.recent_sos_penalty) + ' pts', impactBg: 'rgba(239,68,68,0.1)', impactColor: '#ef4444'
       });
     }
     if (data.time_multiplier > 1.0) {
       suggestions.push({
-        icon: 'bi-moon-stars', iconBg: 'rgba(212,175,55,0.12)', iconColor: '#d4af37',
+        icon: 'bi-moon-stars', iconBg: 'rgba(139,92,246,0.12)', iconColor: '#8b5cf6',
         title: 'Late Night — Extra Caution',
         desc: 'Safety risk is elevated during nighttime hours. Share your live location with trusted contacts.',
-        impact: 'Night risk', impactBg: 'rgba(212,175,55,0.1)', impactColor: '#d4af37'
+        impact: 'Night risk', impactBg: 'rgba(16,185,129,0.1)', impactColor: '#10b981'
       });
     }
 
     /* Always show these general suggestions */
     suggestions.push({
-      icon: 'bi-people', iconBg: 'rgba(212,175,55,0.12)', iconColor: '#d4af37',
+      icon: 'bi-people', iconBg: 'rgba(139,92,246,0.12)', iconColor: '#8b5cf6',
       title: 'Add Emergency Contacts',
       desc: 'More contacts means faster response in emergencies. Add at least 3 trusted contacts.',
-      impact: '+10 pts', impactBg: 'rgba(212,175,55,0.1)', impactColor: '#d4af37'
+      impact: '+10 pts', impactBg: 'rgba(239,68,68,0.1)', impactColor: '#ef4444'
     });
     suggestions.push({
-      icon: 'bi-phone', iconBg: 'rgba(184,134,11,0.12)', iconColor: '#b8860b',
+      icon: 'bi-phone', iconBg: 'rgba(124,58,237,0.12)', iconColor: '#7c3aed',
       title: 'Keep Phone Charged',
       desc: 'Ensure your phone battery stays above 20% when traveling. Carry a power bank.',
-      impact: 'General', impactBg: 'rgba(184,134,11,0.1)', impactColor: '#b8860b'
+      impact: 'General', impactBg: 'rgba(124,58,237,0.1)', impactColor: '#7c3aed'
     });
 
     el.innerHTML = suggestions.slice(0, 4).map(function(s) {
@@ -565,15 +565,15 @@
 
     var finalEl = document.getElementById('ss-final-score');
     finalEl.textContent = data.score;
-    if (data.score > 70) finalEl.style.color = '#d4af37';
-    else if (data.score >= 40) finalEl.style.color = '#d4af37';
-    else finalEl.style.color = '#d4af37';
+    if (data.score > 70) finalEl.style.color = '#ef4444';
+    else if (data.score >= 40) finalEl.style.color = '#8b5cf6';
+    else finalEl.style.color = '#8b5cf6';
 
     // Advisory
     var advEl = document.getElementById('ss-advisory');
     var hour = new Date().getHours();
     var icon = (hour >= 6 && hour < 18) ? 'bi-sun' : 'bi-moon-stars';
-    var iconColor = (hour >= 6 && hour < 18) ? '#d4af37' : '#d4af37';
+    var iconColor = (hour >= 6 && hour < 18) ? '#8b5cf6' : '#8b5cf6';
     advEl.innerHTML = '<i class="bi ' + icon + ' ss-advisory-icon" style="color:' + iconColor + ';"></i>' +
       '<div><div style="font-weight:600;color:#fff;margin-bottom:2px;">' + data.time_advisory + '</div>' +
       '<div style="font-size:0.8rem;color:var(--text-muted,#888);">' + data.recent_sos_count + ' SOS alert' +
@@ -613,13 +613,13 @@
           loadNearbyAlerts(lat, lng);
         } else {
           document.getElementById('ss-loading-state').innerHTML =
-            '<i class="bi bi-exclamation-triangle" style="font-size:2rem;color:#d4af37;"></i>' +
+            '<i class="bi bi-exclamation-triangle" style="font-size:2rem;color:#8b5cf6;"></i>' +
             '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">' + (data.error || 'Failed to calculate score') + '</div>';
         }
       })
       .catch(function() {
         document.getElementById('ss-loading-state').innerHTML =
-          '<i class="bi bi-wifi-off" style="font-size:2rem;color:#d4af37;"></i>' +
+          '<i class="bi bi-wifi-off" style="font-size:2rem;color:#8b5cf6;"></i>' +
           '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">Network error</div>';
       });
   }
@@ -631,15 +631,15 @@
     postJSON('/sos/nearby', { latitude: lat, longitude: lng, radius: 5 })
       .then(function(d) {
         if (!d.success || !d.alerts || d.alerts.length === 0) {
-          container.innerHTML = '<div style="text-align:center;padding:16px;"><i class="bi bi-shield-check" style="color:#d4af37;font-size:1.3rem;"></i><div style="font-size:0.82rem;color:var(--text-muted,#888);margin-top:6px;">No incidents reported nearby in the last 7 days</div></div>';
+          container.innerHTML = '<div style="text-align:center;padding:16px;"><i class="bi bi-shield-check" style="color:#ef4444;font-size:1.3rem;"></i><div style="font-size:0.82rem;color:var(--text-muted,#888);margin-top:6px;">No incidents reported nearby in the last 7 days</div></div>';
           return;
         }
         container.innerHTML = d.alerts.map(function(a) {
           var dt = a.created_at ? new Date(a.created_at).toLocaleDateString() + ' ' + new Date(a.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '';
           var typeLabel = (a.trigger_type || 'manual').replace(/_/g, ' ');
           return '<div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;">' +
-            '<div style="display:flex;align-items:center;gap:8px;"><i class="bi bi-exclamation-circle" style="color:#d4af37;font-size:0.9rem;"></i><div><div style="font-size:0.78rem;font-weight:500;">' + typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1) + ' alert</div><div style="font-size:0.68rem;color:var(--text-muted,#888);">' + dt + '</div></div></div>' +
-            '<span style="font-size:0.65rem;padding:2px 6px;border-radius:4px;background:rgba(212,175,55,0.1);color:#d4af37;border:1px solid rgba(212,175,55,0.2);">' + (a.status || '?') + '</span></div>';
+            '<div style="display:flex;align-items:center;gap:8px;"><i class="bi bi-exclamation-circle" style="color:#8b5cf6;font-size:0.9rem;"></i><div><div style="font-size:0.78rem;font-weight:500;">' + typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1) + ' alert</div><div style="font-size:0.68rem;color:var(--text-muted,#888);">' + dt + '</div></div></div>' +
+            '<span style="font-size:0.65rem;padding:2px 6px;border-radius:4px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(139,92,246,0.2);">' + (a.status || '?') + '</span></div>';
         }).join('');
         container.innerHTML = '<div style="padding:8px 12px;font-size:0.7rem;color:var(--text-muted,#888);border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600;letter-spacing:0.08em;">INCIDENTS WITHIN 5KM (LAST 7 DAYS): ' + d.count + '</div>' + container.innerHTML;
       })
@@ -658,7 +658,7 @@
       },
       function() {
         document.getElementById('ss-loading-state').innerHTML =
-          '<i class="bi bi-geo-alt" style="font-size:2rem;color:#d4af37;"></i>' +
+          '<i class="bi bi-geo-alt" style="font-size:2rem;color:#8b5cf6;"></i>' +
           '<div style="margin-top:12px;color:var(--text-secondary,#ccc);">Location access denied. Enter coordinates manually below.</div>' +
           '<div style="margin-top:8px;font-size:0.8rem;color:var(--text-muted,#888);">Enable location in your browser settings for automatic detection.</div>';
         document.getElementById('ss-main').style.display = 'block';
