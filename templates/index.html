@@ -48,7 +48,7 @@ body::before{
 .hero-section{
   min-height:100vh;
   display:grid;
-  grid-template-columns:1fr 440px;
+  grid-template-columns:1fr min(440px,42vw);
   gap:2rem;
   align-items:center;
   padding:clamp(96px,12vh,150px) clamp(2rem,6vw,6rem) 4rem;
@@ -56,6 +56,7 @@ body::before{
   margin:0 auto;
   position:relative;
   overflow:visible;
+  box-sizing:border-box;
 }
 .hero-section::before{
   content:'';position:absolute;width:700px;height:700px;top:50%;left:55%;
@@ -93,7 +94,9 @@ body::before{
 ═══════════════════════════════════════════*/
 .phone-wrap{
   position:relative;
-  width:270px;
+  width:320px;
+  max-width:min(320px,calc(100vw - 32px));
+  margin:0 auto;
   overflow:visible;
   animation:fadeIn .7s .3s both;
 }
@@ -755,7 +758,10 @@ body::before{
   .tb-item:last-child{border-bottom:none}
 }
 @media(max-width:640px){
-  .hero-visual{display:none}
+  .hero-section{grid-template-columns:1fr;gap:1.75rem;padding-top:clamp(88px,16vh,120px)}
+  .hero-visual{display:flex;justify-content:center;padding:0 10px}
+  .phone-wrap{transform:scale(.88);transform-origin:center top}
+  .fc1,.fc2{display:none}
   .bento-grid{grid-template-columns:1fr;grid-template-areas:unset}
   .bc-sos,.bc-threat,.bc-map,.bc-hud,.bc-vault,.bc-auth{grid-area:unset}
   .cta-btns{flex-direction:column;align-items:center}
