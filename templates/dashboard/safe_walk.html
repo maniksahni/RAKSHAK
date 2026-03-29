@@ -17,8 +17,8 @@
   100% { transform: translateX(0) translateY(0); }
 }
 @keyframes swPulseGreen {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(212,175,55,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(139,92,246,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(139,92,246,0); }
 }
 @keyframes swCheckpointPop {
   from { opacity: 0; transform: scale(0.5); }
@@ -59,8 +59,8 @@
 .sw-walking-badge {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 14px; border-radius: 20px;
-  background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25);
-  font-size: 0.72rem; color: #d4af37; font-weight: 600;
+  background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25);
+  font-size: 0.72rem; color:#8b5cf6; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.06em;
 }
 
@@ -91,11 +91,11 @@
   background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.2);
 }
 .sw-timeline-item.active::before {
-  background: #d4af37; border-color: #d4af37;
+  background: #10b981; border-color:#8b5cf6;
   /* anim-removed */
 }
 .sw-timeline-item.completed::before {
-  background: #d4af37; border-color: #d4af37;
+  background:#8b5cf6; border-color:#8b5cf6;
 }
 .sw-timeline-item.upcoming::before {
   background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12);
@@ -113,7 +113,7 @@
 }
 .sw-progress-fill {
   height: 100%; border-radius: 6px;
-  background: linear-gradient(90deg, #d4af37, #b8860b);
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
   transition: width 1s ease;
   animation: swProgressBar 1s ease both;
 }
@@ -130,19 +130,19 @@
 }
 .sw-eta-value {
   font-family: 'Courier New', monospace; font-size: 1.1rem;
-  color: #d4af37; font-weight: 700;
+  color:#8b5cf6; font-weight: 700;
 }
 /* Share location button */
 .sw-share-btn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 20px; border-radius: 10px;
-  background: rgba(184,134,11,0.1); border: 1px solid rgba(184,134,11,0.25);
-  color: #b8860b; font-size: 0.82rem; font-weight: 600;
+  background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.25);
+  color:#7c3aed; font-size: 0.82rem; font-weight: 600;
   cursor: pointer; transition: all 0.2s;
 }
 .sw-share-btn:hover {
-  background: rgba(184,134,11,0.2); border-color: rgba(184,134,11,0.4);
-  transform: translateY(-1px); box-shadow: 0 4px 15px rgba(184,134,11,0.2);
+  background: rgba(124,58,237,0.2); border-color: rgba(124,58,237,0.4);
+  transform: translateY(-1px); box-shadow: 0 4px 15px rgba(124,58,237,0.2);
 }
 
 /* form inputs */
@@ -158,7 +158,7 @@
 }
 .sw-input:focus {
   outline: none;
-  border-color: rgba(212,175,55,0.5);
+  border-color: rgba(139,92,246,0.5);
   background: rgba(255,255,255,0.06);
 }
 .sw-input::placeholder { color: rgba(255,255,255,0.3); }
@@ -185,9 +185,9 @@
   -webkit-appearance: none;
   width: 18px; height: 18px;
   border-radius: 50%;
-  background: #d4af37;
+  background:#8b5cf6;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(212,175,55,0.5);
+  box-shadow: 0 0 10px rgba(139,92,246,0.5);
 }
 
 /* buttons */
@@ -204,29 +204,29 @@
   gap: 8px;
 }
 .sw-btn-primary {
-  background: linear-gradient(135deg, #d4af37, #b8860b);
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(212,175,55,0.3);
+  box-shadow: 0 4px 20px rgba(139,92,246,0.3);
 }
-.sw-btn-primary:hover { box-shadow: 0 6px 28px rgba(212,175,55,0.5); transform: translateY(-1px); }
+.sw-btn-primary:hover { box-shadow: 0 6px 28px rgba(139,92,246,0.5); transform: translateY(-1px); }
 
 .sw-btn-safe {
-  background: linear-gradient(135deg, #b8860b, #b8860b);
+  background: linear-gradient(135deg, #7c3aed, #7c3aed);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(184,134,11,0.3);
+  box-shadow: 0 4px 20px rgba(124,58,237,0.3);
 }
-.sw-btn-safe:hover { box-shadow: 0 6px 28px rgba(184,134,11,0.5); transform: translateY(-1px); }
+.sw-btn-safe:hover { box-shadow: 0 6px 28px rgba(124,58,237,0.5); transform: translateY(-1px); }
 
 .sw-btn-sos {
-  background: linear-gradient(135deg, #d4af37, #b8860b);
+  background: linear-gradient(135deg, #ef4444, #7c3aed);
   color: #fff;
   font-size: 1rem;
   padding: 16px 32px;
   /* anim-removed */
 }
 @keyframes sosPulse {
-  0%,100% { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
-  50% { box-shadow: 0 0 40px rgba(212,175,55,0.6); }
+  0%,100% { box-shadow: 0 0 20px rgba(239,68,68,0.3); }
+  50% { box-shadow: 0 0 40px rgba(139,92,246,0.6); }
 }
 
 .sw-btn-outline {
@@ -245,7 +245,7 @@
   text-align: center;
   letter-spacing: 0.1em;
 }
-.sw-countdown.overdue { color: #d4af37; /* anim-removed */ }
+.sw-countdown.overdue { color:#8b5cf6; /* anim-removed */ }
 @keyframes overdueFlash { 50% { opacity: 0.5; } }
 
 /* status badge */
@@ -260,8 +260,8 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.sw-status.active { background: rgba(184,134,11,0.15); color: #d4af37; }
-.sw-status.overdue { background: rgba(212,175,55,0.15); color: #d4af37; }
+.sw-status.active { background: rgba(124,58,237,0.15); color: #10b981; }
+.sw-status.overdue { background: rgba(139,92,246,0.15); color:#8b5cf6; }
 
 /* share link */
 .sw-share-box {
@@ -284,13 +284,13 @@
 {% block content %}
 <div class="sw-container">
   <!-- ── Route Monitoring Command Header ── -->
-  <div style="background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(5,5,10,0.92));border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:22px 26px;margin-bottom:20px;position:relative;overflow:hidden;">
-    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.5),transparent);"></div>
+  <div style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(5,5,10,0.92));border:1px solid rgba(139,92,246,0.2);border-radius:16px;padding:22px 26px;margin-bottom:20px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.5),transparent);"></div>
     <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;border-radius:16px;"></div>
     <div style="position:relative;z-index:2;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
             <i class="bi bi-signpost-2-fill" style="color:var(--accent-green);"></i>
           </div>
           <div>
@@ -307,10 +307,10 @@
       </div>
       <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0 0 12px;">Track your journey — contacts are notified if you don't check in on time.</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;font-family:'Courier New',monospace;font-size:0.68rem;">
-        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--accent-green);">📡 GPS TRACKING: ON</span>
-        <span style="padding:4px 10px;background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.2);border-radius:3px;color:var(--accent-blue);">🛡 SHIELD: ARMED</span>
-        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--accent-amber);">🔔 AUTO-ALERT: ENABLED</span>
-        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--red-primary);">⚡ SOS: ARMED</span>
+        <span style="padding:4px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:3px;color:var(--accent-green);">📡 GPS TRACKING: ON</span>
+        <span style="padding:4px 10px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:3px;color:var(--accent-blue);">🛡 SHIELD: ARMED</span>
+        <span style="padding:4px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:3px;color:var(--accent-amber);">🔔 AUTO-ALERT: ENABLED</span>
+        <span style="padding:4px 10px;background:rgba(239,68,68,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:3px;color:var(--red-primary);">⚡ SOS: ARMED</span>
       </div>
     </div>
   </div>
@@ -318,7 +318,7 @@
   <!-- ── START JOURNEY FORM ──────────────────────────────────────────────── -->
   <div id="sw-start-section">
     <div class="sw-card">
-      <h5><i class="bi bi-geo-alt me-2" style="color:#d4af37;"></i>Start a Journey</h5>
+      <h5><i class="bi bi-geo-alt me-2" style="color:#ef4444;"></i>Start a Journey</h5>
 
       <div id="sw-setup-map" style="margin-bottom:16px;">
         <div id="sw-map"></div>
@@ -370,7 +370,7 @@
       <div style="margin-bottom:16px;">
         <div class="d-flex align-items-center justify-content-between" style="margin-bottom:4px;">
           <span style="font-size:0.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Journey Progress</span>
-          <span id="sw-progress-pct" style="font-size:0.68rem;color:#d4af37;font-weight:700;font-family:monospace;">0%</span>
+          <span id="sw-progress-pct" style="font-size:0.68rem;color:#10b981;font-weight:700;font-family:monospace;">0%</span>
         </div>
         <div class="sw-progress-wrap">
           <div class="sw-progress-fill" id="sw-progress-bar" style="width:0%;"></div>
@@ -412,7 +412,7 @@
           <button class="sw-share-btn" onclick="copyShareLink()">
             <i class="bi bi-share"></i> Share Live Location
           </button>
-          <button class="sw-share-btn" onclick="shareViaWhatsApp()" style="background:rgba(212,175,55,0.1);border-color:rgba(212,175,55,0.25);color:#25d366;">
+          <button class="sw-share-btn" onclick="shareViaWhatsApp()" style="background:rgba(239,68,68,0.1);border-color:rgba(16,185,129,0.25);color:#25d366;">
             <i class="bi bi-whatsapp"></i> WhatsApp
           </button>
         </div>
@@ -495,7 +495,7 @@
         myLng = pos.coords.longitude;
         setupMap.setView([myLat, myLng], 15);
         startMarker = L.circleMarker([myLat, myLng], {
-          radius: 8, fillColor: '#d4af37', fillOpacity: 1,
+          radius: 8, fillColor: '#8b5cf6', fillOpacity: 1,
           color: '#fff', weight: 2
         }).addTo(setupMap).bindPopup('You are here');
       });
@@ -511,7 +511,7 @@
       destMarker = L.marker([destLat, destLng], {
         icon: L.divIcon({
           className: '',
-          html: '<div style="width:14px;height:14px;background:#d4af37;border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(212,175,55,0.6);"></div>',
+          html: '<div style="width:14px;height:14px;background:#8b5cf6;border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(139,92,246,0.6);"></div>',
           iconSize: [14, 14], iconAnchor: [7, 7]
         })
       }).addTo(setupMap).bindPopup('Destination');
@@ -521,7 +521,7 @@
 
       if (myLat !== null) {
         routeLine = L.polyline([[myLat, myLng], [destLat, destLng]], {
-          color: '#d4af37', weight: 2, dashArray: '8 6', opacity: 0.6
+          color: '#8b5cf6', weight: 2, dashArray: '8 6', opacity: 0.6
         }).addTo(setupMap);
         setupMap.fitBounds(routeLine.getBounds().pad(0.2));
       }
@@ -616,14 +616,14 @@
       activeMarker = L.circleMarker(
         [activeJourney.current_lat || activeJourney.start_lat,
          activeJourney.current_lng || activeJourney.start_lng],
-        {radius: 8, fillColor: '#d4af37', fillOpacity: 1, color: '#fff', weight: 2}
+        {radius: 8, fillColor: '#10b981', fillOpacity: 1, color: '#fff', weight: 2}
       ).addTo(activeMap);
 
       activeDestMarker = L.marker(
         [activeJourney.dest_lat, activeJourney.dest_lng],
         {icon: L.divIcon({
           className: '',
-          html: '<div style="width:14px;height:14px;background:#d4af37;border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(212,175,55,0.6);"></div>',
+          html: '<div style="width:14px;height:14px;background:#10b981;border:2px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(16,185,129,0.6);"></div>',
           iconSize: [14, 14], iconAnchor: [7, 7]
         })}
       ).addTo(activeMap);
@@ -631,7 +631,7 @@
       activeLine = L.polyline([
         [activeJourney.start_lat, activeJourney.start_lng],
         [activeJourney.dest_lat, activeJourney.dest_lng]
-      ], {color: '#d4af37', weight: 2, dashArray: '8 6', opacity: 0.5}).addTo(activeMap);
+      ], {color: '#10b981', weight: 2, dashArray: '8 6', opacity: 0.5}).addTo(activeMap);
 
       activeMap.fitBounds(activeLine.getBounds().pad(0.2));
     }, 100);
@@ -668,20 +668,20 @@
 
       /* Update progress bar color based on time */
       if (pct > 85) {
-        if (progressBar) progressBar.style.background = 'linear-gradient(90deg, #d4af37, #d4af37)';
+        if (progressBar) progressBar.style.background = 'linear-gradient(90deg, #10b981, #8b5cf6)';
       }
 
       if (diff <= 0) {
         el.textContent = 'OVERDUE';
-        el.style.color = '#d4af37';
+        el.style.color = '#8b5cf6';
         statusEl.className = 'sw-status overdue';
         statusEl.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> OVERDUE';
-        if (progressBar) { progressBar.style.width = '100%'; progressBar.style.background = '#d4af37'; }
+        if (progressBar) { progressBar.style.width = '100%'; progressBar.style.background = '#8b5cf6'; }
         if (progressPct) progressPct.textContent = 'OVERDUE';
         if (checkpointEl) {
           checkpointEl.querySelector('.sw-timeline-label').textContent = 'Overdue — Check In Required';
           checkpointEl.classList.remove('active'); checkpointEl.classList.add('upcoming');
-          checkpointEl.querySelector('.sw-timeline-label').style.color = '#d4af37';
+          checkpointEl.querySelector('.sw-timeline-label').style.color = '#10b981';
         }
         // Check ETA on server
         fetch('/safe-walk/check-eta', {method: 'POST', headers})
@@ -793,7 +793,7 @@
           list.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><i class="bi bi-shield-check" style="font-size:1.5rem;color:var(--accent-green);"></i><p style="font-size:0.82rem;color:var(--text-muted);">No past journeys yet.</p></div>';
           return;
         }
-        var statusColors = {completed:'#d4af37', overdue:'#d4af37', active:'#b8860b', cancelled:'#718096'};
+        var statusColors = {completed:'#8b5cf6', overdue:'#8b5cf6', active:'#7c3aed', cancelled:'#718096'};
         list.innerHTML = d.journeys.map(function(j) {
           var dt = j.started_at ? new Date(j.started_at).toLocaleString() : '';
           var sc = statusColors[j.status] || '#718096';

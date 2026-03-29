@@ -70,13 +70,13 @@ function initAdminMap(alerts, zones) {
       if (!a.latitude || !a.longitude) return;
       const icon = L.divIcon({
         className: '',
-        html: `<div style="width:18px;height:18px;border-radius:50%;background:#b8860b;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 12px #b8860b,0 0 24px #b8860b44;${a.status==='active'?'animation:sos-pulse 1.5s infinite;':''}"></div>`,
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:#7c3aed;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 12px #7c3aed,0 0 24px #7c3aed44;${a.status==='active'?'animation:sos-pulse 1.5s infinite;':''}"></div>`,
         iconSize: [18, 18], iconAnchor: [9, 9],
       });
       const m = L.marker([a.latitude, a.longitude], { icon })
         .bindPopup(`
           <div style="font-family:Inter,sans-serif;min-width:180px;">
-            <strong style="color:#b8860b;">🚨 ${a.full_name||'User'}</strong><br>
+            <strong style="color:#7c3aed;">🚨 ${a.full_name||'User'}</strong><br>
             <span style="font-size:0.8rem;color:#a0aec0;">${a.phone||''}</span><br>
             <span style="font-size:0.78rem;">${a.address||`${a.latitude},${a.longitude}`}</span><br>
             <span class="pill pill-${a.status}" style="font-size:0.7rem;">${a.status}</span>
@@ -92,11 +92,11 @@ function initAdminMap(alerts, zones) {
       if (!z.latitude || !z.longitude) return;
       const icon = L.divIcon({
         className: '',
-        html: `<div style="width:14px;height:14px;border-radius:50%;background:#d4af37;border:2px solid rgba(255,255,255,0.3);box-shadow:0 0 8px #d4af37;"></div>`,
+        html: `<div style="width:14px;height:14px;border-radius:50%;background:#ef4444;border:2px solid rgba(255,255,255,0.3);box-shadow:0 0 8px #f59e0b;"></div>`,
         iconSize: [14, 14], iconAnchor: [7, 7],
       });
       L.marker([z.latitude, z.longitude], { icon })
-        .bindPopup(`<div style="font-family:Inter,sans-serif;"><strong style="color:#d4af37;">⚠️ ${(z.zone_type||'zone').replace(/_/g,' ').toUpperCase()}</strong><br><span style="font-size:0.8rem;">${z.description||''}</span></div>`)
+        .bindPopup(`<div style="font-family:Inter,sans-serif;"><strong style="color:#8b5cf6;">⚠️ ${(z.zone_type||'zone').replace(/_/g,' ').toUpperCase()}</strong><br><span style="font-size:0.8rem;">${z.description||''}</span></div>`)
         .addTo(adminMap);
     });
   }
@@ -115,8 +115,8 @@ async function loadAnalytics() {
     const daysData = resp.alerts_per_day || [];
     const alertsCtx = document.getElementById('chart-alerts-day').getContext('2d');
     const alertGrad = alertsCtx.createLinearGradient(0, 0, 0, 200);
-    alertGrad.addColorStop(0, 'rgba(184,134,11,0.8)');
-    alertGrad.addColorStop(1, 'rgba(184,134,11,0.15)');
+    alertGrad.addColorStop(0, 'rgba(124,58,237,0.8)');
+    alertGrad.addColorStop(1, 'rgba(124,58,237,0.15)');
     new Chart(alertsCtx, {
       type: 'bar',
       data: {
@@ -124,15 +124,15 @@ async function loadAnalytics() {
         datasets: [{
           label: 'Alerts', data: daysData.map(d => d.count),
           backgroundColor: alertGrad,
-          borderColor: '#b8860b', borderWidth: 1, borderRadius: 6,
-          hoverBackgroundColor: 'rgba(184,134,11,0.9)',
+          borderColor: '#7c3aed', borderWidth: 1, borderRadius: 6,
+          hoverBackgroundColor: 'rgba(124,58,237,0.9)',
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         animation: { duration: 1200, easing: 'easeOutQuart' },
         plugins: { legend: { display: false },
-          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#b8860b', borderWidth: 1,
+          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#7c3aed', borderWidth: 1,
             titleFont: { family: 'Rajdhani', weight: '700' }, padding: 12, cornerRadius: 8 }
         },
         scales: {
@@ -147,26 +147,26 @@ async function loadAnalytics() {
     const hoursMap = Object.fromEntries((resp.peak_hours||[]).map(h=>[h.hour, h.count]));
     const peakCtx = document.getElementById('chart-peak-hours').getContext('2d');
     const peakGrad = peakCtx.createLinearGradient(0, 0, 0, 200);
-    peakGrad.addColorStop(0, 'rgba(212,175,55,0.3)');
-    peakGrad.addColorStop(1, 'rgba(212,175,55,0.02)');
+    peakGrad.addColorStop(0, 'rgba(139,92,246,0.3)');
+    peakGrad.addColorStop(1, 'rgba(139,92,246,0.02)');
     new Chart(peakCtx, {
       type: 'line',
       data: {
         labels: hours.map(h => `${h}:00`),
         datasets: [{
           label: 'Alerts', data: hours.map(h => hoursMap[h]||0),
-          borderColor: '#d4af37', backgroundColor: peakGrad,
+          borderColor: '#ef4444', backgroundColor: peakGrad,
           fill: true, tension: 0.4, pointRadius: 2, pointHoverRadius: 6,
-          pointBackgroundColor: '#d4af37', pointBorderColor: '#0a0a0f',
+          pointBackgroundColor: '#8b5cf6', pointBorderColor: '#0a0a0f',
           pointBorderWidth: 2, borderWidth: 2.5,
-          pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#d4af37',
+          pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#8b5cf6',
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         animation: { duration: 1500, easing: 'easeOutQuart' },
         plugins: { legend: { display: false },
-          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#d4af37', borderWidth: 1,
+          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#8b5cf6', borderWidth: 1,
             titleFont: { family: 'Rajdhani', weight: '700' }, padding: 12, cornerRadius: 8 }
         },
         scales: {
@@ -188,8 +188,8 @@ async function loadAnalytics() {
         labels: ['Low Risk','Medium Risk','High Risk'],
         datasets: [{
           data: [riskMap.low||0, riskMap.medium||0, riskMap.high||0],
-          backgroundColor: ['rgba(212,175,55,0.8)','rgba(212,175,55,0.8)','rgba(184,134,11,0.8)'],
-          borderColor: ['#d4af37','#d4af37','#b8860b'],
+          backgroundColor: ['rgba(245,158,11,0.8)','rgba(139,92,246,0.8)','rgba(124,58,237,0.8)'],
+          borderColor: ['#f59e0b','#8b5cf6','#7c3aed'],
           borderWidth: 2, hoverOffset: 12,
           hoverBorderWidth: 3,
         }]
@@ -233,10 +233,10 @@ async function loadAnalytics() {
         labels: ['Active','Resolved','False Alarm'],
         datasets: [{
           data: [statusMap.active||0, statusMap.resolved||0, statusMap.false_alarm||0],
-          backgroundColor: ['rgba(184,134,11,0.8)','rgba(212,175,55,0.8)','rgba(212,175,55,0.5)'],
-          borderColor: ['#b8860b','#d4af37','#a0aec0'],
+          backgroundColor: ['rgba(124,58,237,0.8)','rgba(239,68,68,0.8)','rgba(16,185,129,0.5)'],
+          borderColor: ['#7c3aed','#ef4444','#a0aec0'],
           borderWidth: 1.5, borderRadius: 6,
-          hoverBackgroundColor: ['rgba(184,134,11,1)','rgba(212,175,55,1)','rgba(212,175,55,0.7)'],
+          hoverBackgroundColor: ['rgba(124,58,237,1)','rgba(139,92,246,1)','rgba(139,92,246,0.7)'],
         }]
       },
       options: {
@@ -275,8 +275,8 @@ async function loadUsers(q='') {
     if (!resp.users.length) {
       tbody.innerHTML = `<tr><td colspan="8">
         <div class="empty-state" style="padding:40px;text-align:center;">
-          <div style="width:80px;height:80px;border-radius:50%;border:1px dashed rgba(212,175,55,.5);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;animation:spinSlow 10s linear infinite;">
-            <i class="bi bi-radar" style="font-size:2rem;color:#d4af37;animation:none;"></i>
+          <div style="width:80px;height:80px;border-radius:50%;border:1px dashed rgba(139,92,246,.5);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;animation:spinSlow 10s linear infinite;">
+            <i class="bi bi-radar" style="font-size:2rem;color:#8b5cf6;animation:none;"></i>
           </div>
           <p style="font-family:'Courier New',monospace;color:rgba(255,255,255,0.5);letter-spacing:0.1em;font-size:0.8rem;text-transform:uppercase;">No operatives found on this frequency.</p>
         </div>
@@ -289,9 +289,9 @@ async function loadUsers(q='') {
       
       const roleStr = u.role || 'user';
       const riskStr = u.risk_level || 'low';
-      const roleColor = roleStr === 'admin' ? '#d4af37' : (roleStr === 'trusted_contact' ? '#d4af37' : '#d4af37');
+      const roleColor = roleStr === 'admin' ? '#8b5cf6' : (roleStr === 'trusted_contact' ? '#8b5cf6' : '#8b5cf6');
       const riskClass = riskStr === 'high' ? 'danger' : (riskStr === 'medium' ? 'amber' : 'green');
-      const statusIcon = u.is_active ? '<i class="bi bi-check-circle-fill" style="color:#d4af37;"></i> ACTIVE' : '<i class="bi bi-slash-circle-fill" style="color:#d4af37;"></i> LOCKED';
+      const statusIcon = u.is_active ? '<i class="bi bi-check-circle-fill" style="color:#ef4444;"></i> ACTIVE' : '<i class="bi bi-slash-circle-fill" style="color:#10b981;"></i> LOCKED';
       const initial = (u.full_name && u.full_name.length > 0) ? u.full_name[0].toUpperCase() : '?';
       
       return `
@@ -339,8 +339,8 @@ window.openDossier = function(uid) {
   const riskStr = u.risk_level || 'low';
   const roleStr = u.role || 'user';
   
-  const riskColor = riskStr === 'high' ? '#d4af37' : (riskStr === 'medium' ? '#d4af37' : '#d4af37');
-  const roleColor = roleStr === 'admin' ? '#d4af37' : (roleStr === 'trusted_contact' ? '#d4af37' : '#d4af37');
+  const riskColor = riskStr === 'high' ? '#8b5cf6' : (riskStr === 'medium' ? '#f59e0b' : '#8b5cf6');
+  const roleColor = roleStr === 'admin' ? '#8b5cf6' : (roleStr === 'trusted_contact' ? '#8b5cf6' : '#8b5cf6');
   
   const riskEl = document.getElementById('dos-risk');
   riskEl.textContent = riskStr.toUpperCase();
@@ -352,7 +352,7 @@ window.openDossier = function(uid) {
   
   const statusEl = document.getElementById('dos-status');
   statusEl.textContent = u.is_active ? 'ACTIVE' : 'LOCKED';
-  statusEl.style.color = u.is_active ? '#d4af37' : '#d4af37';
+  statusEl.style.color = u.is_active ? '#10b981' : '#8b5cf6';
   
   const pingEl = document.getElementById('dos-ping');
   const d = u.last_ping ? new Date(u.last_ping) : null;
@@ -361,12 +361,12 @@ window.openDossier = function(uid) {
   const toggleBtn = document.getElementById('dos-btn-toggle');
   if(u.is_active) {
     toggleBtn.innerHTML = '<i class="bi bi-sign-stop me-2"></i>Lock Access';
-    toggleBtn.style.color = '#d4af37';
-    toggleBtn.style.borderColor = 'rgba(212,175,55,.4)';
+    toggleBtn.style.color = '#10b981';
+    toggleBtn.style.borderColor = 'rgba(16,185,129,.4)';
   } else {
     toggleBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Restore Access';
-    toggleBtn.style.color = '#d4af37';
-    toggleBtn.style.borderColor = 'rgba(212,175,55,.4)';
+    toggleBtn.style.color = '#8b5cf6';
+    toggleBtn.style.borderColor = 'rgba(139,92,246,.4)';
   }
   
   // Open the custom side-panel dossier
@@ -425,10 +425,10 @@ async function loadPendingZones() {
     if (!resp.success || !resp.zones.length) {
       container.innerHTML = `<div class="col-12">
       <div class="empty-state" style="padding:30px;text-align:center;">
-        <div style="width:40px;height:40px;margin:0 auto 10px;border-radius:50%;background:rgba(212,175,55,0.1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(212,175,55,0.2);">
-          <i class="bi bi-shield-check" style="font-size:1.5rem;color:#d4af37;"></i>
+        <div style="width:40px;height:40px;margin:0 auto 10px;border-radius:50%;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(16,185,129,0.2);">
+          <i class="bi bi-shield-check" style="font-size:1.5rem;color:#ef4444;"></i>
         </div>
-        <p style="font-family:'Courier New',monospace;color:rgba(212,175,55,0.7);letter-spacing:0.1em;font-size:0.75rem;text-transform:uppercase;margin:0;">Grid Secure. No Active Hostile Zones.</p>
+        <p style="font-family:'Courier New',monospace;color:rgba(139,92,246,0.7);letter-spacing:0.1em;font-size:0.75rem;text-transform:uppercase;margin:0;">Grid Secure. No Active Hostile Zones.</p>
       </div>
     </div>`;
       return;
@@ -531,11 +531,11 @@ function onNewSos(data) {
   if (adminMap && a.latitude && a.longitude) {
     const icon = L.divIcon({
       className:'',
-      html:`<div style="width:22px;height:22px;border-radius:50%;background:#b8860b;border:3px solid white;box-shadow:0 0 20px #b8860b;animation:sos-pulse 1s infinite;"></div>`,
+      html:`<div style="width:22px;height:22px;border-radius:50%;background:#7c3aed;border:3px solid white;box-shadow:0 0 20px #7c3aed;animation:sos-pulse 1s infinite;"></div>`,
       iconSize:[22,22],iconAnchor:[11,11],
     });
     L.marker([a.latitude,a.longitude],{icon})
-      .bindPopup(`<strong style="color:#b8860b;">🚨 New SOS Alert!</strong><br>User #${a.user_id}`)
+      .bindPopup(`<strong style="color:#7c3aed;">🚨 New SOS Alert!</strong><br>User #${a.user_id}`)
       .addTo(adminMap).openPopup();
     adminMap.setView([a.latitude,a.longitude],14);
   }

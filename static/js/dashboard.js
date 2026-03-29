@@ -96,10 +96,10 @@ function initMap(dangerZones) {
         iconAnchor: [12, 12],
       });
       L.marker([zone.latitude, zone.longitude], { icon })
-        .bindPopup(`<div style="font-family:'Space Grotesk',sans-serif;background:rgba(10,10,15,0.9);border:1px solid #b8860b;padding:8px;border-radius:6px;color:#fff;">
-          <strong style="color:#d4af37;letter-spacing:0.1em;border-bottom:1px solid rgba(184,134,11,0.3);padding-bottom:4px;display:block;margin-bottom:6px;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'THREAT DETECTED'}</strong>
+        .bindPopup(`<div style="font-family:'Space Grotesk',sans-serif;background:rgba(10,10,15,0.9);border:1px solid #7c3aed;padding:8px;border-radius:6px;color:#fff;">
+          <strong style="color:#8b5cf6;letter-spacing:0.1em;border-bottom:1px solid rgba(124,58,237,0.3);padding-bottom:4px;display:block;margin-bottom:6px;">${zone.zone_type ? zone.zone_type.replace(/_/g,' ').toUpperCase() : 'THREAT DETECTED'}</strong>
           <span style="color:rgba(255,255,255,0.7);font-size:0.75rem;font-family:'Courier New',monospace;">${zone.description || 'Verified danger zone'}</span><br>
-          <div style="margin-top:6px;background:rgba(184,134,11,0.2);color:#d4af37;font-size:0.65rem;padding:2px 6px;display:inline-block;border-radius:4px;font-weight:700;">${zone.severity.toUpperCase()} PRIORITY</div>
+          <div style="margin-top:6px;background:rgba(124,58,237,0.2);color:#8b5cf6;font-size:0.65rem;padding:2px 6px;display:inline-block;border-radius:4px;font-weight:700;">${zone.severity.toUpperCase()} PRIORITY</div>
         </div>`, { closeButton: false, className: 'tactical-popup' })
         .addTo(dashMap);
     });
@@ -115,17 +115,17 @@ function initMap(dangerZones) {
       const userIcon = L.divIcon({
         className: '',
         html: `<div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
-                 <div style="position:absolute;width:100%;height:100%;border:2px dashed #d4af37;border-radius:50%;animation:radarSpin 8s linear infinite;"></div>
-                 <div style="position:absolute;width:20px;height:20px;border:2px solid #d4af37;border-radius:50%;"></div>
+                 <div style="position:absolute;width:100%;height:100%;border:2px dashed #8b5cf6;border-radius:50%;animation:radarSpin 8s linear infinite;"></div>
+                 <div style="position:absolute;width:20px;height:20px;border:2px solid #8b5cf6;border-radius:50%;"></div>
                  <div style="position:absolute;width:2px;height:2px;background:#fff;box-shadow:0 0 10px #fff;"></div>
-                 <div style="position:absolute;top:-5px;bottom:-5px;width:1px;background:rgba(212,175,55,0.6);"></div>
-                 <div style="position:absolute;left:-5px;right:-5px;height:1px;background:rgba(212,175,55,0.6);"></div>
+                 <div style="position:absolute;top:-5px;bottom:-5px;width:1px;background:rgba(139,92,246,0.6);"></div>
+                 <div style="position:absolute;left:-5px;right:-5px;height:1px;background:rgba(139,92,246,0.6);"></div>
                </div>`,
         iconSize: [40, 40],
         iconAnchor: [20, 20],
       });
       userMarker = L.marker([currentLat, currentLng], { icon: userIcon })
-        .bindPopup('<strong style="font-family:\'Space Grotesk\',sans-serif;color:#d4af37;letter-spacing:0.1em;">ASSET LOCATED</strong>', { closeButton: false, className: 'tactical-popup' })
+        .bindPopup('<strong style="font-family:\'Space Grotesk\',sans-serif;color:#8b5cf6;letter-spacing:0.1em;">ASSET LOCATED</strong>', { closeButton: false, className: 'tactical-popup' })
         .addTo(dashMap);
 
       checkProximity(currentLat, currentLng);
@@ -159,7 +159,7 @@ function startSOSHold(e) {
       sosHoldRAF = requestAnimationFrame(animateRing);
     } else {
       // Hold complete — trigger SOS
-      if (holdStatus) { holdStatus.textContent = 'ACTIVATING...'; holdStatus.style.color = '#b8860b'; }
+      if (holdStatus) { holdStatus.textContent = 'ACTIVATING...'; holdStatus.style.color = '#7c3aed'; }
       if (btn) { btn.classList.remove('sos-holding'); btn.classList.add('sos-activated'); }
       setTimeout(() => triggerSOS(), 200);
     }
@@ -254,7 +254,7 @@ async function confirmSOS() {
   // Create & mount the Max Max Terminal Overlay
   const term = document.createElement('div');
   term.id = 'rakshak-terminal';
-  term.style.cssText = 'position:fixed;inset:0;background:rgba(5,5,10,0.95);z-index:9999;display:flex;flex-direction:column;justify-content:center;padding:40px;font-family:"Courier New", monospace;color:#d4af37;backdrop-filter:blur(20px);box-shadow:inset 0 0 100px rgba(0,0,0,1);';
+  term.style.cssText = 'position:fixed;inset:0;background:rgba(5,5,10,0.95);z-index:9999;display:flex;flex-direction:column;justify-content:center;padding:40px;font-family:"Courier New", monospace;color:#ef4444;backdrop-filter:blur(20px);box-shadow:inset 0 0 100px rgba(0,0,0,1);';
 
   // Matrix rain canvas background
   const matrixCanvas = document.createElement('canvas');
@@ -263,7 +263,7 @@ async function confirmSOS() {
   startMatrixRain(matrixCanvas);
 
   const scanline = document.createElement('div');
-  scanline.style.cssText = 'position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(212,175,55,0.1),transparent);height:10px;animation:scanline 3s linear infinite;pointer-events:none;';
+  scanline.style.cssText = 'position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(239,68,68,0.1),transparent);height:10px;animation:scanline 3s linear infinite;pointer-events:none;';
   term.appendChild(scanline);
 
   const styleNode = document.createElement('style');
@@ -271,7 +271,7 @@ async function confirmSOS() {
   term.appendChild(styleNode);
 
   const container = document.createElement('div');
-  container.style.cssText = 'max-width:800px;margin:0 auto;width:100%;text-shadow:0 0 8px rgba(212,175,55,0.6);position:relative;z-index:1;';
+  container.style.cssText = 'max-width:800px;margin:0 auto;width:100%;text-shadow:0 0 8px rgba(139,92,246,0.6);position:relative;z-index:1;';
   term.appendChild(container);
   document.body.appendChild(term);
 
@@ -298,7 +298,7 @@ async function confirmSOS() {
         const p = document.createElement('p');
         p.className = 'term-line';
         p.innerHTML = lines[i];
-        if(i === 4) p.style.color = '#b8860b'; // Red for CRITICAL
+        if(i === 4) p.style.color = '#7c3aed'; // Red for CRITICAL
         container.appendChild(p);
         // Add cursor after last line
         container.appendChild(cursorEl);
@@ -353,7 +353,7 @@ async function sendSOS(lat, lng, accuracy, battery) {
       showToast('SOS Alert successfully broadcasted!', 'sos', 8000);
       if (btn) {
         btn.style.opacity = '1';
-        btn.style.background = 'radial-gradient(circle at 35% 35%, #d4af37, #276749)';
+        btn.style.background = 'radial-gradient(circle at 35% 35%, #ef4444, #276749)';
         btn.style.transform = 'scale(1.1)';
         setTimeout(() => { btn.style.transform = ''; }, 300);
       }
@@ -548,12 +548,12 @@ function startMatrixRain(canvas) {
   function draw() {
     ctx.fillStyle = 'rgba(5, 5, 10, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#d4af37';
+    ctx.fillStyle = '#ef4444';
     ctx.font = fontSize + 'px monospace';
 
     for (let i = 0; i < drops.length; i++) {
       const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillStyle = Math.random() > 0.95 ? '#b8860b' : 'rgba(212, 175, 55, 0.7)';
+      ctx.fillStyle = Math.random() > 0.95 ? '#7c3aed' : 'rgba(239,68,68, 0.7)';
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
       if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {

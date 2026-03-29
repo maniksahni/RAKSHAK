@@ -6,7 +6,7 @@
 /* ── Immersive Auth Background ── */
 .auth-bg {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
-  background: radial-gradient(circle at 50% 100%, rgba(184, 134, 11, 0.05) 0%, rgba(10,10,15,1) 60%);
+  background: radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.05) 0%, rgba(10,10,15,1) 60%);
   position: relative; overflow: hidden; perspective: 1000px;
 }
 .auth-bg::before, .auth-bg::after {
@@ -15,12 +15,12 @@
 }
 .auth-bg::before {
   width: 800px; height: 800px;
-  background: radial-gradient(circle, rgba(184, 134, 11, 0.15) 0%, rgba(212,175,55,0.1) 50%, transparent 70%);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, rgba(139,92,246,0.1) 50%, transparent 70%);
   top: -200px; left: -200px; /* anim-removed */
 }
 .auth-bg::after {
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(184, 134, 11, 0.15) 0%, rgba(212,175,55,0.05) 50%, transparent 60%);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, rgba(139,92,246,0.05) 50%, transparent 60%);
   bottom: -150px; right: -150px; /* anim-removed */
 }
 
@@ -61,7 +61,7 @@
 /* Animated glow border inside card */
 .glass-card::before {
   content:''; position: absolute; inset: -2px; z-index: -1;
-  background: conic-gradient(from 0deg, transparent 40%, rgba(212,175,55,0.5) 50%, rgba(212,175,55,0.5) 75%, transparent 100%);
+  background: conic-gradient(from 0deg, transparent 40%, rgba(139,92,246,0.5) 50%, rgba(139,92,246,0.5) 75%, transparent 100%);
   border-radius: inherit;
   /* anim-removed */
   opacity: 0.6; filter: blur(5px);
@@ -76,7 +76,7 @@
 }
 @keyframes cardPulse {
   0%, 100% { transform:translateY(0); box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
-  50% { transform:translateY(-8px); box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(212,175,55,0.15); }
+  50% { transform:translateY(-8px); box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(139,92,246,0.15); }
 }
 
 /* ── Secure Access Terminal Title -> Modern Welcome ── */
@@ -89,9 +89,9 @@
 /* ── Large Glowing Shield Icon ── */
 .shield-icon {
   width: 72px; height: 72px; border-radius: 18px; margin: 0 auto 1.2rem;
-  background: linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.2) 100%);
+  background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(139,92,246,0.2) 100%);
   border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: inset 0 0 30px rgba(255,255,255,0.05), 0 10px 40px rgba(212,175,55,0.2);
+  box-shadow: inset 0 0 30px rgba(255,255,255,0.05), 0 10px 40px rgba(139,92,246,0.2);
   display: flex; justify-content: center; align-items: center;
   font-size: 1.8rem; position: relative; overflow:hidden;
 }
@@ -110,21 +110,21 @@
 .form-control-dark:focus {
   background: rgba(0, 0, 0, 0.4) !important;
   border-color: var(--red-primary) !important;
-  box-shadow: 0 0 0 4px rgba(212,175,55,0.15), 0 0 20px rgba(212,175,55,0.1) !important;
+  box-shadow: 0 0 0 4px rgba(139,92,246,0.15), 0 0 20px rgba(139,92,246,0.1) !important;
   transform: translateY(-2px);
 }
 
 /* Primary Button High-End */
 .btn-rakshak {
-  background: linear-gradient(135deg, var(--red-primary) 0%, #b8860b 100%);
+  background: linear-gradient(135deg, var(--red-primary) 0%, #7c3aed 100%);
   border: none; position: relative; overflow: hidden;
-  box-shadow: 0 10px 20px -5px rgba(212,175,55,0.4);
+  box-shadow: 0 10px 20px -5px rgba(139,92,246,0.4);
   transform: translateY(0); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   letter-spacing: 0.05em; font-weight: 600; text-transform: uppercase;
 }
 .btn-rakshak:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 15px 30px -5px rgba(212,175,55,0.6);
+  box-shadow: 0 15px 30px -5px rgba(139,92,246,0.6);
 }
 .btn-rakshak::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -159,8 +159,8 @@
   font-size:0.7rem;font-weight:700;background:var(--bg-card);border:2px solid var(--border-glass);
   color:var(--text-muted);flex-shrink:0;transition:all 0.4s cubic-bezier(.22,1,.36,1);position:relative;z-index:2;
 }
-.reg-step-dot.active {background:var(--red-primary);border-color:var(--red-primary);color:#fff;box-shadow:0 0 16px rgba(212,175,55,0.4);transform:scale(1.1);}
-.reg-step-dot.done {background:rgba(212,175,55,0.2);border-color:var(--accent-green);color:var(--accent-green);}
+.reg-step-dot.active {background:var(--red-primary);border-color:var(--red-primary);color:#fff;box-shadow:0 0 16px rgba(16,185,129,0.4);transform:scale(1.1);}
+.reg-step-dot.done {background:rgba(139,92,246,0.2);border-color:var(--accent-green);color:var(--accent-green);}
 .reg-step-line {flex:1;height:2px;background:var(--border-glass);position:relative;overflow:hidden;}
 .reg-step-line-fill {position:absolute;inset:0;background:var(--accent-green);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1);}
 .reg-step-line.done .reg-step-line-fill {transform:scaleX(1);}
@@ -205,11 +205,11 @@
 
       <div class="text-center mb-4">
         <div style="margin:0 auto 16px;width:72px;height:72px;position:relative;display:flex;align-items:center;justify-content:center;">
-          <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.4) 0%,transparent 70%);/* anim-removed */"></div>
+          <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.4) 0%,transparent 70%);/* anim-removed */"></div>
           <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="72" height="72"
-            style="position:relative;z-index:2;filter:drop-shadow(0 0 12px rgba(212,175,55,0.9));object-fit:contain;/* anim-removed */">
+            style="position:relative;z-index:2;filter:drop-shadow(0 0 12px rgba(139,92,246,0.9));object-fit:contain;/* anim-removed */">
         </div>
-        <div class="terminal-title" style="background:linear-gradient(135deg,#fff 0%,#f7e7ce 40%,#d4af37 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Join RAKSHAK</div>
+        <div class="terminal-title" style="background:linear-gradient(135deg,#fff 0%,#c4b5fd 40%,#8b5cf6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Join RAKSHAK</div>
         <p class="text-secondary" style="font-size:0.85rem;color:rgba(255,255,255,0.5)!important;font-family:'Courier New',monospace;letter-spacing:.08em;">
           ACTIVATE YOUR VALKYRIE SHIELD // SECURE ONBOARDING
         </p>
@@ -219,24 +219,24 @@
       <a href="{{ url_for('google_auth.google_login') }}" class="btn-google" id="google-reg-btn" style="font-size:1.05rem;padding:16px 24px;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;text-decoration:none;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;color:#fff;font-weight:600;transition:all .3s;position:relative;overflow:hidden;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.transform='translateY(0)';this.style.boxShadow='none'">
         <svg width="22" height="22" viewBox="0 0 48 48">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#d4af37" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-          <path fill="#d4af37" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-          <path fill="#b8860b" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="#8b5cf6" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#8b5cf6" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#7c3aed" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
         </svg>
         Sign up with Google
       </a>
 
       <!-- Benefits -->
       <div style="margin-top:2rem;display:flex;flex-direction:column;gap:12px;">
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:10px;">
-          <i class="bi bi-lightning-charge-fill" style="color:#d4af37;font-size:1rem;"></i>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:10px;">
+          <i class="bi bi-lightning-charge-fill" style="color:#8b5cf6;font-size:1rem;"></i>
           <span style="font-size:0.85rem;color:rgba(255,255,255,0.7);">Instant setup — no forms, no passwords</span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(184,134,11,0.05);border:1px solid rgba(184,134,11,0.15);border-radius:10px;">
-          <i class="bi bi-shield-lock-fill" style="color:#b8860b;font-size:1rem;"></i>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(124,58,237,0.05);border:1px solid rgba(124,58,237,0.15);border-radius:10px;">
+          <i class="bi bi-shield-lock-fill" style="color:#7c3aed;font-size:1rem;"></i>
           <span style="font-size:0.85rem;color:rgba(255,255,255,0.7);">Enterprise-grade encryption from day one</span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:10px;">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.15);border-radius:10px;">
           <i class="bi bi-broadcast" style="color:var(--red-primary);font-size:1rem;"></i>
           <span style="font-size:0.85rem;color:rgba(255,255,255,0.7);">24/7 real-time SOS & threat monitoring</span>
         </div>
@@ -245,14 +245,14 @@
       <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
         <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">
           Already protected?
-          <a href="{{ url_for('auth.login') }}" style="color:var(--red-primary);text-decoration:none;font-weight:700;margin-left:6px;transition:all .2s;" onmouseover="this.style.textShadow='0 0 15px rgba(212,175,55,0.8)'" onmouseout="this.style.textShadow='none'">Sign in</a>
+          <a href="{{ url_for('auth.login') }}" style="color:var(--red-primary);text-decoration:none;font-weight:700;margin-left:6px;transition:all .2s;" onmouseover="this.style.textShadow='0 0 15px rgba(139,92,246,0.8)'" onmouseout="this.style.textShadow='none'">Sign in</a>
         </p>
       </div>
     </div>
 
     <div class="text-center mt-3 d-flex align-items-center" style="justify-content:center;">
       <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
-        <i class="bi bi-lock-fill" style="color:rgba(212,175,55,0.6);font-size:0.7rem;/* anim-removed */"></i>
+        <i class="bi bi-lock-fill" style="color:rgba(139,92,246,0.6);font-size:0.7rem;/* anim-removed */"></i>
         <span style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.08em;">SECURED WITH AES-256 ENCRYPTION</span>
         <span style="width:4px;height:4px;border-radius:50%;background:var(--accent-green);/* anim-removed */"></span>
       </div>
@@ -312,7 +312,7 @@
     ctx.fillRect(0, 0, width, height);
     
     // Draw columns
-    ctx.fillStyle = '#d4af37'; // primary red
+    ctx.fillStyle = '#8b5cf6'; // primary red
     ctx.font = fontSize + 'px monospace';
     
     columns.forEach((y, i) => {
