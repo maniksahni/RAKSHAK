@@ -24,6 +24,8 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   background: radial-gradient(circle at center, #0a0307 0%, #020104 100%);
   border-right: 1px solid rgba(139,92,246,0.15);
   box-shadow: inset -20px 0 50px rgba(0,0,0,0.8);
+  perspective: 1500px;
+  perspective-origin: 50% 42%;
 }
 
 /* Background Cyber Grid */
@@ -59,7 +61,8 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* ── SHIELD HERO ASSEMBLY ── */
 .lp-hero-assembly {
   position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center;
-  transform-style: preserve-3d; 
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 @keyframes floatAssembly {
   0%, 100% { transform: translateY(0); }
@@ -113,7 +116,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 
 /* Stat Cards */
-.lp-stat-row { display: flex; gap: 24px; margin-top: 45px; justify-content: center; }
+.lp-stat-row { display: flex; gap: 24px; margin-top: 45px; justify-content: center; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
 .lp-stat {
   position: relative; padding: 18px 28px; border-radius: 16px;
   background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
@@ -121,12 +124,17 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 15px 30px rgba(0,0,0,0.4);
   display: flex; flex-direction: column; align-items: center; min-width: 140px; overflow: hidden;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 .lp-stat::before {
   content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(139,92,246,0.1), transparent);
   opacity: 0; transition: opacity 0.4s;
 }
-.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(139,92,246,0.2); }
+.lp-stat:hover { transform: translateZ(14px) translateY(-6px); box-shadow: 0 24px 48px rgba(0,0,0,0.55), 0 0 32px rgba(139,92,246,0.18); }
+@media (prefers-reduced-motion: reduce) {
+  .lp-stat:hover { transform: translateY(-5px); }
+}
 .lp-stat:hover::before { opacity: 1; }
 .lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color:#8b5cf6; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
 .lp-stat-lbl { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; position: relative; z-index: 1; }
@@ -135,6 +143,12 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-right {
   flex: 1; display: flex; align-items: center; justify-content: center;
   position: relative; background: #05050A; overflow: hidden;
+}
+/* Full-panel pointer tilt (immersive-3d.js) */
+.lp-tilt-stage {
+  position: relative; z-index: 5; width: 100%; min-height: 100%;
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 88px 28px 48px; box-sizing: border-box;
 }
 .lp-right::before {
   content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px;
@@ -167,6 +181,9 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   border-radius: 24px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 30px 60px rgba(0,0,0,0.6), 0 0 100px rgba(0,0,0,0.5);
   padding: 50px 48px; position: relative; overflow: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  will-change: transform;
 }
 .lp-card-inner::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
@@ -243,7 +260,8 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   body, html { overflow: auto; height: auto; }
   .login-root { flex-direction: column; height: auto; }
   .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(139,92,246,0.15); }
-  .lp-right { padding: 60px 24px; min-height: 100vh; }
+  .lp-right { padding: 0; min-height: 100vh; }
+  .lp-tilt-stage { padding: 56px 20px 40px; }
   .lp-hero-title { font-size: 3rem; }
   .lp-stat-row { flex-wrap: wrap; }
   .lp-right-nav { position: static; justify-content: center; margin-bottom: 40px; }
@@ -376,7 +394,8 @@ function startBiometricAuth(e) {
 
   <!-- RIGHT PANEL -->
   <div class="lp-right">
-    
+
+    <div class="tilt-card lp-tilt-stage">
     <!-- Top Nav links only visible on desktop -->
     <div class="lp-right-nav d-none d-lg-flex">
       <a href="{{ url_for('main.index') }}" class="lp-btn-outline"><i class="bi bi-house me-1"></i> Home</a>
@@ -445,6 +464,7 @@ function startBiometricAuth(e) {
         </div>
 
       </div>
+    </div>
     </div>
   </div>
 </div>
