@@ -828,28 +828,68 @@ body::before{
 .bc-vault .bc-icon{display:none!important}
 .bc-vault .bc-mini-anim{display:none!important}
 .vault-3d-wrap{
-  perspective:1000px;margin:0 auto 1rem;width:100%;max-width:200px;height:132px;display:flex;align-items:center;justify-content:center;position:relative;z-index:3;
+  --vault-mx:0;
+  --vault-my:0;
+  perspective:1280px;
+  perspective-origin:50% 45%;
+  margin:0 auto 1rem;width:100%;max-width:200px;height:132px;display:flex;align-items:center;justify-content:center;position:relative;z-index:3;
 }
 .vault-3d{
-  position:relative;width:130px;height:104px;transform-style:preserve-3d;
-  transition:transform .65s cubic-bezier(.22,1,.36,1);
+  position:relative;width:130px;height:104px;
+  transform-style:preserve-3d;
+  -webkit-transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.22,1,.36,1);
+  transform:rotateX(calc(5deg + var(--vault-my) * -14deg)) rotateY(calc(-14deg + var(--vault-mx) * 22deg)) translateZ(8px);
 }
 .bc-vault:hover .vault-3d{
-  transform:rotateY(-22deg) rotateX(8deg) translateZ(4px);
+  transform:rotateX(calc(6deg + var(--vault-my) * -18deg)) rotateY(calc(-22deg + var(--vault-mx) * 28deg)) translateZ(16px);
+}
+@keyframes vaultGlowPulse{
+  0%,100%{opacity:.72;filter:blur(0)}
+  50%{opacity:1;filter:blur(1px)}
+}
+@keyframes vaultSheen{
+  0%{transform:translateX(-120%) skewX(-12deg)}
+  100%{transform:translateX(220%) skewX(-12deg)}
+}
+@keyframes vaultLockPulse{
+  0%,100%{box-shadow:0 0 18px rgba(139,92,246,.45),inset 0 1px 0 rgba(255,255,255,.12)}
+  50%{box-shadow:0 0 28px rgba(196,181,253,.65),inset 0 1px 0 rgba(255,255,255,.22)}
 }
 @media (prefers-reduced-motion: reduce){
-  .bc-vault:hover .vault-3d{transform:none}
+  .vault-3d-wrap{--vault-mx:0!important;--vault-my:0!important}
+  .vault-3d{
+    transform:rotateY(-12deg) rotateX(4deg) translateZ(6px)!important;
+    transition:none;
+  }
+  .bc-vault:hover .vault-3d{
+    transform:rotateY(-16deg) rotateX(5deg) translateZ(8px)!important;
+  }
+  .vault-3d-glow{animation:none!important;opacity:.85}
+  .vault-3d-door::after{animation:none!important;opacity:0}
+  .vault-3d-lock{animation:none!important}
+}
+.vault-3d::before{
+  content:'';position:absolute;inset:-6px;border-radius:14px;
+  background:linear-gradient(165deg,rgba(45,30,80,.55),rgba(10,6,18,.98));
+  border:1px solid rgba(88,28,135,.35);
+  transform:translateZ(-12px) scale(1.06);
+  box-shadow:0 0 50px rgba(0,0,0,.5),inset 0 0 24px rgba(139,92,246,.08);
+  pointer-events:none;
 }
 .vault-3d-glow{
-  position:absolute;inset:-25%;background:radial-gradient(ellipse at 50% 60%,rgba(139,92,246,.35) 0%,transparent 62%);
-  pointer-events:none;transform:translateZ(-20px);opacity:.85;
+  position:absolute;inset:-28%;
+  background:radial-gradient(ellipse at 50% 58%,rgba(167,139,250,.42) 0%,rgba(139,92,246,.12) 38%,transparent 64%);
+  pointer-events:none;transform:translateZ(-24px);opacity:.88;
+  animation:vaultGlowPulse 4.2s ease-in-out infinite;
 }
 .vault-3d-door{
   position:absolute;inset:0;border-radius:10px;
   background:linear-gradient(155deg,rgba(167,139,250,.45),rgba(45,25,75,.98) 45%,rgba(12,8,22,.99));
   border:1px solid rgba(196,181,253,.45);
-  box-shadow:inset 0 0 28px rgba(139,92,246,.25),0 18px 40px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.06);
+  box-shadow:inset 0 0 28px rgba(139,92,246,.25),0 22px 48px rgba(0,0,0,.72),0 0 0 1px rgba(255,255,255,.06);
   transform:translateZ(14px);
+  overflow:hidden;
 }
 .vault-3d-door::before{
   content:'';position:absolute;inset:11px;border-radius:6px;
@@ -857,12 +897,20 @@ body::before{
   background:repeating-linear-gradient(-18deg,transparent,transparent 5px,rgba(139,92,246,.07) 5px,rgba(139,92,246,.07) 6px);
   opacity:.9;
 }
+.vault-3d-door::after{
+  content:'';position:absolute;top:-10%;bottom:-10%;left:0;width:42%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.18),transparent);
+  opacity:.35;
+  pointer-events:none;
+  animation:vaultSheen 5.5s ease-in-out infinite;
+}
 .vault-3d-lock{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translateZ(22px);
   width:36px;height:36px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.2),rgba(88,28,135,.95));
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.22),rgba(88,28,135,.95));
   border:2px solid rgba(233,213,255,.35);
   box-shadow:0 0 20px rgba(139,92,246,.5),inset 0 1px 0 rgba(255,255,255,.15);
+  animation:vaultLockPulse 3s ease-in-out infinite;
 }
 .vault-3d-lock::after{
   content:'';position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);
@@ -3402,6 +3450,36 @@ if (s) statsIO.observe(s);
   })();
 })();
 
+/* ── 2b. Classified vault — pointer parallax on CSS variables ── */
+(function(){
+  const card = document.querySelector('.bc-vault');
+  const wrap = document.querySelector('.vault-3d-wrap');
+  if(!card || !wrap) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let mx = 0, my = 0, tx = 0, ty = 0;
+  card.addEventListener('mousemove', (e) => {
+    if(reduce.matches) return;
+    const r = card.getBoundingClientRect();
+    tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+  });
+  card.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+  reduce.addEventListener('change', () => {
+    wrap.style.setProperty('--vault-mx', '0');
+    wrap.style.setProperty('--vault-my', '0');
+    mx = 0; my = 0;
+  });
+  (function loop(){
+    if(!reduce.matches){
+      mx += (tx - mx) * 0.14;
+      my += (ty - my) * 0.14;
+      wrap.style.setProperty('--vault-mx', mx.toFixed(4));
+      wrap.style.setProperty('--vault-my', my.toFixed(4));
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
 /* ── 3. Intersection Observer Stagger ── */
 (function(){
   /* Add stagger-child class to children of sections that should animate */
@@ -3647,36 +3725,38 @@ function fddToggle(header) {
 })();
 
 (function(){
-  const cards = document.querySelectorAll('.bc');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cards = document.querySelectorAll('.bc:not(.bc-vault)');
+  if (!cards.length) return;
+  const states = [];
   cards.forEach(card => {
-    // Wrap contents so we can tilt the wrapper, or tilt the card itself
+    let tx = 0, ty = 0, cx = 0, cy = 0;
     card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      
-      const rotateX = ((y - centerY) / centerY) * -5; // max 5deg tilt
-      const rotateY = ((x - centerX) / centerX) * 5;
-      
-      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.02)`;
-      
-      // Dynamic glare effect
-      const glareX = (x / rect.width) * 100;
-      const glareY = (y / rect.height) * 100;
-      card.style.background = `
-        radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.08) 0%, transparent 50%),
+      tx = (e.clientX - rect.left) / rect.width * 2 - 1;
+      ty = (e.clientY - rect.top) / rect.height * 2 - 1;
+    });
+    card.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+    states.push({ card, getTx: ()=>tx, getTy: ()=>ty, cx: 0, cy: 0 });
+  });
+  (function bentoLoop(){
+    states.forEach(s => {
+      const tx = s.getTx(), ty = s.getTy();
+      s.cx += (tx - s.cx) * 0.15;
+      s.cy += (ty - s.cy) * 0.15;
+      const rotateX = s.cy * -11;
+      const rotateY = s.cx * 11;
+      const zL = 8 + (Math.abs(s.cx) + Math.abs(s.cy)) * 9;
+      s.card.style.transform = `perspective(1280px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) translateZ(${zL}px) scale(1.032)`;
+      const gx = (s.cx + 1) * 50;
+      const gy = (s.cy + 1) * 50;
+      s.card.style.background = `
+        radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.14) 0%, transparent 54%),
         linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))
       `;
     });
-    
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      card.style.background = `linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))`;
-    });
-  });
+    requestAnimationFrame(bentoLoop);
+  })();
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" onload="window._initParticlesJS()"></script>

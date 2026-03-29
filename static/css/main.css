@@ -1685,3 +1685,23 @@ h1,h2,h3,h4,h5,h6 {
   font-family:'Courier New',monospace;font-size:.38rem;letter-spacing:.2em;
   color:rgba(139,92,246,.75);text-transform:uppercase;
 }
+
+/* ── Immersive 3D (pointer tilt via static/js/immersive-3d.js) ───────────── */
+.tilt-card {
+  perspective: 1320px;
+  perspective-origin: 48% 32%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tilt-card { perspective: none; }
+}
+
+/* Subtle page depth behind primary panels (auth + simple layouts) */
+.depth-stage {
+  perspective: 1400px;
+  perspective-origin: 50% 20%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .depth-stage { perspective: none; }
+}

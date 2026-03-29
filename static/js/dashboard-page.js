@@ -114,47 +114,7 @@ function renderTip(idx) {
 function nextTip(){ currentTip=(currentTip+1)%SAFETY_TIPS.length; renderTip(currentTip); }
 renderTip(0); setInterval(nextTip, 8000);
 
-/* ── 3D Tilt Cards ── */
-(function(){
-  document.querySelectorAll('.tilt-card').forEach(card => {
-    let ticking=false;
-    card.addEventListener('mousemove', e => {
-      if (ticking) return; ticking=true;
-      requestAnimationFrame(() => {
-        const r=card.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-0.5, y=(e.clientY-r.top)/r.height-0.5;
-        card.style.transform=`perspective(800px) rotateX(${y*-12}deg) rotateY(${x*12}deg) scale3d(1.02,1.02,1.02)`;
-        const inner=card.querySelector('.glass-card,.stat-card');
-        if (inner) inner.style.boxShadow=`${x*20}px ${y*20}px 40px rgba(124,58,237,0.08)`;
-        ticking=false;
-      });
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform='perspective(800px) rotateX(0) rotateY(0) scale3d(1,1,1)';
-      card.style.transition='transform .4s cubic-bezier(.22,1,.36,1)';
-      const inner=card.querySelector('.glass-card,.stat-card');
-      if (inner) inner.style.boxShadow='';
-      setTimeout(()=>card.style.transition='transform .1s ease-out', 400);
-    });
-  });
-})();
-
-/* ── Glass card 3D tilt ── */
-(function(){
-  document.querySelectorAll('.glass-card:not(.sos-card)').forEach(card => {
-    if (card.closest('.tilt-card')) return;
-    let ticking=false;
-    card.addEventListener('mousemove', e => {
-      if (ticking) return; ticking=true;
-      requestAnimationFrame(() => {
-        const r=card.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-0.5, y=(e.clientY-r.top)/r.height-0.5;
-        card.style.transform=`perspective(1000px) rotateX(${y*-6}deg) rotateY(${x*6}deg) translateZ(4px)`;
-        card.style.transition='transform 0.1s ease-out';
-        ticking=false;
-      });
-    });
-    card.addEventListener('mouseleave', () => { card.style.transform='perspective(1000px) rotateX(0) rotateY(0) translateZ(0)'; card.style.transition='transform 0.5s cubic-bezier(.22,1,.36,1)'; });
-  });
-})();
+/* 3D tilt: static/js/immersive-3d.js (global) */
 
 /* ── Smooth Counter on Scroll ── */
 (function(){
@@ -350,11 +310,14 @@ setTimeout(fetchNearbyPlaces, 800);
   const grid=document.getElementById('cyber-grid'), orbRed=document.getElementById('orb-red'), orbBlue=document.getElementById('orb-blue'), orbPurple=document.getElementById('orb-purple');
   document.addEventListener('mousemove',e=>{ mouseX=(e.clientX/window.innerWidth-0.5)*2; mouseY=(e.clientY/window.innerHeight-0.5)*2; });
   function animateParallax(){
-    currentX+=(mouseX-currentX)*0.05; currentY+=(mouseY-currentY)*0.05;
-    if(grid)grid.style.transform=`translate(${currentX*8}px,${currentY*5}px)`;
-    if(orbRed){orbRed.style.marginLeft=`${currentX*20}px`;orbRed.style.marginTop=`${currentY*15}px`;}
-    if(orbBlue){orbBlue.style.marginLeft=`${currentX*-15}px`;orbBlue.style.marginTop=`${currentY*-12}px`;}
-    if(orbPurple){orbPurple.style.marginLeft=`${currentX*12}px`;orbPurple.style.marginTop=`${currentY*10}px`;}
+    if(typeof window.matchMedia==='function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      requestAnimationFrame(animateParallax); return;
+    }
+    currentX+=(mouseX-currentX)*0.055; currentY+=(mouseY-currentY)*0.055;
+    if(grid)grid.style.transform=`translate(${currentX*11}px,${currentY*7}px) perspective(900px) rotateX(${currentY*2}deg) rotateY(${currentX*-2}deg)`;
+    if(orbRed){orbRed.style.marginLeft=`${currentX*26}px`;orbRed.style.marginTop=`${currentY*19}px`;}
+    if(orbBlue){orbBlue.style.marginLeft=`${currentX*-20}px`;orbBlue.style.marginTop=`${currentY*-16}px`;}
+    if(orbPurple){orbPurple.style.marginLeft=`${currentX*16}px`;orbPurple.style.marginTop=`${currentY*13}px`;}
     requestAnimationFrame(animateParallax);
   }
   requestAnimationFrame(animateParallax);

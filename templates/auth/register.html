@@ -7,7 +7,7 @@
 .auth-bg {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
   background: radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.05) 0%, rgba(10,10,15,1) 60%);
-  position: relative; overflow: hidden; perspective: 1000px;
+  position: relative; overflow: hidden; perspective: 1240px;
 }
 .auth-bg::before, .auth-bg::after {
   content: ''; position: absolute; border-radius: 50%;
@@ -41,11 +41,16 @@
 /* 3D Grid floor -> Removed for elegant look */
 .grid-floor { display:none; }
 
+/* Full-viewport tilt hit area (immersive-3d.js) */
+.auth-tilt-stage {
+  position: relative; z-index: 5; width: 100%; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center; padding: 2rem;
+  box-sizing: border-box;
+}
 /* Auth Card 3D Wrap */
 .auth-card-wrap {
-  width: 100%; max-width: 520px; position: relative; z-index: 5;
+  width: 100%; max-width: 520px; position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.1s ease-out; /* For 3D tilt JS */
 }
 
 /* The actual glass card */
@@ -199,6 +204,7 @@
   <canvas id="matrix-rain"></canvas>
   <div class="grid-floor"></div>
 
+  <div class="tilt-card auth-tilt-stage">
   <div class="auth-card-wrap" id="auth-card">
 
     <div class="glass-card p-4 p-md-5" style="border-radius:var(--radius-xl);">
@@ -257,6 +263,7 @@
         <span style="width:4px;height:4px;border-radius:50%;background:var(--accent-green);"></span>
       </div>
     </div>
+  </div>
   </div>
 </div>
 
@@ -333,22 +340,7 @@
   draw();
 })();
 
-/* 3D Tilt Effect on mousemove */
-(function() {
-  const bg = document.getElementById('auth-bg');
-  const card = document.getElementById('auth-card');
-  if(!bg || !card) return;
-  
-  bg.addEventListener('mousemove', (e) => {
-    const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
-    const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
-    card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-  });
-  
-  bg.addEventListener('mouseleave', () => {
-    card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-  });
-})();
+/* 3D tilt: immersive-3d.js (.tilt-card + .glass-card) */
 
 /* step progress tracker */
 function updateRegSteps() {
