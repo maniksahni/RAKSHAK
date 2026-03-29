@@ -38,8 +38,8 @@
 
 .fc-card {
   background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  
+  
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
   padding: 28px;
@@ -251,7 +251,7 @@
 }
 .fc-call-overlay.visible {
   display: flex;
-  animation: fcWaveIn 0.3s cubic-bezier(.22,1,.36,1) both, fcIncomingBg 8s ease infinite;
+  /* anim-removed */
 }
 
 .fc-caller-section {
@@ -271,7 +271,7 @@
   content: ''; position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%; border: 2px solid rgba(124,58,237,0.3);
-  animation: fcRingWave 2s ease-out infinite;
+  /* anim-removed */
 }
 .fc-ring-effect::before { width: 130px; height: 130px; }
 .fc-ring-effect::after  { width: 160px; height: 160px; animation-delay: 0.5s; }
@@ -294,7 +294,7 @@
   z-index: 1;
 }
 .fc-call-overlay.visible .fc-caller-avatar {
-  animation: fcPhoneRing 1.5s ease-in-out infinite;
+  /* anim-removed */
 }
 .fc-caller-name {
   font-size: 1.8rem;
@@ -315,7 +315,7 @@
 .fc-signal-dots span {
   width: 6px; height: 6px; border-radius: 50%;
   background: rgba(255,255,255,0.3);
-  animation: fcDotPulse 1.4s ease-in-out infinite;
+  /* anim-removed */
 }
 .fc-signal-dots span:nth-child(2) { animation-delay: 0.2s; }
 .fc-signal-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -352,7 +352,7 @@
 .fc-call-btn.answer {
   background: linear-gradient(135deg, #16a34a, #15803d);
   box-shadow: 0 0 24px rgba(22,163,74,0.4);
-  animation: answerRing 1.5s ease-in-out infinite;
+  /* anim-removed */
 }
 @keyframes answerRing {
   0%,100% { box-shadow: 0 0 24px rgba(22,163,74,0.4); }
@@ -413,7 +413,7 @@
           <i class="bi bi-telephone-fill" style="color:var(--red-primary);"></i>
         </div>
         <div style="font-size:0.65rem;color:var(--accent-green);letter-spacing:0.15em;font-family:'Courier New',monospace;font-weight:700;">
-          <span style="animation:blink 1.2s infinite;">●</span> TACTICAL DECEPTION MODULE
+          <span style="/* anim-removed */">●</span> TACTICAL DECEPTION MODULE
         </div>
       </div>
       <h4 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0 0 4px;font-size:1.4rem;">Fake Call</h4>
