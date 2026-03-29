@@ -16,12 +16,12 @@
 .auth-bg::before {
   width: 800px; height: 800px;
   background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, rgba(139,92,246,0.1) 50%, transparent 70%);
-  top: -200px; left: -200px; /* anim-removed */
+  top: -200px; left: -200px; 
 }
 .auth-bg::after {
   width: 600px; height: 600px;
   background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, rgba(139,92,246,0.05) 50%, transparent 60%);
-  bottom: -150px; right: -150px; /* anim-removed */
+  bottom: -150px; right: -150px; 
 }
 
 @keyframes drift {
@@ -34,7 +34,7 @@
   position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.2;
   background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
   background-size: 30px 30px;
-  /* anim-removed */
+  
 }
 @keyframes bgMove { from { background-position:0 0; } to { background-position:300px 300px; } }
 
@@ -63,7 +63,7 @@
   content:''; position: absolute; inset: -2px; z-index: -1;
   background: conic-gradient(from 0deg, transparent 40%, rgba(139,92,246,0.5) 50%, rgba(139,92,246,0.5) 75%, transparent 100%);
   border-radius: inherit;
-  /* anim-removed */
+  
   opacity: 0.6; filter: blur(5px);
 }
 @keyframes rotateGlow {
@@ -72,7 +72,7 @@
 
 /* Pulsing shadow on the card */
 .glass-card {
-  /* anim-removed */
+  
 }
 @keyframes cardPulse {
   0%, 100% { transform:translateY(0); box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
@@ -129,7 +129,7 @@
 .btn-rakshak::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transform: skewX(-20deg); /* anim-removed */
+  transform: skewX(-20deg); 
 }
 @keyframes btnSweep {
   0% { left: -100%; }
@@ -205,9 +205,9 @@
 
       <div class="text-center mb-4">
         <div style="margin:0 auto 16px;width:72px;height:72px;position:relative;display:flex;align-items:center;justify-content:center;">
-          <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.4) 0%,transparent 70%);/* anim-removed */"></div>
+          <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.4) 0%,transparent 70%);"></div>
           <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="72" height="72"
-            style="position:relative;z-index:2;filter:drop-shadow(0 0 12px rgba(139,92,246,0.9));object-fit:contain;/* anim-removed */">
+            style="position:relative;z-index:2;filter:drop-shadow(0 0 12px rgba(139,92,246,0.9));object-fit:contain;">
         </div>
         <div class="terminal-title" style="background:linear-gradient(135deg,#fff 0%,#c4b5fd 40%,#8b5cf6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Join RAKSHAK</div>
         <p class="text-secondary" style="font-size:0.85rem;color:rgba(255,255,255,0.5)!important;font-family:'Courier New',monospace;letter-spacing:.08em;">
@@ -252,9 +252,9 @@
 
     <div class="text-center mt-3 d-flex align-items-center" style="justify-content:center;">
       <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
-        <i class="bi bi-lock-fill" style="color:rgba(139,92,246,0.6);font-size:0.7rem;/* anim-removed */"></i>
+        <i class="bi bi-lock-fill" style="color:rgba(139,92,246,0.6);font-size:0.7rem;"></i>
         <span style="color:var(--text-muted);font-size:0.72rem;letter-spacing:0.08em;">SECURED WITH AES-256 ENCRYPTION</span>
-        <span style="width:4px;height:4px;border-radius:50%;background:var(--accent-green);/* anim-removed */"></span>
+        <span style="width:4px;height:4px;border-radius:50%;background:var(--accent-green);"></span>
       </div>
     </div>
   </div>

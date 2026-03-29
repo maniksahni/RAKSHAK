@@ -44,7 +44,7 @@
     .shield-pulse-ring {
       position: absolute; inset: -15px; border-radius: 50%;
       border: 2px solid rgba(139,92,246,0.3);
-      /* anim-removed */
+      
     }
     .shield-pulse-ring:nth-child(2) { animation-delay: 0.8s; }
     .shield-pulse-ring:nth-child(3) { animation-delay: 1.6s; }
@@ -53,7 +53,7 @@
     .shield-scan-line {
       position: absolute; left: 10%; right: 10%; height: 2px;
       background: linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent);
-      /* anim-removed */
+      
     }
     @keyframes shieldScan { 0% { top: 15%; } 50% { top: 80%; } 100% { top: 15%; } }
 
@@ -64,7 +64,7 @@
     .signal-wave span {
       display: inline-block; width: 3px; height: 12px; margin: 0 2px;
       background: rgba(139,92,246,0.5); border-radius: 3px;
-      /* anim-removed */
+      
     }
     .signal-wave span:nth-child(1) { animation-delay: 0s; height: 8px; }
     .signal-wave span:nth-child(2) { animation-delay: 0.1s; height: 14px; }
@@ -83,7 +83,7 @@
     }
     .badge-dot {
       width: 8px; height: 8px; border-radius: 50%;
-      background: var(--red); /* anim-removed */
+      background: var(--red); 
       box-shadow: 0 0 10px var(--red);
     }
     @keyframes blink { 50% { opacity: 0.2; } }
@@ -151,7 +151,7 @@
       background: rgba(124,58,237,0.15); color: #fff; font-family: 'Space Grotesk', sans-serif;
       font-size: 1rem; font-weight: 900; letter-spacing: 0.05em; cursor: pointer;
       transition: all 0.3s; box-shadow: 0 0 20px rgba(124,58,237,0.2);
-      /* anim-removed */ width: 100%; margin-bottom: 12px;
+       width: 100%; margin-bottom: 12px;
     }
     .btn-sos:hover { background: rgba(124,58,237,0.3); box-shadow: 0 0 40px rgba(124,58,237,0.4); transform: translateY(-2px); }
     .btn-sos:active { transform: translateY(0); }

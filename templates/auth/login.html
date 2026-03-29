@@ -34,7 +34,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
     linear-gradient(90deg, rgba(139,92,246,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
   transform: perspective(1000px) rotateX(60deg);
-  /* anim-removed */
+  
   mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
 }
@@ -45,7 +45,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
   transform: translate(-50%, -50%); border-radius: 50%;
   background: radial-gradient(circle at center, rgba(139,92,246,0.15) 0%, rgba(100,80,11,0.05) 40%, transparent 70%);
-  /* anim-removed */
+  
   pointer-events: none; z-index: 1;
 }
 @keyframes corePulse {
@@ -59,7 +59,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* ── SHIELD HERO ASSEMBLY ── */
 .lp-hero-assembly {
   position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center;
-  transform-style: preserve-3d; /* anim-removed */
+  transform-style: preserve-3d; 
 }
 @keyframes floatAssembly {
   0%, 100% { transform: translateY(0); }
@@ -71,9 +71,9 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   position: absolute; top: 35%; left: 50%; border-radius: 50%;
   border: 1px dashed rgba(139,92,246,0.2); transform: translate(-50%, -50%); pointer-events: none;
 }
-.lp-orbit-1 { width: 320px; height: 320px; /* anim-removed */ }
-.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(139,92,246,0.1); /* anim-removed */ }
-.lp-orbit-3 { width: 560px; height: 560px; border-style: dotted; /* anim-removed */ }
+.lp-orbit-1 { width: 320px; height: 320px;  }
+.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(139,92,246,0.1);  }
+.lp-orbit-3 { width: 560px; height: 560px; border-style: dotted;  }
 .lp-orbit::after {
   content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
   background:#8b5cf6; box-shadow: 0 0 15px #8b5cf6; top: -4px; left: 50%; transform: translateX(-50%);
@@ -85,7 +85,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   width: 180px; height: 240px; margin-bottom: 2rem;
   filter: drop-shadow(0 0 40px rgba(139,92,246,0.7)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
   position: relative; z-index: 10;
-  /* anim-removed */
+  
 }
 
 /* Shield text */
@@ -99,7 +99,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 .lp-hero-badge-dot {
   width: 6px; height: 6px; border-radius: 50%; background:#8b5cf6; box-shadow: 0 0 10px #8b5cf6;
-  /* anim-removed */
+  
 }
 .lp-hero-title {
   font-family: 'Space Grotesk', sans-serif; font-size: 4.5rem; font-weight: 900;
@@ -171,7 +171,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-card-inner::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(139,92,246,0.8), transparent);
-  /* anim-removed */
+  
 }
 @keyframes cardScan { 0% { left: -50%; } 100% { left: 150%; } }
 
@@ -266,11 +266,11 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   <div style="position:relative;z-index:10;text-align:center;">
     <!-- Thumbprint / Iris graphic -->
     <div style="margin:0 auto 30px;width:120px;height:120px;position:relative;">
-      <div style="position:absolute;inset:-20px;border-radius:50%;border:2px dashed rgba(139,92,246,.5);/* anim-removed */"></div>
-      <div style="position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(139,92,246,.8);border-left-color:transparent;border-right-color:transparent;/* anim-removed */"></div>
+      <div style="position:absolute;inset:-20px;border-radius:50%;border:2px dashed rgba(139,92,246,.5);"></div>
+      <div style="position:absolute;inset:-10px;border-radius:50%;border:1px solid rgba(139,92,246,.8);border-left-color:transparent;border-right-color:transparent;"></div>
       
       <!-- The passing laser -->
-      <div style="position:absolute;top:0;left:-20px;right:-20px;height:2px;background:#8b5cf6;box-shadow:0 0 15px #8b5cf6;/* anim-removed */"></div>
+      <div style="position:absolute;top:0;left:-20px;right:-20px;height:2px;background:#8b5cf6;box-shadow:0 0 15px #8b5cf6;"></div>
       
       <i class="bi bi-fingerprint" style="font-size:5rem;color:rgba(139,92,246,.8);filter:drop-shadow(0 0 10px rgba(139,92,246,.5));"></i>
     </div>
@@ -347,8 +347,8 @@ function startBiometricAuth(e) {
       
       <!-- Cyber Trishul Logo -->
       <div style="position:relative;display:flex;align-items:center;justify-content:center;width:220px;height:220px;margin-bottom:2rem;">
-        <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%);/* anim-removed */"></div>
-        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="180" height="180" style="position:relative;z-index:2;filter:drop-shadow(0 0 30px rgba(139,92,246,1)) drop-shadow(0 0 60px rgba(139,92,246,0.4));object-fit:contain;/* anim-removed */">
+        <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.3) 0%,transparent 70%);"></div>
+        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="180" height="180" style="position:relative;z-index:2;filter:drop-shadow(0 0 30px rgba(139,92,246,1)) drop-shadow(0 0 60px rgba(139,92,246,0.4));object-fit:contain;">
       </div>
       
       <div class="lp-hero-text">

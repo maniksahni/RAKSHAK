@@ -32,7 +32,7 @@
   content: '';
   position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(139,92,246,0.35), transparent);
-  /* anim-removed */
+  
 }
 @keyframes cardTopScan { 0% { left: -50%; } 100% { left: 150%; } }
 .glass-card:hover {
@@ -249,7 +249,7 @@
   content: ''; position: absolute; left: 0; width: 100%; height: 1.5px;
   background: linear-gradient(90deg, transparent, rgba(139,92,246,0.1) 30%, rgba(139,92,246,0.25) 50%, rgba(139,92,246,0.1) 70%, transparent);
   box-shadow: 0 0 12px rgba(139,92,246,0.15);
-  /* anim-removed */
+  
 }
 @keyframes scanSweep { 0%{ top:-2px;opacity:0; } 5%{opacity:1;} 95%{opacity:1;} 100%{top:100%;opacity:0;} }
 
@@ -260,7 +260,7 @@
 .radar-scan-overlay::before {
   content: ''; position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
   background: conic-gradient(from 0deg, transparent 0deg, rgba(139,92,246,0.02) 30deg, transparent 60deg);
-  /* anim-removed */
+  
   transform-origin: center center;
 }
 @keyframes radarSpin { to { transform: rotate(360deg); } }
@@ -270,7 +270,7 @@
   height: 1px; margin: 8px 0; border: none;
   background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), rgba(139,92,246,0.5), rgba(139,92,246,0.3), transparent);
   box-shadow: 0 0 8px rgba(139,92,246,0.15);
-  /* anim-removed */
+  
 }
 @keyframes neonPulse { 0%,100%{opacity:0.5;} 50%{opacity:1;} }
 
@@ -285,7 +285,7 @@
 .stats-ticker-bar::before { content: '▶\00a0'; color: rgba(139,92,246,0.6); padding-left: 16px; }
 .ticker-text {
   display: inline-block; white-space: nowrap;
-  /* anim-removed */
+  
   font-weight: 700; text-shadow: 0 0 10px rgba(139,92,246,0.2);
 }
 @keyframes tickerScroll { 0%{ transform: translateX(0); } 100%{ transform: translateX(-50%); } }
