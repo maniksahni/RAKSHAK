@@ -3742,16 +3742,21 @@ function fddToggle(header) {
   (function bentoLoop(){
     states.forEach(s => {
       const tx = s.getTx(), ty = s.getTy();
-      s.cx += (tx - s.cx) * 0.15;
-      s.cy += (ty - s.cy) * 0.15;
-      const rotateX = s.cy * -11;
-      const rotateY = s.cx * 11;
-      const zL = 8 + (Math.abs(s.cx) + Math.abs(s.cy)) * 9;
-      s.card.style.transform = `perspective(1280px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) translateZ(${zL}px) scale(1.032)`;
+      s.cx += (tx - s.cx) * 0.175;
+      s.cy += (ty - s.cy) * 0.175;
+      const rotateX = s.cy * -13;
+      const rotateY = s.cx * 13;
+      let rz = s.cx * s.cy * -5;
+      if (rz > 4) rz = 4;
+      if (rz < -4) rz = -4;
+      const zL = 12 + (Math.abs(s.cx) + Math.abs(s.cy)) * 12;
+      s.card.style.transform = `perspective(1450px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rz}deg) translateY(-12px) translateZ(${zL}px) scale(1.042)`;
+      const ds = 22 + Math.abs(s.cx) * 14 + Math.abs(s.cy) * 10;
+      s.card.style.filter = `drop-shadow(${s.cx * -7}px ${s.cy * -6 + 5}px ${ds}px rgba(88,28,135,0.2))`;
       const gx = (s.cx + 1) * 50;
       const gy = (s.cy + 1) * 50;
       s.card.style.background = `
-        radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.14) 0%, transparent 54%),
+        radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.17) 0%, transparent 55%),
         linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))
       `;
     });

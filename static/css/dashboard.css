@@ -234,8 +234,8 @@
 
 /* ── 3D Tilt Cards (JS: immersive-3d.js) ── */
 .tilt-card {
-  perspective: 1350px;
-  perspective-origin: 48% 30%;
+  perspective: 1520px;
+  perspective-origin: 45% 26%;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
 }
@@ -256,7 +256,7 @@
 .cyber-grid-bg::before {
   content:'';position:absolute;top:40%;left:-20%;right:-20%;bottom:-60%;
   background:linear-gradient(rgba(139,92,246,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.06) 1px,transparent 1px);
-  background-size:60px 60px;transform:perspective(720px) rotateX(62deg);transform-origin:center top;
+  background-size:60px 60px;transform:perspective(880px) rotateX(64deg);transform-origin:center top;
   
   mask-image:linear-gradient(to top,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.1) 60%,transparent 100%);
   -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.1) 60%,transparent 100%);
@@ -264,7 +264,7 @@
 .cyber-grid-bg::after {
   content:'';position:absolute;top:40%;left:-20%;right:-20%;bottom:-60%;
   background:linear-gradient(rgba(124,58,237,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.03) 1px,transparent 1px);
-  background-size:120px 120px;transform:perspective(720px) rotateX(62deg);transform-origin:center top;
+  background-size:120px 120px;transform:perspective(880px) rotateX(64deg);transform-origin:center top;
   
   mask-image:linear-gradient(to top,rgba(0,0,0,0.3) 0%,transparent 80%);
   -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0.3) 0%,transparent 80%);

@@ -1688,8 +1688,8 @@ h1,h2,h3,h4,h5,h6 {
 
 /* ── Immersive 3D (pointer tilt via static/js/immersive-3d.js) ───────────── */
 .tilt-card {
-  perspective: 1320px;
-  perspective-origin: 48% 32%;
+  perspective: 1480px;
+  perspective-origin: 46% 28%;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
 }
