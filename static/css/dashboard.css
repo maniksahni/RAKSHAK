@@ -13,7 +13,6 @@
 .dash-ticker-track { display:inline-flex;gap:2rem; }
 .dash-ticker-item { display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--text-muted);letter-spacing:0.05em; }
 .dash-ticker-item .bi { color:var(--accent-green);font-size:0.6rem; }
-@keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
 /* Greeting icon */
 .greeting-icon {
@@ -22,7 +21,6 @@
   display:flex;align-items:center;justify-content:center;font-size:1.2rem;
   flex-shrink:0;
 }
-@keyframes greetBob {0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 
 /* SOS card */
 .sos-card {
@@ -47,7 +45,6 @@
   background:linear-gradient(90deg,transparent,rgba(139,92,246,0.06),transparent);
   
 }
-@keyframes aiSweep {0%{left:-100%}100%{left:200%}}
 
 /* Live dot */
 .live-dot {
@@ -77,19 +74,12 @@
 .quick-action-card:hover { border-color:rgba(139,92,246,0.25) !important;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.15); }
 
 /* Animations */
-@keyframes secScan { 0%{left:-30%} 100%{left:100%} }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-@keyframes statusBlink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.9)} }
 
 /* Activity items */
 .activity-item { transition:transform .2s,border-color .2s;cursor:default; }
 .activity-item:hover { transform:translateY(-2px);border-color:rgba(255,255,255,0.15) !important; }
 
 /* Heartbeat */
-@keyframes heartbeat {
-  0%,100%{transform:scale(1)}14%{transform:scale(1.08)}28%{transform:scale(1)}
-  42%{transform:scale(1.05)}56%{transform:scale(1)}
-}
 
 /* ── Safety Checklist ── */
 .safety-checklist-card {
@@ -119,7 +109,6 @@
 .cmd-strip { saturate(160%);background:linear-gradient(90deg,rgba(10,10,18,0.82),rgba(15,15,25,0.78));border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0;overflow:hidden;position:relative;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 8px 32px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05); }
 .cmd-strip::before { content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.4),rgba(139,92,246,0.3),rgba(124,58,237,0.3),transparent); }
 .cmd-strip::after { content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent); }
-@keyframes cmdScan { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 .cmd-strip-inner { display:flex;align-items:stretch;padding:0;overflow-x:auto;scrollbar-width:none; }
 .cmd-strip-inner::-webkit-scrollbar{display:none}
 .cmd-node { display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 20px;gap:3px;min-width:fit-content;position:relative;transition:background .2s; }
@@ -147,7 +136,6 @@
 .nsp-scope-ch.h{width:1px;height:100%;left:50%;top:0}.nsp-scope-ch.v{height:1px;width:100%;top:50%;left:0}
 .nsp-scope-sweep { position:absolute;inset:0;border-radius:50%;background:conic-gradient(rgba(var(--nsp-rgb),0.35) 0deg,rgba(var(--nsp-rgb),0.12) 45deg,transparent 90deg); }
 .nsp-scope-dot { position:absolute;width:5px;height:5px;border-radius:50%;background:rgb(var(--nsp-rgb));top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;box-shadow:0 0 8px rgb(var(--nsp-rgb)); }
-@keyframes nspSpin { to{transform:rotate(360deg)} }
 .nsp-scan-lbl { font-size:0.6rem;letter-spacing:0.18em;color:rgba(var(--nsp-rgb),0.7);font-family:'Courier New',monospace;font-weight:700;text-transform:uppercase; }
 .nsp-scan-radius { font-size:0.52rem;color:rgba(255,255,255,0.2);letter-spacing:0.1em;font-family:'Courier New',monospace; }
 .safe-place-item { display:flex;align-items:flex-start;gap:12px;padding:11px 13px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02);margin-bottom:6px;transition:all .25s ease;position:relative;overflow:hidden; }
@@ -232,7 +220,6 @@
   .glass-card:hover { transform: translateY(-6px) scale(1.02); }
 }
 .glass-card:hover::before { opacity: 1;  }
-@keyframes bgSpinCard { 100%{filter:hue-rotate(360deg)} }
 
 /* ── 3D Tilt Cards (JS: immersive-3d.js) ── */
 .tilt-card {
@@ -271,16 +258,12 @@
   mask-image:linear-gradient(to top,rgba(0,0,0,0.3) 0%,transparent 80%);
   -webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0.3) 0%,transparent 80%);
 }
-@keyframes gridScroll { 0%{background-position:0 0} 100%{background-position:0 60px} }
 
 /* ── Floating Orbs ── */
 .floating-orb { position:fixed;border-radius:50%;pointer-events:none;z-index:-1;filter:blur(80px);opacity:0.4;will-change:transform; }
 .floating-orb.orb-red { width:350px;height:350px;background:radial-gradient(circle,rgba(139,92,246,0.35),transparent 70%);top:15%;left:10%; }
 .floating-orb.orb-blue { width:300px;height:300px;background:radial-gradient(circle,rgba(124,58,237,0.3),transparent 70%);top:55%;right:8%; }
 .floating-orb.orb-purple { width:280px;height:280px;background:radial-gradient(circle,rgba(139,92,246,0.3),transparent 70%);bottom:10%;left:35%; }
-@keyframes orbDrift1 { 0%{transform:translate(0,0) scale(1)} 33%{transform:translate(60px,-40px) scale(1.1)} 66%{transform:translate(-30px,50px) scale(0.95)} 100%{transform:translate(40px,20px) scale(1.05)} }
-@keyframes orbDrift2 { 0%{transform:translate(0,0) scale(1)} 33%{transform:translate(-50px,30px) scale(1.08)} 66%{transform:translate(40px,-60px) scale(0.92)} 100%{transform:translate(-20px,-30px) scale(1.03)} }
-@keyframes orbDrift3 { 0%{transform:translate(0,0) scale(1)} 33%{transform:translate(45px,50px) scale(1.06)} 66%{transform:translate(-55px,-25px) scale(0.97)} 100%{transform:translate(30px,-40px) scale(1.02)} }
 
 /* ── Card entrance animations ── */
 @keyframes slideFromLeft { 0%{opacity:0;transform:translateX(-80px) rotateY(8deg)} 100%{opacity:1;transform:translateX(0) rotateY(0)} }
@@ -297,7 +280,6 @@
 
 /* ── Neon Divider ── */
 .neon-divider { height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.5),rgba(139,92,246,0.8),rgba(139,92,246,0.5),transparent);margin:0.5rem 0;position:relative;box-shadow:0 0 8px rgba(139,92,246,0.3),0 0 16px rgba(139,92,246,0.15); }
-@keyframes neonPulse { 0%,100%{opacity:0.6;box-shadow:0 0 8px rgba(139,92,246,0.3),0 0 16px rgba(139,92,246,0.15)} 50%{opacity:1;box-shadow:0 0 12px rgba(139,92,246,0.5),0 0 24px rgba(139,92,246,0.25)} }
 
 /* ── Greeting shimmer ── */
 .dash-greeting { position:relative;overflow:hidden; }
@@ -331,10 +313,8 @@
 .dsh-header{position:relative;}
 .dsh-top-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.025),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 32px rgba(0,0,0,.4);position:relative;overflow:hidden;}
 .dsh-top-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.4),rgba(124,58,237,.25),transparent);background-size:200% 100%;}
-@keyframes dshTopScan{0%{background-position:100% 0}100%{background-position:-100% 0}}
 .dsh-avatar{position:relative;width:48px;height:48px;border-radius:14px;flex-shrink:0;background:linear-gradient(135deg,rgba(139,92,246,.18),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:#8b5cf6;}
 .dsh-avatar-ring{position:absolute;inset:-4px;border-radius:18px;border:1.5px solid transparent;background:conic-gradient(from 0deg,rgba(139,92,246,.5),transparent 40%,transparent 60%,rgba(139,92,246,.5)) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;}
-@keyframes avatarRingSpin{to{transform:rotate(360deg)}}
 .dsh-greet-left{display:flex;align-items:center;gap:14px;}
 .dsh-greet-text{display:flex;flex-direction:column;gap:4px;}
 .dsh-greet-label{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;}
@@ -405,6 +385,4 @@
 /* ── Modal & misc keyframes ── */
 @keyframes modalSlam { 0%{opacity:0;transform:translateY(-30px) scale(.9)} 60%{transform:translateY(4px) scale(1.02)} 100%{opacity:1;transform:translateY(0) scale(1)} }
 @keyframes iconShake { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg)} 40%{transform:rotate(12deg)} 60%{transform:rotate(-8deg)} 80%{transform:rotate(8deg)} }
-@keyframes ringPulse { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.12);opacity:0} }
-@keyframes scan { 0%{top:-2px} 100%{top:100%} }
 @keyframes fadeSlideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }

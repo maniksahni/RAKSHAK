@@ -17,8 +17,6 @@
 /* ── ULTRA GLASS CARD — Warm Dark ── */
 .glass-card {
   background: linear-gradient(145deg, rgba(20,17,12,0.75), rgba(10,8,5,0.92)) !important;
-  saturate(200%) !important;
-  saturate(200%) !important;
   border: 1px solid rgba(139,92,246,0.06) !important;
   border-radius: 24px !important;
   box-shadow:
@@ -34,7 +32,6 @@
   background: linear-gradient(90deg, transparent, rgba(139,92,246,0.35), transparent);
   
 }
-@keyframes cardTopScan { 0% { left: -50%; } 100% { left: 150%; } }
 .glass-card:hover {
   transform: translateY(-7px) !important;
   border-color: rgba(139,92,246,0.2) !important;
@@ -251,7 +248,6 @@
   box-shadow: 0 0 12px rgba(139,92,246,0.15);
   
 }
-@keyframes scanSweep { 0%{ top:-2px;opacity:0; } 5%{opacity:1;} 95%{opacity:1;} 100%{top:100%;opacity:0;} }
 
 /* ── RADAR SCAN — Gold ── */
 .radar-scan-overlay {
@@ -272,7 +268,6 @@
   box-shadow: 0 0 8px rgba(139,92,246,0.15);
   
 }
-@keyframes neonPulse { 0%,100%{opacity:0.5;} 50%{opacity:1;} }
 
 /* ── TICKER — Gold ── */
 .stats-ticker-bar {
@@ -288,7 +283,6 @@
   
   font-weight: 700; text-shadow: 0 0 10px rgba(139,92,246,0.2);
 }
-@keyframes tickerScroll { 0%{ transform: translateX(0); } 100%{ transform: translateX(-50%); } }
 
 /* ── PREMIUM QUICK ACTIONS ── */
 .pqa {

@@ -9,17 +9,6 @@
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-@keyframes swWalk {
-  0%   { transform: translateX(0) translateY(0); }
-  25%  { transform: translateX(2px) translateY(-3px); }
-  50%  { transform: translateX(0) translateY(0); }
-  75%  { transform: translateX(-2px) translateY(-3px); }
-  100% { transform: translateX(0) translateY(0); }
-}
-@keyframes swPulseGreen {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(139,92,246,0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(139,92,246,0); }
-}
 @keyframes swCheckpointPop {
   from { opacity: 0; transform: scale(0.5); }
   to   { opacity: 1; transform: scale(1); }
@@ -224,10 +213,6 @@
   padding: 16px 32px;
   
 }
-@keyframes sosPulse {
-  0%,100% { box-shadow: 0 0 20px rgba(239,68,68,0.3); }
-  50% { box-shadow: 0 0 40px rgba(139,92,246,0.6); }
-}
 
 .sw-btn-outline {
   background: transparent;
@@ -246,7 +231,6 @@
   letter-spacing: 0.1em;
 }
 .sw-countdown.overdue { color:#8b5cf6;  }
-@keyframes overdueFlash { 50% { opacity: 0.5; } }
 
 /* status badge */
 .sw-status {

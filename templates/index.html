@@ -86,7 +86,6 @@ body::before{
 .btn-outline{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-family:var(--sg);font-weight:600;font-size:0.95rem;background:rgba(255,255,255,.03);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15);text-decoration:none;cursor:pointer;transition:all .3s cubic-bezier(.22,1,.36,1);}
 .btn-outline:hover{transform:translateY(-3px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.3);color:#fff;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
 
-@keyframes btnSweep { 0% { left: -100%; } 20%, 100% { left: 200%; } }
 
 .hero-trust{display:flex;align-items:center;gap:12px;font-family:var(--int);font-size:.75rem;color:rgba(255,255,255,.3);animation:slideUp .5s .32s ease both}
 .trust-avatars{display:flex}
@@ -123,7 +122,6 @@ body::before{
   filter:blur(55px);
   pointer-events:none;z-index:0;
 }
-@keyframes glowPulse{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 
 /* phone frame — 17 Pro Max Titanium */
 .phone-frame{
@@ -140,10 +138,6 @@ body::before{
     inset 0 0 0 1px rgba(255,255,255,.05),
     inset 0 0 10px rgba(255,255,255,.1);
   will-change: transform;
-}
-@keyframes phoneBorderGlow{
-  0%,100%{box-shadow:0 50px 120px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.05), inset 0 0 10px rgba(255,255,255,.1)}
-  50%{box-shadow:0 50px 120px rgba(0,0,0,.85), inset 0 0 0 1px rgba(139,92,246,.12), inset 0 0 10px rgba(139,92,246,.15)}
 }
 
 /* side buttons - 17 Pro Max */
@@ -224,7 +218,6 @@ body::before{
 .di-wave:nth-child(2){animation-delay:0.2s;height:14px;}
 .di-wave:nth-child(3){animation-delay:0.4s;height:10px;}
 .di-wave:nth-child(4){animation-delay:0.6s;;height:16px;}
-@keyframes sQ { 0%{transform:scaleY(0.4)} 100%{transform:scaleY(1)} }
 
 .di-text {
   font-family: var(--sg); font-size: 0.65rem; color: #fff; font-weight: 700;
@@ -236,7 +229,6 @@ body::before{
   box-shadow: 0 0 8px var(--red);
 }
 
-@keyframes floatIsland { 0%,100%{transform:translateY(0)} 50%{transform:translateY(1px)} }
 
 /* screen - Immersive Edge-to-Edge LTPO OLED */
 .phone-screen{
@@ -296,8 +288,6 @@ body::before{
 .ph-sos-btn svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ph-sos-label{font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:6px}
 
-@keyframes sosPulse1{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.28)}60%{box-shadow:0 0 0 14px rgba(139,92,246,0)}}
-@keyframes sosPulse2{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.22)}60%{box-shadow:0 0 0 9px rgba(139,92,246,0)}}
 
 /* stats row */
 .ph-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px}
@@ -455,7 +445,6 @@ body::before{
   border-radius:26px; opacity:0; transition:opacity 0.5s ease;
 }
 .bc:hover::before { opacity:1;  }
-@keyframes bgSpin { 100% { filter: hue-rotate(360deg); } }
 
 .bc-holo { position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(255,255,255,0.06), transparent 60%); pointer-events:none; }
 
@@ -486,9 +475,7 @@ body::before{
 .fd-time{font-family:'Courier New', monospace; color:rgba(255,255,255,0.5);font-size:0.75rem;font-weight:700;}
 
 /* Mini-Anim Keyframes */
-@keyframes ringPulse { 0% { transform:scale(0.8); opacity:1; } 100% { transform:scale(2); opacity:0; } }
 @keyframes radarSpin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
-@keyframes scanLaser { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(22px); } }
 
 .rk-hr{border:none;height:1px;max-width:1380px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1) 50%,transparent);}
 
@@ -592,7 +579,6 @@ body::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,transparent,rgba(59,130,246,0.5),rgba(139,92,246,0.5),rgba(239,68,68,0.4),transparent);
 }
-@keyframes opsBeam{0%{opacity:0.6}50%{opacity:1}100%{opacity:0.6}}
 .ops-header{
   display:flex;align-items:center;justify-content:space-between;
   padding:1.5rem 2rem;border-bottom:1px solid rgba(255,255,255,0.06);
@@ -724,8 +710,6 @@ body::before{
 ═══════════════════════════════════════════*/
 @keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 
 /* scroll-reveal: instant appear, no hidden state */
 .reveal{opacity:1;transform:none}
@@ -952,7 +936,6 @@ body::before{
 .ekg-svg{width:100%;height:100%;position:relative;z-index:2}
 .ekg-line{fill:none;stroke:#ef4444;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(239,68,68,.8))}
 .ekg-scan{position:absolute;top:0;bottom:0;width:32px;background:linear-gradient(90deg,transparent,rgba(239,68,68,.14),transparent);z-index:3}
-@keyframes ekgScan{from{left:-32px}to{left:100%}}
 .ekg-metrics{display:flex;gap:1.4rem}
 .ekg-metric{display:flex;flex-direction:column;align-items:center}
 .ekg-val{font-family:var(--sg);font-size:1.3rem;font-weight:800;line-height:1}
@@ -971,7 +954,6 @@ body::before{
 .radar-blip{position:absolute;width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 8px #3b82f6,0 0 16px rgba(59,130,246,.4)}
 .radar-blip.blip-r{background:#ef4444;box-shadow:0 0 8px #ef4444,0 0 16px rgba(239,68,68,.4);animation-duration:1.5s}
 .radar-blip.blip-o{background:#f59e0b;box-shadow:0 0 8px #f59e0b,0 0 16px rgba(245,158,11,.4)}
-@keyframes blipBeat{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(.8)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}}
 .radar-zones{flex:1;display:flex;flex-direction:column;gap:.5rem}
 .radar-zone{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(0,0,0,.3);border-radius:6px;border-left:2px solid transparent;font-family:'Courier New',monospace;font-size:.63rem;letter-spacing:.04em;color:rgba(255,255,255,.45)}
 .radar-zone.zone-hot{border-left-color:#ef4444}
@@ -1027,7 +1009,6 @@ body::before{
     flex:1;height:2px;
     background:repeating-linear-gradient(90deg,var(--red) 0,var(--red) 6px,transparent 6px,transparent 11px);
   }
-  @keyframes dashMove{0%{background-position:0 0}100%{background-position:17px 0}}
   .step-connector-arrow{
     flex-shrink:0;width:0;height:0;
     border-left:7px solid var(--red);
@@ -1055,7 +1036,6 @@ body::before{
 .cta-h2-gradient{background:linear-gradient(120deg,#ef4444,#f97316,#fbbf24,#f97316,#ef4444);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal}
 .sweep-line-track{height:3px;position:relative;overflow:hidden;margin-bottom:1rem;background:linear-gradient(90deg, transparent, rgba(139,92,246,0.05) 20%, rgba(139,92,246,0.1) 50%, rgba(139,92,246,0.05) 80%, transparent);border-radius:3px;}
 .sweep-laser{position:absolute;top:0;left:0;height:100%;width:300px;background:linear-gradient(90deg, transparent, rgba(139,92,246,0.8) 50%, transparent);box-shadow:0 0 15px rgba(139,92,246,0.9);}
-@keyframes sweepLine{0%{transform:translateX(-300px)}100%{transform:translateX(100vw)}}
 .footer-social{display:flex;gap:12px;align-items:center}
 .social-icon{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:pointer}
 .social-icon:hover{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);transform:translateY(-2px);box-shadow:0 4px 12px rgba(139,92,246,.2)}
@@ -1091,15 +1071,6 @@ body::before{
 .bc:hover .bc-back{opacity:0.15}
 
 /* ── 3. Glowing Particle Trail on Scroll ── */
-@keyframes scrollParticleDrift{
-  0%{transform:translateY(0) translateX(0) scale(1);opacity:.7}
-  50%{opacity:1}
-  100%{transform:translateY(-120vh) translateX(30px) scale(0);opacity:0}
-}
-@keyframes scrollParticleGlow{
-  0%,100%{box-shadow:0 0 4px rgba(139,92,246,.4)}
-  50%{box-shadow:0 0 12px rgba(139,92,246,.8),0 0 25px rgba(139,92,246,.3)}
-}
 .scroll-particle{
   position:fixed;width:3px;height:3px;border-radius:50%;
   background:var(--red);pointer-events:none;z-index:0;
@@ -1114,17 +1085,6 @@ body::before{
   filter:blur(40px);pointer-events:none;z-index:0;
   will-change:border-radius,transform;
 }
-@keyframes blobMorph{
-  0%{border-radius:40% 60% 55% 45% / 55% 40% 60% 45%}
-  25%{border-radius:55% 45% 40% 60% / 45% 55% 45% 55%}
-  50%{border-radius:45% 55% 60% 40% / 60% 45% 55% 45%}
-  75%{border-radius:60% 40% 45% 55% / 40% 60% 45% 55%}
-  100%{border-radius:40% 60% 55% 45% / 55% 40% 60% 45%}
-}
-@keyframes blobRotate{
-  0%{transform:translate(-50%,-50%) rotate(0deg)}
-  100%{transform:translate(-50%,-50%) rotate(360deg)}
-}
 
 /* ── 5. Perspective Grid Floor ── */
 .hero-grid-floor{
@@ -1138,25 +1098,13 @@ body::before{
   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,rgba(0,0,0,.15) 60%,transparent 100%);
   pointer-events:none;z-index:0;
 }
-@keyframes gridPulse{
-  0%,100%{opacity:.5}
-  50%{opacity:.8}
-}
 
 /* ── 6. Neon Text Glow on Hero Heading ── */
 .hero-h1{
   text-shadow:0 0 10px rgba(139,92,246,0),0 0 40px rgba(139,92,246,0);
 }
-@keyframes neonTextPulse{
-  0%,100%{text-shadow:0 0 8px rgba(139,92,246,0),0 0 30px rgba(139,92,246,0),0 0 60px rgba(139,92,246,0)}
-  50%{text-shadow:0 0 8px rgba(139,92,246,.15),0 0 30px rgba(139,92,246,.08),0 0 60px rgba(139,92,246,.04)}
-}
 .h1-grad{
   filter:drop-shadow(0 0 15px rgba(139,92,246,.12));
-}
-@keyframes neonGradPulse{
-  0%,100%{filter:drop-shadow(0 0 10px rgba(139,92,246,.05))}
-  50%{filter:drop-shadow(0 0 25px rgba(139,92,246,.2))}
 }
 
 /* ── 7. Floating Geometric Shapes ── */
@@ -1208,29 +1156,6 @@ body::before{
 .fs-cross::after{height:2px;width:100%;top:50%;transform:translateY(-50%)}
 
 /* Floating animations */
-@keyframes floatDrift1{
-  0%{transform:translateY(0) rotate(0deg)}
-  33%{transform:translateY(-40px) rotate(60deg)}
-  66%{transform:translateY(-20px) rotate(180deg)}
-  100%{transform:translateY(0) rotate(360deg)}
-}
-@keyframes floatDrift2{
-  0%{transform:translateY(0) translateX(0) rotate(0deg)}
-  50%{transform:translateY(-60px) translateX(30px) rotate(180deg)}
-  100%{transform:translateY(0) translateX(0) rotate(360deg)}
-}
-@keyframes floatDrift3{
-  0%{transform:translateY(0) translateX(0) rotate(0deg) scale(1)}
-  25%{transform:translateY(-30px) translateX(-20px) rotate(90deg) scale(1.1)}
-  50%{transform:translateY(-50px) translateX(10px) rotate(180deg) scale(.9)}
-  75%{transform:translateY(-20px) translateX(25px) rotate(270deg) scale(1.05)}
-  100%{transform:translateY(0) translateX(0) rotate(360deg) scale(1)}
-}
-@keyframes floatDrift4{
-  0%{transform:translateY(0) rotate(0deg)}
-  50%{transform:translateY(-70px) rotate(-180deg)}
-  100%{transform:translateY(0) rotate(-360deg)}
-}
 
 /* ── Stagger-in for child elements ── */
 .stagger-child{opacity:0;transform:translateY(25px) scale(.97);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
@@ -1256,7 +1181,6 @@ body::before{
 .scanline:nth-child(1){animation-delay:0s}
 .scanline:nth-child(2){animation-delay:2s}
 .scanline:nth-child(3){animation-delay:4s}
-@keyframes scanDown{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:100%;opacity:0}}
 
 /* ── BIGGER HERO HEADING + STRONGER NEON ── */
 .hero-h1{font-size:clamp(3.5rem,6.5vw,7rem) !important;text-shadow:0 0 20px rgba(139,92,246,.15),0 0 60px rgba(139,92,246,.08),0 0 120px rgba(139,92,246,.04) !important}
@@ -1264,7 +1188,6 @@ body::before{
 
 /* ── GLITCH TEXT on "Our Mission" ── */
 .h1-grad{position:relative}
-@keyframes glitchShift{0%,92%,100%{transform:translateX(0)}93%{transform:translateX(-3px)}94%{transform:translateX(5px)}95%{transform:translateX(-2px)}96%{transform:translateX(4px)}97%{transform:translateX(0)}98%{transform:translateX(-6px)}99%{transform:translateX(2px)}}
 .glitch-text{position:relative}
 .hero-geo-bg{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5}
 
@@ -1279,7 +1202,6 @@ body::before{
 .signal-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(139,92,246,.15);opacity:0}
 .signal-ring:nth-child(2){animation-delay:1s}
 .signal-ring:nth-child(3){animation-delay:2s}
-@keyframes signalPulse{0%{transform:scale(.3);opacity:.6}100%{transform:scale(1);opacity:0}}
 
 /* floating cards stronger 3D + bounce */
 .f-card{box-shadow:0 25px 60px rgba(0,0,0,.95),0 0 30px rgba(139,92,246,.15),inset 0 0 20px rgba(139,92,246,.08) !important;border:1px solid rgba(139,92,246,.5) !important}
@@ -1338,7 +1260,6 @@ body::before{
 .rk-logo-mark:hover .rk-logo-shield-wrap{filter:drop-shadow(0 0 14px rgba(139,92,246,.85)) drop-shadow(0 0 3px rgba(247,231,206,.3))}
 .rk-logo-ring{position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(139,92,246,.35);pointer-events:none}
 .rk-logo-ring2{position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(139,92,246,.12);pointer-events:none}
-@keyframes rkLogoPulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.1);opacity:.75}}
 .rk-logo-wordmark{font-family:'Space Grotesk',sans-serif;font-size:1.08rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.82) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:all .3s}
 .rk-logo-mark:hover .rk-logo-wordmark{background:linear-gradient(135deg,#fff 0%,#e0e7ff 55%,#8b5cf6 100%);-webkit-background-clip:text;background-clip:text}
 .rk-logo-tagline{font-family:'Courier New',monospace;font-size:.4rem;letter-spacing:.2em;color:rgba(139,92,246,.65);text-transform:uppercase;display:block;margin-top:1px;-webkit-text-fill-color:rgba(139,92,246,.65)}
@@ -1673,7 +1594,6 @@ body::before{
   content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,transparent,rgba(139,92,246,.4),rgba(124,58,237,.5),rgba(139,92,246,.7),transparent);
 }
-@keyframes ptBeam{0%,100%{opacity:.5}50%{opacity:1}}
 /* fade edges */
 .pticker-wrap>.pt-fade-l{position:absolute;top:0;left:0;bottom:0;width:140px;background:linear-gradient(90deg,rgba(8,8,14,1),transparent);z-index:5;pointer-events:none}
 .pticker-wrap>.pt-fade-r{position:absolute;top:0;right:0;bottom:0;width:140px;background:linear-gradient(270deg,rgba(8,8,14,1),transparent);z-index:5;pointer-events:none}
@@ -1681,7 +1601,6 @@ body::before{
 .pt-row:last-child{margin-bottom:0}
 .pt-track{display:flex;gap:1.5rem;white-space:nowrap;animation:marquee 34s linear infinite}
 .pt-track:hover{animation-play-state:paused}
-@keyframes ptScroll{to{transform:translateX(-50%)}}
 .pt-chip{
   display:inline-flex;align-items:center;gap:9px;
   padding:8px 20px;border-radius:50px;
@@ -2635,7 +2554,6 @@ body::before{
 .lti-orbit{border-radius:50%;border:1px solid rgba(139,92,246,.12)}
 .globe-ring:nth-child(2){inset:-40px;animation-delay:1s}
 .globe-ring:nth-child(3){inset:-60px;animation-delay:2s}
-@keyframes globeRingPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}}
 
 /* Incident feed */
 .lti-feed{display:flex;flex-direction:column;gap:1rem}
@@ -2733,7 +2651,6 @@ body::before{
 .app-phone-1{left:50%;transform:translateX(-75%) rotate(-8deg);z-index:1;opacity:.7}
 .app-phone-2{left:50%;transform:translateX(-50%);z-index:3}
 .app-phone-3{transform:translateX(-25%) rotate(8deg);z-index:1;opacity:.7}
-@keyframes appPhoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
 .app-screen-inner{padding:16px 12px;background:#030305;min-height:360px}
 .app-screen-header{font-family:'Space Grotesk',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.15em;color:rgba(139,92,246,.7);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px}
 .app-screen-header::before{content:'';width:4px;height:4px;border-radius:50%;background:#10b981;box-shadow:0 0 5px #10b981}

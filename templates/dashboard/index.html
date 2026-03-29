@@ -119,10 +119,6 @@
 .risk-badge {
   
 }
-@keyframes riskBadgePulse {
-  0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,0)}
-  50%{box-shadow:0 0 0 4px rgba(139,92,246,.2)}
-}
 
 /* ── Premium shimmer on header ── */
 .dsh-header {
@@ -140,7 +136,6 @@
   background: linear-gradient(90deg,transparent,rgba(139,92,246,.8),transparent);
   
 }
-@keyframes headerScan{0%{left:-60%}100%{left:160%}}
 </style>
 
 {% block content %}
@@ -1147,14 +1142,7 @@
   
   <style>
   .vw-bar { width:4px;background:#8b5cf6;border-radius:2px;box-shadow:0 0 6px #8b5cf6; }
-  @keyframes vWave { 0% { height:4px; } 100% { height:24px; } }
   .valkyrie-listening {  }
-  @keyframes vPulse {
-    0% { box-shadow:0 0 0 0 rgba(139,92,246,0.6), 0 0 30px rgba(139,92,246,0.4); transform:scale(1.05); }
-    70% { box-shadow:0 0 0 25px rgba(139,92,246,0), 0 0 50px rgba(139,92,246,0.1); }
-    100% { box-shadow:0 0 0 0 rgba(139,92,246,0), 0 0 30px rgba(139,92,246,0); transform:scale(1); }
-  }
-  @keyframes pulsePulse { 0%,100%{opacity:0.3} 50%{opacity:0.6} }
   </style>
   <script>
   let valkActive = false;

@@ -48,14 +48,12 @@
     }
     .shield-pulse-ring:nth-child(2) { animation-delay: 0.8s; }
     .shield-pulse-ring:nth-child(3) { animation-delay: 1.6s; }
-    @keyframes shieldPulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
 
     .shield-scan-line {
       position: absolute; left: 10%; right: 10%; height: 2px;
       background: linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent);
       
     }
-    @keyframes shieldScan { 0% { top: 15%; } 50% { top: 80%; } 100% { top: 15%; } }
 
     /* Signal wave */
     .signal-wave {
@@ -71,7 +69,6 @@
     .signal-wave span:nth-child(3) { animation-delay: 0.2s; height: 20px; }
     .signal-wave span:nth-child(4) { animation-delay: 0.3s; height: 14px; }
     .signal-wave span:nth-child(5) { animation-delay: 0.4s; height: 8px; }
-    @keyframes wave { 0%,100% { transform: scaleY(0.5); opacity: 0.3; } 50% { transform: scaleY(1.2); opacity: 1; } }
 
     /* Status badge */
     .signal-badge {
@@ -86,7 +83,6 @@
       background: var(--red); 
       box-shadow: 0 0 10px var(--red);
     }
-    @keyframes blink { 50% { opacity: 0.2; } }
 
     h1 {
       font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 900;
@@ -156,7 +152,6 @@
     .btn-sos:hover { background: rgba(124,58,237,0.3); box-shadow: 0 0 40px rgba(124,58,237,0.4); transform: translateY(-2px); }
     .btn-sos:active { transform: translateY(0); }
     .btn-sos.queued { background: rgba(239,68,68,0.15); border-color: #ef4444; color:#8b5cf6; animation: none; }
-    @keyframes sosPulse { 0%,100% { box-shadow: 0 0 15px rgba(124,58,237,0.2); } 50% { box-shadow: 0 0 30px rgba(124,58,237,0.5); } }
 
     /* Retry button */
     .btn-retry {

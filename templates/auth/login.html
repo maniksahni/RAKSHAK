@@ -40,7 +40,6 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 60%);
 }
-@keyframes gridMove { 0% { transform: perspective(1000px) rotateX(60deg) translateY(0); } 100% { transform: perspective(1000px) rotateX(60deg) translateY(60px); } }
 
 /* Massive pulsing ambient core */
 .lp-ambient-core {
@@ -49,10 +48,6 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   background: radial-gradient(circle at center, rgba(139,92,246,0.15) 0%, rgba(100,80,11,0.05) 40%, transparent 70%);
   
   pointer-events: none; z-index: 1;
-}
-@keyframes corePulse {
-  0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; filter: hue-rotate(-10deg); }
-  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; filter: hue-rotate(10deg); }
 }
 
 /* Particles Canvas */
@@ -63,10 +58,6 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-}
-@keyframes floatAssembly {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
 }
 
 /* Orbiting Rings */
@@ -81,7 +72,6 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
   background:#8b5cf6; box-shadow: 0 0 15px #8b5cf6; top: -4px; left: 50%; transform: translateX(-50%);
 }
-@keyframes orbitSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
 /* The SVG Shield */
 .lp-shield-svg {
@@ -190,7 +180,6 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   background: linear-gradient(90deg, transparent, rgba(139,92,246,0.8), transparent);
   
 }
-@keyframes cardScan { 0% { left: -50%; } 100% { left: 150%; } }
 
 /* Login Header */
 .lp-card-tag {
@@ -307,9 +296,6 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 </div>
 
 <style>
-@keyframes spinOuter { 100% { transform:rotate(360deg); } }
-@keyframes spinInner { 100% { transform:rotate(-360deg); } }
-@keyframes laserScan { 0% { top:-10px; } 100% { top:130px; } }
 </style>
 
 <script>

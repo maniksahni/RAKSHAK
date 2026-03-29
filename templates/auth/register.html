@@ -24,10 +24,6 @@
   bottom: -150px; right: -150px; 
 }
 
-@keyframes drift {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  100% { transform: translate(60px, 40px) scale(1.1) rotate(15deg); }
-}
 
 /* ── Floating Hexagonal Grid -> Sleek Dots ── */
 .hex-grid {
@@ -36,7 +32,6 @@
   background-size: 30px 30px;
   
 }
-@keyframes bgMove { from { background-position:0 0; } to { background-position:300px 300px; } }
 
 /* 3D Grid floor -> Removed for elegant look */
 .grid-floor { display:none; }
@@ -71,17 +66,10 @@
   
   opacity: 0.6; filter: blur(5px);
 }
-@keyframes rotateGlow {
-  to { transform: rotate(360deg); }
-}
 
 /* Pulsing shadow on the card */
 .glass-card {
   
-}
-@keyframes cardPulse {
-  0%, 100% { transform:translateY(0); box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
-  50% { transform:translateY(-8px); box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(139,92,246,0.15); }
 }
 
 /* ── Secure Access Terminal Title -> Modern Welcome ── */
@@ -136,20 +124,12 @@
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   transform: skewX(-20deg); 
 }
-@keyframes btnSweep {
-  0% { left: -100%; }
-  20%, 100% { left: 200%; }
-}
 
 /* Matrix Rain Canvas */
 #matrix-rain {
   position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6;
 }
 .grid-floor { z-index: 1; }
-@keyframes lockPulse {
-  0%,100%{opacity:0.5;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.15)}
-}
 @keyframes inputShake {
   0%,100%{transform:translateX(0)}
   20%{transform:translateX(-6px)}40%{transform:translateX(6px)}
