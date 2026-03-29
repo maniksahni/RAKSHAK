@@ -1,0 +1,15 @@
+---
+description: After UI or deployable asset changes, commit and push to main for Railway
+globs: static/**/*,templates/**/*
+alwaysApply: false
+---
+
+# Auto commit + push
+
+When you finish a task that edits **templates** or **static** assets (CSS, JS, images) and the user has not asked to skip version control:
+
+1. Run `git status`; stage only intentional paths (never `.env` or secrets).
+2. Commit with a concise, conventional message (`feat`, `fix`, `chore`).
+3. Run `git push origin main` so Railway (or linked CI) can deploy.
+
+If push fails (auth/network), report the error and what remains locally.
