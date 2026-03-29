@@ -651,15 +651,8 @@ h1,h2,h3,h4,h5,h6 {
   pointer-events: none;
 }
 
-.hero-section {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.08) 0%, transparent 60%);
-}
+/* .hero-section — defined only in templates/index.html (grid + overflow:visible).
+   A duplicate rule here used display:flex + overflow:hidden and clipped the phone mockup. */
 
 .scroll-indicator {
   position: absolute;
