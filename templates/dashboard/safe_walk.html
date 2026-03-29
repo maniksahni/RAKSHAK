@@ -33,8 +33,8 @@
 /* glassmorphism card */
 .sw-card {
   background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  
+  
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 16px;
   padding: 24px;
@@ -54,7 +54,7 @@
 /* Walking person indicator */
 .sw-walking-icon {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 1.4rem; animation: swWalk 0.6s ease-in-out infinite;
+  font-size: 1.4rem; /* anim-removed */
 }
 .sw-walking-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -92,7 +92,7 @@
 }
 .sw-timeline-item.active::before {
   background: #22c55e; border-color: #22c55e;
-  animation: swPulseGreen 2s ease-in-out infinite;
+  /* anim-removed */
 }
 .sw-timeline-item.completed::before {
   background: #22c55e; border-color: #22c55e;
@@ -222,7 +222,7 @@
   color: #fff;
   font-size: 1rem;
   padding: 16px 32px;
-  animation: sosPulse 2s ease-in-out infinite;
+  /* anim-removed */
 }
 @keyframes sosPulse {
   0%,100% { box-shadow: 0 0 20px rgba(212,175,55,0.3); }
@@ -245,7 +245,7 @@
   text-align: center;
   letter-spacing: 0.1em;
 }
-.sw-countdown.overdue { color: #d4af37; animation: overdueFlash 1s ease-in-out infinite; }
+.sw-countdown.overdue { color: #d4af37; /* anim-removed */ }
 @keyframes overdueFlash { 50% { opacity: 0.5; } }
 
 /* status badge */
@@ -295,7 +295,7 @@
           </div>
           <div>
             <div style="font-size:0.65rem;color:var(--accent-green);letter-spacing:0.15em;font-family:'Courier New',monospace;font-weight:700;">
-              <span style="animation:blink 1.5s infinite;">●</span> ROUTE MONITORING ACTIVE
+              <span style="/* anim-removed */">●</span> ROUTE MONITORING ACTIVE
             </div>
             <h4 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0;font-size:1.4rem;">Safe Walk</h4>
           </div>

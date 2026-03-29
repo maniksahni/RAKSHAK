@@ -47,12 +47,12 @@
   content:'';position:absolute;inset:-4px;border-radius:50%;
   background:conic-gradient(from 0deg, transparent 0%, rgba(212,175,55,0.8) 25%, transparent 50%, rgba(212,175,55,0.3) 75%, transparent 100%);
   z-index:-1;
-  animation:avatarBorderSpin 3s linear infinite;
+  /* anim-removed */
 }
 .profile-avatar-lg::after {
   content:'';position:absolute;inset:-10px;border-radius:50%;border:1px dashed rgba(212,175,55,0.3);
   z-index:-2;
-  animation:avatarBorderSpin 12s linear infinite reverse;
+  /* anim-removed */
 }
 @keyframes avatarBorderSpin { from{transform:rotate(0deg)}to{transform:rotate(360deg)} }
 .avatar-inner {
@@ -71,14 +71,14 @@
   content:'';position:absolute;inset:0;
   background:linear-gradient(to bottom, transparent 45%, rgba(212,175,55,0.4) 50%, transparent 55%);
   background-size:100% 200%;
-  animation:avatarScan 2.5s ease-in-out infinite;
+  /* anim-removed */
   pointer-events:none;
 }
 @keyframes avatarScan { 0% { transform:translateY(-100%); opacity:0; } 50% { opacity:1; } 100% { transform:translateY(100%); opacity:0; } }
 .avatar-pulse-ring {
   position:absolute;inset:-16px;border-radius:50%;
   border:1px solid rgba(212,175,55,0.3);
-  animation:pulseRing 2s cubic-bezier(0,0,0.2,1) infinite;
+  /* anim-removed */
   pointer-events:none;
 }
 .avatar-pulse-ring:nth-child(2) { animation-delay:1s; border:1px solid rgba(212,175,55,0.15); }
@@ -93,7 +93,7 @@
   color:#d4af37;font-family:var(--font-display);
   position:relative;overflow:hidden;
   box-shadow:0 0 20px rgba(212,175,55,0.1), inset 0 0 10px rgba(212,175,55,0.1);
-  animation:badgeGlitch 10s infinite;
+  /* anim-removed */
 }
 @keyframes badgeGlitch { 0%,96%,98%,100%{transform:none;opacity:1} 97%,99%{transform:translate(-2px,1px);opacity:0.8;filter:hue-rotate(90deg)} }
 
@@ -116,12 +116,12 @@
 .shield-progress-wrap::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#d4af37;box-shadow:0 0 10px #d4af37; }
 .shield-bar-outer { width:100%;height:6px;background:rgba(212,175,55,0.1);position:relative;margin-top:12px; }
 .shield-bar-fill { height:100%;background:#d4af37;box-shadow:0 0 15px #d4af37;position:relative;transition:width 2s cubic-bezier(0,1,0.5,1); }
-.shield-bar-fill::after { content:'';position:absolute;right:0;top:-4px;bottom:-4px;width:2px;background:#fff;box-shadow:0 0 10px #fff;animation:shimmer 1s infinite alternate; }
+.shield-bar-fill::after { content:'';position:absolute;right:0;top:-4px;bottom:-4px;width:2px;background:#fff;box-shadow:0 0 10px #fff;/* anim-removed */ }
 
 /* ── GLASSMORPHISM CARDS REFINED (BLACK & RED) ── */
 .glass-section {
   background:linear-gradient(135deg,rgba(15,15,20,0.85),rgba(6,6,10,0.95));
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  
   border:1px solid rgba(212,175,55,0.15);
   border-radius:8px;
   position:relative;overflow:hidden;
@@ -285,7 +285,7 @@
       <div class="col-4 col-md-2">
         <div class="profile-stat">
           <div class="d-flex align-items-center justify-content-center gap-1">
-            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(72,187,120,0.5);animation:dotBlink 2s infinite;"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(72,187,120,0.5);/* anim-removed */"></div>
             <div class="profile-stat-num" style="color:var(--accent-green);font-size:1.1rem;">ON</div>
           </div>
           <div class="profile-stat-label">Shield</div>
@@ -302,7 +302,7 @@
     <!-- Cyber Status Chips -->
     <div class="d-flex gap-2 flex-wrap mt-3" style="font-family:'Courier New', monospace; font-size:0.7rem;">
       <div style="display:flex; align-items:center; gap:6px; background:rgba(72,187,120,0.06); border:1px solid rgba(72,187,120,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-green);">
-        <span style="width:5px;height:5px;border-radius:0;background:var(--accent-green);animation:blink 1.2s infinite;"></span>
+        <span style="width:5px;height:5px;border-radius:0;background:var(--accent-green);/* anim-removed */"></span>
         SHIELD: ACTIVE
       </div>
       <div style="display:flex; align-items:center; gap:6px; background:rgba(66,153,225,0.06); border:1px solid rgba(66,153,225,0.2); border-radius:3px; padding:5px 12px; color:var(--accent-blue);">
@@ -374,7 +374,7 @@
                 <div style="font-size:0.68rem;color:var(--text-muted);font-weight:400;margin-top:1px;">{{ current_user.email }}</div>
               </div>
               <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:#34A853;box-shadow:0 0 6px rgba(52,168,83,0.5);animation:dotBlink 2s infinite;"></div>
+                <div style="width:6px;height:6px;border-radius:50%;background:#34A853;box-shadow:0 0 6px rgba(52,168,83,0.5);/* anim-removed */"></div>
                 <span style="font-size:0.65rem;color:var(--accent-green);">VERIFIED</span>
               </div>
             </div>
@@ -590,7 +590,7 @@
           <div style="padding:14px 16px;border-radius:var(--radius-sm);background:rgba(72,187,120,0.04);border:1px solid rgba(72,187,120,0.15);">
             <div style="font-size:0.65rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Account Status</div>
             <div style="display:flex;align-items:center;gap:8px;">
-              <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(72,187,120,0.5);animation:dotBlink 2s infinite;"></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);box-shadow:0 0 8px rgba(72,187,120,0.5);/* anim-removed */"></div>
               <span style="font-size:0.85rem;font-weight:700;color:var(--accent-green);letter-spacing:0.05em;">OPERATIONAL</span>
             </div>
           </div>
