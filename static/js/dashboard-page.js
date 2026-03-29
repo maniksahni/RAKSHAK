@@ -263,7 +263,7 @@ function fetchNearbyPlaces() {
   const originEl=document.getElementById('nsp-origin');
   if(originEl)originEl.textContent=lat.toFixed(4)+'°N  '+lng.toFixed(4)+'°E';
   
-  const colorMap={police:'66,153,225',hospital:'72,187,120',fire:'246,173,85'};
+  const colorMap={police:'66,153,225',hospital:'212,175,55',fire:'212,175,55'};
   const iconMap={police:'bi-shield-fill',hospital:'bi-heart-pulse-fill',fire:'bi-fire'};
   
   // Tactical realistic fallback generator (instant load)

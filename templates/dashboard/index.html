@@ -397,7 +397,7 @@
 
         <!-- Total Alerts -->
         <div class="col-6">
-          <div class="psc" style="--psc-accent:220,38,38;">
+          <div class="psc" style="--psc-accent:212,175,55;">
             <div class="psc-top-bar"></div>
             <div class="psc-icon"><i class="bi bi-bell-fill" style="color:rgba(184,134,11,.8);"></i></div>
             <div class="psc-num" id="total-alerts">{{ alerts|length }}</div>
@@ -407,7 +407,7 @@
 
         <!-- Active -->
         <div class="col-6">
-          <div class="psc" style="--psc-accent:249,115,22;">
+          <div class="psc" style="--psc-accent:212,175,55;">
             <div class="psc-top-bar"></div>
             <div class="psc-icon"><i class="bi bi-exclamation-triangle-fill" style="color:rgba(212,175,55,.8);"></i></div>
             <div class="psc-num" id="active-alerts" style="color:#d4af37;">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
@@ -417,7 +417,7 @@
 
         <!-- Missed pings -->
         <div class="col-6">
-          <div class="psc" style="--psc-accent:245,158,11;">
+          <div class="psc" style="--psc-accent:212,175,55;">
             <div class="psc-top-bar"></div>
             <div class="psc-icon"><i class="bi bi-wifi-off" style="color:rgba(212,175,55,.8);"></i></div>
             <div class="psc-num" style="color:#d4af37;">{{ (current_user.consecutive_missed_pings or 0) }}</div>
@@ -427,7 +427,7 @@
 
         <!-- System Status -->
         <div class="col-6">
-          <div class="psc" style="--psc-accent:34,197,94;">
+          <div class="psc" style="--psc-accent:212,175,55;">
             <div class="psc-top-bar"></div>
             <div class="psc-icon"><i class="bi bi-shield-check-fill" style="color:rgba(212,175,55,.8);"></i></div>
             <div class="psc-num" style="color:#d4af37;font-size:1.3rem;">LIVE</div>
@@ -961,7 +961,7 @@
               <span style="font-size:0.72rem;font-weight:700;color:#d4af37;letter-spacing:0.1em;">HOSPITALS</span>
             </div>
             <div id="places-hospital">
-              <div class="nsp-scan-state" style="--nsp-rgb:72,187,120">
+              <div class="nsp-scan-state" style="--nsp-rgb:212,175,55">
                 <div class="nsp-scope">
                   <div class="nsp-scope-ring r1"></div><div class="nsp-scope-ring r2"></div><div class="nsp-scope-ring r3"></div>
                   <div class="nsp-scope-ch h"></div><div class="nsp-scope-ch v"></div>
@@ -978,7 +978,7 @@
               <span style="font-size:0.72rem;font-weight:700;color:#d4af37;letter-spacing:0.1em;">FIRE STATIONS</span>
             </div>
             <div id="places-fire">
-              <div class="nsp-scan-state" style="--nsp-rgb:246,173,85">
+              <div class="nsp-scan-state" style="--nsp-rgb:212,175,55">
                 <div class="nsp-scope">
                   <div class="nsp-scope-ring r1"></div><div class="nsp-scope-ring r2"></div><div class="nsp-scope-ring r3"></div>
                   <div class="nsp-scope-ch h"></div><div class="nsp-scope-ch v"></div>
@@ -1008,11 +1008,11 @@
         <div class="row g-3">
           <!-- SOS Readiness -->
           <div class="col-md-6">
-            <div class="si-metric" style="--si-rgb:220,38,38">
+            <div class="si-metric" style="--si-rgb:212,175,55">
               <div class="si-ring-wrap">
                 <svg viewBox="0 0 52 52" width="52" height="52">
                   <circle class="si-ring-bg" cx="26" cy="26" r="20"/>
-                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="rgb(220,38,38)" id="si-ring-sos" style="stroke-dashoffset:0;"/>
+                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="rgb(212,175,55)" id="si-ring-sos" style="stroke-dashoffset:0;"/>
                 </svg>
                 <span class="si-pct" style="color:#d4af37;" id="si-pct-sos">100%</span>
               </div>
@@ -1042,11 +1042,11 @@
           </div>
           <!-- Contact Network -->
           <div class="col-md-6">
-            <div class="si-metric" style="--si-rgb:72,187,120">
+            <div class="si-metric" style="--si-rgb:212,175,55">
               <div class="si-ring-wrap">
                 <svg viewBox="0 0 52 52" width="52" height="52">
                   <circle class="si-ring-bg" cx="26" cy="26" r="20"/>
-                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="rgb(72,187,120)"
+                  <circle class="si-ring-fill" cx="26" cy="26" r="20" stroke="rgb(212,175,55)"
                     id="si-ring-contacts"
                     style="stroke-dashoffset:{{ (125.66 * (1 - [trusted_contacts|length, 5]|min / 5))|round(2) }};"/>
                 </svg>
@@ -1061,7 +1061,7 @@
           </div>
           <!-- Threat Score -->
           <div class="col-md-6">
-            <div class="si-metric" style="--si-rgb:{% if current_user.risk_level=='critical' %}220,38,38{% elif current_user.risk_level=='high' %}249,115,22{% elif current_user.risk_level=='medium' %}245,158,11{% else %}34,197,94{% endif %}">
+            <div class="si-metric" style="--si-rgb:{% if current_user.risk_level=='critical' %}212,175,55{% elif current_user.risk_level=='high' %}212,175,55{% elif current_user.risk_level=='medium' %}212,175,55{% else %}212,175,55{% endif %}">
               {% set threat_score = {'critical':8,'high':30,'medium':55,'low':88}[current_user.risk_level] %}
               {% set threat_color = {'critical':'#d4af37','high':'#d4af37','medium':'#d4af37','low':'#d4af37'}[current_user.risk_level] %}
               <div class="si-ring-wrap">
@@ -1075,7 +1075,7 @@
               <div class="si-bar">
                 <div class="si-label"><i class="bi bi-activity me-1" style="color:{{ threat_color }};"></i>THREAT SCORE</div>
                 <div class="si-sublabel">Current risk: {{ current_user.risk_level|upper }}</div>
-                <div class="si-bar-track"><div class="si-bar-fill" style="width:{{ threat_score }}%;background:linear-gradient(90deg,{{ threat_color }},rgba({{ {'critical':'220,38,38','high':'249,115,22','medium':'245,158,11','low':'34,197,94'}[current_user.risk_level] }},0.5));box-shadow:0 0 8px rgba({{ {'critical':'220,38,38','high':'249,115,22','medium':'245,158,11','low':'34,197,94'}[current_user.risk_level] }},0.4);"></div></div>
+                <div class="si-bar-track"><div class="si-bar-fill" style="width:{{ threat_score }}%;background:linear-gradient(90deg,{{ threat_color }},rgba({{ {'critical':'212,175,55','high':'212,175,55','medium':'212,175,55','low':'212,175,55'}[current_user.risk_level] }},0.5));box-shadow:0 0 8px rgba({{ {'critical':'212,175,55','high':'212,175,55','medium':'212,175,55','low':'212,175,55'}[current_user.risk_level] }},0.4);"></div></div>
               </div>
             </div>
           </div>
