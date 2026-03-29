@@ -64,7 +64,7 @@
   font-size: 1rem; font-weight: 800; color: #fff;
   font-family: var(--sg);
 }
-.threat-op-chip.green-chip { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05)); border:1px solid rgba(16,185,129,0.2); }
+.threat-op-chip.green-chip { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05)); border:1px solid rgba(212,175,55,0.2); }
 .threat-op-chip.green-chip .threat-op-val { color: var(--accent-green); }
 
 /* animated breach ring */
@@ -173,7 +173,7 @@
 .status-blink {
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--accent-green);
-  box-shadow: 0 0 8px var(--accent-green), 0 0 16px rgba(72,187,120,0.3);
+  box-shadow: 0 0 8px var(--accent-green), 0 0 16px rgba(212,175,55,0.3);
   /* anim-removed */
   display: inline-block;
 }
@@ -228,10 +228,10 @@
   box-shadow: 0 0 15px rgba(212,175,55,0.1);
 }
 .filter-pill.active.filter-all {
-  background: rgba(72,187,120,0.1);
-  border-color: rgba(72,187,120,0.4);
+  background: rgba(212,175,55,0.1);
+  border-color: rgba(212,175,55,0.4);
   color: var(--accent-green);
-  box-shadow: 0 0 15px rgba(72,187,120,0.1);
+  box-shadow: 0 0 15px rgba(212,175,55,0.1);
 }
 .filter-pill i { font-size: 0.8rem; }
 .filter-count {
@@ -245,7 +245,7 @@
   background: rgba(212,175,55,0.2);
 }
 .filter-pill.active.filter-all .filter-count {
-  background: rgba(72,187,120,0.2);
+  background: rgba(212,175,55,0.2);
 }
 
 /* ── FLOATING CONTROLS PANEL ─────────────────────────────────────────────── */
@@ -357,15 +357,15 @@
 .target-data-panel {
   position: absolute; bottom: 24px; right: 16px; z-index: 1000;
   background: rgba(5,5,10,0.9); 
-  border: 1px solid rgba(72,187,120,0.25); border-radius: 8px;
+  border: 1px solid rgba(212,175,55,0.25); border-radius: 8px;
   padding: 12px 16px; font-family: 'Courier New', Courier, monospace;
   color: var(--accent-green); font-size: 0.75rem; min-width: 220px;
-  box-shadow: 0 0 25px rgba(72,187,120,0.12), 0 8px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 0 25px rgba(212,175,55,0.12), 0 8px 32px rgba(0,0,0,0.4);
   transition: all 0.3s ease;
 }
 .target-data-panel:hover {
-  border-color: rgba(72,187,120,0.4);
-  box-shadow: 0 0 30px rgba(72,187,120,0.2), 0 8px 32px rgba(0,0,0,0.5);
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 0 30px rgba(212,175,55,0.2), 0 8px 32px rgba(0,0,0,0.5);
 }
 
 /* ── REPORT MODAL ────────────────────────────────────────────────────────── */
@@ -407,7 +407,7 @@
 }
 .leaflet-popup-content-wrapper::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, #d4af37, #f6ad55, #d4af37);
+  background: linear-gradient(90deg, #d4af37, #d4af37, #d4af37);
   opacity: 0.8;
 }
 .leaflet-popup-tip {
@@ -557,26 +557,26 @@
   </div>
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-exclamation-triangle-fill" style="color:#f6ad55;font-size:0.7rem;"></i>
+      <i class="bi bi-exclamation-triangle-fill" style="color:#d4af37;font-size:0.7rem;"></i>
       Active Threats
     </div>
-    <div class="stat-value" style="color:#f6ad55;" id="stat-active-threats">--</div>
+    <div class="stat-value" style="color:#d4af37;" id="stat-active-threats">--</div>
     <div class="stat-sub">High severity</div>
   </div>
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-shield-fill-check" style="color:#48bb78;font-size:0.7rem;"></i>
+      <i class="bi bi-shield-fill-check" style="color:#d4af37;font-size:0.7rem;"></i>
       Safe Areas
     </div>
-    <div class="stat-value" style="color:#48bb78;" id="stat-safe-areas">--</div>
+    <div class="stat-value" style="color:#d4af37;" id="stat-safe-areas">--</div>
     <div class="stat-sub">Low risk zones</div>
   </div>
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-clock-fill" style="color:#4299e1;font-size:0.7rem;"></i>
+      <i class="bi bi-clock-fill" style="color:#b8860b;font-size:0.7rem;"></i>
       Last Updated
     </div>
-    <div class="stat-value" style="color:#4299e1;font-size:1rem;" id="stat-last-updated">--:--</div>
+    <div class="stat-value" style="color:#b8860b;font-size:1rem;" id="stat-last-updated">--:--</div>
     <div class="stat-sub" id="stat-update-label">Syncing...</div>
   </div>
 </div>
@@ -639,7 +639,7 @@
   <div style="position:absolute;bottom:30px;left:30px;font-family:'Courier New',monospace;font-size:.65rem;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase;">
     <div>SYS_ID: VALKYRIE_MAP_ENG_v4</div>
     <div>ALTITUDE: 140M MSL</div>
-    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#22c55e;border-radius:50%;/* anim-removed */"></span> SAT_LINK_NOMINAL</div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#d4af37;border-radius:50%;/* anim-removed */"></span> SAT_LINK_NOMINAL</div>
   </div>
 </div>
 <style>
@@ -677,15 +677,15 @@
 
   <!-- Live Target Telemetry Panel -->
   <div class="target-data-panel">
-    <div style="font-weight:900;letter-spacing:0.1em;border-bottom:1px solid rgba(72,187,120,0.3);margin-bottom:6px;padding-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-weight:900;letter-spacing:0.1em;border-bottom:1px solid rgba(212,175,55,0.3);margin-bottom:6px;padding-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
       <span>SYS.TRK.LINK</span>
-      <span style="font-size:0.6rem;/* anim-removed */color:#48bb78;">● ACTIVE</span>
+      <span style="font-size:0.6rem;/* anim-removed */color:#d4af37;">● ACTIVE</span>
     </div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(72,187,120,0.6);">LAT:</span> <span id="hud-lat">0.00000</span></div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(72,187,120,0.6);">LNG:</span> <span id="hud-lng">0.00000</span></div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(72,187,120,0.6);">BEARING:</span> <span id="hud-bearing">0.00° N</span></div>
-    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(72,187,120,0.6);">ZOOM:</span> <span id="hud-zoom">14.0x</span></div>
-    <div class="d-flex justify-content-between mt-2" style="font-size:0.65rem;color:#4299e1;"><span>SYNC:</span> <span style="/* anim-removed */">● LINKED</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">LAT:</span> <span id="hud-lat">0.00000</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">LNG:</span> <span id="hud-lng">0.00000</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">BEARING:</span> <span id="hud-bearing">0.00° N</span></div>
+    <div class="d-flex justify-content-between mb-1"><span style="color:rgba(212,175,55,0.6);">ZOOM:</span> <span id="hud-zoom">14.0x</span></div>
+    <div class="d-flex justify-content-between mt-2" style="font-size:0.65rem;color:#b8860b;"><span>SYNC:</span> <span style="/* anim-removed */">● LINKED</span></div>
   </div>
 
   <!-- Title bar (inside map) -->
@@ -733,7 +733,7 @@
 
   <!-- Controls -->
   <div class="map-controls">
-    <button class="map-ctrl-btn" id="global-toggle-btn" onclick="toggleGlobalView()" style="border-color:rgba(66,153,225,0.15);">
+    <button class="map-ctrl-btn" id="global-toggle-btn" onclick="toggleGlobalView()" style="border-color:rgba(184,134,11,0.15);">
       <i class="bi bi-globe2 me-1" style="color:var(--accent-blue);"></i> Global View
     </button>
     <button class="map-ctrl-btn" onclick="toggleGlobalMarkers()">
@@ -763,11 +763,11 @@
       <span>High Risk</span>
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#f6ad55;box-shadow:0 0 6px #f6ad55;color:#f6ad55;animation-delay:0.4s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;color:#d4af37;animation-delay:0.4s;"></span>
       <span>Medium</span>
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#48bb78;box-shadow:0 0 6px #48bb78;color:#48bb78;animation-delay:0.8s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;color:#d4af37;animation-delay:0.8s;"></span>
       <span>Low Risk</span>
     </div>
     <div class="legend-divider"></div>
@@ -775,7 +775,7 @@
       <i class="bi bi-pin-map-fill" style="color:var(--accent-blue);"></i> MARKERS
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#4299e1;box-shadow:0 0 8px #4299e1;color:#4299e1;animation-delay:1.2s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#b8860b;box-shadow:0 0 8px #b8860b;color:#b8860b;animation-delay:1.2s;"></span>
       <span>Your Location</span>
     </div>
     <div class="legend-item">
@@ -940,7 +940,7 @@ function filterZones(type, btn) {
     GLOBAL_HOTSPOTS.forEach((spot, i) => {
       if (type !== 'all' && spot.type !== type) return;
 
-      const colors = { high:'#d4af37', medium:'#f6ad55', low:'#48bb78' };
+      const colors = { high:'#d4af37', medium:'#d4af37', low:'#d4af37' };
       const color = colors[spot.severity] || '#d4af37';
       const size = spot.severity === 'high' ? 18 : spot.severity === 'medium' ? 14 : 11;
       const ringDelay = (i * 0.3 % 3).toFixed(1);
@@ -982,7 +982,7 @@ function filterZones(type, btn) {
     if (heatPoints.length > 0) {
       window.globalHeatLayer = L.heatLayer(heatPoints, {
         radius: 40, blur: 30, maxZoom: 10, max: 1.0,
-        gradient: { 0.0:'#48bb78', 0.3:'#f6ad55', 0.6:'#d4af37', 0.85:'#ff4444', 1.0:'#fff' },
+        gradient: { 0.0:'#d4af37', 0.3:'#d4af37', 0.6:'#d4af37', 0.85:'#d4af37', 1.0:'#fff' },
       });
       globalHeatLayer.addTo(heatMap);
     }

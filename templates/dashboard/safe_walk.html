@@ -17,8 +17,8 @@
   100% { transform: translateX(0) translateY(0); }
 }
 @keyframes swPulseGreen {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(212,175,55,0); }
 }
 @keyframes swCheckpointPop {
   from { opacity: 0; transform: scale(0.5); }
@@ -59,8 +59,8 @@
 .sw-walking-badge {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 14px; border-radius: 20px;
-  background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25);
-  font-size: 0.72rem; color: #22c55e; font-weight: 600;
+  background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25);
+  font-size: 0.72rem; color: #d4af37; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.06em;
 }
 
@@ -91,11 +91,11 @@
   background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.2);
 }
 .sw-timeline-item.active::before {
-  background: #22c55e; border-color: #22c55e;
+  background: #d4af37; border-color: #d4af37;
   /* anim-removed */
 }
 .sw-timeline-item.completed::before {
-  background: #22c55e; border-color: #22c55e;
+  background: #d4af37; border-color: #d4af37;
 }
 .sw-timeline-item.upcoming::before {
   background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12);
@@ -113,7 +113,7 @@
 }
 .sw-progress-fill {
   height: 100%; border-radius: 6px;
-  background: linear-gradient(90deg, #22c55e, #16a34a);
+  background: linear-gradient(90deg, #d4af37, #b8860b);
   transition: width 1s ease;
   animation: swProgressBar 1s ease both;
 }
@@ -130,19 +130,19 @@
 }
 .sw-eta-value {
   font-family: 'Courier New', monospace; font-size: 1.1rem;
-  color: #22c55e; font-weight: 700;
+  color: #d4af37; font-weight: 700;
 }
 /* Share location button */
 .sw-share-btn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 10px 20px; border-radius: 10px;
-  background: rgba(66,153,225,0.1); border: 1px solid rgba(66,153,225,0.25);
-  color: #4299e1; font-size: 0.82rem; font-weight: 600;
+  background: rgba(184,134,11,0.1); border: 1px solid rgba(184,134,11,0.25);
+  color: #b8860b; font-size: 0.82rem; font-weight: 600;
   cursor: pointer; transition: all 0.2s;
 }
 .sw-share-btn:hover {
-  background: rgba(66,153,225,0.2); border-color: rgba(66,153,225,0.4);
-  transform: translateY(-1px); box-shadow: 0 4px 15px rgba(66,153,225,0.2);
+  background: rgba(184,134,11,0.2); border-color: rgba(184,134,11,0.4);
+  transform: translateY(-1px); box-shadow: 0 4px 15px rgba(184,134,11,0.2);
 }
 
 /* form inputs */
@@ -204,21 +204,21 @@
   gap: 8px;
 }
 .sw-btn-primary {
-  background: linear-gradient(135deg, #d4af37, #b91c1c);
+  background: linear-gradient(135deg, #d4af37, #b8860b);
   color: #fff;
   box-shadow: 0 4px 20px rgba(212,175,55,0.3);
 }
 .sw-btn-primary:hover { box-shadow: 0 6px 28px rgba(212,175,55,0.5); transform: translateY(-1px); }
 
 .sw-btn-safe {
-  background: linear-gradient(135deg, #16a34a, #15803d);
+  background: linear-gradient(135deg, #b8860b, #b8860b);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(22,163,74,0.3);
+  box-shadow: 0 4px 20px rgba(184,134,11,0.3);
 }
-.sw-btn-safe:hover { box-shadow: 0 6px 28px rgba(22,163,74,0.5); transform: translateY(-1px); }
+.sw-btn-safe:hover { box-shadow: 0 6px 28px rgba(184,134,11,0.5); transform: translateY(-1px); }
 
 .sw-btn-sos {
-  background: linear-gradient(135deg, #d4af37, #991b1b);
+  background: linear-gradient(135deg, #d4af37, #b8860b);
   color: #fff;
   font-size: 1rem;
   padding: 16px 32px;
@@ -260,7 +260,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.sw-status.active { background: rgba(22,163,74,0.15); color: #22c55e; }
+.sw-status.active { background: rgba(184,134,11,0.15); color: #d4af37; }
 .sw-status.overdue { background: rgba(212,175,55,0.15); color: #d4af37; }
 
 /* share link */
@@ -284,13 +284,13 @@
 {% block content %}
 <div class="sw-container">
   <!-- ── Route Monitoring Command Header ── -->
-  <div style="background:linear-gradient(135deg,rgba(72,187,120,0.08),rgba(5,5,10,0.92));border:1px solid rgba(72,187,120,0.2);border-radius:16px;padding:22px 26px;margin-bottom:20px;position:relative;overflow:hidden;">
-    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(72,187,120,0.5),transparent);"></div>
+  <div style="background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(5,5,10,0.92));border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:22px 26px;margin-bottom:20px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.5),transparent);"></div>
     <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;border-radius:16px;"></div>
     <div style="position:relative;z-index:2;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:rgba(72,187,120,0.12);border:1px solid rgba(72,187,120,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+          <div style="width:44px;height:44px;border-radius:12px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
             <i class="bi bi-signpost-2-fill" style="color:var(--accent-green);"></i>
           </div>
           <div>
@@ -307,9 +307,9 @@
       </div>
       <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0 0 12px;">Track your journey — contacts are notified if you don't check in on time.</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;font-family:'Courier New',monospace;font-size:0.68rem;">
-        <span style="padding:4px 10px;background:rgba(72,187,120,0.08);border:1px solid rgba(72,187,120,0.2);border-radius:3px;color:var(--accent-green);">📡 GPS TRACKING: ON</span>
-        <span style="padding:4px 10px;background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:3px;color:var(--accent-blue);">🛡 SHIELD: ARMED</span>
-        <span style="padding:4px 10px;background:rgba(246,173,85,0.08);border:1px solid rgba(246,173,85,0.2);border-radius:3px;color:var(--accent-amber);">🔔 AUTO-ALERT: ENABLED</span>
+        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--accent-green);">📡 GPS TRACKING: ON</span>
+        <span style="padding:4px 10px;background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.2);border-radius:3px;color:var(--accent-blue);">🛡 SHIELD: ARMED</span>
+        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--accent-amber);">🔔 AUTO-ALERT: ENABLED</span>
         <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--red-primary);">⚡ SOS: ARMED</span>
       </div>
     </div>
@@ -370,7 +370,7 @@
       <div style="margin-bottom:16px;">
         <div class="d-flex align-items-center justify-content-between" style="margin-bottom:4px;">
           <span style="font-size:0.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Journey Progress</span>
-          <span id="sw-progress-pct" style="font-size:0.68rem;color:#22c55e;font-weight:700;font-family:monospace;">0%</span>
+          <span id="sw-progress-pct" style="font-size:0.68rem;color:#d4af37;font-weight:700;font-family:monospace;">0%</span>
         </div>
         <div class="sw-progress-wrap">
           <div class="sw-progress-fill" id="sw-progress-bar" style="width:0%;"></div>
@@ -412,7 +412,7 @@
           <button class="sw-share-btn" onclick="copyShareLink()">
             <i class="bi bi-share"></i> Share Live Location
           </button>
-          <button class="sw-share-btn" onclick="shareViaWhatsApp()" style="background:rgba(37,211,102,0.1);border-color:rgba(37,211,102,0.25);color:#25d366;">
+          <button class="sw-share-btn" onclick="shareViaWhatsApp()" style="background:rgba(212,175,55,0.1);border-color:rgba(212,175,55,0.25);color:#25d366;">
             <i class="bi bi-whatsapp"></i> WhatsApp
           </button>
         </div>
@@ -495,7 +495,7 @@
         myLng = pos.coords.longitude;
         setupMap.setView([myLat, myLng], 15);
         startMarker = L.circleMarker([myLat, myLng], {
-          radius: 8, fillColor: '#22c55e', fillOpacity: 1,
+          radius: 8, fillColor: '#d4af37', fillOpacity: 1,
           color: '#fff', weight: 2
         }).addTo(setupMap).bindPopup('You are here');
       });
@@ -616,7 +616,7 @@
       activeMarker = L.circleMarker(
         [activeJourney.current_lat || activeJourney.start_lat,
          activeJourney.current_lng || activeJourney.start_lng],
-        {radius: 8, fillColor: '#22c55e', fillOpacity: 1, color: '#fff', weight: 2}
+        {radius: 8, fillColor: '#d4af37', fillOpacity: 1, color: '#fff', weight: 2}
       ).addTo(activeMap);
 
       activeDestMarker = L.marker(
@@ -668,7 +668,7 @@
 
       /* Update progress bar color based on time */
       if (pct > 85) {
-        if (progressBar) progressBar.style.background = 'linear-gradient(90deg, #f59e0b, #d4af37)';
+        if (progressBar) progressBar.style.background = 'linear-gradient(90deg, #d4af37, #d4af37)';
       }
 
       if (diff <= 0) {
@@ -793,7 +793,7 @@
           list.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><i class="bi bi-shield-check" style="font-size:1.5rem;color:var(--accent-green);"></i><p style="font-size:0.82rem;color:var(--text-muted);">No past journeys yet.</p></div>';
           return;
         }
-        var statusColors = {completed:'#48bb78', overdue:'#f6ad55', active:'#4299e1', cancelled:'#718096'};
+        var statusColors = {completed:'#d4af37', overdue:'#d4af37', active:'#b8860b', cancelled:'#718096'};
         list.innerHTML = d.journeys.map(function(j) {
           var dt = j.started_at ? new Date(j.started_at).toLocaleString() : '';
           var sc = statusColors[j.status] || '#718096';

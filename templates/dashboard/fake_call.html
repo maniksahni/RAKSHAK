@@ -109,7 +109,7 @@
   color: #fff;
   box-shadow: 0 0 20px rgba(212,175,55,0.15);
 }
-.fc-preset.active i { background: rgba(212,175,55,0.2); color: #ff6b6b; }
+.fc-preset.active i { background: rgba(212,175,55,0.2); color: #d4af37; }
 .fc-preset.active::after {
   content: ''; position: absolute; bottom: 0; left: 25%; right: 25%;
   height: 2px; background: #d4af37; border-radius: 2px;
@@ -179,7 +179,7 @@
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  background: linear-gradient(135deg, #d4af37, #b91c1c);
+  background: linear-gradient(135deg, #d4af37, #b8860b);
   color: #fff;
   box-shadow: 0 4px 20px rgba(212,175,55,0.3);
   transition: all 0.2s;
@@ -270,7 +270,7 @@
 .fc-ring-effect::before, .fc-ring-effect::after {
   content: ''; position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 50%; border: 2px solid rgba(124,58,237,0.3);
+  border-radius: 50%; border: 2px solid rgba(184,134,11,0.3);
   /* anim-removed */
 }
 .fc-ring-effect::before { width: 130px; height: 130px; }
@@ -289,7 +289,7 @@
   justify-content: center;
   font-size: 2.4rem;
   color: #fff;
-  box-shadow: 0 0 40px rgba(124,58,237,0.3);
+  box-shadow: 0 0 40px rgba(184,134,11,0.3);
   position: relative;
   z-index: 1;
 }
@@ -346,17 +346,17 @@
 }
 .fc-call-btn:hover { transform: scale(1.1); }
 .fc-call-btn.decline {
-  background: linear-gradient(135deg, #d4af37, #991b1b);
+  background: linear-gradient(135deg, #d4af37, #b8860b);
   box-shadow: 0 0 24px rgba(212,175,55,0.4);
 }
 .fc-call-btn.answer {
-  background: linear-gradient(135deg, #16a34a, #15803d);
-  box-shadow: 0 0 24px rgba(22,163,74,0.4);
+  background: linear-gradient(135deg, #b8860b, #b8860b);
+  box-shadow: 0 0 24px rgba(184,134,11,0.4);
   /* anim-removed */
 }
 @keyframes answerRing {
-  0%,100% { box-shadow: 0 0 24px rgba(22,163,74,0.4); }
-  50% { box-shadow: 0 0 44px rgba(22,163,74,0.6); }
+  0%,100% { box-shadow: 0 0 24px rgba(184,134,11,0.4); }
+  50% { box-shadow: 0 0 44px rgba(184,134,11,0.6); }
 }
 
 /* ── ACTIVE CALL SCREEN ─────────────────────────────────────────────────── */
@@ -386,7 +386,7 @@
   height: 68px;
   border-radius: 50%;
   border: none;
-  background: linear-gradient(135deg, #d4af37, #991b1b);
+  background: linear-gradient(135deg, #d4af37, #b8860b);
   box-shadow: 0 0 24px rgba(212,175,55,0.4);
   color: #fff;
   font-size: 1.5rem;
@@ -419,8 +419,8 @@
       <h4 style="font-family:var(--font-display);font-weight:800;color:#fff;margin:0 0 4px;font-size:1.4rem;">Fake Call</h4>
       <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0 0 12px;">Schedule a fake incoming call to escape uncomfortable situations</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px;font-family:'Courier New',monospace;font-size:0.68rem;">
-        <span style="padding:4px 10px;background:rgba(72,187,120,0.08);border:1px solid rgba(72,187,120,0.2);border-radius:3px;color:var(--accent-green);">AUDIO ENGINE: READY</span>
-        <span style="padding:4px 10px;background:rgba(66,153,225,0.08);border:1px solid rgba(66,153,225,0.2);border-radius:3px;color:var(--accent-blue);">VIBRATION: ON</span>
+        <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--accent-green);">AUDIO ENGINE: READY</span>
+        <span style="padding:4px 10px;background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.2);border-radius:3px;color:var(--accent-blue);">VIBRATION: ON</span>
         <span style="padding:4px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:3px;color:var(--red-primary);">COVER STORY: ACTIVE</span>
       </div>
     </div>
@@ -442,7 +442,7 @@
     <div class="fc-card">
       <h5><i class="bi bi-clock-fill me-2" style="color:#d4af37;"></i>Timer</h5>
       <div class="fc-timers" id="fc-timer-presets">
-        <div class="fc-timer-btn" data-delay="10"><i class="bi bi-lightning-fill" style="font-size:0.7rem;color:#f59e0b;margin-right:3px;"></i>10s</div>
+        <div class="fc-timer-btn" data-delay="10"><i class="bi bi-lightning-fill" style="font-size:0.7rem;color:#d4af37;margin-right:3px;"></i>10s</div>
         <div class="fc-timer-btn active" data-delay="30">30s</div>
         <div class="fc-timer-btn" data-delay="60">1 min</div>
         <div class="fc-timer-btn" data-delay="300">5 min</div>
@@ -600,7 +600,7 @@
       var progress = 1 - (remaining / totalDelay);
       ringEl.style.strokeDashoffset = progress * circumference;
       /* Change color as time runs out */
-      if (remaining <= 5) { ringEl.style.stroke = '#f59e0b'; }
+      if (remaining <= 5) { ringEl.style.stroke = '#d4af37'; }
       else { ringEl.style.stroke = '#d4af37'; }
       if (remaining <= 0) {
         clearInterval(pendingTimer);

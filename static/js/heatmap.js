@@ -126,13 +126,13 @@ async function initHeatmap() {
 
       const userIcon = L.divIcon({
         className: '',
-        html: `<div style="width:18px;height:18px;border-radius:50%;background:#4299e1;border:3px solid rgba(255,255,255,0.9);box-shadow:0 0 16px #4299e1,0 0 32px rgba(66,153,225,0.4);"></div>
-               <div style="position:absolute;top:-4px;left:-4px;width:26px;height:26px;border-radius:50%;border:2px solid rgba(66,153,225,0.4);animation:userPing 2s ease-out infinite;"></div>`,
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:#b8860b;border:3px solid rgba(255,255,255,0.9);box-shadow:0 0 16px #b8860b,0 0 32px rgba(184,134,11,0.4);"></div>
+               <div style="position:absolute;top:-4px;left:-4px;width:26px;height:26px;border-radius:50%;border:2px solid rgba(184,134,11,0.4);animation:userPing 2s ease-out infinite;"></div>`,
         iconSize: [18, 18],
         iconAnchor: [9, 9],
       });
       L.marker([userLoc.lat, userLoc.lng], { icon: userIcon })
-        .bindPopup('<strong style="color:#4299e1;">📍 You are here</strong><br><span style="color:#a0aec0;font-size:0.8rem;">GPS location locked</span>')
+        .bindPopup('<strong style="color:#b8860b;">📍 You are here</strong><br><span style="color:#a0aec0;font-size:0.8rem;">GPS location locked</span>')
         .addTo(heatMap);
 
       // Check proximity
@@ -214,7 +214,7 @@ function loadGlobalHotspots() {
   const heatPoints = [];
 
   GLOBAL_HOTSPOTS.forEach((spot, i) => {
-    const colors = { high:'#b8860b', medium:'#f6ad55', low:'#48bb78' };
+    const colors = { high:'#b8860b', medium:'#d4af37', low:'#d4af37' };
     const color = colors[spot.severity] || '#b8860b';
     const size = spot.severity === 'high' ? 18 : spot.severity === 'medium' ? 14 : 11;
     const ringDelay = (i * 0.3 % 3).toFixed(1);
@@ -276,7 +276,7 @@ function loadGlobalHotspots() {
     blur: 30,
     maxZoom: 10,
     max: 1.0,
-    gradient: { 0.0:'#48bb78', 0.3:'#f6ad55', 0.6:'#b8860b', 0.85:'#ff4444', 1.0:'#fff' },
+    gradient: { 0.0:'#d4af37', 0.3:'#d4af37', 0.6:'#b8860b', 0.85:'#d4af37', 1.0:'#fff' },
   });
   globalHeatLayer.addTo(heatMap);
 }
@@ -332,7 +332,7 @@ async function loadHeatmap() {
       blur: 25,
       maxZoom: 17,
       max: 1.0,
-      gradient: { 0.0: '#4299e1', 0.3: '#f6ad55', 0.6: '#b8860b', 1.0: '#fff' },
+      gradient: { 0.0: '#b8860b', 0.3: '#d4af37', 0.6: '#b8860b', 1.0: '#fff' },
     });
     heatLayer.addTo(heatMap);
   } catch (e) {
@@ -357,7 +357,7 @@ function addZoneMarker(zone, coords) {
   const lng = zone.longitude || (coords && coords[0]);
   if (!lat || !lng) return;
 
-  const colors = { high: '#b8860b', medium: '#f6ad55', low: '#48bb78' };
+  const colors = { high: '#b8860b', medium: '#d4af37', low: '#d4af37' };
   const color = colors[zone.severity] || '#b8860b';
 
   const icon = L.divIcon({
@@ -399,9 +399,9 @@ async function upvoteZone(zoneId, btn) {
     const res = await postJSON(`/danger-zones/${zoneId}/upvote`);
     if (res.success) {
       btn.textContent = '✓ Done';
-      btn.style.background = 'rgba(72,187,120,0.15)';
-      btn.style.borderColor = 'rgba(72,187,120,0.4)';
-      btn.style.color = '#48bb78';
+      btn.style.background = 'rgba(212,175,55,0.15)';
+      btn.style.borderColor = 'rgba(212,175,55,0.4)';
+      btn.style.color = '#d4af37';
       showToast('Zone upvoted — helps others stay safe', 'success');
     } else {
       btn.textContent = res.error || 'Failed';

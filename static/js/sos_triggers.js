@@ -400,7 +400,7 @@
           '<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#888;"><span>3s</span><span id="sos-countdown-val">' + countdown + 's</span><span>10s</span></div>' +
         '</div>' +
 
-        '<button id="sos-settings-save" style="width:100%;padding:12px;background:linear-gradient(135deg,#b8860b,#b91c1c);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;letter-spacing:0.05em;">SAVE SETTINGS</button>' +
+        '<button id="sos-settings-save" style="width:100%;padding:12px;background:linear-gradient(135deg,#b8860b,#b8860b);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;letter-spacing:0.05em;">SAVE SETTINGS</button>' +
       '</div>';
 
     document.body.appendChild(modal);
