@@ -9,9 +9,12 @@
    ═══════════════════════════════════════════ */
 :root{
   --bg:#050508;--bg2:#08080f;
-  --red:#d4af37;--red2:#fb7185;
+  --gold:#d4af37;--gold-dark:#b8860b;--gold-light:#f7e7ce;
+  --red:#ef4444;--red2:#fca5a5;
+  --accent:#c8a2ff;--accent2:#8b5cf6;
+  --blue:#3b82f6;--cyan:#06b6d4;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--violet:#8b5cf6;
   --white:#ffffff;--muted:rgba(255,255,255,0.45);
-  --bdr:rgba(212,175,55,0.15);
+  --bdr:rgba(255,255,255,0.08);
   --sg:'Space Grotesk',sans-serif;--int:'Inter',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -22,8 +25,8 @@ body{font-family:var(--sg);background:var(--bg);color:var(--white);overflow-x:hi
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(circle at 100% 0%, rgba(212,175,55,0.1) 0%, transparent 60%),
-    radial-gradient(circle at 0% 100%, rgba(184,134,11,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(139,92,246,0.08) 0%, transparent 60%),
+    radial-gradient(circle at 0% 100%, rgba(212,175,55,0.06) 0%, transparent 50%),
     radial-gradient(rgba(255,255,255,0.055) 1px,transparent 1px);
   background-size:100% 100%, 100% 100%, 28px 28px;
   mask-image:radial-gradient(ellipse 90% 90% at 50% 0%,black 30%,transparent 80%);
@@ -32,11 +35,11 @@ body::before{
 
 /* ── Navbar ── */
 .rk-nav{position:fixed !important;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:background .4s,border-color .4s,backdrop-filter .4s}
-.rk-nav.scrolled{background:rgba(5,5,8,.93) !important;border-color:var(--bdr) !important;}
+.rk-nav.scrolled{background:rgba(5,5,8,.93) !important;border-color:rgba(255,255,255,0.06) !important;}
 /* Premium logo already handled by base.html style — keep for compat */
 .rk-nav .navbar-brand-text{font-family:var(--sg) !important;font-size:1.1rem !important;font-weight:700 !important;letter-spacing:.2em !important;color:var(--white) !important;text-shadow:none !important}
 .rk-nav .btn-glass{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:500 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 18px !important}
-.rk-nav .btn-rakshak{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:600 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 20px !important;background:var(--red) !important;box-shadow:0 0 22px rgba(212,175,55,.4) !important}
+.rk-nav .btn-rakshak{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:600 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 20px !important;background:linear-gradient(135deg,#ef4444,#dc2626) !important;box-shadow:0 0 22px rgba(239,68,68,.35) !important}
 .rk-page{position:relative;z-index:1}
 
 /* ═══════════════════════════════════════════
@@ -56,7 +59,7 @@ body::before{
 .hero-section::before{
   content:'';position:absolute;width:700px;height:700px;top:50%;left:55%;
   transform:translate(-50%,-50%);
-  background:radial-gradient(ellipse,rgba(212,175,55,.08) 0%,transparent 65%);
+  background:radial-gradient(ellipse,rgba(139,92,246,.06) 0%,rgba(212,175,55,.04) 40%,transparent 65%);
   filter:blur(60px);pointer-events:none;z-index:0;
 }
 
@@ -64,14 +67,14 @@ body::before{
 .hero-visual{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;overflow:visible}
 
 /* ── Pill ── */
-.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:100px;border:1px solid rgba(212,175,55,.3);background:rgba(212,175,55,.07);font-size:.68rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(247,231,206,.9);margin-bottom:2rem;animation:slideUp .5s ease both}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:100px;border:1px solid rgba(139,92,246,.3);background:rgba(139,92,246,.07);font-size:.68rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.85);margin-bottom:2rem;animation:slideUp .5s ease both}
 .pill-dot{width:5px;height:5px;border-radius:50%;background:var(--red);box-shadow:0 0 7px var(--red);/* anim-removed */font-weight:700;line-height:1.04;letter-spacing:-.035em;margin-bottom:1.5rem;animation:slideUp .5s .08s ease both}
 .h1-white{display:block;color:var(--white)}
-.h1-grad{display:block;background:linear-gradient(120deg,#d4af37 0%,#d4af37 40%,#f7e7ce 50%,#d4af37 60%,#d4af37 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;/* anim-removed */font-size:clamp(.9rem,1.3vw,1.02rem);color:rgba(255,255,255,.48);max-width:480px;line-height:1.9;margin-bottom:2.4rem;animation:slideUp .5s .16s ease both}
+.h1-grad{display:block;background:linear-gradient(120deg,#ffffff 0%,#e0e7ff 25%,#c084fc 50%,#e0e7ff 75%,#ffffff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;/* anim-removed */font-size:clamp(.9rem,1.3vw,1.02rem);color:rgba(255,255,255,.48);max-width:480px;line-height:1.9;margin-bottom:2.4rem;animation:slideUp .5s .16s ease both}
 
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:3rem;animation:slideUp .5s .24s ease both}
-.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;font-family:var(--sg);font-weight:700;font-size:1rem;background:linear-gradient(135deg, var(--red) 0%, #b8860b 100%);color:#fff;border:none;text-decoration:none;cursor:pointer;box-shadow:0 10px 25px rgba(212,175,55,.4), inset 0 1px 0 rgba(255,255,255,0.2);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s, background .3s;position:relative;overflow:hidden;letter-spacing:0.05em;text-transform:uppercase;}
-.btn-primary:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 15px 35px rgba(212,175,55,.6);color:#fff}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;font-family:var(--sg);font-weight:700;font-size:1rem;background:linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);color:#fff;border:none;text-decoration:none;cursor:pointer;box-shadow:0 10px 25px rgba(239,68,68,.35), inset 0 1px 0 rgba(255,255,255,0.2);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s, background .3s;position:relative;overflow:hidden;letter-spacing:0.05em;text-transform:uppercase;}
+.btn-primary:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 15px 35px rgba(239,68,68,.5);color:#fff}
 .btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transform:skewX(-20deg);/* anim-removed */align-items:center;gap:8px;padding:14px 30px;border-radius:12px;font-family:var(--sg);font-weight:600;font-size:0.95rem;background:rgba(255,255,255,.03);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15);text-decoration:none;cursor:pointer;transition:all .3s cubic-bezier(.22,1,.36,1);}
 .btn-outline:hover{transform:translateY(-3px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.3);color:#fff;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
 
@@ -192,7 +195,7 @@ body::before{
 .di-indicator {
   position: absolute; right: 18px; top: 7px;
   width: 4px; height: 4px; border-radius: 50%;
-  background: #d4af37; box-shadow: 0 0 8px #d4af37;
+  background: #10b981; box-shadow: 0 0 8px #10b981;
   /* anim-removed */
 }
 
@@ -255,7 +258,7 @@ body::before{
 .ph-time{font-weight:600;color:rgba(255,255,255,.82)}
 .ph-icons{display:flex;gap:4px;align-items:center}
 .ph-bat{width:14px;height:7px;border:1px solid rgba(255,255,255,.4);border-radius:2px;position:relative}
-.ph-bat::after{content:'';position:absolute;top:1px;left:1px;bottom:1px;width:65%;background:#d4af37;border-radius:1px}
+.ph-bat::after{content:'';position:absolute;top:1px;left:1px;bottom:1px;width:65%;background:#10b981;border-radius:1px}
 .ph-bat::before{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2px;height:4px;background:rgba(255,255,255,.4);border-radius:0 1px 1px 0}
 
 /* app header */
@@ -263,8 +266,8 @@ body::before{
 .ph-logo{display:flex;align-items:center;gap:5px;font-size:.65rem;font-weight:700;letter-spacing:.12em}
 .ph-logo-shield{width:18px;height:18px;background:var(--red);border-radius:4px;display:flex;align-items:center;justify-content:center}
 .ph-logo-shield svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.ph-live-badge{display:flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.28);font-size:.5rem;font-weight:700;letter-spacing:.12em;color:rgba(247,231,206,.9)}
-.ph-live-dot{width:4px;height:4px;border-radius:50%;background:#d4af37;box-shadow:0 0 5px #d4af37;/* anim-removed */flex-direction:column;align-items:center;margin-bottom:14px}
+.ph-live-badge{display:flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);font-size:.5rem;font-weight:700;letter-spacing:.12em;color:rgba(167,243,208,.9)}
+.ph-live-dot{width:4px;height:4px;border-radius:50%;background:#10b981;box-shadow:0 0 5px #10b981;/* anim-removed */flex-direction:column;align-items:center;margin-bottom:14px}
 .ph-sos-outer{
   width:100px;height:100px;border-radius:50%;
   background:rgba(212,175,55,.055);
@@ -279,9 +282,9 @@ body::before{
 }
 .ph-sos-btn{
   width:64px;height:64px;border-radius:50%;
-  background:linear-gradient(145deg,#d4af37,#b8860b);
+  background:linear-gradient(145deg,#ef4444,#dc2626);
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 24px rgba(212,175,55,.65),0 0 0 2px rgba(212,175,55,.25);
+  box-shadow:0 6px 24px rgba(239,68,68,.55),0 0 0 2px rgba(239,68,68,.25);
   cursor:pointer;
   transition:transform .2s;
 }
@@ -303,20 +306,20 @@ body::before{
 .ph-risk{margin-bottom:10px}
 .ph-risk-head{display:flex;justify-content:space-between;font-family:var(--int);font-size:.54rem;margin-bottom:5px}
 .ph-risk-head span:first-child{color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-.ph-risk-val{color:#d4af37;font-weight:700}
+.ph-risk-val{color:#10b981;font-weight:700}
 .ph-risk-track{height:4px;border-radius:10px;background:rgba(255,255,255,.07)}
-.ph-risk-fill{height:100%;width:0;border-radius:10px;background:linear-gradient(90deg,#b8860b,#d4af37);position:relative;animation:riskFill 1.5s 1.4s cubic-bezier(.25,.46,.45,.94) forwards}
+.ph-risk-fill{height:100%;width:0;border-radius:10px;background:linear-gradient(90deg,#059669,#10b981);position:relative;animation:riskFill 1.5s 1.4s cubic-bezier(.25,.46,.45,.94) forwards}
 @keyframes riskFill{to{width:17%}}
-.ph-risk-fill::after{content:'';position:absolute;right:0;top:50%;transform:translate(50%,-50%);width:8px;height:8px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px #d4af37}
+.ph-risk-fill::after{content:'';position:absolute;right:0;top:50%;transform:translate(50%,-50%);width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
 
 /* activity */
 .ph-activity-title{font-family:var(--int);font-size:.52rem;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:8px}
 .ph-items{display:flex;flex-direction:column;gap:6px}
 .ph-item{display:flex;align-items:center;gap:7px;font-family:var(--int);font-size:.6rem}
 .ph-item-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.ph-item-dot.r{background:#d4af37;box-shadow:0 0 5px #d4af37}
-.ph-item-dot.g{background:#d4af37;box-shadow:0 0 5px #d4af37}
-.ph-item-dot.o{background:#d4af37;box-shadow:0 0 5px #d4af37}
+.ph-item-dot.r{background:#ef4444;box-shadow:0 0 5px #ef4444}
+.ph-item-dot.g{background:#10b981;box-shadow:0 0 5px #10b981}
+.ph-item-dot.o{background:#f59e0b;box-shadow:0 0 5px #f59e0b}
 .ph-item-txt{flex:1;color:rgba(255,255,255,.45);line-height:1.35}
 .ph-item-txt strong{color:rgba(255,255,255,.8);font-weight:600}
 .ph-item-time{color:rgba(255,255,255,.2);font-size:.52rem;white-space:nowrap}
@@ -339,8 +342,8 @@ body::before{
 /* card 1 — top right, outside tilt */
 .fc1{top:10px;right:-80px;/* anim-removed */left:-80px;/* anim-removed */align-items:center;gap:7px;margin-bottom:5px}
 .rc-dot{width:6px;height:6px;border-radius:0;flex-shrink:0}
-.rc-dot.alive{background:var(--red);box-shadow:0 0 10px var(--red);/* anim-removed */box-shadow:0 0 10px #d4af37}
-.rc-dot.warn{background:#d4af37;box-shadow:0 0 10px #d4af37}
+.rc-dot.alive{background:var(--red);box-shadow:0 0 10px var(--red);}
+.rc-dot.warn{background:#f59e0b;box-shadow:0 0 10px #f59e0b}
 .rc-title{font-family:'Rajdhani', sans-serif;font-size:.85rem;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:0.05em;}
 .rc-body{font-family:'Courier New', monospace;font-size:.7rem;color:rgba(255,255,255,.6);line-height:1.4}
 .rc-time{font-family:'Courier New', monospace;font-size:.65rem;color:var(--red);margin-top:5px;font-weight:700}
@@ -358,7 +361,7 @@ body::before{
 ═══════════════════════════════════════════*/
 .stats-section{padding:6rem clamp(2rem,6vw,6rem);max-width:1380px;margin:0 auto}
 .sec-hd{text-align:center;margin-bottom:3.5rem}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.7rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:#d4af37;margin-bottom:1rem;font-family:var(--sg); border:1px solid rgba(212,175,55,0.2); padding:6px 16px; border-radius:50px; background:rgba(212,175,55,0.05); box-shadow:0 0 15px rgba(212,175,55,0.1);}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.7rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;font-family:var(--sg); border:1px solid rgba(139,92,246,0.25); padding:6px 16px; border-radius:50px; background:rgba(139,92,246,0.06); box-shadow:0 0 15px rgba(139,92,246,0.1);}
 .sec-title{font-family:var(--sg);font-size:clamp(2.5rem,4.5vw,3.8rem);font-weight:800;line-height:1.15;letter-spacing:-0.03em;}
 .sec-sub{font-family:var(--int);font-size:1.05rem;color:rgba(255,255,255,0.6);max-width:540px;margin:.8rem auto 0;line-height:1.6}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.02);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 40px rgba(0,0,0,0.5); }
@@ -369,21 +372,21 @@ body::before{
 .stat-cell:hover::after { opacity:1; }
 .stat-cell:last-child{border-right:none}
 .stat-cell:hover{background:rgba(255,255,255,0.04); transform:translateY(-4px);}
-.stat-cell:nth-child(1){--sc:rgba(212,175,55,0.8);--sc-rgb:239,68,68}
-.stat-cell:nth-child(2){--sc:rgba(212,175,55,0.8);--sc-rgb:212,175,55}
-.stat-cell:nth-child(3){--sc:rgba(212,175,55,0.8);--sc-rgb:212,175,55}
-.stat-cell:nth-child(4){--sc:rgba(212,175,55,0.8);--sc-rgb:96,165,250}
+.stat-cell:nth-child(1){--sc:rgba(239,68,68,0.8);--sc-rgb:239,68,68}
+.stat-cell:nth-child(2){--sc:rgba(59,130,246,0.8);--sc-rgb:59,130,246}
+.stat-cell:nth-child(3){--sc:rgba(16,185,129,0.8);--sc-rgb:16,185,129}
+.stat-cell:nth-child(4){--sc:rgba(139,92,246,0.8);--sc-rgb:139,92,246}
 .stat-num{font-family:var(--sg);font-size:clamp(3rem,4.5vw,4.5rem);font-weight:800;display:block;line-height:1;margin-bottom:0.2rem;}
-.stat-cell:nth-child(1) .stat-num{color:#d4af37;text-shadow:0 0 40px rgba(212,175,55,0.4);}
-.stat-cell:nth-child(2) .stat-num{color:#d4af37;text-shadow:0 0 40px rgba(212,175,55,0.4);}
-.stat-cell:nth-child(3) .stat-num{color:#d4af37;text-shadow:0 0 40px rgba(212,175,55,0.4);}
-.stat-cell:nth-child(4) .stat-num{color:#d4af37;text-shadow:0 0 40px rgba(212,175,55,0.4);}
+.stat-cell:nth-child(1) .stat-num{color:#ef4444;text-shadow:0 0 40px rgba(239,68,68,0.4);}
+.stat-cell:nth-child(2) .stat-num{color:#3b82f6;text-shadow:0 0 40px rgba(59,130,246,0.4);}
+.stat-cell:nth-child(3) .stat-num{color:#10b981;text-shadow:0 0 40px rgba(16,185,129,0.4);}
+.stat-cell:nth-child(4) .stat-num{color:#8b5cf6;text-shadow:0 0 40px rgba(139,92,246,0.4);}
 .stat-micro-icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;}
 .stat-micro-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.stat-cell:nth-child(1) .stat-micro-icon{color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);}
-.stat-cell:nth-child(2) .stat-micro-icon{color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);}
-.stat-cell:nth-child(3) .stat-micro-icon{color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);}
-.stat-cell:nth-child(4) .stat-micro-icon{color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);}
+.stat-cell:nth-child(1) .stat-micro-icon{color:#ef4444;background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);}
+.stat-cell:nth-child(2) .stat-micro-icon{color:#3b82f6;background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.2);}
+.stat-cell:nth-child(3) .stat-micro-icon{color:#10b981;background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);}
+.stat-cell:nth-child(4) .stat-micro-icon{color:#8b5cf6;background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);}
 .stat-lbl{font-family:var(--int);font-size:.85rem;color:rgba(255,255,255,0.5);font-weight:500;}
 
 /* ═══════════════════════════════════════════
@@ -394,19 +397,24 @@ body::before{
 .step-card{background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.08); border-radius:24px;padding:40px 36px;position:relative;overflow:visible;transition:all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);will-change:transform;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 15px 30px rgba(0,0,0,0.5); }
 .step-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); opacity:0.1; transition:opacity 0.3s; }
 .step-card:hover::before { opacity:0.5; box-shadow:0 0 15px rgba(255,255,255,0.5); }
-.step-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% -20%, rgba(212,175,55,0.15), transparent 70%);opacity:0;transition:opacity 0.5s; pointer-events:none;}
-.step-card:hover{border-color:rgba(255,255,255,0.15);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.05); transform:translateY(-8px)}
+.step-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% -20%, rgba(var(--step-rgb,239,68,68),0.12), transparent 70%);opacity:0;transition:opacity 0.5s; pointer-events:none;}
+.step-card:hover{border-color:rgba(255,255,255,0.15);box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(var(--step-rgb,239,68,68),0.08); transform:translateY(-8px)}
 .step-card:hover::after{opacity:1}
 .step-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5rem; position:relative; z-index:2;}
 .step-big{font-family:var(--sg);font-size:5rem;font-weight:900;line-height:1;color:transparent; -webkit-text-stroke:1px rgba(255,255,255,0.1);letter-spacing:-0.05em; transition:all 0.5s;}
-.step-card:hover .step-big { color:rgba(255,255,255,0.05); -webkit-text-stroke:1px rgba(212,175,55,0.5); text-shadow:0 0 20px rgba(212,175,55,0.3); transform:translateX(-5px); }
-.step-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));border:1px solid rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;transition:all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);}
-.step-card:hover .step-icon{background:rgba(212,175,55,0.8);box-shadow:0 10px 30px rgba(212,175,55,0.4); transform:scale(1.1) rotate(5deg); border-color:#fff;}
+.step-card:hover .step-big { color:rgba(255,255,255,0.05); -webkit-text-stroke:1px rgba(var(--step-rgb,239,68,68),0.5); text-shadow:0 0 20px rgba(var(--step-rgb,239,68,68),0.3); transform:translateX(-5px); }
+.step-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg, rgba(var(--step-rgb,239,68,68),0.15), rgba(var(--step-rgb,239,68,68),0.04));border:1px solid rgba(var(--step-rgb,239,68,68),0.3);display:flex;align-items:center;justify-content:center;transition:all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);}
+.step-card:hover .step-icon{background:rgba(var(--step-rgb,239,68,68),0.8);box-shadow:0 10px 30px rgba(var(--step-rgb,239,68,68),0.4); transform:scale(1.1) rotate(5deg); border-color:#fff;}
 .step-icon svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round; transition:all 0.3s;}
 .step-card:hover .step-icon svg { filter:drop-shadow(0 0 5px #fff); }
 .step-h{font-family:var(--sg);font-size:1.6rem;font-weight:800;color:var(--white);margin-bottom:1rem;letter-spacing:-0.02em; position:relative; z-index:2;}
 .step-p{font-family:var(--int);font-size:0.95rem;color:rgba(255,255,255,0.6);line-height:1.7; position:relative; z-index:2; font-weight:400;}
 
+
+/* Step card distinct colors */
+.step-card:nth-child(1){--step-rgb:239,68,68}
+.step-card:nth-child(2){--step-rgb:59,130,246}
+.step-card:nth-child(3){--step-rgb:16,185,129}
 /* ═══════════════════════════════════════════
    BENTO GRID
 ═══════════════════════════════════════════*/
@@ -437,7 +445,7 @@ body::before{
 /* 1024px bento handled in main responsive block below */
 .bc::before {
   content:''; position:absolute; inset:-2px; z-index:-1;
-  background: linear-gradient(135deg, rgba(212,175,55,0.4), rgba(212,175,55,0.4), rgba(212,175,55,0.4));
+  background: linear-gradient(135deg, rgba(var(--bc-rgb,212,175,55),0.4), rgba(var(--bc-rgb,212,175,55),0.2), rgba(var(--bc-rgb,212,175,55),0.4));
   border-radius:26px; opacity:0; transition:opacity 0.5s ease;
 }
 .bc:hover::before { opacity:1; /* anim-removed */ }
@@ -453,8 +461,8 @@ body::before{
 
 
 .bc-num{position:absolute;top:20px;right:25px;font-family:var(--sg);font-size:0.8rem;font-weight:800;letter-spacing:0.1em;background:linear-gradient(90deg, #fff, rgba(255,255,255,0.4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.bc-icon{position:relative;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));border:1px solid rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:1.8rem;transition:all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index:2;}
-.bc:hover .bc-icon{background:rgba(212,175,55,0.8);box-shadow:0 10px 30px rgba(212,175,55,0.5); transform:scale(1.1) rotate(-5deg); border-color:#fff;}
+.bc-icon{position:relative;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg, rgba(var(--bc-rgb,212,175,55),0.15), rgba(var(--bc-rgb,212,175,55),0.04));border:1px solid rgba(var(--bc-rgb,212,175,55),0.3);display:flex;align-items:center;justify-content:center;margin-bottom:1.8rem;transition:all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index:2;}
+.bc:hover .bc-icon{background:rgba(var(--bc-rgb,212,175,55),0.8);box-shadow:0 10px 30px rgba(var(--bc-rgb,212,175,55),0.5); transform:scale(1.1) rotate(-5deg); border-color:#fff;}
 .bc-icon svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round; transition:all 0.3s;}
 .bc:hover .bc-icon svg { stroke:#fff; filter:drop-shadow(0 0 5px #fff); }
 .bc-h{font-family:var(--sg); font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:0.8rem;letter-spacing:-0.02em; z-index:2; position:relative; line-height:1.2;}
@@ -465,11 +473,11 @@ body::before{
 .feed-row:nth-child(1){animation-delay:1s}  .feed-row:nth-child(2){animation-delay:1.2s}  .feed-row:nth-child(3){animation-delay:1.4s}  .feed-row:nth-child(4){animation-delay:1.6s}
 @keyframes feedIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
 .fd{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.fd.r{background:#d4af37;box-shadow:0 0 12px #d4af37}
-.fd.g{background:#d4af37;box-shadow:0 0 12px #d4af37}
-.fd.o{background:#d4af37;box-shadow:0 0 12px #d4af37}
+.fd.r{background:#ef4444;box-shadow:0 0 12px #ef4444}
+.fd.g{background:#10b981;box-shadow:0 0 12px #10b981}
+.fd.o{background:#f59e0b;box-shadow:0 0 12px #f59e0b}
 .fd-txt{color:rgba(255,255,255,0.85);flex:1;}
-.fd-time{font-family:'Courier New', monospace; color:#f7e7ce;font-size:0.75rem;font-weight:700;}
+.fd-time{font-family:'Courier New', monospace; color:rgba(255,255,255,0.5);font-size:0.75rem;font-weight:700;}
 
 /* Mini-Anim Keyframes */
 @keyframes ringPulse { 0% { transform:scale(0.8); opacity:1; } 100% { transform:scale(2); opacity:0; } }
@@ -498,7 +506,7 @@ body::before{
   border-color:rgba(255,255,255,0.15);box-shadow:0 30px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1);
   transform:translateY(-8px);
 }
-.testi-stars{display:flex;gap:4px;margin-bottom:1.5rem;color:#d4af37;font-size:1rem}
+.testi-stars{display:flex;gap:4px;margin-bottom:1.5rem;color:#fbbf24;font-size:1rem}
 .testi-text{font-family:var(--int);font-size:1rem;color:rgba(255,255,255,0.8);line-height:1.8;margin-bottom:2rem;font-weight:400;}
 .testi-text.bc-p{font-family:var(--int);font-size:0.95rem;color:rgba(255,255,255,0.65);line-height:1.7;margin:0; font-weight:400;}
 
@@ -512,9 +520,9 @@ body::before{
   color:rgba(255,255,255,0.8);
 }
 .bc-stat-pill .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.bc-stat-pill.pill-r .dot{background:#d4af37;box-shadow:0 0 8px #d4af37;}
-.bc-stat-pill.pill-g .dot{background:#d4af37;box-shadow:0 0 8px #d4af37;}
-.bc-stat-pill.pill-o .dot{background:#d4af37;box-shadow:0 0 8px #d4af37;}
+.bc-stat-pill.pill-r .dot{background:#ef4444;box-shadow:0 0 8px #ef4444;}
+.bc-stat-pill.pill-g .dot{background:#10b981;box-shadow:0 0 8px #10b981;}
+.bc-stat-pill.pill-o .dot{background:#f59e0b;box-shadow:0 0 8px #f59e0b;}
 
 /* Feed Anim */
 .testi-author{display:flex;align-items:center;gap:12px}
@@ -561,9 +569,9 @@ body::before{
   display:flex;align-items:center;justify-content:center;
   transition:all 0.3s;
 }
-.tb-item:hover .tb-icon { background:rgba(212,175,55,0.2); border-color:var(--red); transform:scale(1.1); }
+.tb-item:hover .tb-icon { background:rgba(139,92,246,0.15); border-color:var(--accent2); transform:scale(1.1); }
 .tb-icon svg{width:18px;height:18px;stroke:var(--white);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; transition:all 0.3s;}
-.tb-item:hover .tb-icon svg { stroke:var(--red); }
+.tb-item:hover .tb-icon svg { stroke:var(--accent2); }
 
 /* ═══════════════════════════════════════════
    LIVE OPERATIONS BOARD
@@ -576,7 +584,7 @@ body::before{
 }
 .ops-board::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.6),rgba(212,175,55,0.4),rgba(212,175,55,0.4),transparent);
+  background:linear-gradient(90deg,transparent,rgba(59,130,246,0.5),rgba(139,92,246,0.5),rgba(239,68,68,0.4),transparent);
   /* anim-removed */
 }
 @keyframes opsBeam{0%{opacity:0.6}50%{opacity:1}100%{opacity:0.6}}
@@ -591,11 +599,11 @@ body::before{
 .ops-badge{
   display:flex;align-items:center;gap:7px;padding:5px 14px;border-radius:50px;
   font-family:'Courier New',monospace;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;
-  background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.2);color:#d4af37;
+  background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);color:#10b981;
 }
 .ops-badge .ob-dot{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;/* anim-removed */}
-.ops-badge.ob-amber{background:rgba(212,175,55,0.06);border-color:rgba(212,175,55,0.2);color:#d4af37;}
-.ops-badge.ob-blue{background:rgba(184,134,11,0.06);border-color:rgba(184,134,11,0.2);color:#d4af37;}
+.ops-badge.ob-amber{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.2);color:#f59e0b;}
+.ops-badge.ob-blue{background:rgba(59,130,246,0.06);border-color:rgba(59,130,246,0.2);color:#3b82f6;}
 .ops-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;}
 .ops-metric{
   padding:2rem;border-right:1px solid rgba(255,255,255,0.05);
@@ -628,7 +636,7 @@ body::before{
 }
 .rk-footer-v2::before{
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.3),rgba(212,175,55,0.2),rgba(184,134,11,0.2),transparent);
+  background:linear-gradient(90deg,transparent,rgba(139,92,246,0.25),rgba(59,130,246,0.2),rgba(239,68,68,0.15),transparent);
 }
 .ft-grid-v2{
   display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr;
@@ -689,11 +697,11 @@ body::before{
    CTA
 ═══════════════════════════════════════════*/
 .cta-section{padding:8rem clamp(2rem,6vw,6rem);text-align:center;position:relative;overflow:hidden}
-.cta-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 80% at 50% 120%,rgba(212,175,55,.15),transparent 70%);}
+.cta-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 80% at 50% 120%,rgba(139,92,246,.12),rgba(239,68,68,.06),transparent 70%);}
 .cta-inner{position:relative;z-index:1}
-.cta-eyebrow{display:inline-block;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:1.5rem; background:rgba(212,175,55,0.05); padding:6px 20px; border-radius:50px; border:1px solid rgba(212,175,55,0.2);}
+.cta-eyebrow{display:inline-block;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem; background:rgba(139,92,246,0.06); padding:6px 20px; border-radius:50px; border:1px solid rgba(139,92,246,0.2);}
 .cta-h2{font-size:clamp(3rem,6vw,5.5rem);font-weight:800;line-height:1.05;letter-spacing:-0.03em;margin-bottom:1.5rem}
-.cta-h2 em{font-style:normal;background:linear-gradient(120deg,#fff,#f7e7ce);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-h2 em{font-style:normal;background:linear-gradient(120deg,#fff,#c084fc,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .cta-p{font-family:var(--int);font-size:1.1rem;color:rgba(255,255,255,0.6);max-width:500px;margin:0 auto 3rem;line-height:1.7}
 .cta-btns{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}
 
@@ -756,7 +764,7 @@ body::before{
 /* ═══════════════════════════════════════════
    SCROLL PROGRESS BAR
 ═══════════════════════════════════════════*/
-.scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#d4af37,#d4af37,#f7e7ce,#d4af37,#d4af37);background-size:200% 100%;/* anim-removed */z-index:9999;width:0;transition:width .1s linear;box-shadow:0 0 10px rgba(212,175,55,.6),0 0 20px rgba(212,175,55,.3)}
+.scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981,#3b82f6,#8b5cf6);background-size:200% 100%;z-index:9999;width:0;transition:width .1s linear;box-shadow:0 0 10px rgba(139,92,246,.5),0 0 20px rgba(239,68,68,.3)}
 
 /* ═══════════════════════════════════════════
    3D SHIELD ANIMATION (Hero background)
@@ -773,36 +781,40 @@ body::before{
 .stat-cell:hover .stat-micro-icon{background:rgba(212,175,55,.2);box-shadow:0 0 15px rgba(212,175,55,.3);transform:scale(1.1)}
 .parallax-section{transition:transform .1s linear;will-change:transform}
 
+
+/* Step card distinct colors */
+.step-card:nth-child(1){--step-rgb:239,68,68}
+.step-card:nth-child(2){--step-rgb:59,130,246}
+.step-card:nth-child(3){--step-rgb:16,185,129}
 /* ═══════════════════════════════════════════
    BENTO GRID — UNIQUE COLORED HOVERS
 ═══════════════════════════════════════════*/
-.bc-sos:hover{border-color:rgba(212,175,55,.6) !important;box-shadow:inset 0 0 40px rgba(212,175,55,.12),0 0 50px rgba(212,175,55,.25) !important}
-.bc-sos:hover .bc-icon{background:rgba(212,175,55,.2) !important;box-shadow:0 0 25px rgba(212,175,55,.5) !important}
-.bc-threat:hover{border-color:rgba(212,175,55,.6) !important;box-shadow:inset 0 0 40px rgba(212,175,55,.12),0 0 50px rgba(212,175,55,.25) !important}
-.bc-threat:hover .bc-icon{background:rgba(212,175,55,.2) !important;box-shadow:0 0 25px rgba(212,175,55,.5) !important}
-.bc-threat:hover .bc-icon svg{stroke:#d4af37 !important}
-.bc-threat:hover::before{border-top-color:#d4af37 !important;border-left-color:#d4af37 !important}
-.bc-threat:hover::after{border-bottom-color:#d4af37 !important;border-right-color:#d4af37 !important}
-.bc-map:hover{border-color:rgba(212,175,55,.6) !important;box-shadow:inset 0 0 40px rgba(212,175,55,.12),0 0 50px rgba(212,175,55,.25) !important}
-.bc-map:hover .bc-icon{background:rgba(212,175,55,.2) !important;box-shadow:0 0 25px rgba(212,175,55,.5) !important}
-.bc-map:hover .bc-icon svg{stroke:#d4af37 !important}
-.bc-map:hover::before{border-top-color:#d4af37 !important;border-left-color:#d4af37 !important}
-.bc-map:hover::after{border-bottom-color:#d4af37 !important;border-right-color:#d4af37 !important}
-.bc-hud:hover{border-color:rgba(212,175,55,.6) !important;box-shadow:inset 0 0 40px rgba(212,175,55,.12),0 0 50px rgba(212,175,55,.25) !important}
-.bc-hud:hover .bc-icon{background:rgba(212,175,55,.2) !important;box-shadow:0 0 25px rgba(212,175,55,.5) !important}
-.bc-hud:hover .bc-icon svg{stroke:#d4af37 !important}
-.bc-hud:hover::before{border-top-color:#d4af37 !important;border-left-color:#d4af37 !important}
-.bc-hud:hover::after{border-bottom-color:#d4af37 !important;border-right-color:#d4af37 !important}
-.bc-vault:hover{border-color:rgba(184,134,11,.6) !important;box-shadow:inset 0 0 40px rgba(184,134,11,.12),0 0 50px rgba(184,134,11,.25) !important}
-.bc-vault:hover .bc-icon{background:rgba(184,134,11,.2) !important;box-shadow:0 0 25px rgba(184,134,11,.5) !important}
-.bc-vault:hover .bc-icon svg{stroke:#b8860b !important}
-.bc-vault:hover::before{border-top-color:#b8860b !important;border-left-color:#b8860b !important}
-.bc-vault:hover::after{border-bottom-color:#b8860b !important;border-right-color:#b8860b !important}
-.bc-auth:hover{border-color:rgba(212,175,55,.6) !important;box-shadow:inset 0 0 40px rgba(212,175,55,.12),0 0 50px rgba(212,175,55,.25) !important}
-.bc-auth:hover .bc-icon{background:rgba(212,175,55,.2) !important;box-shadow:0 0 25px rgba(212,175,55,.5) !important}
-.bc-auth:hover .bc-icon svg{stroke:#d4af37 !important}
-.bc-auth:hover::before{border-top-color:#d4af37 !important;border-left-color:#d4af37 !important}
-.bc-auth:hover::after{border-bottom-color:#d4af37 !important;border-right-color:#d4af37 !important}
+
+/* Bento card distinct colors */
+.bc-sos{--bc-rgb:239,68,68}
+.bc-threat{--bc-rgb:245,158,11}
+.bc-map{--bc-rgb:59,130,246}
+.bc-hud{--bc-rgb:6,182,212}
+.bc-vault{--bc-rgb:139,92,246}
+.bc-auth{--bc-rgb:16,185,129}
+/* Bento hover uses CSS vars */
+.bc-sos:hover{border-color:rgba(239,68,68,.5) !important;box-shadow:inset 0 0 40px rgba(239,68,68,.08),0 0 50px rgba(239,68,68,.2) !important}
+.bc-sos:hover .bc-icon{background:rgba(239,68,68,.2) !important;box-shadow:0 0 25px rgba(239,68,68,.5) !important}
+.bc-threat:hover{border-color:rgba(245,158,11,.5) !important;box-shadow:inset 0 0 40px rgba(245,158,11,.08),0 0 50px rgba(245,158,11,.2) !important}
+.bc-threat:hover .bc-icon{background:rgba(245,158,11,.2) !important;box-shadow:0 0 25px rgba(245,158,11,.5) !important}
+.bc-threat:hover .bc-icon svg{stroke:#f59e0b !important}
+.bc-map:hover{border-color:rgba(59,130,246,.5) !important;box-shadow:inset 0 0 40px rgba(59,130,246,.08),0 0 50px rgba(59,130,246,.2) !important}
+.bc-map:hover .bc-icon{background:rgba(59,130,246,.2) !important;box-shadow:0 0 25px rgba(59,130,246,.5) !important}
+.bc-map:hover .bc-icon svg{stroke:#3b82f6 !important}
+.bc-hud:hover{border-color:rgba(6,182,212,.5) !important;box-shadow:inset 0 0 40px rgba(6,182,212,.08),0 0 50px rgba(6,182,212,.2) !important}
+.bc-hud:hover .bc-icon{background:rgba(6,182,212,.2) !important;box-shadow:0 0 25px rgba(6,182,212,.5) !important}
+.bc-hud:hover .bc-icon svg{stroke:#06b6d4 !important}
+.bc-vault:hover{border-color:rgba(139,92,246,.5) !important;box-shadow:inset 0 0 40px rgba(139,92,246,.08),0 0 50px rgba(139,92,246,.2) !important}
+.bc-vault:hover .bc-icon{background:rgba(139,92,246,.2) !important;box-shadow:0 0 25px rgba(139,92,246,.5) !important}
+.bc-vault:hover .bc-icon svg{stroke:#8b5cf6 !important}
+.bc-auth:hover{border-color:rgba(16,185,129,.5) !important;box-shadow:inset 0 0 40px rgba(16,185,129,.08),0 0 50px rgba(16,185,129,.2) !important}
+.bc-auth:hover .bc-icon{background:rgba(16,185,129,.2) !important;box-shadow:0 0 25px rgba(16,185,129,.5) !important}
+.bc-auth:hover .bc-icon svg{stroke:#10b981 !important}
 
 /* rotating border gradient on hover */
 .bc{position:relative}
@@ -813,13 +825,13 @@ body::before{
 .bc-wide-right{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
 
 /* ── EKG — THREAT SENSOR ── */
-.ekg-lbl{font-family:'Courier New',monospace;font-size:.55rem;color:rgba(212,175,55,.55);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
-.ekg-lbl::before{content:'';width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */flex-shrink:0}
-.ekg-wrap{position:relative;height:90px;background:rgba(0,0,0,.5);border:1px solid rgba(212,175,55,.1);border-radius:10px;overflow:hidden;margin-bottom:.8rem}
-.ekg-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.04) 1px,transparent 1px);background-size:100% 22px,50px 100%}
+.ekg-lbl{font-family:'Courier New',monospace;font-size:.55rem;color:rgba(239,68,68,.55);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.ekg-lbl::before{content:'';width:5px;height:5px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;/* anim-removed */flex-shrink:0}
+.ekg-wrap{position:relative;height:90px;background:rgba(0,0,0,.5);border:1px solid rgba(239,68,68,.1);border-radius:10px;overflow:hidden;margin-bottom:.8rem}
+.ekg-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(239,68,68,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(239,68,68,.04) 1px,transparent 1px);background-size:100% 22px,50px 100%}
 .ekg-svg{width:100%;height:100%;position:relative;z-index:2}
-.ekg-line{fill:none;stroke:#d4af37;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(212,175,55,.8))}
-.ekg-scan{position:absolute;top:0;bottom:0;width:32px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.14),transparent);/* anim-removed */z-index:3}
+.ekg-line{fill:none;stroke:#ef4444;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(239,68,68,.8))}
+.ekg-scan{position:absolute;top:0;bottom:0;width:32px;background:linear-gradient(90deg,transparent,rgba(239,68,68,.14),transparent);/* anim-removed */z-index:3}
 @keyframes ekgScan{from{left:-32px}to{left:100%}}
 .ekg-metrics{display:flex;gap:1.4rem}
 .ekg-metric{display:flex;flex-direction:column;align-items:center}
@@ -830,39 +842,39 @@ body::before{
 .radar-wrap{display:flex;gap:1.2rem;align-items:center;height:100%}
 .radar-scope{position:relative;width:130px;height:130px;flex-shrink:0}
 .radar-ring{position:absolute;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
-.radar-ring:nth-child(1){width:44px;height:44px;border:1px solid rgba(212,175,55,.28)}
-.radar-ring:nth-child(2){width:88px;height:88px;border:1px solid rgba(212,175,55,.16)}
-.radar-ring:nth-child(3){width:130px;height:130px;border:1px solid rgba(212,175,55,.08)}
-.radar-ch{position:absolute;background:rgba(212,175,55,.09);top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
-.radar-cv{position:absolute;background:rgba(212,175,55,.09);left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
-.radar-sweep-arm{position:absolute;top:50%;left:50%;width:65px;height:65px;background:conic-gradient(rgba(212,175,55,.4) 0deg,transparent 50deg,transparent 360deg);transform-origin:0 0;border-radius:0 100% 0 0;/* anim-removed */width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%);/* anim-removed */box-shadow:0 0 8px #d4af37,0 0 16px rgba(212,175,55,.4)}
-.radar-blip.blip-r{background:#d4af37;box-shadow:0 0 8px #d4af37,0 0 16px rgba(212,175,55,.4);animation-duration:1.5s}
-.radar-blip.blip-o{background:#d4af37;box-shadow:0 0 8px #d4af37,0 0 16px rgba(212,175,55,.4)}
+.radar-ring:nth-child(1){width:44px;height:44px;border:1px solid rgba(59,130,246,.28)}
+.radar-ring:nth-child(2){width:88px;height:88px;border:1px solid rgba(59,130,246,.16)}
+.radar-ring:nth-child(3){width:130px;height:130px;border:1px solid rgba(59,130,246,.08)}
+.radar-ch{position:absolute;background:rgba(59,130,246,.09);top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+.radar-cv{position:absolute;background:rgba(59,130,246,.09);left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+.radar-sweep-arm{position:absolute;top:50%;left:50%;width:65px;height:65px;background:conic-gradient(rgba(59,130,246,.4) 0deg,transparent 50deg,transparent 360deg);transform-origin:0 0;border-radius:0 100% 0 0;/* anim-removed */width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%);/* anim-removed */box-shadow:0 0 8px #3b82f6,0 0 16px rgba(59,130,246,.4)}
+.radar-blip.blip-r{background:#ef4444;box-shadow:0 0 8px #ef4444,0 0 16px rgba(239,68,68,.4);animation-duration:1.5s}
+.radar-blip.blip-o{background:#f59e0b;box-shadow:0 0 8px #f59e0b,0 0 16px rgba(245,158,11,.4)}
 @keyframes blipBeat{0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(.8)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}}
 .radar-zones{flex:1;display:flex;flex-direction:column;gap:.5rem}
 .radar-zone{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(0,0,0,.3);border-radius:6px;border-left:2px solid transparent;font-family:'Courier New',monospace;font-size:.63rem;letter-spacing:.04em;color:rgba(255,255,255,.45)}
-.radar-zone.zone-hot{border-left-color:#d4af37}
-.radar-zone.zone-warn{border-left-color:#d4af37}
-.radar-zone.zone-safe{border-left-color:#d4af37}
+.radar-zone.zone-hot{border-left-color:#ef4444}
+.radar-zone.zone-warn{border-left-color:#f59e0b}
+.radar-zone.zone-safe{border-left-color:#10b981}
 .rz-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.zone-hot .rz-dot{background:#d4af37;box-shadow:0 0 5px #d4af37}
-.zone-warn .rz-dot{background:#d4af37;box-shadow:0 0 5px #d4af37}
-.zone-safe .rz-dot{background:#d4af37;box-shadow:0 0 5px #d4af37}
+.zone-hot .rz-dot{background:#ef4444;box-shadow:0 0 5px #ef4444}
+.zone-warn .rz-dot{background:#f59e0b;box-shadow:0 0 5px #f59e0b}
+.zone-safe .rz-dot{background:#10b981;box-shadow:0 0 5px #10b981}
 .rz-dist{margin-left:auto;font-size:.58rem;color:rgba(255,255,255,.22)}
 
 /* ── TERMINAL — ZERO-TRUST AUTH ── */
-.terminal-viz{height:100%;min-height:120px;background:rgba(0,0,0,.5);border:1px solid rgba(212,175,55,.1);border-radius:10px;padding:14px;overflow:hidden;display:flex;flex-direction:column}
+.terminal-viz{height:100%;min-height:120px;background:rgba(0,0,0,.5);border:1px solid rgba(16,185,129,.1);border-radius:10px;padding:14px;overflow:hidden;display:flex;flex-direction:column}
 .term-bar{display:flex;align-items:center;gap:5px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.05)}
 .term-dot{width:7px;height:7px;border-radius:50%}
-.term-dot:nth-child(1){background:#d4af37}
-.term-dot:nth-child(2){background:#d4af37}
-.term-dot:nth-child(3){background:#d4af37}
+.term-dot:nth-child(1){background:#ef4444}
+.term-dot:nth-child(2){background:#f59e0b}
+.term-dot:nth-child(3){background:#10b981}
 .term-title{font-family:'Courier New',monospace;font-size:.52rem;color:rgba(255,255,255,.2);margin-left:4px;letter-spacing:.1em}
 .term-lines{display:flex;flex-direction:column;gap:0;flex:1;overflow:hidden}
-.term-line{font-family:'Courier New',monospace;font-size:.62rem;line-height:1.65;color:rgba(212,175,55,.55);opacity:0;animation:termIn .3s ease forwards;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.term-line{font-family:'Courier New',monospace;font-size:.62rem;line-height:1.65;color:rgba(16,185,129,.55);opacity:0;animation:termIn .3s ease forwards;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .term-line .tok{color:rgba(255,255,255,.75)}
-.term-line .tok-ok{color:#d4af37}
-.term-line .tok-cmd{color:#d4af37}
+.term-line .tok-ok{color:#10b981}
+.term-line .tok-cmd{color:#8b5cf6}
 .term-line:nth-child(1){animation-delay:.3s}
 .term-line:nth-child(2){animation-delay:.9s}
 .term-line:nth-child(3){animation-delay:1.5s}
@@ -870,7 +882,7 @@ body::before{
 .term-line:nth-child(5){animation-delay:2.7s}
 .term-line:nth-child(6){animation-delay:3.3s}
 .term-line:nth-child(7){animation-delay:3.9s}
-.term-cursor{display:inline-block;width:6px;height:.7em;background:rgba(212,175,55,.8);margin-left:2px;vertical-align:middle;/* anim-removed */inset:0;z-index:9997;pointer-events:none;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;/* anim-removed */align-items:center;
+.term-cursor{display:inline-block;width:6px;height:.7em;background:rgba(16,185,129,.8);margin-left:2px;vertical-align:middle;/* anim-removed */inset:0;z-index:9997;pointer-events:none;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;/* anim-removed */align-items:center;
     position:absolute;
     height:10px;top:70px;    /* icon center: 40px card padding + 30px half icon */
     z-index:10;              /* safe — width:2rem means no card overlap */
@@ -900,7 +912,7 @@ body::before{
     filter:drop-shadow(0 0 4px var(--red));
   }
 }
-.step-badge{position:absolute;top:-18px;left:20px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red),#b8860b);border:2px solid rgba(212,175,55,0.4);display:flex;align-items:center;justify-content:center;font-family:var(--sg);font-size:.8rem;font-weight:800;color:#fff;box-shadow:0 0 20px rgba(212,175,55,.6),0 4px 12px rgba(0,0,0,.5);z-index:20;/* anim-removed */position:relative;margin-top:3.5rem}
+.step-badge{position:absolute;top:-18px;left:20px;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(var(--step-rgb,239,68,68),1),rgba(var(--step-rgb,239,68,68),0.7));border:2px solid rgba(var(--step-rgb,239,68,68),0.4);display:flex;align-items:center;justify-content:center;font-family:var(--sg);font-size:.8rem;font-weight:800;color:#fff;box-shadow:0 0 20px rgba(var(--step-rgb,239,68,68),.5),0 4px 12px rgba(0,0,0,.5);z-index:20;/* anim-removed */position:relative;margin-top:3.5rem}
 .testi-track-wrap::before,.testi-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
 .testi-track-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
 .testi-track-wrap::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
@@ -908,21 +920,21 @@ body::before{
 .testi-track:hover{animation-play-state:paused}
 @keyframes testiScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .testi-card{min-width:350px;max-width:380px;flex-shrink:0}
-.verified-badge{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:600;color:#d4af37;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);padding:2px 8px;border-radius:10px;margin-left:8px}
-.verified-badge svg{width:10px;height:10px;fill:#d4af37}
+.verified-badge{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:600;color:#10b981;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);padding:2px 8px;border-radius:10px;margin-left:8px}
+.verified-badge svg{width:10px;height:10px;fill:#10b981}
 
 /* ═══════════════════════════════════════════
    CTA — FLOATING 3D SHIELD & GRADIENT TEXT
 ═══════════════════════════════════════════*/
 .cta-3d-shield{position:absolute;top:50%;right:8%;transform:translateY(-50%);width:200px;height:200px;opacity:.07;pointer-events:none;/* anim-removed */left:8%}
-.cta-h2-gradient{background:linear-gradient(120deg,#d4af37,#d4af37,#f7e7ce,#f7e7ce,#f7e7ce,#d4af37,#d4af37);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;/* anim-removed */height:3px;position:relative;overflow:hidden;margin-bottom:1rem;background:linear-gradient(90deg, transparent, rgba(212,175,55,0.05) 20%, rgba(212,175,55,0.1) 50%, rgba(212,175,55,0.05) 80%, transparent);border-radius:3px;}
+.cta-h2-gradient{background:linear-gradient(120deg,#ef4444,#f97316,#fbbf24,#f97316,#ef4444);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;/* anim-removed */height:3px;position:relative;overflow:hidden;margin-bottom:1rem;background:linear-gradient(90deg, transparent, rgba(212,175,55,0.05) 20%, rgba(212,175,55,0.1) 50%, rgba(212,175,55,0.05) 80%, transparent);border-radius:3px;}
 .sweep-laser{position:absolute;top:0;left:0;height:100%;width:300px;background:linear-gradient(90deg, transparent, rgba(212,175,55,0.8) 50%, transparent);box-shadow:0 0 15px rgba(212,175,55,0.9);/* anim-removed */}
 @keyframes sweepLine{0%{transform:translateX(-300px)}100%{transform:translateX(100vw)}}
 .footer-social{display:flex;gap:12px;align-items:center}
 .social-icon{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:pointer}
-.social-icon:hover{background:rgba(212,175,55,.15);border-color:rgba(212,175,55,.4);transform:translateY(-2px);box-shadow:0 4px 12px rgba(212,175,55,.2)}
+.social-icon:hover{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);transform:translateY(-2px);box-shadow:0 4px 12px rgba(139,92,246,.2)}
 .social-icon svg{width:16px;height:16px;stroke:rgba(255,255,255,.4);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
-.social-icon:hover svg{stroke:var(--red)}
+.social-icon:hover svg{stroke:var(--accent)}
 .footer-tagline{font-family:var(--int);font-size:.72rem;color:rgba(255,255,255,.25);letter-spacing:.05em}
 
 /* ═══════════════════════════════════════════
@@ -1148,7 +1160,7 @@ body::before{
 
 /* floating cards stronger 3D + bounce */
 .f-card{box-shadow:0 25px 60px rgba(0,0,0,.95),0 0 30px rgba(212,175,55,.15),inset 0 0 20px rgba(212,175,55,.08) !important;border:1px solid rgba(212,175,55,.5) !important}
-.fc1{/* anim-removed */text-shadow:0 0 15px rgba(212,175,55,.6),0 0 30px rgba(212,175,55,.3) !important;color:#d4af37 !important}
+.fc1{/* anim-removed */text-shadow:0 0 15px rgba(239,68,68,.5),0 0 30px rgba(239,68,68,.2) !important;color:#ef4444 !important}
 .m-sep{display:inline-flex;align-items:center;padding:0 1rem;opacity:.4}
 .m-sep svg{width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px var(--red))}
 
@@ -1159,10 +1171,10 @@ body::before{
 .stat-cell .stat-lbl{position:relative;z-index:2}
 .stat-cell .stat-micro-icon{position:relative;z-index:2}
 .stat-accent-strip{position:absolute;top:0;left:0;right:0;height:3px;z-index:3}
-.stat-cell:nth-child(1) .stat-accent-strip{background:linear-gradient(90deg,#d4af37,#d4af37);box-shadow:0 0 10px rgba(212,175,55,.5)}
-.stat-cell:nth-child(2) .stat-accent-strip{background:linear-gradient(90deg,#d4af37,#d4af37);box-shadow:0 0 10px rgba(212,175,55,.5)}
-.stat-cell:nth-child(3) .stat-accent-strip{background:linear-gradient(90deg,#d4af37,#d4af37);box-shadow:0 0 10px rgba(212,175,55,.5)}
-.stat-cell:nth-child(4) .stat-accent-strip{background:linear-gradient(90deg,#d4af37,#d4af37);box-shadow:0 0 10px rgba(212,175,55,.5)}
+.stat-cell:nth-child(1) .stat-accent-strip{background:linear-gradient(90deg,#ef4444,#f97316);box-shadow:0 0 10px rgba(239,68,68,.5)}
+.stat-cell:nth-child(2) .stat-accent-strip{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 10px rgba(59,130,246,.5)}
+.stat-cell:nth-child(3) .stat-accent-strip{background:linear-gradient(90deg,#10b981,#34d399);box-shadow:0 0 10px rgba(16,185,129,.5)}
+.stat-cell:nth-child(4) .stat-accent-strip{background:linear-gradient(90deg,#8b5cf6,#a78bfa);box-shadow:0 0 10px rgba(139,92,246,.5)}
 /* typewriter cursor */
 .stat-cursor{display:inline-block;width:2px;height:1em;background:var(--red);margin-left:4px;vertical-align:middle;/* anim-removed */}
 .bc-icon{width:65px !important;height:65px !important}
@@ -1204,7 +1216,7 @@ body::before{
 .rk-logo-ring2{position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(212,175,55,.12);/* anim-removed */pointer-events:none}
 @keyframes rkLogoPulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.1);opacity:.75}}
 .rk-logo-wordmark{font-family:'Space Grotesk',sans-serif;font-size:1.08rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.82) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:all .3s}
-.rk-logo-mark:hover .rk-logo-wordmark{background:linear-gradient(135deg,#fff 0%,#f7e7ce 55%,#d4af37 100%);-webkit-background-clip:text;background-clip:text}
+.rk-logo-mark:hover .rk-logo-wordmark{background:linear-gradient(135deg,#fff 0%,#e0e7ff 55%,#8b5cf6 100%);-webkit-background-clip:text;background-clip:text}
 .rk-logo-tagline{font-family:'Courier New',monospace;font-size:.4rem;letter-spacing:.2em;color:rgba(212,175,55,.65);text-transform:uppercase;display:block;margin-top:1px;-webkit-text-fill-color:rgba(212,175,55,.65)}
 
 /* ═══════════════════════════════════════════
@@ -1215,17 +1227,17 @@ body::before{
 .trp-node{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:2}
 .trp-connector{flex:1;display:flex;align-items:center;margin-top:28px;position:relative;z-index:1}
 .trp-line-track{flex:1;height:2px;background:rgba(255,255,255,.05);border-radius:2px;position:relative;overflow:hidden}
-.trp-line-fill{position:absolute;top:0;left:0;height:100%;width:100%;background:linear-gradient(90deg,var(--c1,#d4af37),var(--c2,#d4af37));animation:trpFill 2s ease-out forwards;transform-origin:left}
+.trp-line-fill{position:absolute;top:0;left:0;height:100%;width:100%;background:linear-gradient(90deg,var(--c1,#ef4444),var(--c2,#3b82f6));animation:trpFill 2s ease-out forwards;transform-origin:left}
 @keyframes trpFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.trp-arrow{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--c2,#d4af37);filter:drop-shadow(0 0 4px var(--c2,#d4af37));flex-shrink:0}
+.trp-arrow{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--c2,#3b82f6);filter:drop-shadow(0 0 4px var(--c2,#3b82f6));flex-shrink:0}
 .trp-icon-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;border:1.5px solid var(--tc,rgba(212,175,55,.4));background:radial-gradient(circle,rgba(var(--tc-rgb,212,175,55),.14),transparent 70%);box-shadow:0 0 20px rgba(var(--tc-rgb,212,175,55),.15),inset 0 0 10px rgba(var(--tc-rgb,212,175,55),.08);transition:all .4s cubic-bezier(.22,1,.36,1);position:relative}
 .trp-icon-wrap::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(var(--tc-rgb,212,175,55),.15);/* anim-removed */opacity:.3}50%{transform:scale(1.1);opacity:.7}}
 .trp-icon-wrap:hover{transform:scale(1.08);box-shadow:0 0 35px rgba(var(--tc-rgb,212,175,55),.4)}
-.trp-icon-wrap svg{width:24px;height:24px;stroke:var(--tc,#d4af37);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.trp-icon-wrap svg{width:24px;height:24px;stroke:var(--tc,#ef4444);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .trp-step{font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.2em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:.4rem}
 .trp-label{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:.08em;color:#fff;margin-bottom:.5rem;text-transform:uppercase}
 .trp-desc{font-family:'Inter',sans-serif;font-size:.75rem;color:rgba(255,255,255,.4);line-height:1.6;max-width:160px;margin:0 auto}
-.trp-stat{display:inline-flex;align-items:center;gap:4px;margin-top:.6rem;padding:3px 10px;border-radius:20px;font-family:'Courier New',monospace;font-size:.6rem;font-weight:700;background:rgba(var(--tc-rgb,212,175,55),.08);border:1px solid rgba(var(--tc-rgb,212,175,55),.2);color:var(--tc,#d4af37)}
+.trp-stat{display:inline-flex;align-items:center;gap:4px;margin-top:.6rem;padding:3px 10px;border-radius:20px;font-family:'Courier New',monospace;font-size:.6rem;font-weight:700;background:rgba(var(--tc-rgb,239,68,68),.08);border:1px solid rgba(var(--tc-rgb,239,68,68),.2);color:var(--tc,#ef4444)}
 .trp-stat::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;/* anim-removed */align-items:center;gap:1.5rem}.trp-connector{width:2px;height:40px;flex-direction:column}.trp-line-track{width:2px;height:100%;flex:1}.trp-arrow{transform:rotate(90deg)}}
 
 /* ═══════════════════════════════════════════
@@ -1259,12 +1271,12 @@ body::before{
    WORLD PROTECTION BAND
 ═══════════════════════════════════════════*/
 .wpb-section{padding:5rem clamp(2rem,6vw,6rem);position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(8,8,16,.98),rgba(12,10,20,.97));border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)}
-.wpb-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,#d4af37,#d4af37,rgba(184,134,11,.5),#d4af37,transparent);/* anim-removed */margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center}
+.wpb-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,#ef4444,#8b5cf6,rgba(59,130,246,.5),#10b981,transparent);/* anim-removed */margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center}
 .wpb-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
 .wpb-metric{text-align:center;padding:1.5rem 1rem;border:1px solid rgba(255,255,255,.06);border-radius:16px;background:rgba(255,255,255,.02);transition:all .4s;position:relative;overflow:hidden}
 .wpb-metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,rgba(212,175,55,.5));box-shadow:0 0 8px var(--mc,rgba(212,175,55,.5));opacity:.6}
 .wpb-metric:hover{background:rgba(255,255,255,.04);transform:translateY(-3px)}
-.wpb-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,2.5vw,2.8rem);font-weight:900;line-height:1;margin-bottom:.3rem;color:var(--mc,#d4af37);text-shadow:0 0 30px rgba(var(--mc-rgb,212,175,55),.4)}
+.wpb-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,2.5vw,2.8rem);font-weight:900;line-height:1;margin-bottom:.3rem;color:var(--mc,#ef4444);text-shadow:0 0 30px rgba(var(--mc-rgb,239,68,68),.4)}
 .wpb-lbl{font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.15em;color:rgba(255,255,255,.35);text-transform:uppercase}
 .wpb-badge-col{display:flex;flex-direction:column;gap:12px;min-width:220px}
 .wpb-badge{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);font-family:'Courier New',monospace;font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.06em;transition:all .3s}
@@ -1328,9 +1340,9 @@ body::before{
     <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
       <defs>
         <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#d4af37;stop-opacity:0.6"/>
-          <stop offset="50%" style="stop-color:#d4af37;stop-opacity:0.3"/>
-          <stop offset="100%" style="stop-color:#d4af37;stop-opacity:0.6"/>
+          <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.5"/>
+          <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:0.2"/>
+          <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.5"/>
         </linearGradient>
       </defs>
       <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="url(#shieldGrad)" stroke-width="2" fill="none" opacity="0.8"/>
@@ -1378,7 +1390,7 @@ body::before{
           <i class="bi bi-shield-check" style="font-size:1rem;"></i>
           <strong>14+</strong> <span style="opacity:0.7;">Safety Features</span>
         </div>
-        <div style="display:flex; align-items:center; gap:8px; background:rgba(212,175,55,0.05); padding:8px 16px; border:1px solid rgba(212,175,55,0.2); border-radius:8px; font-family:'Courier New', monospace; font-size:0.8rem; color:#d4af37;">
+        <div style="display:flex; align-items:center; gap:8px; background:rgba(139,92,246,0.05); padding:8px 16px; border:1px solid rgba(139,92,246,0.2); border-radius:8px; font-family:'Courier New', monospace; font-size:0.8rem; color:#8b5cf6;">
           <i class="bi bi-broadcast" style="font-size:1rem;"></i>
           <strong>24/7</strong> <span style="opacity:0.7;">Real-time Protection</span>
         </div>
@@ -1464,7 +1476,7 @@ body::before{
               <div class="ph-stat-l">Contacts</div>
             </div>
             <div class="ph-stat">
-              <div class="ph-stat-n" style="color:#d4af37">Low</div>
+              <div class="ph-stat-n" style="color:#10b981">Low</div>
               <div class="ph-stat-l">Risk</div>
             </div>
             <div class="ph-stat">
@@ -1636,91 +1648,91 @@ body::before{
 <div class="trp-section">
   <div class="sec-hd reveal">
     <span class="eyebrow">
-      <span style="width:6px;height:6px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px #d4af37;display:inline-block;/* anim-removed */margin-right:4px;"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;display:inline-block;margin-right:4px;"></span>
       Response Protocol
     </span>
-    <h2 class="sec-title">Zero to <span style="background:linear-gradient(120deg,#d4af37,#d4af37,#f7e7ce);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Safe</span> in seconds.</h2>
+    <h2 class="sec-title">Zero to <span style="background:linear-gradient(120deg,#ef4444,#f97316,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Safe</span> in seconds.</h2>
     <p class="sec-sub">RAKSHAK's 5-stage threat pipeline activates the instant danger is detected — fully automated, fully encrypted.</p>
   </div>
 
   <div class="trp-row">
     <!-- Node 1: DETECT -->
     <div class="trp-node">
-      <div class="trp-icon-wrap" style="--tc:#d4af37;--tc-rgb:239,68,68;">
+      <div class="trp-icon-wrap" style="--tc:#ef4444;--tc-rgb:239,68,68;">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
       </div>
       <div class="trp-step">STAGE · 01</div>
       <div class="trp-label">DETECT</div>
       <div class="trp-desc">AI monitors activity patterns, inactivity windows and panic triggers in real-time</div>
-      <div class="trp-stat" style="--tc:#d4af37;--tc-rgb:239,68,68;">&lt;0.1s TRIGGER</div>
+      <div class="trp-stat" style="--tc:#ef4444;--tc-rgb:239,68,68;">&lt;0.1s TRIGGER</div>
     </div>
 
     <!-- Connector 1→2 -->
     <div class="trp-connector">
-      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#d4af37;--c2:#d4af37;animation-delay:.4s"></div></div>
-      <div class="trp-arrow" style="--c2:#d4af37;"></div>
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#ef4444;--c2:#f59e0b;animation-delay:.4s"></div></div>
+      <div class="trp-arrow" style="--c2:#06b6d4;"></div>
     </div>
 
     <!-- Node 2: ENCRYPT -->
     <div class="trp-node">
-      <div class="trp-icon-wrap" style="--tc:#d4af37;--tc-rgb:212,175,55;">
+      <div class="trp-icon-wrap" style="--tc:#3b82f6;--tc-rgb:59,130,246;">
         <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
       </div>
       <div class="trp-step">STAGE · 02</div>
       <div class="trp-label">ENCRYPT</div>
       <div class="trp-desc">Your location and identity wrapped in AES-256 end-to-end encryption before transmission</div>
-      <div class="trp-stat" style="--tc:#d4af37;--tc-rgb:212,175,55;">AES-256 BIT</div>
+      <div class="trp-stat" style="--tc:#3b82f6;--tc-rgb:59,130,246;">AES-256 BIT</div>
     </div>
 
     <!-- Connector 2→3 -->
     <div class="trp-connector">
-      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#d4af37;--c2:#d4af37;animation-delay:.8s"></div></div>
-      <div class="trp-arrow" style="--c2:#d4af37;"></div>
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#3b82f6;--c2:#06b6d4;animation-delay:.8s"></div></div>
+      <div class="trp-arrow" style="--c2:#f59e0b;"></div>
     </div>
 
     <!-- Node 3: LOCK GPS -->
     <div class="trp-node">
-      <div class="trp-icon-wrap" style="--tc:#d4af37;--tc-rgb:212,175,55;">
+      <div class="trp-icon-wrap" style="--tc:#06b6d4;--tc-rgb:6,182,212;">
         <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
       </div>
       <div class="trp-step">STAGE · 03</div>
       <div class="trp-label">GPS LOCK</div>
       <div class="trp-desc">Satellite-grade coordinates captured with ±3m accuracy and timestamped to the millisecond</div>
-      <div class="trp-stat" style="--tc:#d4af37;--tc-rgb:212,175,55;">±3m ACCURACY</div>
+      <div class="trp-stat" style="--tc:#06b6d4;--tc-rgb:6,182,212;">±3m ACCURACY</div>
     </div>
 
     <!-- Connector 3→4 -->
     <div class="trp-connector">
-      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#d4af37;--c2:#d4af37;animation-delay:1.2s"></div></div>
-      <div class="trp-arrow" style="--c2:#d4af37;"></div>
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#06b6d4;--c2:#f59e0b;animation-delay:1.2s"></div></div>
+      <div class="trp-arrow" style="--c2:#10b981;"></div>
     </div>
 
     <!-- Node 4: ALERT -->
     <div class="trp-node">
-      <div class="trp-icon-wrap" style="--tc:#d4af37;--tc-rgb:212,175,55;">
+      <div class="trp-icon-wrap" style="--tc:#f59e0b;--tc-rgb:245,158,11;">
         <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.12 1.22 2 2 0 012.1 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.31 7.46a16 16 0 006.22 6.22l1.32-1.04a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
       </div>
       <div class="trp-step">STAGE · 04</div>
       <div class="trp-label">BROADCAST</div>
       <div class="trp-desc">All trusted contacts simultaneously notified with live GPS link, audio alert and situation report</div>
-      <div class="trp-stat" style="--tc:#d4af37;--tc-rgb:212,175,55;">&lt;1s DELIVERY</div>
+      <div class="trp-stat" style="--tc:#f59e0b;--tc-rgb:245,158,11;">&lt;1s DELIVERY</div>
     </div>
 
     <!-- Connector 4→5 -->
     <div class="trp-connector">
-      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#d4af37;--c2:#d4af37;animation-delay:1.6s"></div></div>
-      <div class="trp-arrow" style="--c2:#d4af37;"></div>
+      <div class="trp-line-track"><div class="trp-line-fill" style="--c1:#f59e0b;--c2:#10b981;animation-delay:1.6s"></div></div>
+      <div class="trp-arrow" style="--c2:#10b981;"></div>
     </div>
 
     <!-- Node 5: VERIFY -->
     <div class="trp-node">
-      <div class="trp-icon-wrap" style="--tc:#d4af37;--tc-rgb:212,175,55;">
+      <div class="trp-icon-wrap" style="--tc:#10b981;--tc-rgb:16,185,129;">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
       </div>
       <div class="trp-step">STAGE · 05</div>
       <div class="trp-label">VERIFIED</div>
       <div class="trp-desc">Safety confirmed by two-way check-in. Evidence vault auto-archives all incident data securely</div>
-      <div class="trp-stat" style="--tc:#d4af37;--tc-rgb:212,175,55;">SECURED</div>
+      <div class="trp-stat" style="--tc:#10b981;--tc-rgb:16,185,129;">SECURED</div>
     </div>
   </div>
 </div>
@@ -1732,7 +1744,7 @@ body::before{
   <div class="stats-section">
     <div class="sec-hd reveal">
       <span class="eyebrow">Operational Intelligence</span>
-      <h2 class="sec-title">Numbers that <em style="background:linear-gradient(120deg,#d4af37,#f7e7ce);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal;">protect.</em></h2>
+      <h2 class="sec-title">Numbers that <em style="background:linear-gradient(120deg,#3b82f6,#8b5cf6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal;">protect.</em></h2>
       <p class="sec-sub">Real metrics from RAKSHAK's threat engine — running 24/7 to keep you protected.</p>
     </div>
     <div class="stats-grid reveal d1 parallax-section" data-parallax-speed="0.03">
@@ -1823,7 +1835,7 @@ body::before{
       <div class="bc bc-sos reveal d1">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#d4af37"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="bc-mini-anim" style="color:#ef4444"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <span class="bc-num">SYS.01</span>
         <div class="bc-top">
           <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
@@ -1841,10 +1853,10 @@ body::before{
       <div class="bc bc-threat reveal d2">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#d4af37">
+        <div class="bc-mini-anim" style="color:#f59e0b">
           <div style="position:relative;width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
-             <div style="position:absolute;width:100%;height:100%;border-radius:50%;border:1px solid #d4af37;/* anim-removed */"></div>
-             <div style="width:8px;height:8px;border-radius:50%;background:#d4af37;box-shadow:0 0 10px #d4af37;"></div>
+             <div style="position:absolute;width:100%;height:100%;border-radius:50%;border:1px solid #f59e0b;/* anim-removed */"></div>
+             <div style="width:8px;height:8px;border-radius:50%;background:#f59e0b;box-shadow:0 0 10px #f59e0b;"></div>
           </div>
         </div>
         <span class="bc-num">MOD.02</span>
@@ -1870,9 +1882,9 @@ body::before{
               <div class="ekg-scan"></div>
             </div>
             <div class="ekg-metrics">
-              <div class="ekg-metric"><span class="ekg-val" style="color:#d4af37">72</span><span class="ekg-key">BPM</span></div>
-              <div class="ekg-metric"><span class="ekg-val" style="color:#d4af37">120s</span><span class="ekg-key">Interval</span></div>
-              <div class="ekg-metric"><span class="ekg-val" style="color:#d4af37">98%</span><span class="ekg-key">SpO₂</span></div>
+              <div class="ekg-metric"><span class="ekg-val" style="color:#ef4444">72</span><span class="ekg-key">BPM</span></div>
+              <div class="ekg-metric"><span class="ekg-val" style="color:#3b82f6">120s</span><span class="ekg-key">Interval</span></div>
+              <div class="ekg-metric"><span class="ekg-val" style="color:#10b981">98%</span><span class="ekg-key">SpO₂</span></div>
             </div>
           </div>
         </div>
@@ -1882,10 +1894,10 @@ body::before{
       <div class="bc bc-map reveal d3">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#d4af37">
-          <div style="position:relative;width:24px;height:24px;border-radius:50%;border:1px solid rgba(212,175,55,0.3);overflow:hidden;">
-            <div style="position:absolute;top:50%;left:50%;width:50%;height:50%;transform-origin:0 0;background:linear-gradient(45deg, rgba(212,175,55,0.8), transparent);/* anim-removed */"></div>
-            <div style="position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(212,175,55,0.5);"></div>
+        <div class="bc-mini-anim" style="color:#3b82f6">
+          <div style="position:relative;width:24px;height:24px;border-radius:50%;border:1px solid rgba(59,130,246,0.3);overflow:hidden;">
+            <div style="position:absolute;top:50%;left:50%;width:50%;height:50%;transform-origin:0 0;background:linear-gradient(45deg, rgba(59,130,246,0.8), transparent);/* anim-removed */"></div>
+            <div style="position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(59,130,246,0.5);"></div>
           </div>
         </div>
         <span class="bc-num">MOD.03</span>
@@ -1930,9 +1942,9 @@ body::before{
       <div class="bc bc-hud reveal d1">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#d4af37">
-           <div style="position:relative;width:20px;height:24px;border:1px dashed rgba(212,175,55,0.4);border-radius:3px;">
-             <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */"></div>
+        <div class="bc-mini-anim" style="color:#06b6d4">
+           <div style="position:relative;width:20px;height:24px;border:1px dashed rgba(6,182,212,0.4);border-radius:3px;">
+             <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#06b6d4;box-shadow:0 0 8px #06b6d4;/* anim-removed */"></div>
            </div>
         </div>
         <span class="bc-num">SYS.04</span>
@@ -1951,7 +1963,7 @@ body::before{
       <div class="bc bc-vault reveal d2">
         <div class="rotating-border"></div>
         <div class="bc-holo"></div>
-        <div class="bc-mini-anim" style="color:#b8860b"><svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div class="bc-mini-anim" style="color:#8b5cf6"><svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
         <span class="bc-num">SYS.05</span>
         <div class="bc-top">
           <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
@@ -2053,40 +2065,40 @@ body::before{
     </div>
     <div class="ops-grid">
       <div class="ops-metric">
-        <div class="ops-metric-icon" style="color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);">🆘</div>
-        <div class="ops-metric-val" style="color:#d4af37;">&lt;1s</div>
+        <div class="ops-metric-icon" style="color:#ef4444;background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);">🆘</div>
+        <div class="ops-metric-val" style="color:#ef4444;">&lt;1s</div>
         <div class="ops-metric-lbl">SOS trigger to contact alert</div>
-        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:98%;background:linear-gradient(90deg,#d4af37,rgba(212,175,55,0.4));box-shadow:0 0 8px rgba(212,175,55,0.3);"></div></div>
+        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:98%;background:linear-gradient(90deg,#ef4444,rgba(239,68,68,0.4));box-shadow:0 0 8px rgba(239,68,68,0.3);"></div></div>
       </div>
       <div class="ops-metric">
-        <div class="ops-metric-icon" style="color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);">📡</div>
-        <div class="ops-metric-val" style="color:#d4af37;">99.9%</div>
+        <div class="ops-metric-icon" style="color:#10b981;background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);">📡</div>
+        <div class="ops-metric-val" style="color:#10b981;">99.9%</div>
         <div class="ops-metric-lbl">System uptime &amp; availability</div>
-        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:99.9%;background:linear-gradient(90deg,#d4af37,rgba(212,175,55,0.4));box-shadow:0 0 8px rgba(212,175,55,0.3);"></div></div>
+        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:99.9%;background:linear-gradient(90deg,#10b981,rgba(16,185,129,0.4));box-shadow:0 0 8px rgba(16,185,129,0.3);"></div></div>
       </div>
       <div class="ops-metric">
-        <div class="ops-metric-icon" style="color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);">🔐</div>
-        <div class="ops-metric-val" style="color:#d4af37;">256-bit</div>
+        <div class="ops-metric-icon" style="color:#3b82f6;background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.2);">🔐</div>
+        <div class="ops-metric-val" style="color:#3b82f6;">256-bit</div>
         <div class="ops-metric-lbl">End-to-end AES encryption</div>
-        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:100%;background:linear-gradient(90deg,#d4af37,rgba(212,175,55,0.4));box-shadow:0 0 8px rgba(212,175,55,0.3);"></div></div>
+        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:100%;background:linear-gradient(90deg,#3b82f6,rgba(59,130,246,0.4));box-shadow:0 0 8px rgba(59,130,246,0.3);"></div></div>
       </div>
       <div class="ops-metric">
-        <div class="ops-metric-icon" style="color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);">🗺</div>
-        <div class="ops-metric-val" style="color:#d4af37;">500m</div>
+        <div class="ops-metric-icon" style="color:#f59e0b;background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);">🗺</div>
+        <div class="ops-metric-val" style="color:#f59e0b;">500m</div>
         <div class="ops-metric-lbl">Danger zone proximity radius</div>
-        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:72%;background:linear-gradient(90deg,#d4af37,rgba(212,175,55,0.4));box-shadow:0 0 8px rgba(212,175,55,0.3);"></div></div>
+        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:72%;background:linear-gradient(90deg,#f59e0b,rgba(245,158,11,0.4));box-shadow:0 0 8px rgba(245,158,11,0.3);"></div></div>
       </div>
       <div class="ops-metric">
-        <div class="ops-metric-icon" style="color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);">⏱</div>
-        <div class="ops-metric-val" style="color:#d4af37;">2min</div>
+        <div class="ops-metric-icon" style="color:#06b6d4;background:rgba(6,182,212,0.08);border-color:rgba(6,182,212,0.2);">⏱</div>
+        <div class="ops-metric-val" style="color:#06b6d4;">2min</div>
         <div class="ops-metric-lbl">Automated safety ping cycle</div>
-        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:60%;background:linear-gradient(90deg,#d4af37,rgba(212,175,55,0.4));box-shadow:0 0 8px rgba(212,175,55,0.3);"></div></div>
+        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:60%;background:linear-gradient(90deg,#06b6d4,rgba(6,182,212,0.4));box-shadow:0 0 8px rgba(6,182,212,0.3);"></div></div>
       </div>
       <div class="ops-metric">
-        <div class="ops-metric-icon" style="color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2);">👥</div>
-        <div class="ops-metric-val" style="color:#d4af37;">5</div>
+        <div class="ops-metric-icon" style="color:#8b5cf6;background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);">👥</div>
+        <div class="ops-metric-val" style="color:#8b5cf6;">5</div>
         <div class="ops-metric-lbl">Max trusted operative contacts</div>
-        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:84%;background:linear-gradient(90deg,#d4af37,rgba(212,175,55,0.4));box-shadow:0 0 8px rgba(212,175,55,0.3);"></div></div>
+        <div class="ops-metric-bar"><div class="ops-metric-fill" style="width:84%;background:linear-gradient(90deg,#8b5cf6,rgba(139,92,246,0.4));box-shadow:0 0 8px rgba(139,92,246,0.3);"></div></div>
       </div>
     </div>
   </div>
@@ -2102,7 +2114,7 @@ body::before{
     <!-- Section header -->
     <div class="sec-hd reveal" style="text-align:center;margin-bottom:4rem;">
       <span class="eyebrow">Why RAKSHAK</span>
-      <h2 class="sec-title" style="font-size:clamp(2.5rem,4.5vw,4rem);">Not just an app.<br><em style="background:linear-gradient(135deg,#d4af37,#f7e7ce 50%,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal;">A protection system.</em></h2>
+      <h2 class="sec-title" style="font-size:clamp(2.5rem,4.5vw,4rem);">Not just an app.<br><em style="background:linear-gradient(135deg,#ef4444,#f97316 40%,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal;">A protection system.</em></h2>
       <p class="sec-sub" style="max-width:580px;margin:.8rem auto 0;">RAKSHAK combines technology layers that work together — so no single point of failure can leave you unprotected.</p>
     </div>
 
@@ -2116,19 +2128,19 @@ body::before{
         <div style="position:absolute;top:0;left:0;width:60px;height:60px;background:radial-gradient(circle at 0 0,rgba(212,175,55,.25),transparent 70%);pointer-events:none;"></div>
         <!-- Icon -->
         <div style="width:52px;height:52px;border-radius:14px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
         </div>
         <div style="font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:.6rem;">AI Liveness Engine</div>
         <p style="font-family:'Inter',sans-serif;font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:1.4rem;">Pings every 2 minutes. If you go silent for 6 minutes, RAKSHAK auto-triggers SOS using your last known coordinates — even if you can't press anything.</p>
         <div style="display:flex;flex-direction:column;gap:7px;">
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(212,175,55,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 6px #d4af37;flex-shrink:0;"></div>120s heartbeat interval
+            <div style="width:5px;height:5px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;flex-shrink:0;"></div>120s heartbeat interval
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(212,175,55,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 6px #d4af37;flex-shrink:0;"></div>Auto-escalates risk: low → medium → high
+            <div style="width:5px;height:5px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;flex-shrink:0;"></div>Auto-escalates risk: low → medium → high
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(212,175,55,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 6px #d4af37;flex-shrink:0;"></div>Server-side — no app needed to trigger
+            <div style="width:5px;height:5px;border-radius:50%;background:#ef4444;box-shadow:0 0 6px #ef4444;flex-shrink:0;"></div>Server-side — no app needed to trigger
           </div>
         </div>
       </div>
@@ -2139,19 +2151,19 @@ body::before{
            onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(184,134,11,.18)';this.style.boxShadow='none'">
         <div style="position:absolute;top:0;left:0;width:60px;height:60px;background:radial-gradient(circle at 0 0,rgba(184,134,11,.25),transparent 70%);pointer-events:none;"></div>
         <div style="width:52px;height:52px;border-radius:14px;background:rgba(184,134,11,.1);border:1px solid rgba(184,134,11,.25);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         </div>
         <div style="font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:.6rem;">Evidence Vault</div>
         <p style="font-family:'Inter',sans-serif;font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:1.4rem;">Every SOS generates a tamper-proof forensic package — SHA-256 hash, complete audit trail, contact notification log, and chronological timeline. Downloadable as PDF.</p>
         <div style="display:flex;flex-direction:column;gap:7px;">
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(184,134,11,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#b8860b;box-shadow:0 0 6px #b8860b;flex-shrink:0;"></div>SHA-256 immutable hash per alert
+            <div style="width:5px;height:5px;border-radius:50%;background:#3b82f6;box-shadow:0 0 6px #3b82f6;flex-shrink:0;"></div>SHA-256 immutable hash per alert
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(184,134,11,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#b8860b;box-shadow:0 0 6px #b8860b;flex-shrink:0;"></div>Full audit log + IP tracking
+            <div style="width:5px;height:5px;border-radius:50%;background:#3b82f6;box-shadow:0 0 6px #3b82f6;flex-shrink:0;"></div>Full audit log + IP tracking
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(184,134,11,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#b8860b;box-shadow:0 0 6px #b8860b;flex-shrink:0;"></div>PDF incident report download
+            <div style="width:5px;height:5px;border-radius:50%;background:#3b82f6;box-shadow:0 0 6px #3b82f6;flex-shrink:0;"></div>PDF incident report download
           </div>
         </div>
       </div>
@@ -2162,19 +2174,19 @@ body::before{
            onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(212,175,55,.18)';this.style.boxShadow='none'">
         <div style="position:absolute;top:0;left:0;width:60px;height:60px;background:radial-gradient(circle at 0 0,rgba(212,175,55,.25),transparent 70%);pointer-events:none;"></div>
         <div style="width:52px;height:52px;border-radius:14px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
         <div style="font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:.6rem;">Safe Walk + Live Tracking</div>
         <p style="font-family:'Inter',sans-serif;font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:1.4rem;">Share a live tracking link with trusted contacts before your walk. If you don't arrive by your ETA, contacts are automatically alerted — no action required.</p>
         <div style="display:flex;flex-direction:column;gap:7px;">
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(212,175,55,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 6px #d4af37;flex-shrink:0;"></div>No login required for contacts to track
+            <div style="width:5px;height:5px;border-radius:50%;background:#06b6d4;box-shadow:0 0 6px #06b6d4;flex-shrink:0;"></div>No login required for contacts to track
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(212,175,55,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 6px #d4af37;flex-shrink:0;"></div>ETA overdue → auto notify all contacts
+            <div style="width:5px;height:5px;border-radius:50%;background:#06b6d4;box-shadow:0 0 6px #06b6d4;flex-shrink:0;"></div>ETA overdue → auto notify all contacts
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:.62rem;color:rgba(212,175,55,.8);">
-            <div style="width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 6px #d4af37;flex-shrink:0;"></div>Cryptographic token, unique per walk
+            <div style="width:5px;height:5px;border-radius:50%;background:#06b6d4;box-shadow:0 0 6px #06b6d4;flex-shrink:0;"></div>Cryptographic token, unique per walk
           </div>
         </div>
       </div>
@@ -2449,16 +2461,16 @@ body::before{
     <!-- Preview Panel -->
     <div class="fdd-preview">
       <div class="fdd-preview-header">
-        <div class="fdp-dot" style="background:#d4af37"></div>
-        <div class="fdp-dot" style="background:#d4af37;margin-left:6px"></div>
-        <div class="fdp-dot" style="background:#d4af37;margin-left:6px"></div>
+        <div class="fdp-dot" style="background:#ef4444"></div>
+        <div class="fdp-dot" style="background:#f59e0b;margin-left:6px"></div>
+        <div class="fdp-dot" style="background:#10b981;margin-left:6px"></div>
         <span class="fdp-title">RAKSHAK — LIVE MODULE PREVIEW</span>
       </div>
       <div class="fdd-preview-screen" id="fddPreview">
         <!-- SOS default preview -->
         <div style="text-align:center">
           <div style="width:110px;height:110px;border-radius:50%;margin:0 auto 24px;background:rgba(212,175,55,.08);border:1.5px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;/* anim-removed */position:relative">
-            <div style="width:85px;height:85px;border-radius:50%;background:rgba(212,175,55,.12);display:flex;align-items:center;justify-content:center;/* anim-removed */height:62px;border-radius:50%;background:linear-gradient(145deg,#d4af37,#b8860b);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(212,175,55,.7)">
+            <div style="width:85px;height:85px;border-radius:50%;background:rgba(212,175,55,.12);display:flex;align-items:center;justify-content:center;/* anim-removed */height:62px;border-radius:50%;background:linear-gradient(145deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(239,68,68,.6)">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
             </div>
@@ -2494,7 +2506,7 @@ body::before{
 /* Incident feed */
 .lti-feed{display:flex;flex-direction:column;gap:1rem}
 .lti-feed-hd{font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.25em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:8px}
-.lti-feed-hd::before{content:'';width:6px;height:6px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--ic,rgba(212,175,55,.8));border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;animation:incidentIn .6s ease forwards;opacity:0}
+.lti-feed-hd::before{content:'';width:6px;height:6px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;/* anim-removed */border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--ic,rgba(212,175,55,.8));border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;animation:incidentIn .6s ease forwards;opacity:0}
 @keyframes incidentIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 .lti-incident::after{content:'';position:absolute;top:0;right:0;width:40px;height:40px;background:radial-gradient(circle at 100% 0%,rgba(var(--ic-rgb,212,175,55),.15),transparent 70%)}
 .inc-type{font-family:'Courier New',monospace;font-size:.55rem;letter-spacing:.15em;color:var(--ic,rgba(212,175,55,.8));text-transform:uppercase;margin-bottom:4px;font-weight:700}
@@ -2505,7 +2517,7 @@ body::before{
 .lti-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
 .lti-stat{background:rgba(8,8,16,.7);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;text-align:center;transition:all .4s}
 .lti-stat:hover{border-color:rgba(212,175,55,.25);background:rgba(212,175,55,.03)}
-.lti-stat-n{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:900;color:#d4af37;line-height:1;text-shadow:0 0 30px rgba(212,175,55,.4)}
+.lti-stat-n{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:900;color:#ef4444;line-height:1;text-shadow:0 0 30px rgba(239,68,68,.4)}
 .lti-stat-l{font-family:'Courier New',monospace;font-size:.52rem;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
 
 @media(max-width:900px){.lti-layout{grid-template-columns:1fr}}
@@ -2515,10 +2527,10 @@ body::before{
 <div class="lti-inner">
   <div class="sec-hd reveal" style="text-align:center">
     <span class="eyebrow">
-      <span style="width:6px;height:6px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px #d4af37;display:inline-block;/* anim-removed */margin-right:4px"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:#ef4444;box-shadow:0 0 8px #ef4444;display:inline-block;margin-right:4px"></span>
       Live Intelligence
     </span>
-    <h2 class="sec-title">Threats never sleep.<br><span style="background:linear-gradient(120deg,#d4af37,#d4af37,#f7e7ce);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Neither do we.</span></h2>
+    <h2 class="sec-title">Threats never sleep.<br><span style="background:linear-gradient(120deg,#06b6d4,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Neither do we.</span></h2>
     <p class="sec-sub">RAKSHAK's threat intelligence engine monitors global danger signals in real time — categorising, mapping, and alerting 24/7.</p>
   </div>
 
@@ -2588,14 +2600,14 @@ body::before{
 @keyframes appPhoneFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-14px)}}
 .app-screen-inner{padding:16px 12px;background:#030305;min-height:360px}
 .app-screen-header{font-family:'Space Grotesk',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.15em;color:rgba(212,175,55,.7);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px}
-.app-screen-header::before{content:'';width:4px;height:4px;border-radius:50%;background:#d4af37;box-shadow:0 0 5px #d4af37;/* anim-removed */height:60px;border-radius:50%;background:linear-gradient(145deg,#d4af37,#b8860b);margin:10px auto;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(212,175,55,.6)}
+.app-screen-header::before{content:'';width:4px;height:4px;border-radius:50%;background:#10b981;box-shadow:0 0 5px #10b981;/* anim-removed */height:60px;border-radius:50%;background:linear-gradient(145deg,#ef4444,#dc2626);margin:10px auto;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(239,68,68,.5)}
 .app-sos-mini svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .app-mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:10px}
 .app-mini-stat{background:rgba(255,255,255,.04);border-radius:7px;padding:5px 3px;text-align:center;font-family:'Space Grotesk',sans-serif}
 .app-mini-stat-n{font-size:.7rem;font-weight:700;color:#fff}
 .app-mini-stat-l{font-size:.38rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em}
 .app-mini-bar{height:2px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:8px;overflow:hidden}
-.app-mini-bar-fill{height:100%;background:linear-gradient(90deg,#d4af37,#d4af37);border-radius:2px}
+.app-mini-bar-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);border-radius:2px}
 .app-mini-item{display:flex;align-items:center;gap:5px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-family:'Inter',sans-serif;font-size:.5rem;color:rgba(255,255,255,.5)}
 .app-mini-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
 
@@ -2632,11 +2644,11 @@ body::before{
         <div class="app-screen-inner">
           <div class="app-screen-header">Danger Map</div>
           <div style="height:140px;background:rgba(212,175,55,.04);border:1px solid rgba(212,175,55,.1);border-radius:8px;position:relative;overflow:hidden;margin-bottom:8px">
-            <div style="position:absolute;top:40%;left:35%;width:8px;height:8px;border-radius:50%;background:#d4af37;box-shadow:0 0 10px #d4af37;/* anim-removed */top:60%;left:55%;width:6px;height:6px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */top:25%;left:65%;width:6px;height:6px;border-radius:50%;background:#d4af37;box-shadow:0 0 8px #d4af37"></div>
+            <div style="position:absolute;top:40%;left:35%;width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 10px #ef4444;/* anim-removed */top:60%;left:55%;width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;/* anim-removed */top:25%;left:65%;width:6px;height:6px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px #8b5cf6"></div>
             <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.05) 1px,transparent 1px);background-size:20px 20px"></div>
           </div>
-          <div class="app-mini-item"><div class="app-mini-dot" style="background:#d4af37;box-shadow:0 0 4px #d4af37"></div>Zone-7 HOT — 0.8km</div>
-          <div class="app-mini-item"><div class="app-mini-dot" style="background:#d4af37;box-shadow:0 0 4px #d4af37"></div>Zone-12 WATCH — 1.4km</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#ef4444;box-shadow:0 0 4px #ef4444"></div>Zone-7 HOT — 0.8km</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#f59e0b;box-shadow:0 0 4px #f59e0b"></div>Zone-12 WATCH — 1.4km</div>
         </div>
       </div>
 
@@ -2649,8 +2661,8 @@ body::before{
           <div style="text-align:center;margin:8px 0">
             <div style="position:relative;width:70px;height:70px;margin:0 auto">
               <div style="position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(212,175,55,.2);/* anim-removed */font-size:.45rem;color:rgba(255,255,255,.25);letter-spacing:.08em;margin-top:4px">RISK LEVEL — LOW</div>
-          <div class="app-mini-item" style="margin-top:8px"><div class="app-mini-dot" style="background:#d4af37;box-shadow:0 0 4px #d4af37;/* anim-removed */box-shadow:0 0 4px #d4af37"></div>Sys Ping OK · risk low</div>
-          <div class="app-mini-item"><div class="app-mini-dot" style="background:#d4af37;box-shadow:0 0 4px #d4af37"></div>Zone Alert · 480m</div>
+          <div class="app-mini-item" style="margin-top:8px"><div class="app-mini-dot" style="background:#10b981;box-shadow:0 0 4px #10b981"></div>Sys Ping OK · risk low</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#f59e0b;box-shadow:0 0 4px #f59e0b"></div>Zone Alert · 480m</div>
         </div>
       </div>
 
@@ -2658,11 +2670,11 @@ body::before{
         <div style="height:20px;background:#000;border-radius:0"></div>
         <div class="app-screen-inner">
           <div class="app-screen-header">Safety Score</div>
-          <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 10px;border:3px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,.05);font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:900;color:#d4af37;text-shadow:0 0 20px rgba(212,175,55,.5)">87</div>
+          <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 10px;border:3px solid rgba(16,185,129,.3);display:flex;align-items:center;justify-content:center;background:rgba(16,185,129,.05);font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:900;color:#10b981;text-shadow:0 0 20px rgba(16,185,129,.5)">87</div>
           <div style="font-family:'Courier New',monospace;font-size:.5rem;text-align:center;color:rgba(212,175,55,.6);letter-spacing:.1em;margin-bottom:10px">SCORE — EXCELLENT</div>
-          <div class="app-mini-item"><div class="app-mini-dot" style="background:#d4af37"></div>Contacts verified</div>
-          <div class="app-mini-item"><div class="app-mini-dot" style="background:#d4af37"></div>GPS enabled</div>
-          <div class="app-mini-item"><div class="app-mini-dot" style="background:#d4af37"></div>Fake call not set</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#10b981"></div>Contacts verified</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#10b981"></div>GPS enabled</div>
+          <div class="app-mini-item"><div class="app-mini-dot" style="background:#f59e0b"></div>Fake call not set</div>
         </div>
       </div>
     </div>
@@ -2670,7 +2682,7 @@ body::before{
     <!-- Content -->
     <div class="app-content">
       <span class="eyebrow">Get the App</span>
-      <h2 class="sec-title" style="font-size:clamp(2.2rem,4vw,3.5rem);margin-top:1rem">Protection in<br><em style="font-style:normal;background:linear-gradient(120deg,#d4af37,#d4af37,#f7e7ce);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">your pocket.</em></h2>
+      <h2 class="sec-title" style="font-size:clamp(2.2rem,4vw,3.5rem);margin-top:1rem">Protection in<br><em style="font-style:normal;background:linear-gradient(120deg,#10b981,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">your pocket.</em></h2>
       <p style="font-family:'Inter',sans-serif;font-size:1rem;color:rgba(255,255,255,.5);line-height:1.75;margin-top:1rem;max-width:440px">RAKSHAK works on any device — phone, tablet, or desktop. Install it as a native PWA for the full offline-capable, push-notification-enabled experience.</p>
 
       <div class="app-badge-row">
@@ -2711,7 +2723,7 @@ body::before{
 <div class="sa-inner">
   <div class="sec-hd reveal">
     <span class="eyebrow">Security Architecture</span>
-    <h2 class="sec-title">Military-grade. <span style="background:linear-gradient(120deg,#d4af37,#d4af37,#f7e7ce);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Zero compromise.</span></h2>
+    <h2 class="sec-title">Military-grade. <span style="background:linear-gradient(120deg,#f59e0b,#ef4444,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Zero compromise.</span></h2>
     <p class="sec-sub">Six interlocking security layers engineered to protect you at every level — hardware to cloud.</p>
   </div>
   <div class="sa-grid">
@@ -2792,23 +2804,23 @@ body::before{
     <div>
       <div class="sec-hd reveal" style="text-align:left;margin-bottom:3rem;">
         <span class="eyebrow">Global Reach</span>
-        <h2 class="sec-title" style="font-size:clamp(2rem,3.5vw,3.2rem);">Always on.<br><span style="background:linear-gradient(120deg,#d4af37,#d4af37,#f7e7ce);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Everywhere.</span></h2>
+        <h2 class="sec-title" style="font-size:clamp(2rem,3.5vw,3.2rem);">Always on.<br><span style="background:linear-gradient(120deg,#8b5cf6,#3b82f6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Everywhere.</span></h2>
         <p class="sec-sub" style="text-align:left;margin:0;">RAKSHAK operates continuously across all networks, serving users 24 hours a day, every day of the year.</p>
       </div>
       <div class="wpb-metrics reveal">
-        <div class="wpb-metric" style="--mc:#d4af37;--mc-rgb:212,175,55;">
+        <div class="wpb-metric" style="--mc:#8b5cf6;--mc-rgb:139,92,246;">
           <div class="wpb-num">99.9%</div>
           <div class="wpb-lbl">Uptime SLA</div>
         </div>
-        <div class="wpb-metric" style="--mc:#d4af37;--mc-rgb:212,175,55;">
+        <div class="wpb-metric" style="--mc:#8b5cf6;--mc-rgb:139,92,246;">
           <div class="wpb-num">&lt;1s</div>
           <div class="wpb-lbl">Alert Delivery</div>
         </div>
-        <div class="wpb-metric" style="--mc:#d4af37;--mc-rgb:212,175,55;">
+        <div class="wpb-metric" style="--mc:#8b5cf6;--mc-rgb:139,92,246;">
           <div class="wpb-num">256</div>
           <div class="wpb-lbl">Bit Encryption</div>
         </div>
-        <div class="wpb-metric" style="--mc:#d4af37;--mc-rgb:212,175,55;">
+        <div class="wpb-metric" style="--mc:#8b5cf6;--mc-rgb:139,92,246;">
           <div class="wpb-num">24/7</div>
           <div class="wpb-lbl">Monitoring</div>
         </div>
@@ -2816,27 +2828,27 @@ body::before{
     </div>
     <div class="wpb-badge-col reveal">
       <div class="wpb-badge">
-        <div class="wpb-badge-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */"></div>
+        <div class="wpb-badge-dot" style="background:#ef4444;box-shadow:0 0 8px #ef4444;/* anim-removed */"></div>
         CORE ENGINE · ONLINE
       </div>
       <div class="wpb-badge">
-        <div class="wpb-badge-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */"></div>
+        <div class="wpb-badge-dot" style="background:#3b82f6;box-shadow:0 0 8px #3b82f6;/* anim-removed */"></div>
         GPS SUBSYSTEM · ACTIVE
       </div>
       <div class="wpb-badge">
-        <div class="wpb-badge-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */"></div>
+        <div class="wpb-badge-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;/* anim-removed */"></div>
         ALERT PIPELINE · ARMED
       </div>
       <div class="wpb-badge">
-        <div class="wpb-badge-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */"></div>
+        <div class="wpb-badge-dot" style="background:#f59e0b;box-shadow:0 0 8px #f59e0b;/* anim-removed */"></div>
         ENCRYPTION · AES-256
       </div>
       <div class="wpb-badge">
-        <div class="wpb-badge-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */"></div>
+        <div class="wpb-badge-dot" style="background:#8b5cf6;box-shadow:0 0 8px #8b5cf6;/* anim-removed */"></div>
         THREAT AI · SCANNING
       </div>
       <div class="wpb-badge">
-        <div class="wpb-badge-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;/* anim-removed */"></div>
+        <div class="wpb-badge-dot" style="background:#06b6d4;box-shadow:0 0 8px #06b6d4;/* anim-removed */"></div>
         RAILWAY CLOUD · LIVE
       </div>
     </div>
@@ -2851,15 +2863,15 @@ body::before{
   <!-- Floating 3D Shields -->
   <div class="cta-3d-shield">
     <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#d4af37" stroke-width="2" fill="none" opacity="0.6"/>
-      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#d4af37" stroke-width="1" fill="none" opacity="0.3"/>
-      <path d="M80 110 L95 125 L125 95" stroke="#d4af37" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#8b5cf6" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#8b5cf6" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M80 110 L95 125 L125 95" stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
     </svg>
   </div>
   <div class="cta-3d-shield cta-3d-shield-left">
     <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#d4af37" stroke-width="2" fill="none" opacity="0.6"/>
-      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#d4af37" stroke-width="1" fill="none" opacity="0.3"/>
+      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#8b5cf6" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#8b5cf6" stroke-width="1" fill="none" opacity="0.3"/>
     </svg>
   </div>
   <div class="cta-inner reveal">
@@ -2888,7 +2900,7 @@ body::before{
           <svg width="28" height="31" viewBox="0 0 34 38" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="lgFt1" x1="0" y1="0" x2="34" y2="38" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#f7e7ce"/><stop offset="48%" stop-color="#d4af37"/><stop offset="100%" stop-color="#5c4a1e"/>
+                <stop offset="0%" stop-color="#c4b5fd"/><stop offset="48%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#4c1d95"/>
               </linearGradient>
               <linearGradient id="lgFt2" x1="17" y1="1" x2="17" y2="22" gradientUnits="userSpaceOnUse">
                 <stop offset="0%" stop-color="rgba(255,255,255,.3)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
@@ -2935,38 +2947,38 @@ body::before{
       <div class="ft-col-hd">System Status</div>
       <div class="ft-status-row">
         <div style="display:flex;align-items:center;gap:7px;">
-          <div class="ft-status-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;/* anim-removed */"></div>
+          <div class="ft-status-dot" style="background:#10b981;box-shadow:0 0 6px #10b981;/* anim-removed */"></div>
           <span class="ft-status-lbl">CORE ENGINE</span>
         </div>
-        <span class="ft-status-val" style="color:#d4af37;">ONLINE</span>
+        <span class="ft-status-val" style="color:#10b981;">ONLINE</span>
       </div>
       <div class="ft-status-row">
         <div style="display:flex;align-items:center;gap:7px;">
-          <div class="ft-status-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;/* anim-removed */"></div>
+          <div class="ft-status-dot" style="background:#10b981;box-shadow:0 0 6px #10b981;/* anim-removed */"></div>
           <span class="ft-status-lbl">GPS SUBSYSTEM</span>
         </div>
-        <span class="ft-status-val" style="color:#d4af37;">ACTIVE</span>
+        <span class="ft-status-val" style="color:#10b981;">ACTIVE</span>
       </div>
       <div class="ft-status-row">
         <div style="display:flex;align-items:center;gap:7px;">
-          <div class="ft-status-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;/* anim-removed */"></div>
+          <div class="ft-status-dot" style="background:#10b981;box-shadow:0 0 6px #10b981;/* anim-removed */"></div>
           <span class="ft-status-lbl">ALERT PIPELINE</span>
         </div>
-        <span class="ft-status-val" style="color:#d4af37;">ARMED</span>
+        <span class="ft-status-val" style="color:#10b981;">ARMED</span>
       </div>
       <div class="ft-status-row">
         <div style="display:flex;align-items:center;gap:7px;">
-          <div class="ft-status-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;/* anim-removed */"></div>
+          <div class="ft-status-dot" style="background:#10b981;box-shadow:0 0 6px #10b981;/* anim-removed */"></div>
           <span class="ft-status-lbl">ENCRYPTION</span>
         </div>
-        <span class="ft-status-val" style="color:#d4af37;">AES-256</span>
+        <span class="ft-status-val" style="color:#10b981;">AES-256</span>
       </div>
       <div class="ft-status-row">
         <div style="display:flex;align-items:center;gap:7px;">
-          <div class="ft-status-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;/* anim-removed */"></div>
+          <div class="ft-status-dot" style="background:#10b981;box-shadow:0 0 6px #10b981;/* anim-removed */"></div>
           <span class="ft-status-lbl">THREAT SCANNER</span>
         </div>
-        <span class="ft-status-val" style="color:#d4af37;">SCANNING</span>
+        <span class="ft-status-val" style="color:#10b981;">SCANNING</span>
       </div>
     </div>
 
@@ -2976,7 +2988,7 @@ body::before{
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
       <span class="ft-copy-v2">&copy; 2026 RAKSHAK &nbsp;&middot;&nbsp; Built for Safety &nbsp;&middot;&nbsp; Made in India &#127470;&#127475;</span>
       <span style="display:flex;align-items:center;gap:5px;font-family:'Courier New',monospace;font-size:.6rem;color:rgba(212,175,55,.55);">
-        <span style="width:5px;height:5px;border-radius:50%;background:#d4af37;box-shadow:0 0 6px #d4af37;/* anim-removed */flex-shrink:0;"></span>
+        <span style="width:5px;height:5px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;flex-shrink:0;"></span>
         ALL SYSTEMS OPERATIONAL
       </span>
     </div>
@@ -3359,11 +3371,11 @@ window._initParticlesJS = function() {
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": "#d4af37" },
+        "color": { "value": "#8b5cf6" },
         "shape": { "type": "circle" },
         "opacity": { "value": 0.5, "random": false, "anim": { "enable": false } },
         "size": { "value": 3, "random": true, "anim": { "enable": false } },
-        "line_linked": { "enable": true, "distance": 150, "color": "#d4af37", "opacity": 0.2, "width": 1 },
+        "line_linked": { "enable": true, "distance": 150, "color": "#8b5cf6", "opacity": 0.15, "width": 1 },
         "move": {
           "enable": true, "speed": 1.5, "direction": "none", "random": false,
           "straight": false, "out_mode": "out", "bounce": false,
@@ -3407,16 +3419,16 @@ function fddToggle(header) {
 
   // Hotspot dots (lat/lon) — major Indian cities + world
   const hotspots = [
-    {lat:28.6,lon:77.2,c:'#d4af37',size:5,pulse:0},   // Delhi
-    {lat:19.1,lon:72.9,c:'#d4af37',size:4,pulse:0.3},  // Mumbai
-    {lat:12.9,lon:77.6,c:'#d4af37',size:3,pulse:0.6},  // Bangalore
-    {lat:13.1,lon:80.3,c:'#d4af37',size:4,pulse:0.9},  // Chennai
-    {lat:17.4,lon:78.5,c:'#d4af37',size:3,pulse:1.2},  // Hyderabad
-    {lat:22.6,lon:88.4,c:'#d4af37',size:4,pulse:1.5},  // Kolkata
-    {lat:51.5,lon:-0.1,c:'#d4af37',size:3,pulse:0.5},  // London
-    {lat:40.7,lon:-74.0,c:'#d4af37',size:3,pulse:1.0}, // NYC
-    {lat:35.7,lon:139.7,c:'#d4af37',size:3,pulse:1.8}, // Tokyo
-    {lat:-33.9,lon:151.2,c:'#d4af37',size:3,pulse:2.1},// Sydney
+    {lat:28.6,lon:77.2,c:'#ef4444',size:5,pulse:0},   // Delhi
+    {lat:19.1,lon:72.9,c:'#3b82f6',size:4,pulse:0.3},  // Mumbai
+    {lat:12.9,lon:77.6,c:'#10b981',size:3,pulse:0.6},  // Bangalore
+    {lat:13.1,lon:80.3,c:'#f59e0b',size:4,pulse:0.9},  // Chennai
+    {lat:17.4,lon:78.5,c:'#8b5cf6',size:3,pulse:1.2},  // Hyderabad
+    {lat:22.6,lon:88.4,c:'#06b6d4',size:4,pulse:1.5},  // Kolkata
+    {lat:51.5,lon:-0.1,c:'#f43f5e',size:3,pulse:0.5},  // London
+    {lat:40.7,lon:-74.0,c:'#14b8a6',size:3,pulse:1.0}, // NYC
+    {lat:35.7,lon:139.7,c:'#f97316',size:3,pulse:1.8}, // Tokyo
+    {lat:-33.9,lon:151.2,c:'#a78bfa',size:3,pulse:2.1},// Sydney
   ];
 
   function latLonToXY(lat,lon,r,rot){
