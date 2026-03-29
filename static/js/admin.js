@@ -70,13 +70,13 @@ function initAdminMap(alerts, zones) {
       if (!a.latitude || !a.longitude) return;
       const icon = L.divIcon({
         className: '',
-        html: `<div style="width:18px;height:18px;border-radius:50%;background:#dc2626;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 12px #dc2626,0 0 24px #dc262644;${a.status==='active'?'animation:sos-pulse 1.5s infinite;':''}"></div>`,
+        html: `<div style="width:18px;height:18px;border-radius:50%;background:#b8860b;border:2px solid rgba(255,255,255,0.4);box-shadow:0 0 12px #b8860b,0 0 24px #b8860b44;${a.status==='active'?'animation:sos-pulse 1.5s infinite;':''}"></div>`,
         iconSize: [18, 18], iconAnchor: [9, 9],
       });
       const m = L.marker([a.latitude, a.longitude], { icon })
         .bindPopup(`
           <div style="font-family:Inter,sans-serif;min-width:180px;">
-            <strong style="color:#dc2626;">🚨 ${a.full_name||'User'}</strong><br>
+            <strong style="color:#b8860b;">🚨 ${a.full_name||'User'}</strong><br>
             <span style="font-size:0.8rem;color:#a0aec0;">${a.phone||''}</span><br>
             <span style="font-size:0.78rem;">${a.address||`${a.latitude},${a.longitude}`}</span><br>
             <span class="pill pill-${a.status}" style="font-size:0.7rem;">${a.status}</span>
@@ -115,8 +115,8 @@ async function loadAnalytics() {
     const daysData = resp.alerts_per_day || [];
     const alertsCtx = document.getElementById('chart-alerts-day').getContext('2d');
     const alertGrad = alertsCtx.createLinearGradient(0, 0, 0, 200);
-    alertGrad.addColorStop(0, 'rgba(220,38,38,0.8)');
-    alertGrad.addColorStop(1, 'rgba(220,38,38,0.15)');
+    alertGrad.addColorStop(0, 'rgba(184,134,11,0.8)');
+    alertGrad.addColorStop(1, 'rgba(184,134,11,0.15)');
     new Chart(alertsCtx, {
       type: 'bar',
       data: {
@@ -124,15 +124,15 @@ async function loadAnalytics() {
         datasets: [{
           label: 'Alerts', data: daysData.map(d => d.count),
           backgroundColor: alertGrad,
-          borderColor: '#dc2626', borderWidth: 1, borderRadius: 6,
-          hoverBackgroundColor: 'rgba(220,38,38,0.9)',
+          borderColor: '#b8860b', borderWidth: 1, borderRadius: 6,
+          hoverBackgroundColor: 'rgba(184,134,11,0.9)',
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         animation: { duration: 1200, easing: 'easeOutQuart' },
         plugins: { legend: { display: false },
-          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#dc2626', borderWidth: 1,
+          tooltip: { backgroundColor: 'rgba(15,15,26,0.95)', borderColor: '#b8860b', borderWidth: 1,
             titleFont: { family: 'Rajdhani', weight: '700' }, padding: 12, cornerRadius: 8 }
         },
         scales: {
@@ -188,8 +188,8 @@ async function loadAnalytics() {
         labels: ['Low Risk','Medium Risk','High Risk'],
         datasets: [{
           data: [riskMap.low||0, riskMap.medium||0, riskMap.high||0],
-          backgroundColor: ['rgba(72,187,120,0.8)','rgba(246,173,85,0.8)','rgba(220,38,38,0.8)'],
-          borderColor: ['#48bb78','#f6ad55','#dc2626'],
+          backgroundColor: ['rgba(72,187,120,0.8)','rgba(246,173,85,0.8)','rgba(184,134,11,0.8)'],
+          borderColor: ['#48bb78','#f6ad55','#b8860b'],
           borderWidth: 2, hoverOffset: 12,
           hoverBorderWidth: 3,
         }]
@@ -233,10 +233,10 @@ async function loadAnalytics() {
         labels: ['Active','Resolved','False Alarm'],
         datasets: [{
           data: [statusMap.active||0, statusMap.resolved||0, statusMap.false_alarm||0],
-          backgroundColor: ['rgba(220,38,38,0.8)','rgba(72,187,120,0.8)','rgba(160,174,192,0.5)'],
-          borderColor: ['#dc2626','#48bb78','#a0aec0'],
+          backgroundColor: ['rgba(184,134,11,0.8)','rgba(72,187,120,0.8)','rgba(160,174,192,0.5)'],
+          borderColor: ['#b8860b','#48bb78','#a0aec0'],
           borderWidth: 1.5, borderRadius: 6,
-          hoverBackgroundColor: ['rgba(220,38,38,1)','rgba(72,187,120,1)','rgba(160,174,192,0.7)'],
+          hoverBackgroundColor: ['rgba(184,134,11,1)','rgba(72,187,120,1)','rgba(160,174,192,0.7)'],
         }]
       },
       options: {
@@ -275,8 +275,8 @@ async function loadUsers(q='') {
     if (!resp.users.length) {
       tbody.innerHTML = `<tr><td colspan="8">
         <div class="empty-state" style="padding:40px;text-align:center;">
-          <div style="width:80px;height:80px;border-radius:50%;border:1px dashed rgba(244,63,94,.5);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;animation:spinSlow 10s linear infinite;">
-            <i class="bi bi-radar" style="font-size:2rem;color:#f43f5e;animation:none;"></i>
+          <div style="width:80px;height:80px;border-radius:50%;border:1px dashed rgba(212,175,55,.5);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;animation:spinSlow 10s linear infinite;">
+            <i class="bi bi-radar" style="font-size:2rem;color:#d4af37;animation:none;"></i>
           </div>
           <p style="font-family:'Courier New',monospace;color:rgba(255,255,255,0.5);letter-spacing:0.1em;font-size:0.8rem;text-transform:uppercase;">No operatives found on this frequency.</p>
         </div>
@@ -289,9 +289,9 @@ async function loadUsers(q='') {
       
       const roleStr = u.role || 'user';
       const riskStr = u.risk_level || 'low';
-      const roleColor = roleStr === 'admin' ? '#f43f5e' : (roleStr === 'trusted_contact' ? '#818cf8' : '#22c55e');
+      const roleColor = roleStr === 'admin' ? '#d4af37' : (roleStr === 'trusted_contact' ? '#818cf8' : '#22c55e');
       const riskClass = riskStr === 'high' ? 'danger' : (riskStr === 'medium' ? 'amber' : 'green');
-      const statusIcon = u.is_active ? '<i class="bi bi-check-circle-fill" style="color:#22c55e;"></i> ACTIVE' : '<i class="bi bi-slash-circle-fill" style="color:#f43f5e;"></i> LOCKED';
+      const statusIcon = u.is_active ? '<i class="bi bi-check-circle-fill" style="color:#22c55e;"></i> ACTIVE' : '<i class="bi bi-slash-circle-fill" style="color:#d4af37;"></i> LOCKED';
       const initial = (u.full_name && u.full_name.length > 0) ? u.full_name[0].toUpperCase() : '?';
       
       return `
@@ -339,8 +339,8 @@ window.openDossier = function(uid) {
   const riskStr = u.risk_level || 'low';
   const roleStr = u.role || 'user';
   
-  const riskColor = riskStr === 'high' ? '#f43f5e' : (riskStr === 'medium' ? '#f59e0b' : '#22c55e');
-  const roleColor = roleStr === 'admin' ? '#f43f5e' : (roleStr === 'trusted_contact' ? '#818cf8' : '#22c55e');
+  const riskColor = riskStr === 'high' ? '#d4af37' : (riskStr === 'medium' ? '#f59e0b' : '#22c55e');
+  const roleColor = roleStr === 'admin' ? '#d4af37' : (roleStr === 'trusted_contact' ? '#818cf8' : '#22c55e');
   
   const riskEl = document.getElementById('dos-risk');
   riskEl.textContent = riskStr.toUpperCase();
@@ -352,7 +352,7 @@ window.openDossier = function(uid) {
   
   const statusEl = document.getElementById('dos-status');
   statusEl.textContent = u.is_active ? 'ACTIVE' : 'LOCKED';
-  statusEl.style.color = u.is_active ? '#22c55e' : '#f43f5e';
+  statusEl.style.color = u.is_active ? '#22c55e' : '#d4af37';
   
   const pingEl = document.getElementById('dos-ping');
   const d = u.last_ping ? new Date(u.last_ping) : null;
@@ -361,8 +361,8 @@ window.openDossier = function(uid) {
   const toggleBtn = document.getElementById('dos-btn-toggle');
   if(u.is_active) {
     toggleBtn.innerHTML = '<i class="bi bi-sign-stop me-2"></i>Lock Access';
-    toggleBtn.style.color = '#f43f5e';
-    toggleBtn.style.borderColor = 'rgba(244,63,94,.4)';
+    toggleBtn.style.color = '#d4af37';
+    toggleBtn.style.borderColor = 'rgba(212,175,55,.4)';
   } else {
     toggleBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Restore Access';
     toggleBtn.style.color = '#22c55e';
@@ -531,11 +531,11 @@ function onNewSos(data) {
   if (adminMap && a.latitude && a.longitude) {
     const icon = L.divIcon({
       className:'',
-      html:`<div style="width:22px;height:22px;border-radius:50%;background:#dc2626;border:3px solid white;box-shadow:0 0 20px #dc2626;animation:sos-pulse 1s infinite;"></div>`,
+      html:`<div style="width:22px;height:22px;border-radius:50%;background:#b8860b;border:3px solid white;box-shadow:0 0 20px #b8860b;animation:sos-pulse 1s infinite;"></div>`,
       iconSize:[22,22],iconAnchor:[11,11],
     });
     L.marker([a.latitude,a.longitude],{icon})
-      .bindPopup(`<strong style="color:#dc2626;">🚨 New SOS Alert!</strong><br>User #${a.user_id}`)
+      .bindPopup(`<strong style="color:#b8860b;">🚨 New SOS Alert!</strong><br>User #${a.user_id}`)
       .addTo(adminMap).openPopup();
     adminMap.setView([a.latitude,a.longitude],14);
   }

@@ -374,33 +374,33 @@
     modal.id = 'sos-trigger-settings-modal';
     modal.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);';
     modal.innerHTML =
-      '<div style="background:linear-gradient(135deg,#0f0f17,#1a1a2e);border:1px solid rgba(220,38,38,0.2);border-radius:16px;padding:32px;max-width:400px;width:90%;color:#e2e2e2;box-shadow:0 20px 60px rgba(0,0,0,0.5);">' +
+      '<div style="background:linear-gradient(135deg,#0f0f17,#1a1a2e);border:1px solid rgba(184,134,11,0.2);border-radius:16px;padding:32px;max-width:400px;width:90%;color:#e2e2e2;box-shadow:0 20px 60px rgba(0,0,0,0.5);">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">' +
-          '<h3 style="margin:0;font-size:1.1rem;color:#dc2626;font-weight:700;letter-spacing:0.05em;">SOS TRIGGER SETTINGS</h3>' +
+          '<h3 style="margin:0;font-size:1.1rem;color:#b8860b;font-weight:700;letter-spacing:0.05em;">SOS TRIGGER SETTINGS</h3>' +
           '<button id="sos-settings-close" style="background:none;border:none;color:#888;font-size:1.4rem;cursor:pointer;padding:0;line-height:1;">&times;</button>' +
         '</div>' +
 
         '<div style="margin-bottom:20px;">' +
           '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
-            '<input type="checkbox" id="sos-set-shake" ' + (shakeEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#dc2626;">' +
+            '<input type="checkbox" id="sos-set-shake" ' + (shakeEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#b8860b;">' +
             '<div><div style="font-weight:600;font-size:0.9rem;">Shake to SOS</div><div style="font-size:0.75rem;color:#888;">Shake your phone aggressively to trigger SOS</div></div>' +
           '</label>' +
         '</div>' +
 
         '<div style="margin-bottom:20px;">' +
           '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
-            '<input type="checkbox" id="sos-set-volume" ' + (volumeEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#dc2626;">' +
+            '<input type="checkbox" id="sos-set-volume" ' + (volumeEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#b8860b;">' +
             '<div><div style="font-weight:600;font-size:0.9rem;">Volume Button SOS</div><div style="font-size:0.75rem;color:#888;">Press volume buttons 5 times rapidly</div></div>' +
           '</label>' +
         '</div>' +
 
         '<div style="margin-bottom:24px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
           '<label style="font-weight:600;font-size:0.9rem;display:block;margin-bottom:8px;">Countdown (seconds)</label>' +
-          '<input type="range" id="sos-set-countdown" min="3" max="10" value="' + countdown + '" style="width:100%;accent-color:#dc2626;">' +
+          '<input type="range" id="sos-set-countdown" min="3" max="10" value="' + countdown + '" style="width:100%;accent-color:#b8860b;">' +
           '<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#888;"><span>3s</span><span id="sos-countdown-val">' + countdown + 's</span><span>10s</span></div>' +
         '</div>' +
 
-        '<button id="sos-settings-save" style="width:100%;padding:12px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;letter-spacing:0.05em;">SAVE SETTINGS</button>' +
+        '<button id="sos-settings-save" style="width:100%;padding:12px;background:linear-gradient(135deg,#b8860b,#b91c1c);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;letter-spacing:0.05em;">SAVE SETTINGS</button>' +
       '</div>';
 
     document.body.appendChild(modal);

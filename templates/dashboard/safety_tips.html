@@ -13,8 +13,8 @@
   to   { opacity: 1; transform: translateX(0); }
 }
 @keyframes spotlightPulse {
-  0%, 100% { box-shadow: 0 0 40px rgba(244,63,94,0.15), inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3); }
-  50% { box-shadow: 0 0 80px rgba(244,63,94,0.25), inset 0 1px 0 rgba(255,255,255,0.15), 0 20px 50px rgba(0,0,0,0.4); }
+  0%, 100% { box-shadow: 0 0 40px rgba(212,175,55,0.15), inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 0 80px rgba(212,175,55,0.25), inset 0 1px 0 rgba(255,255,255,0.15), 0 20px 50px rgba(0,0,0,0.4); }
 }
 @keyframes floatIcon {
   0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -35,7 +35,7 @@
 }
 .tip-of-day-card::before {
   content: ''; position: absolute; inset: -1px; z-index: -1;
-  background: linear-gradient(135deg, rgba(244,63,94,0.3), rgba(245,158,11,0.3), rgba(159,122,234,0.3));
+  background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(245,158,11,0.3), rgba(159,122,234,0.3));
   border-radius: inherit; opacity: 1; pointer-events: none;
   animation: bgSpinCard 6s linear infinite; filter:blur(10px);
 }
@@ -49,9 +49,9 @@
 .totd-icon {
   font-size: 2.5rem; flex-shrink: 0; width: 72px; height: 72px;
   display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, rgba(244,63,94,0.2), rgba(244,63,94,0.05));
-  border-radius: 18px; border: 1px solid rgba(244,63,94,0.3);
-  box-shadow: 0 10px 30px rgba(244,63,94,0.2);
+  background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
+  border-radius: 18px; border: 1px solid rgba(212,175,55,0.3);
+  box-shadow: 0 10px 30px rgba(212,175,55,0.2);
   animation: floatIcon 3s ease-in-out infinite;
 }
 .totd-badge {
@@ -66,7 +66,7 @@
 .totd-spotlight {
   position: absolute; top: -60%; left: 50%; transform: translateX(-50%);
   width: 300px; height: 300px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(244,63,94,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%);
   pointer-events: none; z-index: -1; animation: spotlightBreathe 4s ease-in-out infinite;
 }
 @keyframes spotlightBreathe {
@@ -82,7 +82,7 @@
   display: flex; align-items: center; gap: 6px;
   font-size: 0.72rem; color: rgba(255,255,255,0.45); font-family: var(--int);
 }
-.totd-stat i { color: rgba(244,63,94,0.6); }
+.totd-stat i { color: rgba(212,175,55,0.6); }
 
 /* Category Tabs — with active indicator animation */
 .category-tabs {
@@ -101,13 +101,13 @@
 }
 .cat-tab::after {
   content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px;
-  background: var(--red-primary, #f43f5e); transition: all 0.3s ease; transform: translateX(-50%);
+  background: var(--red-primary, #d4af37); transition: all 0.3s ease; transform: translateX(-50%);
 }
 .cat-tab.active::after { width: 60%; }
 .cat-tab:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.2); transform:translateY(-2px); }
 .cat-tab.active {
-  background: rgba(244,63,94,0.15); border-color: rgba(244,63,94,0.3); color: #fff;
-  box-shadow: 0 0 20px rgba(244,63,94,0.2);
+  background: rgba(212,175,55,0.15); border-color: rgba(212,175,55,0.3); color: #fff;
+  box-shadow: 0 0 20px rgba(212,175,55,0.2);
 }
 /* Category count badge */
 .cat-count {
@@ -116,7 +116,7 @@
   background: rgba(255,255,255,0.08); font-size: 0.65rem; font-weight: 700;
   margin-left: 6px; color: rgba(255,255,255,0.5);
 }
-.cat-tab.active .cat-count { background: rgba(244,63,94,0.3); color: #fff; }
+.cat-tab.active .cat-count { background: rgba(212,175,55,0.3); color: #fff; }
 
 /* Tips Grid */
 .tips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
@@ -143,27 +143,27 @@
 .tip-card:nth-child(n+11) { animation-delay: 0.6s; }
 .tip-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.8), transparent); transform: scaleX(0);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.8), transparent); transform: scaleX(0);
   transition: transform .5s cubic-bezier(.22,1,.36,1); opacity:0.5;
 }
 .tip-card:hover::before { transform: scaleX(1); }
 .tip-card:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-.tip-card.expanded { border-color: rgba(244,63,94,0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+.tip-card.expanded { border-color: rgba(212,175,55,0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
 .tip-card.expanded::before { transform: scaleX(1); }
 /* Colored left accent bar per category */
-.tip-card[data-category="Personal Safety"] { border-left: 3px solid rgba(244,63,94,0.4); }
+.tip-card[data-category="Personal Safety"] { border-left: 3px solid rgba(212,175,55,0.4); }
 .tip-card[data-category="Travel Safety"]   { border-left: 3px solid rgba(66,153,225,0.4); }
 .tip-card[data-category="Digital Safety"]   { border-left: 3px solid rgba(159,122,234,0.4); }
 .tip-card[data-category="Home Safety"]      { border-left: 3px solid rgba(72,187,120,0.4); }
 .tip-card[data-category="Workplace Safety"] { border-left: 3px solid rgba(245,158,11,0.4); }
 .tip-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; cursor: pointer; gap: 14px; }
 .tip-icon { font-size: 1.4rem; flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 12px; transition: all .3s; border:1px solid rgba(255,255,255,0.05); }
-.tip-card:hover .tip-icon { box-shadow: 0 0 20px rgba(244,63,94,0.15); background:rgba(244,63,94,0.1); border-color:var(--red-primary); color:var(--red-primary); transform:scale(1.05) rotate(-5deg); }
+.tip-card:hover .tip-icon { box-shadow: 0 0 20px rgba(212,175,55,0.15); background:rgba(212,175,55,0.1); border-color:var(--red-primary); color:var(--red-primary); transform:scale(1.05) rotate(-5deg); }
 .tip-title { color: #fff; font-size: 1rem; font-weight: 700; font-family:var(--sg); margin: 0; line-height: 1.3; }
 .tip-chevron { color: rgba(255,255,255,0.4); font-size: 1rem; transition: transform 0.4s ease; flex-shrink: 0; }
 .tip-card.expanded .tip-chevron { transform: rotate(180deg); color: #fff; }
 .tip-priority { font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
-.priority-1 { background: rgba(244,63,94,0.15); color: #ff6b6b; border: 1px solid rgba(244,63,94,0.3); }
+.priority-1 { background: rgba(212,175,55,0.15); color: #ff6b6b; border: 1px solid rgba(212,175,55,0.3); }
 .priority-2 { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
 .priority-3 { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
 .tip-cat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); font-family:var(--int); }
@@ -178,7 +178,7 @@
   letter-spacing: 0.05em; margin-bottom: 12px;
   animation: tipSlideIn 0.4s 0.3s cubic-bezier(.22,1,.36,1) both;
 }
-.tips-result-count span { color: var(--red-primary, #f43f5e); font-weight: 700; }
+.tips-result-count span { color: var(--red-primary, #d4af37); font-weight: 700; }
 </style>
 {% endblock %}
 
@@ -191,7 +191,7 @@
     <div style="position:relative;z-index:2;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:12px;">
         <div style="display:flex;align-items:center;gap:16px;">
-          <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg, rgba(244,63,94,0.2), rgba(244,63,94,0.05));border:1px solid rgba(244,63,94,0.3);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 0 20px rgba(244,63,94,0.2);">
+          <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));border:1px solid rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 0 20px rgba(212,175,55,0.2);">
             <i class="bi bi-lightbulb-fill" style="color:#fff;"></i>
           </div>
           <div>
@@ -206,7 +206,7 @@
           <i class="bi bi-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:0.9rem;pointer-events:none;"></i>
           <input type="text" id="tip-search" placeholder="Search safety protocols..."
             style="width:100%;padding:12px 16px 12px 42px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:0.85rem;font-family:var(--int);outline:none;transition:all 0.3s;box-shadow:inset 0 2px 4px rgba(0,0,0,0.2);"
-            onfocus="this.style.borderColor='rgba(244,63,94,0.4)'; this.style.boxShadow='0 0 15px rgba(244,63,94,0.1), inset 0 2px 4px rgba(0,0,0,0.2)';" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.2)';">
+            onfocus="this.style.borderColor='rgba(212,175,55,0.4)'; this.style.boxShadow='0 0 15px rgba(212,175,55,0.1), inset 0 2px 4px rgba(0,0,0,0.2)';" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.boxShadow='inset 0 2px 4px rgba(0,0,0,0.2)';">
         </div>
       </div>
       <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;font-family:var(--int);margin:0 0 16px;">Knowledge is your strongest shield. Browse curated resources and verified safety protocols.</p>

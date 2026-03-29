@@ -12,7 +12,7 @@ EMERGENCY_NUMBERS = [
         "icon": "🚔",
         "description": "For any crime, threat, or law and order emergency. Available 24/7 across India.",
         "priority": 1,
-        "color": "#dc2626",
+        "color": "#b8860b",
     },
     {
         "id": 2,
@@ -93,7 +93,7 @@ EMERGENCY_NUMBERS = [
         "icon": "👁️",
         "description": "Report stalking incidents. Available 24/7. Shares the Women Helpline number for immediate response.",
         "priority": 2,
-        "color": "#f43f5e",
+        "color": "#d4af37",
     },
 ]
 

@@ -37,7 +37,7 @@
 /* ── RADAR SWEEP OVERLAY ─────────────────────────────────────────────────── */
 .radar-sweep {
   position: absolute; inset: -50%;
-  background: conic-gradient(from 0deg, transparent 70%, rgba(244,63,94,0.1) 90%, rgba(244,63,94,0.2) 100%);
+  background: conic-gradient(from 0deg, transparent 70%, rgba(212,175,55,0.1) 90%, rgba(212,175,55,0.2) 100%);
   border-radius: 50%;
   animation: radarScan 4s linear infinite;
   pointer-events: none; z-index: 400;
@@ -71,13 +71,13 @@
 .breach-status-ring {
   width: 10px; height: 10px; border-radius: 50%;
   background: var(--red-primary);
-  box-shadow: 0 0 0 0 rgba(244,63,94,0.4);
+  box-shadow: 0 0 0 0 rgba(212,175,55,0.4);
   animation: breachPulse 2s ease-out infinite;
 }
 @keyframes breachPulse {
-  0% { box-shadow: 0 0 0 0 rgba(244,63,94,0.5); }
-  70% { box-shadow: 0 0 0 8px rgba(244,63,94,0); }
-  100% { box-shadow: 0 0 0 0 rgba(244,63,94,0); }
+  0% { box-shadow: 0 0 0 0 rgba(212,175,55,0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(212,175,55,0); }
+  100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
 }
 
 /* ── CROSSHAIR ───────────────────────────────────────────────────────────── */
@@ -147,9 +147,9 @@
 }
 .surveillance-icon {
   width: 54px; height: 54px; border-radius: 16px;
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(244, 63, 94, 0.05));
-  border: 1px solid rgba(244, 63, 94, 0.3);
-  box-shadow: 0 0 25px rgba(244, 63, 94, 0.15), inset 0 0 15px rgba(244, 63, 94, 0.08);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.15), inset 0 0 15px rgba(212, 175, 55, 0.08);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; position: relative;
 }
@@ -159,7 +159,7 @@
   font-family: var(--font-display);
   font-size: 1.35rem; font-weight: 900;
   letter-spacing: 0.12em; text-transform: uppercase;
-  background: linear-gradient(135deg, #fff, #f43f5e);
+  background: linear-gradient(135deg, #fff, #d4af37);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1.2;
@@ -198,7 +198,7 @@
   letter-spacing: 0.08em; color: var(--text-secondary);
   transition: all 0.3s ease;
 }
-.header-badge:hover { border-color: rgba(244,63,94,0.3); }
+.header-badge:hover { border-color: rgba(212,175,55,0.3); }
 
 /* ── FILTER BUTTONS — ZONE TYPE TOGGLES ──────────────────────────────────── */
 .filter-bar {
@@ -217,15 +217,15 @@
   letter-spacing: 0.03em;
 }
 .filter-pill:hover {
-  border-color: rgba(244,63,94,0.3);
+  border-color: rgba(212,175,55,0.3);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 .filter-pill.active {
-  background: rgba(244,63,94,0.12);
-  border-color: rgba(244,63,94,0.5);
+  background: rgba(212,175,55,0.12);
+  border-color: rgba(212,175,55,0.5);
   color: var(--red-primary);
-  box-shadow: 0 0 15px rgba(244,63,94,0.1);
+  box-shadow: 0 0 15px rgba(212,175,55,0.1);
 }
 .filter-pill.active.filter-all {
   background: rgba(72,187,120,0.1);
@@ -242,7 +242,7 @@
   transition: all 0.3s;
 }
 .filter-pill.active .filter-count {
-  background: rgba(244,63,94,0.2);
+  background: rgba(212,175,55,0.2);
 }
 .filter-pill.active.filter-all .filter-count {
   background: rgba(72,187,120,0.2);
@@ -269,13 +269,13 @@
 }
 .map-ctrl-btn::before {
   content:''; position:absolute; inset:0;
-  background:linear-gradient(135deg, rgba(244,63,94,0.1), transparent);
+  background:linear-gradient(135deg, rgba(212,175,55,0.1), transparent);
   opacity:0; transition:opacity .3s;
 }
 .map-ctrl-btn:hover {
-  border-color: rgba(244,63,94,0.4); color: var(--red-primary);
+  border-color: rgba(212,175,55,0.4); color: var(--red-primary);
   transform: translateX(-3px);
-  box-shadow: 0 0 20px rgba(244,63,94,0.1), inset 0 0 20px rgba(244,63,94,0.03);
+  box-shadow: 0 0 20px rgba(212,175,55,0.1), inset 0 0 20px rgba(212,175,55,0.03);
 }
 .map-ctrl-btn:hover::before { opacity:1; }
 
@@ -290,7 +290,7 @@
 }
 .legend::before {
   content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
 }
 @keyframes slideInLeft {
   from { opacity:0; transform:translateX(-20px); }
@@ -350,7 +350,7 @@
 }
 .map-title-bar::before {
   content: ''; position: absolute; bottom: 0; left: 12px; right: 12px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(244,63,94,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
 }
 
 /* ── TARGET DATA PANEL ───────────────────────────────────────────────────── */
@@ -398,21 +398,21 @@
 .leaflet-popup-content-wrapper {
   background: rgba(10,10,20,0.92) !important;
   backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(244,63,94,0.25) !important;
+  border: 1px solid rgba(212,175,55,0.25) !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(244,63,94,0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,175,55,0.08) !important;
   color: #e2e8f0 !important;
   overflow: hidden;
   position: relative;
 }
 .leaflet-popup-content-wrapper::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, #f43f5e, #f6ad55, #f43f5e);
+  background: linear-gradient(90deg, #d4af37, #f6ad55, #d4af37);
   opacity: 0.8;
 }
 .leaflet-popup-tip {
   background: rgba(10,10,20,0.92) !important;
-  border: 1px solid rgba(244,63,94,0.25) !important;
+  border: 1px solid rgba(212,175,55,0.25) !important;
   border-top: none !important; border-left: none !important;
   box-shadow: none !important;
 }
@@ -427,7 +427,7 @@
   transition: color 0.2s !important;
 }
 .leaflet-popup-close-button:hover {
-  color: #f43f5e !important;
+  color: #d4af37 !important;
 }
 
 /* ── GLOBAL UTILITY ANIMATIONS ───────────────────────────────────────────── */
@@ -437,8 +437,8 @@
 }
 
 @keyframes glowPulse {
-  0%,100% { box-shadow: 0 0 5px rgba(244,63,94,0.2); }
-  50% { box-shadow: 0 0 20px rgba(244,63,94,0.4), 0 0 40px rgba(244,63,94,0.1); }
+  0%,100% { box-shadow: 0 0 5px rgba(212,175,55,0.2); }
+  50% { box-shadow: 0 0 20px rgba(212,175,55,0.4), 0 0 40px rgba(212,175,55,0.1); }
 }
 
 /* ── RESPONSIVE — MOBILE STACKING ────────────────────────────────────────── */
@@ -549,10 +549,10 @@
 <div class="stats-bar">
   <div class="stat-cell">
     <div class="stat-label">
-      <i class="bi bi-geo-alt-fill" style="color:#f43f5e;font-size:0.7rem;"></i>
+      <i class="bi bi-geo-alt-fill" style="color:#d4af37;font-size:0.7rem;"></i>
       Total Zones
     </div>
-    <div class="stat-value" style="color:#f43f5e;" id="stat-total-zones">--</div>
+    <div class="stat-value" style="color:#d4af37;" id="stat-total-zones">--</div>
     <div class="stat-sub">Global + Community</div>
   </div>
   <div class="stat-cell">
@@ -620,23 +620,23 @@
 <!-- ══ TACTICAL HUD OVERLAY ══ -->
 <div style="position:absolute;inset:0;pointer-events:none;z-index:450;overflow:hidden;">
   <!-- Cyber grid overlay -->
-  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(244,63,94,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(244,63,94,.03) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(212,175,55,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,.03) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,black 20%,transparent 70%);"></div>
   
   <!-- Corner brackets -->
-  <div style="position:absolute;top:20px;left:20px;width:40px;height:40px;border-top:2px solid rgba(244,63,94,.4);border-left:2px solid rgba(244,63,94,.4);"></div>
-  <div style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-top:2px solid rgba(244,63,94,.4);border-right:2px solid rgba(244,63,94,.4);"></div>
-  <div style="position:absolute;bottom:20px;left:20px;width:40px;height:40px;border-bottom:2px solid rgba(244,63,94,.4);border-left:2px solid rgba(244,63,94,.4);"></div>
-  <div style="position:absolute;bottom:20px;right:20px;width:40px;height:40px;border-bottom:2px solid rgba(244,63,94,.4);border-right:2px solid rgba(244,63,94,.4);"></div>
+  <div style="position:absolute;top:20px;left:20px;width:40px;height:40px;border-top:2px solid rgba(212,175,55,.4);border-left:2px solid rgba(212,175,55,.4);"></div>
+  <div style="position:absolute;top:20px;right:20px;width:40px;height:40px;border-top:2px solid rgba(212,175,55,.4);border-right:2px solid rgba(212,175,55,.4);"></div>
+  <div style="position:absolute;bottom:20px;left:20px;width:40px;height:40px;border-bottom:2px solid rgba(212,175,55,.4);border-left:2px solid rgba(212,175,55,.4);"></div>
+  <div style="position:absolute;bottom:20px;right:20px;width:40px;height:40px;border-bottom:2px solid rgba(212,175,55,.4);border-right:2px solid rgba(212,175,55,.4);"></div>
 
   <!-- Central targeting reticle -->
-  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;border:1px dashed rgba(244,63,94,.15);border-radius:50%;animation:spinOuter 20s linear infinite;"></div>
-  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border:1px solid rgba(244,63,94,.1);border-radius:50%;"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;border:1px dashed rgba(212,175,55,.15);border-radius:50%;animation:spinOuter 20s linear infinite;"></div>
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border:1px solid rgba(212,175,55,.1);border-radius:50%;"></div>
   
   <!-- Scanning horizontal laser -->
-  <div style="position:absolute;left:0;right:0;height:1px;background:rgba(244,63,94,.4);box-shadow:0 0 10px rgba(244,63,94,.5);animation:scanV 4s ease-in-out infinite alternate;"></div>
+  <div style="position:absolute;left:0;right:0;height:1px;background:rgba(212,175,55,.4);box-shadow:0 0 10px rgba(212,175,55,.5);animation:scanV 4s ease-in-out infinite alternate;"></div>
   
   <!-- Telemetry Data Overlay -->
-  <div style="position:absolute;bottom:30px;left:30px;font-family:'Courier New',monospace;font-size:.65rem;color:rgba(244,63,94,.6);letter-spacing:.1em;text-transform:uppercase;">
+  <div style="position:absolute;bottom:30px;left:30px;font-family:'Courier New',monospace;font-size:.65rem;color:rgba(212,175,55,.6);letter-spacing:.1em;text-transform:uppercase;">
     <div>SYS_ID: VALKYRIE_MAP_ENG_v4</div>
     <div>ALTITUDE: 140M MSL</div>
     <div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span style="width:4px;height:4px;background:#22c55e;border-radius:50%;animation:blink 1s infinite;"></span> SAT_LINK_NOMINAL</div>
@@ -690,7 +690,7 @@
 
   <!-- Title bar (inside map) -->
   <div class="map-title-bar">
-    <div style="width:36px;height:36px;border-radius:10px;background:rgba(244,63,94,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div style="width:36px;height:36px;border-radius:10px;background:rgba(212,175,55,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
       <i class="bi bi-map-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
     </div>
     <div>
@@ -759,7 +759,7 @@
       <i class="bi bi-shield-fill-exclamation"></i> THREAT LEVELS
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#f43f5e;box-shadow:0 0 6px #f43f5e;color:#f43f5e;"></span>
+      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;color:#d4af37;"></span>
       <span>High Risk</span>
     </div>
     <div class="legend-item">
@@ -779,11 +779,11 @@
       <span>Your Location</span>
     </div>
     <div class="legend-item">
-      <span class="legend-dot pulse-dot" style="background:#f43f5e;box-shadow:0 0 8px #f43f5e;color:#f43f5e;animation-delay:1.6s;"></span>
+      <span class="legend-dot pulse-dot" style="background:#d4af37;box-shadow:0 0 8px #d4af37;color:#d4af37;animation-delay:1.6s;"></span>
       <span>Global Hotspot</span>
     </div>
     <div class="legend-item" style="margin-bottom:0;">
-      <span class="legend-dot" style="background:rgba(244,63,94,0.5);border:2px solid #f43f5e;color:#f43f5e;width:10px;height:10px;"></span>
+      <span class="legend-dot" style="background:rgba(212,175,55,0.5);border:2px solid #d4af37;color:#d4af37;width:10px;height:10px;"></span>
       <span>Community Report</span>
     </div>
   </div>
@@ -798,7 +798,7 @@
     <div style="position:absolute;inset:-2px;border-radius:var(--radius-xl);background:conic-gradient(from 0deg,transparent 60%,var(--red-primary) 80%,transparent 100%);z-index:-1;animation:radarScan 4s linear infinite;opacity:0.6;"></div>
 
     <div class="text-center mb-4">
-      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(244,63,94,0.15),rgba(244,63,94,0.02));border:1px solid rgba(244,63,94,0.3);box-shadow:inset 0 0 20px rgba(244,63,94,0.1),0 0 30px rgba(244,63,94,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">
+      <div style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(212,175,55,0.02));border:1px solid rgba(212,175,55,0.3);box-shadow:inset 0 0 20px rgba(212,175,55,0.1),0 0 30px rgba(212,175,55,0.2);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;color:var(--red-primary);">
         <i class="bi bi-exclamation-triangle-fill"></i>
       </div>
       <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;letter-spacing:1px;color:#fff;">Report Danger Zone</h3>
@@ -848,7 +848,7 @@
      ═══════════════════════════════════════════════════════════════════════════ -->
 <div id="proximity-modal" class="proximity-float">
   <div class="glass-card-red p-3 d-flex align-items-center gap-3" style="border-radius:var(--radius-md);">
-    <div style="width:40px;height:40px;border-radius:10px;background:rgba(244,63,94,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <div style="width:40px;height:40px;border-radius:10px;background:rgba(212,175,55,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
       <i class="bi bi-exclamation-triangle-fill" style="color:var(--red-primary);font-size:1.1rem;"></i>
     </div>
     <div style="flex:1;">
@@ -940,8 +940,8 @@ function filterZones(type, btn) {
     GLOBAL_HOTSPOTS.forEach((spot, i) => {
       if (type !== 'all' && spot.type !== type) return;
 
-      const colors = { high:'#f43f5e', medium:'#f6ad55', low:'#48bb78' };
-      const color = colors[spot.severity] || '#f43f5e';
+      const colors = { high:'#d4af37', medium:'#f6ad55', low:'#48bb78' };
+      const color = colors[spot.severity] || '#d4af37';
       const size = spot.severity === 'high' ? 18 : spot.severity === 'medium' ? 14 : 11;
       const ringDelay = (i * 0.3 % 3).toFixed(1);
 
@@ -982,7 +982,7 @@ function filterZones(type, btn) {
     if (heatPoints.length > 0) {
       window.globalHeatLayer = L.heatLayer(heatPoints, {
         radius: 40, blur: 30, maxZoom: 10, max: 1.0,
-        gradient: { 0.0:'#48bb78', 0.3:'#f6ad55', 0.6:'#f43f5e', 0.85:'#ff4444', 1.0:'#fff' },
+        gradient: { 0.0:'#48bb78', 0.3:'#f6ad55', 0.6:'#d4af37', 0.85:'#ff4444', 1.0:'#fff' },
       });
       globalHeatLayer.addTo(heatMap);
     }

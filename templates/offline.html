@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --red: #dc2626; --green: #22c55e; --blue: #3b82f6; --bg: #0a0a0f; --purple: #8b5cf6; }
+    :root { --red: #b8860b; --green: #22c55e; --blue: #3b82f6; --bg: #0a0a0f; --purple: #8b5cf6; }
 
     body {
       background: var(--bg); color: #fff; min-height: 100vh;
@@ -27,7 +27,7 @@
     body::after {
       content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: radial-gradient(circle at 50% 30%, rgba(139,92,246,0.08), transparent 60%),
-                  radial-gradient(circle at 80% 80%, rgba(220,38,38,0.06), transparent 50%);
+                  radial-gradient(circle at 80% 80%, rgba(184,134,11,0.06), transparent 50%);
     }
 
     .page {
@@ -76,8 +76,8 @@
     /* Status badge */
     .signal-badge {
       display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px;
-      border-radius: 50px; border: 1px solid rgba(220,38,38,0.3);
-      background: rgba(220,38,38,0.08); font-size: 0.72rem; font-weight: 700;
+      border-radius: 50px; border: 1px solid rgba(184,134,11,0.3);
+      background: rgba(184,134,11,0.08); font-size: 0.72rem; font-weight: 700;
       letter-spacing: 0.12em; color: #fca5a5; margin-bottom: 1.5rem;
       font-family: 'Space Grotesk', sans-serif;
     }
@@ -126,7 +126,7 @@
     .log-line { display: flex; gap: 10px; animation: logIn .3s ease both; align-items: baseline; }
     @keyframes logIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
     .log-ts { color: rgba(255,255,255,0.2); font-size: 0.68rem; min-width: 55px; }
-    .log-err { color: #ef4444; font-weight: 700; }
+    .log-err { color: #d4af37; font-weight: 700; }
     .log-ok  { color: #22c55e; font-weight: 700; }
     .log-warn { color: #f59e0b; font-weight: 700; }
 
@@ -148,15 +148,15 @@
     .btn-sos {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       padding: 14px 36px; border: 2px solid var(--red); border-radius: 50px;
-      background: rgba(220,38,38,0.15); color: #fff; font-family: 'Space Grotesk', sans-serif;
+      background: rgba(184,134,11,0.15); color: #fff; font-family: 'Space Grotesk', sans-serif;
       font-size: 1rem; font-weight: 900; letter-spacing: 0.05em; cursor: pointer;
-      transition: all 0.3s; box-shadow: 0 0 20px rgba(220,38,38,0.2);
+      transition: all 0.3s; box-shadow: 0 0 20px rgba(184,134,11,0.2);
       animation: sosPulse 2s ease-in-out infinite; width: 100%; margin-bottom: 12px;
     }
-    .btn-sos:hover { background: rgba(220,38,38,0.3); box-shadow: 0 0 40px rgba(220,38,38,0.4); transform: translateY(-2px); }
+    .btn-sos:hover { background: rgba(184,134,11,0.3); box-shadow: 0 0 40px rgba(184,134,11,0.4); transform: translateY(-2px); }
     .btn-sos:active { transform: translateY(0); }
     .btn-sos.queued { background: rgba(246,173,85,0.15); border-color: #f59e0b; color: #fbbf24; animation: none; }
-    @keyframes sosPulse { 0%,100% { box-shadow: 0 0 15px rgba(220,38,38,0.2); } 50% { box-shadow: 0 0 30px rgba(220,38,38,0.5); } }
+    @keyframes sosPulse { 0%,100% { box-shadow: 0 0 15px rgba(184,134,11,0.2); } 50% { box-shadow: 0 0 30px rgba(184,134,11,0.5); } }
 
     /* Retry button */
     .btn-retry {

@@ -24,7 +24,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   flex: 0 0 55%; position: relative; display: flex; flex-direction: column;
   align-items: center; justify-content: center; overflow: hidden;
   background: radial-gradient(circle at center, #0a0307 0%, #020104 100%);
-  border-right: 1px solid rgba(220,38,38,0.15);
+  border-right: 1px solid rgba(184,134,11,0.15);
   box-shadow: inset -20px 0 50px rgba(0,0,0,0.8);
 }
 
@@ -32,8 +32,8 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-cyber-grid {
   position: absolute; inset: -50%; pointer-events: none; z-index: 0;
   background-image: 
-    linear-gradient(rgba(220,38,38,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(220,38,38,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(184,134,11,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,134,11,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
   transform: perspective(1000px) rotateX(60deg);
   animation: gridMove 20s linear infinite;
@@ -46,7 +46,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-ambient-core {
   position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
   transform: translate(-50%, -50%); border-radius: 50%;
-  background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, rgba(139,0,0,0.05) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(184,134,11,0.15) 0%, rgba(139,0,0,0.05) 40%, transparent 70%);
   animation: corePulse 8s ease-in-out infinite alternate;
   pointer-events: none; z-index: 1;
 }
@@ -71,10 +71,10 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* Orbiting Rings */
 .lp-orbit {
   position: absolute; top: 35%; left: 50%; border-radius: 50%;
-  border: 1px dashed rgba(220,38,38,0.2); transform: translate(-50%, -50%); pointer-events: none;
+  border: 1px dashed rgba(184,134,11,0.2); transform: translate(-50%, -50%); pointer-events: none;
 }
 .lp-orbit-1 { width: 320px; height: 320px; animation: orbitSpin 15s linear infinite; }
-.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(220,38,38,0.1); animation: orbitSpin 25s linear infinite reverse; }
+.lp-orbit-2 { width: 440px; height: 440px; border: 1px solid rgba(184,134,11,0.1); animation: orbitSpin 25s linear infinite reverse; }
 .lp-orbit-3 { width: 560px; height: 560px; border-style: dotted; animation: orbitSpin 35s linear infinite; }
 .lp-orbit::after {
   content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
@@ -85,7 +85,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* The SVG Shield */
 .lp-shield-svg {
   width: 220px; height: 260px; margin-bottom: 2rem;
-  filter: drop-shadow(0 0 40px rgba(220,38,38,0.6)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+  filter: drop-shadow(0 0 40px rgba(184,134,11,0.6)) drop-shadow(0 10px 20px rgba(0,0,0,0.8));
   position: relative; z-index: 10;
 }
 
@@ -93,10 +93,10 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-hero-text { text-align: center; position: relative; z-index: 10; }
 .lp-hero-badge {
   display: inline-flex; align-items: center; gap: 10px; padding: 6px 18px; border-radius: 30px;
-  background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3);
+  background: rgba(184,134,11,0.1); border: 1px solid rgba(184,134,11,0.3);
   font-family: 'Courier New', monospace; font-size: 0.75rem; font-weight: 700;
   color: #ff6b6b; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
-  box-shadow: 0 0 20px rgba(220,38,38,0.1); backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(184,134,11,0.1); backdrop-filter: blur(10px);
 }
 .lp-hero-badge-dot {
   width: 6px; height: 6px; border-radius: 50%; background: #ff4444; box-shadow: 0 0 10px #ff4444;
@@ -107,7 +107,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   letter-spacing: 0.15em; line-height: 1; margin-bottom: 15px;
   background: linear-gradient(180deg, #ffffff 0%, #ffcaca 50%, #ff6b6b 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(220,38,38,0.3));
+  filter: drop-shadow(0 4px 12px rgba(184,134,11,0.3));
 }
 .lp-hero-sub {
   font-size: 1.05rem; color: rgba(255,255,255,0.6); letter-spacing: 0.05em; line-height: 1.6; font-weight: 300;
@@ -124,10 +124,10 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
 }
 .lp-stat::before {
-  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(220,38,38,0.1), transparent);
+  content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(184,134,11,0.1), transparent);
   opacity: 0; transition: opacity 0.4s;
 }
-.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(220,38,38,0.2); }
+.lp-stat:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(184,134,11,0.2); }
 .lp-stat:hover::before { opacity: 1; }
 .lp-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; color: #ff4444; line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
 .lp-stat-lbl { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; position: relative; z-index: 1; }
@@ -151,11 +151,11 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 .lp-btn-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); color: #fff; transform: translateY(-2px); }
 .lp-btn-solid {
-  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(220,38,38,0.5);
-  background: rgba(220,38,38,0.15); color: #ff6b6b; font-size: 0.85rem; font-weight: 700; text-decoration: none;
-  transition: all 0.3s; box-shadow: 0 0 15px rgba(220,38,38,0.2);
+  padding: 8px 24px; border-radius: 8px; border: 1px solid rgba(184,134,11,0.5);
+  background: rgba(184,134,11,0.15); color: #ff6b6b; font-size: 0.85rem; font-weight: 700; text-decoration: none;
+  transition: all 0.3s; box-shadow: 0 0 15px rgba(184,134,11,0.2);
 }
-.lp-btn-solid:hover { background: rgba(220,38,38,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(220,38,38,0.4); }
+.lp-btn-solid:hover { background: rgba(184,134,11,0.3); color: #fff; transform: translateY(-2px); box-shadow: 0 0 25px rgba(184,134,11,0.4); }
 
 /* Auth Card Glassmorphism */
 .lp-card { width: 100%; max-width: 480px; position: relative; z-index: 10; animation: cardIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
@@ -171,7 +171,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 }
 .lp-card-inner::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(220,38,38,0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(184,134,11,0.8), transparent);
   animation: cardScan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 @keyframes cardScan { 0% { left: -50%; } 100% { left: 150%; } }
@@ -179,7 +179,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 /* Login Header */
 .lp-card-tag {
   display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 20px;
-  background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2);
+  background: rgba(184,134,11,0.08); border: 1px solid rgba(184,134,11,0.2);
   font-family: 'Courier New', monospace; font-size: 0.65rem; color: #ff6b6b; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;
 }
 .lp-welcome { font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; line-height: 1.1; }
@@ -225,7 +225,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 .lp-feature-icon-box {
   width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
 }
-.lp-fi-red { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; }
+.lp-fi-red { background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2); color: #d4af37; }
 .lp-fi-blue { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: #3b82f6; }
 .lp-fi-green { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; }
 .lp-feature-text h4 { font-size: 0.88rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0 0 2px 0; letter-spacing: 0.01em; }
@@ -243,7 +243,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
 @media (max-width: 1024px) {
   body, html { overflow: auto; height: auto; }
   .login-root { flex-direction: column; height: auto; }
-  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(220,38,38,0.15); }
+  .lp-left { flex: 0 0 auto; min-height: 100vh; padding: 40px 20px; border-right: none; border-bottom: 1px solid rgba(184,134,11,0.15); }
   .lp-right { padding: 60px 24px; min-height: 100vh; }
   .lp-hero-title { font-size: 3rem; }
   .lp-stat-row { flex-wrap: wrap; }
@@ -269,7 +269,7 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
       <!-- Premium SVG Shield -->
       <svg class="lp-shield-svg" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="hRG1" cx="38%" cy="28%" r="65%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="45%" stop-color="#dc2626"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
+          <radialGradient id="hRG1" cx="38%" cy="28%" r="65%"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="45%" stop-color="#b8860b"/><stop offset="100%" stop-color="#450a0a"/></radialGradient>
           <linearGradient id="hLG2" x1="0" y1="0" x2="60" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="rgba(255,255,255,.5)"/><stop offset="60%" stop-color="rgba(255,255,255,.05)"/><stop offset="100%" stop-color="rgba(0,0,0,.3)"/></linearGradient>
           <filter id="hGlow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         </defs>
@@ -424,16 +424,16 @@ body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
         if (dist < 120) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(220,38,38,${(1 - dist/120) * 0.15})`;
+          ctx.strokeStyle = `rgba(184,134,11,${(1 - dist/120) * 0.15})`;
           ctx.lineWidth = 0.6;
           ctx.stroke();
         }
       }
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(220,38,38,${p.o})`;
+      ctx.fillStyle = `rgba(184,134,11,${p.o})`;
       ctx.shadowBlur = 10;
-      ctx.shadowColor = 'rgba(220,38,38,0.8)';
+      ctx.shadowColor = 'rgba(184,134,11,0.8)';
       ctx.fill();
       ctx.shadowBlur = 0;
     }
