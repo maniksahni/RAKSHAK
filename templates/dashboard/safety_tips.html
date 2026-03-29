@@ -35,7 +35,7 @@
 }
 .tip-of-day-card::before {
   content: ''; position: absolute; inset: -1px; z-index: -1;
-  background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(245,158,11,0.3), rgba(159,122,234,0.3));
+  background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.3), rgba(212,175,55,0.3));
   border-radius: inherit; opacity: 1; pointer-events: none;
   /* anim-removed */ filter:blur(10px);
 }
@@ -152,10 +152,10 @@
 .tip-card.expanded::before { transform: scaleX(1); }
 /* Colored left accent bar per category */
 .tip-card[data-category="Personal Safety"] { border-left: 3px solid rgba(212,175,55,0.4); }
-.tip-card[data-category="Travel Safety"]   { border-left: 3px solid rgba(66,153,225,0.4); }
-.tip-card[data-category="Digital Safety"]   { border-left: 3px solid rgba(159,122,234,0.4); }
-.tip-card[data-category="Home Safety"]      { border-left: 3px solid rgba(72,187,120,0.4); }
-.tip-card[data-category="Workplace Safety"] { border-left: 3px solid rgba(245,158,11,0.4); }
+.tip-card[data-category="Travel Safety"]   { border-left: 3px solid rgba(184,134,11,0.4); }
+.tip-card[data-category="Digital Safety"]   { border-left: 3px solid rgba(212,175,55,0.4); }
+.tip-card[data-category="Home Safety"]      { border-left: 3px solid rgba(212,175,55,0.4); }
+.tip-card[data-category="Workplace Safety"] { border-left: 3px solid rgba(212,175,55,0.4); }
 .tip-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; cursor: pointer; gap: 14px; }
 .tip-icon { font-size: 1.4rem; flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 12px; transition: all .3s; border:1px solid rgba(255,255,255,0.05); }
 .tip-card:hover .tip-icon { box-shadow: 0 0 20px rgba(212,175,55,0.15); background:rgba(212,175,55,0.1); border-color:var(--red-primary); color:var(--red-primary); transform:scale(1.05) rotate(-5deg); }
@@ -163,9 +163,9 @@
 .tip-chevron { color: rgba(255,255,255,0.4); font-size: 1rem; transition: transform 0.4s ease; flex-shrink: 0; }
 .tip-card.expanded .tip-chevron { transform: rotate(180deg); color: #fff; }
 .tip-priority { font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
-.priority-1 { background: rgba(212,175,55,0.15); color: #ff6b6b; border: 1px solid rgba(212,175,55,0.3); }
-.priority-2 { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
-.priority-3 { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+.priority-1 { background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3); }
+.priority-2 { background: rgba(212,175,55,0.12); color: #d4af37; border: 1px solid rgba(212,175,55,0.25); }
+.priority-3 { background: rgba(212,175,55,0.1); color: #d4af37; border: 1px solid rgba(212,175,55,0.2); }
 .tip-cat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); font-family:var(--int); }
 .tip-card-body { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease; padding: 0 1.5rem; }
 .tip-card.expanded .tip-card-body { max-height: 400px; padding: 0 1.5rem 1.5rem; }

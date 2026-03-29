@@ -75,15 +75,15 @@
     const conn = navigator.connection||navigator.mozConnection||navigator.webkitConnection;
     if (conn && conn.effectiveType) {
       el.textContent = conn.effectiveType.toUpperCase();
-      el.style.color = {'4g':'#22c55e','3g':'#f59e0b','2g':'#f97316','slow-2g':'#d4af37'}[conn.effectiveType]||'var(--white)';
-    } else { el.textContent=navigator.onLine?'ONLINE':'OFFLINE'; el.style.color=navigator.onLine?'#22c55e':'#d4af37'; }
+      el.style.color = {'4g':'#d4af37','3g':'#d4af37','2g':'#d4af37','slow-2g':'#d4af37'}[conn.effectiveType]||'var(--white)';
+    } else { el.textContent=navigator.onLine?'ONLINE':'OFFLINE'; el.style.color=navigator.onLine?'#d4af37':'#d4af37'; }
   }
   updateCmdNet();
   window.addEventListener('online', updateCmdNet); window.addEventListener('offline', updateCmdNet);
   if (navigator.geolocation) {
     navigator.geolocation.watchPosition(pos => {
       const el = document.getElementById('cmd-gps');
-      if (el) { el.innerHTML=pos.coords.latitude.toFixed(4)+'°N '+pos.coords.longitude.toFixed(4)+'°E'; el.style.color='#22c55e'; }
+      if (el) { el.innerHTML=pos.coords.latitude.toFixed(4)+'°N '+pos.coords.longitude.toFixed(4)+'°E'; el.style.color='#d4af37'; }
     });
   }
 })();
@@ -298,7 +298,7 @@ function fetchNearbyPlaces() {
       data = generateFallbackData(type);
     }
     const sorted=data.elements.map(el=>{const elLat=el.lat??el.center?.lat,elLon=el.lon??el.center?.lon;if(!elLat||!elLon)return null;return{name:el.tags?.name||'Unnamed',lat:elLat,lon:elLon,dist:haversine(lat,lng,elLat,elLon)};}).filter(Boolean).sort((a,b)=>a.dist-b.dist).slice(0,3);
-    container.innerHTML=sorted.map((p,i)=>{const distStr=p.dist<1000?Math.round(p.dist)+'m':(p.dist/1000).toFixed(1)+'km',distPct=Math.max(4,Math.min(96,(1-p.dist/5000)*100)).toFixed(0),distColor=p.dist<1000?'#22c55e':p.dist<3000?'#f59e0b':'#f97316',mapsUrl=`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`;return `<div class="safe-place-item" style="--nsp-rgb:${color};animation:fadeSlideIn .3s ease-out ${i*0.08}s both;"><div class="safe-place-icon" style="background:rgba(${color},0.1);border:1px solid rgba(${color},0.2);"><i class="bi ${icon}" style="color:rgb(${color});font-size:0.9rem;"></i></div><div style="flex:1;min-width:0;"><div class="safe-place-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:0.03em;">${p.name.toUpperCase()}</div><div class="safe-place-dist" style="color:${distColor};font-family:'Courier New',monospace;font-weight:700;">${distStr} DETECTED</div><div class="safe-place-dist-bar"><div class="safe-place-dist-bar-fill" style="width:${distPct}%;background:linear-gradient(90deg,${distColor},rgba(${color},0.3));"></div></div><a href="${mapsUrl}" target="_blank" rel="noopener" class="safe-place-nav"><i class="bi bi-geo-alt-fill" style="font-size:0.55rem;"></i>ESTABLISH ROUTE</a></div></div>`;}).join('');
+    container.innerHTML=sorted.map((p,i)=>{const distStr=p.dist<1000?Math.round(p.dist)+'m':(p.dist/1000).toFixed(1)+'km',distPct=Math.max(4,Math.min(96,(1-p.dist/5000)*100)).toFixed(0),distColor=p.dist<1000?'#d4af37':p.dist<3000?'#d4af37':'#d4af37',mapsUrl=`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`;return `<div class="safe-place-item" style="--nsp-rgb:${color};animation:fadeSlideIn .3s ease-out ${i*0.08}s both;"><div class="safe-place-icon" style="background:rgba(${color},0.1);border:1px solid rgba(${color},0.2);"><i class="bi ${icon}" style="color:rgb(${color});font-size:0.9rem;"></i></div><div style="flex:1;min-width:0;"><div class="safe-place-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:0.03em;">${p.name.toUpperCase()}</div><div class="safe-place-dist" style="color:${distColor};font-family:'Courier New',monospace;font-weight:700;">${distStr} DETECTED</div><div class="safe-place-dist-bar"><div class="safe-place-dist-bar-fill" style="width:${distPct}%;background:linear-gradient(90deg,${distColor},rgba(${color},0.3));"></div></div><a href="${mapsUrl}" target="_blank" rel="noopener" class="safe-place-nav"><i class="bi bi-geo-alt-fill" style="font-size:0.55rem;"></i>ESTABLISH ROUTE</a></div></div>`;}).join('');
   }
   
   const OVERPASS_MIRRORS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.openstreetmap.ru/api/interpreter'];
@@ -382,15 +382,15 @@ setTimeout(fetchNearbyPlaces, 800);
   const feed=document.getElementById('threat-feed'); if(!feed) return;
   const events=[
     {sev:'HIGH',  color:'#b8860b',bg:'rgba(184,134,11,0.08)',  border:'rgba(184,134,11,0.2)',  icon:'bi-exclamation-octagon-fill',text:'Unverified assailant reported · Connaught Place, Delhi'},
-    {sev:'MED',   color:'#f59e0b',bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.2)', icon:'bi-eye-fill',                 text:'Suspicious activity logged · Linking Road, Mumbai'},
+    {sev:'MED',   color:'#d4af37',bg:'rgba(212,175,55,0.07)', border:'rgba(212,175,55,0.2)', icon:'bi-eye-fill',                 text:'Suspicious activity logged · Linking Road, Mumbai'},
     {sev:'HIGH',  color:'#b8860b',bg:'rgba(184,134,11,0.08)',  border:'rgba(184,134,11,0.2)',  icon:'bi-shield-exclamation',       text:'SOS override triggered · HSR Layout, Bangalore'},
-    {sev:'LOW',   color:'#48bb78',bg:'rgba(72,187,120,0.06)', border:'rgba(72,187,120,0.15)',icon:'bi-check-circle-fill',        text:'Threat resolved · Koregaon Park, Pune'},
-    {sev:'MED',   color:'#f59e0b',bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.2)', icon:'bi-geo-alt-fill',             text:'Geofence breach detected · Banjara Hills, Hyderabad'},
-    {sev:'CRIT',  color:'#ff3b3b',bg:'rgba(255,59,59,0.1)',   border:'rgba(255,59,59,0.3)',  icon:'bi-broadcast',                text:'Cluster incident — 3 SOS simultaneous · Sector 18, Noida'},
-    {sev:'LOW',   color:'#48bb78',bg:'rgba(72,187,120,0.06)', border:'rgba(72,187,120,0.15)',icon:'bi-person-check-fill',        text:'Safe Walk completed · Indiranagar, Bangalore'},
-    {sev:'MED',   color:'#f59e0b',bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.2)', icon:'bi-camera-video-fill',        text:'CCTV blackout zone entered · CP Road, Kolkata'},
+    {sev:'LOW',   color:'#d4af37',bg:'rgba(212,175,55,0.06)', border:'rgba(212,175,55,0.15)',icon:'bi-check-circle-fill',        text:'Threat resolved · Koregaon Park, Pune'},
+    {sev:'MED',   color:'#d4af37',bg:'rgba(212,175,55,0.07)', border:'rgba(212,175,55,0.2)', icon:'bi-geo-alt-fill',             text:'Geofence breach detected · Banjara Hills, Hyderabad'},
+    {sev:'CRIT',  color:'#ff3b3b',bg:'rgba(212,175,55,0.1)',   border:'rgba(212,175,55,0.3)',  icon:'bi-broadcast',                text:'Cluster incident — 3 SOS simultaneous · Sector 18, Noida'},
+    {sev:'LOW',   color:'#d4af37',bg:'rgba(212,175,55,0.06)', border:'rgba(212,175,55,0.15)',icon:'bi-person-check-fill',        text:'Safe Walk completed · Indiranagar, Bangalore'},
+    {sev:'MED',   color:'#d4af37',bg:'rgba(212,175,55,0.07)', border:'rgba(212,175,55,0.2)', icon:'bi-camera-video-fill',        text:'CCTV blackout zone entered · CP Road, Kolkata'},
     {sev:'HIGH',  color:'#b8860b',bg:'rgba(184,134,11,0.08)',  border:'rgba(184,134,11,0.2)',  icon:'bi-telephone-x-fill',         text:'Missed 3 check-ins · Salt Lake, Kolkata'},
-    {sev:'INFO',  color:'#3b82f6',bg:'rgba(59,130,246,0.06)', border:'rgba(59,130,246,0.15)',icon:'bi-info-circle-fill',         text:'New danger zone verified · Sarojini Nagar Market, Delhi'},
+    {sev:'INFO',  color:'#d4af37',bg:'rgba(212,175,55,0.06)', border:'rgba(212,175,55,0.15)',icon:'bi-info-circle-fill',         text:'New danger zone verified · Sarojini Nagar Market, Delhi'},
   ];
   function pushEvent(evt){
     const now=new Date(), ts=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
