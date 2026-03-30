@@ -449,6 +449,8 @@
   <canvas class="sb-particles" id="sb-particles"></canvas>
 
 </aside>
+<!-- Sidebar backdrop for mobile -->
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
 <!-- Sidebar HUD Styles -->
 <style>
@@ -1207,10 +1209,23 @@ async function postJSON(url, data={}) {
 
 // ── Sidebar Mobile Toggle ────────────────────────────────────────────────────
 const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebarEl = document.getElementById('sidebar');
+const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+function closeSidebar(){
+  if(sidebarEl) sidebarEl.classList.remove('open');
+  if(sidebarBackdrop) sidebarBackdrop.classList.remove('show');
+}
+function openSidebar(){
+  if(sidebarEl) sidebarEl.classList.add('open');
+  if(sidebarBackdrop) sidebarBackdrop.classList.add('show');
+}
 if (sidebarToggle) {
   sidebarToggle.addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
+    sidebarEl.classList.contains('open') ? closeSidebar() : openSidebar();
   });
+}
+if(sidebarBackdrop){
+  sidebarBackdrop.addEventListener('click', closeSidebar);
 }
 
 // ── Notification Dropdown ────────────────────────────────────────────────────
