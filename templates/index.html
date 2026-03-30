@@ -3039,17 +3039,10 @@ body::before{
   <div class="cta-glow"></div>
   <!-- Floating 3D Shields -->
   <div class="cta-3d-shield">
-    <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#8b5cf6" stroke-width="2" fill="none" opacity="0.6"/>
-      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#8b5cf6" stroke-width="1" fill="none" opacity="0.3"/>
-      <path d="M80 110 L95 125 L125 95" stroke="#10b981" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
-    </svg>
+    <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="" style="width:100%;height:100%;object-fit:contain;opacity:.4;filter:drop-shadow(0 0 30px rgba(139,92,246,.5));">
   </div>
   <div class="cta-3d-shield cta-3d-shield-left">
-    <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-      <path d="M100 10 L180 50 L180 120 C180 170 140 210 100 230 C60 210 20 170 20 120 L20 50 Z" stroke="#8b5cf6" stroke-width="2" fill="none" opacity="0.6"/>
-      <path d="M100 40 L150 65 L150 115 C150 150 125 180 100 195 C75 180 50 150 50 115 L50 65 Z" stroke="#8b5cf6" stroke-width="1" fill="none" opacity="0.3"/>
-    </svg>
+    <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="" style="width:100%;height:100%;object-fit:contain;opacity:.4;filter:drop-shadow(0 0 30px rgba(139,92,246,.5));">
   </div>
   <div class="cta-inner reveal">
     <span class="cta-eyebrow">Start today · It's free</span>
@@ -3072,24 +3065,12 @@ body::before{
     <!-- Col 1: Brand -->
     <div>
       <!-- Premium Logo in Footer -->
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:.8rem;">
-        <div style="filter:drop-shadow(0 0 6px rgba(139,92,246,.55));">
-          <svg width="28" height="31" viewBox="0 0 34 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="lgFt1" x1="0" y1="0" x2="34" y2="38" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#c4b5fd"/><stop offset="48%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#4c1d95"/>
-              </linearGradient>
-              <linearGradient id="lgFt2" x1="17" y1="1" x2="17" y2="22" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="rgba(255,255,255,.3)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-              </linearGradient>
-            </defs>
-            <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgFt1)"/>
-            <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" fill="url(#lgFt2)"/>
-            <path d="M17 1.5L2 8.5v11c0 10.2 6.8 18.8 15 21.2 8.2-2.4 15-11 15-21.2V8.5L17 1.5z" stroke="rgba(255,255,255,.25)" stroke-width=".7" fill="none"/>
-            <path d="M11 19.5l4 4 8-8" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:.8rem;">
+        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="40" height="40" style="filter:drop-shadow(0 0 10px rgba(139,92,246,.7)) drop-shadow(0 0 4px rgba(247,231,206,.4));object-fit:contain;">
+        <div>
+          <div class="ft-brand-v2" style="margin-bottom:0;"><span style="color:var(--red)">RAKSHAK</span></div>
+          <div style="font-family:'Courier New',monospace;font-size:.4rem;letter-spacing:.2em;color:rgba(139,92,246,.6);text-transform:uppercase;">Safety Platform</div>
         </div>
-        <div class="ft-brand-v2" style="margin-bottom:0;"><span style="color:var(--red)">RAKSHAK</span></div>
       </div>
       <div class="ft-brand-desc">Real-time Alert &amp; Knowledge System for Hazard And Crisis — protecting lives through intelligent, always-on safety technology.</div>
       <div class="footer-social">
