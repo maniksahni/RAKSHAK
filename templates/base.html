@@ -194,25 +194,15 @@
 <!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
 <aside class="sidebar" id="sidebar">
 
-  <!-- ══ Scrollable Nav Section ══ -->
-  <div class="sidebar-nav-scroll" style="padding-top:0.6rem;">
-
-  <!-- ══ Premium Sidebar Brand ══ -->
+  <!-- ══ Brand (pinned top) ══ -->
   <div class="rksb-brand-wrap">
     <div class="rksb-bg-glow"></div>
-
-    <!-- Big shield + wordmark -->
     <div class="rksb-logo">
-      <!-- Logo Image -->
       <div class="rksb-shield-outer" style="position:relative;display:flex;align-items:center;justify-content:center;">
         <div class="rksb-shield-ring"></div>
         <div style="position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.4) 0%,transparent 70%);pointer-events:none;z-index:0;"></div>
-        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK Logo" width="42" height="42" style="position:relative;z-index:2;filter:drop-shadow(0 0 12px rgba(139,92,246,0.9)) drop-shadow(0 0 5px rgba(247,231,206,0.6));object-fit:contain;">
+        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK Logo" width="42" height="42" style="position:relative;z-index:2;filter:drop-shadow(0 0 12px rgba(139,92,246,0.9)) drop-shadow(0 0 5px rgba(196,181,253,0.6));object-fit:contain;">
       </div>
-      <style>
-      </style>
-
-      <!-- Text stack -->
       <div class="rksb-text">
         <div class="rksb-wordmark">RAKSHAK</div>
         <div class="rksb-tagrow">
@@ -220,7 +210,6 @@
           <span class="rksb-tag">SAFETY PLATFORM</span>
           <span class="rksb-dash" style="background:linear-gradient(90deg,rgba(124,58,237,.15),rgba(124,58,237,.7))"></span>
         </div>
-        <!-- Live status pill -->
         <div class="rksb-status">
           <span class="rksb-dot"></span>
           <span class="rksb-status-text">SHIELD ACTIVE</span>
@@ -229,9 +218,14 @@
     </div>
   </div>
 
-  <hr class="glow-line mx-3">
+  <!-- ══ Scrollable Nav Section ══ -->
+  <div class="sidebar-nav-scroll">
+
+  <hr class="glow-line mx-3" style="margin-top:0;">
 
   {% if current_user.is_admin %}
+  <!-- Admin Section Label -->
+  <div class="sb-section-label"><i class="bi bi-shield-lock-fill"></i> COMMAND CENTER</div>
   <a class="sidebar-link {% if request.endpoint=='admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">
     <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
   </a>
@@ -248,13 +242,13 @@
     <i class="bi bi-map"></i> <span>Live Map</span>
   </a>
 
-  <hr class="glow-line mx-3 my-2" style="opacity:0.3;">
-  <div style="font-size:0.6rem;letter-spacing:0.1em;color:var(--text-muted);text-transform:uppercase;margin:4px 12px 8px;">Operative Features</div>
+  <hr class="glow-line mx-3 my-1" style="opacity:0.25;">
+  <div class="sb-section-label"><i class="bi bi-grid-1x2-fill"></i> OPERATIVE FEATURES</div>
   {% endif %}
 
-  <!-- Core User Tools (Visible to Admins & Users) -->
+  <!-- Core User Tools -->
   <a class="sidebar-link {% if request.endpoint=='dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
-    <i class="bi bi-house"></i> <span>User Dashboard</span>
+    <i class="bi bi-house"></i> <span>Dashboard</span>
   </a>
   {% if not current_user.is_admin %}
   <a class="sidebar-link {% if request.endpoint=='danger.map_view' %}active{% endif %}" href="{{ url_for('danger.map_view') }}">
@@ -284,15 +278,25 @@
   </a>
 
   <hr class="glow-line mx-3">
-  <a class="sidebar-link text-danger" href="{{ url_for('auth.logout') }}">
+  <a class="sidebar-link sb-logout-link" href="{{ url_for('auth.logout') }}">
     <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
   </a>
 
-  <!-- ══ Sidebar HUD Panel (inside scroll) ══ -->
-  <div class="sb-hud">
+  </div><!-- /sidebar-nav-scroll -->
+
+  <!-- ══ HUD Panel (pinned bottom, collapsible) ══ -->
+  <div class="sb-hud" id="sb-hud">
+    <!-- HUD Toggle -->
+    <button class="sb-hud-toggle" id="sb-hud-toggle" title="Toggle HUD Panel">
+      <i class="bi bi-chevron-up" id="sb-hud-chevron"></i>
+      <span>SYSTEM HUD</span>
+      <div class="sb-hud-toggle-dot" id="sb-conn-dot-mini"></div>
+    </button>
+
+    <div class="sb-hud-body" id="sb-hud-body">
 
     {% if not current_user.is_admin %}
-    <!-- ── Quick Actions ── -->
+    <!-- Quick Actions -->
     <div class="sb-quick-actions">
       <button class="sb-qa-btn sb-qa-sos" onclick="triggerGlobalSOS()" title="Emergency SOS">
         <i class="bi bi-shield-exclamation"></i>
@@ -309,12 +313,10 @@
     </div>
     {% endif %}
 
-    <!-- ── Area Safety Status (always visible) ── -->
+    <!-- Area Safety Status -->
     <div class="sb-area-status" id="sb-area-status">
       <div class="sb-area-header">
-        <span class="sb-area-icon" id="sb-area-icon">
-          <i class="bi bi-crosshair"></i>
-        </span>
+        <span class="sb-area-icon" id="sb-area-icon"><i class="bi bi-crosshair"></i></span>
         <div class="sb-area-info">
           <div class="sb-area-label">AREA STATUS</div>
           <div class="sb-area-level" id="sb-area-level">SCANNING...</div>
@@ -326,7 +328,7 @@
       </div>
     </div>
 
-    <!-- ── Tabbed Console ── -->
+    <!-- Tabbed Console -->
     <div class="sb-console">
       <div class="sb-console-tabs">
         <button class="sb-tab active" data-tab="radar" title="Threat Radar">
@@ -423,7 +425,7 @@
       </div>
     </div>
 
-    <!-- ── Connection Footer (always visible) ── -->
+    <!-- Connection Footer -->
     <div class="sb-status-footer">
       <div class="sb-status-row">
         <div class="sb-status-dot-live" id="sb-conn-dot"></div>
@@ -435,16 +437,13 @@
       <div class="sb-version">v3.2 · RAILWAY CLOUD</div>
     </div>
 
+    </div><!-- /sb-hud-body -->
   </div>
-
-  </div><!-- /sidebar-nav-scroll -->
 
   <!-- Sidebar scan line -->
   <div class="sb-scanline"></div>
-
   <!-- Edge glow strip -->
   <div class="sb-edge-glow"></div>
-
   <!-- Sidebar ambient particles -->
   <canvas class="sb-particles" id="sb-particles"></canvas>
 
@@ -454,10 +453,45 @@
 
 <!-- Sidebar HUD Styles -->
 <style>
-.sb-hud{margin:0;padding:6px 8px 8px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;flex-grow:0;border-top:none;justify-content:flex-end;position:relative;overflow:hidden;background:linear-gradient(180deg,transparent 0%,rgba(139,92,246,.01) 50%,rgba(139,92,246,.008) 100%);z-index:2;}
-/* Ambient glow inside HUD area */
-.sb-hud::before{content:'';position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.06) 0%,rgba(139,92,246,.025) 35%,rgba(139,92,246,.01) 55%,transparent 70%);pointer-events:none;}
-.sb-hud::after{content:'';position:absolute;top:0;left:8px;right:8px;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.1),rgba(139,92,246,.25),rgba(139,92,246,.1),transparent);pointer-events:none;box-shadow:0 0 12px rgba(139,92,246,.12),0 1px 0 rgba(255,255,255,.02);}
+/* ── Section Labels ── */
+.sb-section-label{
+  font-size:.52rem;letter-spacing:.2em;font-weight:800;text-transform:uppercase;
+  padding:6px 14px 4px;display:flex;align-items:center;gap:6px;
+  background:linear-gradient(90deg,rgba(139,92,246,.6),rgba(196,181,253,.5));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sb-section-label i{font-size:.55rem;-webkit-text-fill-color:rgba(139,92,246,.5);}
+/* ── Logout link override ── */
+.sb-logout-link{color:rgba(239,68,68,.6)!important;}
+.sb-logout-link:hover{color:rgba(239,68,68,.9)!important;background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.02))!important;}
+.sb-logout-link i{color:rgba(239,68,68,.6)!important;}
+.sb-logout-link:hover i{color:rgba(239,68,68,.9)!important;filter:drop-shadow(0 0 8px rgba(239,68,68,.4))!important;}
+
+/* ── HUD Panel (pinned bottom) ── */
+.sb-hud{flex-shrink:0;position:relative;z-index:2;border-top:1px solid rgba(139,92,246,.08);background:linear-gradient(180deg,rgba(8,7,16,.95) 0%,rgba(6,5,12,.98) 100%);}
+.sb-hud::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:300px;height:80px;background:radial-gradient(ellipse,rgba(139,92,246,.06),transparent 70%);pointer-events:none;}
+
+/* HUD Toggle Button */
+.sb-hud-toggle{
+  display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  padding:7px 10px;border:none;cursor:pointer;
+  background:linear-gradient(180deg,rgba(139,92,246,.06),rgba(139,92,246,.02));
+  color:rgba(196,181,253,.5);font-size:.48rem;font-weight:800;letter-spacing:.18em;
+  text-transform:uppercase;transition:all .3s;position:relative;z-index:3;
+}
+.sb-hud-toggle:hover{background:linear-gradient(180deg,rgba(139,92,246,.1),rgba(139,92,246,.04));color:rgba(196,181,253,.8);}
+.sb-hud-toggle i{font-size:.55rem;transition:transform .3s;}
+.sb-hud.collapsed .sb-hud-toggle i{transform:rotate(180deg);}
+.sb-hud-toggle-dot{width:5px;height:5px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 6px #8b5cf6;flex-shrink:0;}
+
+/* HUD Body (collapsible) */
+.sb-hud-body{
+  padding:6px 8px 8px;display:flex;flex-direction:column;gap:5px;
+  max-height:500px;overflow:hidden;
+  transition:max-height .4s cubic-bezier(.22,1,.36,1),padding .3s,opacity .3s;
+  opacity:1;
+}
+.sb-hud.collapsed .sb-hud-body{max-height:0;padding:0 8px;opacity:0;}
 
 /* ── Quick Actions ── */
 .sb-quick-actions{display:flex;gap:6px;position:relative;z-index:3;}
@@ -611,6 +645,17 @@
 
 <script>
 (function(){
+  /* ── HUD Toggle ── */
+  var hudEl = document.getElementById('sb-hud');
+  var hudToggle = document.getElementById('sb-hud-toggle');
+  if (hudToggle && hudEl) {
+    // Start collapsed by default
+    hudEl.classList.add('collapsed');
+    hudToggle.addEventListener('click', function() {
+      hudEl.classList.toggle('collapsed');
+    });
+  }
+
   /* ── Tab Switching ── */
   var tabsWrap = document.querySelector('.sb-console-tabs');
   if (tabsWrap) {
