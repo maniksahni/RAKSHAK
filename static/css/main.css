@@ -1375,43 +1375,33 @@ h1,h2,h3,h4,h5,h6 {
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
-/* Top ambient violet light spill */
-.sidebar::before{
-  content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:320px;height:320px;
-  background:radial-gradient(ellipse,rgba(139,92,246,.12) 0%,rgba(124,58,237,.05) 35%,rgba(139,92,246,.02) 55%,transparent 70%);
-  pointer-events:none;z-index:0;
-}
 /* Subtle noise texture overlay */
+.sidebar::before{display:none;}
 .sidebar::after{
   content:'';position:absolute;inset:0;
   background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:1;opacity:.4;mix-blend-mode:overlay;
+  pointer-events:none;z-index:1;opacity:.3;mix-blend-mode:overlay;
 }
-/* Bottom ambient violet light spill */
-.sidebar-nav-scroll::before{
-  content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:250px;height:200px;
-  background:radial-gradient(ellipse,rgba(139,92,246,.06) 0%,rgba(124,58,237,.03) 40%,transparent 70%);
-  pointer-events:none;z-index:0;
-}
+.sidebar-nav-scroll::before{display:none;}
 
 /* ── Sidebar nav links — dark violet glass ── */
 .sidebar-link{
   border-left:3px solid rgba(139,92,246,.08);
-  border-radius:0 12px 12px 0!important;
-  margin:2px 10px 2px 0!important;
-  padding:10px 14px!important;
-  font-size:.82rem!important;
+  border-radius:0 10px 10px 0!important;
+  margin:1px 8px 1px 0!important;
+  padding:8px 12px!important;
+  font-size:.78rem!important;
   font-weight:600!important;
   transition:all .45s cubic-bezier(.22,1,.36,1)!important;
   position:relative;
-  letter-spacing:.04em!important;
+  letter-spacing:.03em!important;
   color:rgba(196,181,253,.7)!important;
   z-index:2;
-  background:linear-gradient(135deg,rgba(139,92,246,.04) 0%,rgba(124,58,237,.02) 40%,rgba(255,255,255,.008) 100%)!important;
-  border-bottom:1px solid rgba(139,92,246,.04)!important;
-  border-top:1px solid rgba(255,255,255,.04)!important;
-  border-right:1px solid rgba(139,92,246,.04)!important;
-  box-shadow:0 2px 10px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.03), 0 1px 2px rgba(0,0,0,.2)!important;
+  background:linear-gradient(135deg,rgba(139,92,246,.03) 0%,rgba(124,58,237,.015) 40%,rgba(255,255,255,.005) 100%)!important;
+  border-bottom:none!important;
+  border-top:none!important;
+  border-right:none!important;
+  box-shadow:none!important;
 }
 /* Glass shine sweep on hover */
 .sidebar-link::after{
@@ -1420,71 +1410,38 @@ h1,h2,h3,h4,h5,h6 {
   opacity:0;transition:opacity .45s;pointer-events:none;
 }
 .sidebar-link:hover::after{opacity:1;}
-/* ── Active link — animated violet glow pulse ── */
+/* ── Active link — violet glow ── */
 .sidebar-link.active{
-  background:linear-gradient(135deg,rgba(139,92,246,.15) 0%,rgba(124,58,237,.08) 35%,rgba(255,255,255,.02) 70%,rgba(139,92,246,.01) 100%)!important;
+  background:linear-gradient(135deg,rgba(139,92,246,.12) 0%,rgba(124,58,237,.06) 50%,transparent 100%)!important;
   border-left:3px solid rgba(139,92,246,.8)!important;
-  border-top:1px solid rgba(139,92,246,.2)!important;
-  border-right:1px solid rgba(139,92,246,.08)!important;
-  border-bottom:1px solid rgba(139,92,246,.05)!important;
   color:rgba(255,255,255,.95)!important;
   font-weight:700!important;
-  letter-spacing:.05em!important;
 }
 .sidebar-link.active::before{
-  content:'';position:absolute;left:-3px;top:6%;bottom:6%;width:3px;
-  background:linear-gradient(180deg,rgba(139,92,246,.15),rgba(139,92,246,1),rgba(196,181,253,.6),rgba(139,92,246,.15));border-radius:0 2px 2px 0;
-  box-shadow:0 0 20px rgba(139,92,246,.8),0 0 10px rgba(139,92,246,1),12px 0 40px rgba(139,92,246,.25),0 0 4px rgba(124,58,237,.3);
+  content:'';position:absolute;left:-3px;top:10%;bottom:10%;width:3px;
+  background:linear-gradient(180deg,rgba(139,92,246,.2),rgba(139,92,246,1),rgba(139,92,246,.2));border-radius:0 2px 2px 0;
+  box-shadow:0 0 14px rgba(139,92,246,.7),0 0 6px rgba(139,92,246,.9),8px 0 24px rgba(139,92,246,.15);
 }
-.sidebar-link.active::after{
-  content:'';position:absolute;inset:0;border-radius:0 12px 12px 0;opacity:1;
-  background:linear-gradient(135deg,rgba(139,92,246,.08) 0%,rgba(124,58,237,.04) 35%,rgba(255,255,255,.01) 70%,transparent 100%);
-  pointer-events:none;
-}
-.sidebar-link.active i{color:#fff!important;transform:none!important}
-/* ── Hover state — violet glass lift ── */
+.sidebar-link.active::after{display:none!important;}
+.sidebar-link.active i{color:#c4b5fd!important;transform:none!important}
+/* ── Hover state ── */
 .sidebar-link:hover:not(.active){
-  background:linear-gradient(135deg,rgba(139,92,246,.1) 0%,rgba(124,58,237,.04) 45%,rgba(255,255,255,.01) 100%)!important;
-  border-left:3px solid rgba(139,92,246,.45)!important;
-  border-top:1px solid rgba(255,255,255,.06)!important;
+  background:linear-gradient(135deg,rgba(139,92,246,.08) 0%,rgba(124,58,237,.03) 50%,transparent 100%)!important;
+  border-left:3px solid rgba(139,92,246,.4)!important;
   color:rgba(255,255,255,.9)!important;
-  box-shadow:0 6px 28px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04), 0 0 24px rgba(139,92,246,.08)!important;
-  transform:translateX(3px)!important;
+  transform:translateX(2px)!important;
 }
-/* ── Icon base styles — violet tinted ── */
-.sidebar-link i{width:26px!important;text-align:center;font-size:1.15rem!important;transition:all .4s cubic-bezier(.22,1,.36,1)!important;color:rgba(139,92,246,.7)!important;filter:drop-shadow(0 0 4px rgba(139,92,246,.15))!important}
-.sidebar-link:hover i{transform:scale(1.22)!important;color:rgba(255,255,255,.95)!important;filter:drop-shadow(0 0 12px rgba(139,92,246,.5))!important}
+/* ── Icon styles ── */
+.sidebar-link i{width:22px!important;text-align:center;font-size:1rem!important;transition:all .3s!important;color:rgba(139,92,246,.6)!important}
+.sidebar-link:hover i{transform:scale(1.15)!important;color:rgba(196,181,253,.9)!important}
 .sidebar-link span{position:relative;z-index:1}
-/* Logout icon — red-violet tint */
-.sidebar-link .bi-box-arrow-right{color:rgba(239,68,68,.6)!important;filter:drop-shadow(0 0 4px rgba(239,68,68,.15))!important}
-.sidebar-link:hover .bi-box-arrow-right{color:rgba(239,68,68,.9)!important;filter:drop-shadow(0 0 12px rgba(239,68,68,.4))!important}
 
-/* ── Glow line separator — violet ── */
-.glow-line.mx-3{margin:14px 14px!important;background:linear-gradient(90deg,transparent 0%,rgba(124,58,237,.04) 8%,rgba(139,92,246,.08) 15%,rgba(139,92,246,.35) 50%,rgba(139,92,246,.08) 85%,rgba(124,58,237,.04) 92%,transparent 100%)!important;height:1px!important;border:none!important;position:relative;z-index:2;}
-
-/* ── Section category header — violet gradient ── */
-.sidebar [style*="OPERATIVE"],
-.sidebar [style*="text-transform:uppercase"]{
-  color:rgba(139,92,246,.55)!important;
-  font-size:.58rem!important;
-  font-weight:800!important;
-  letter-spacing:.24em!important;
-  text-shadow:0 0 30px rgba(139,92,246,.2),0 0 8px rgba(124,58,237,.1)!important;
-  padding-left:16px!important;
-  background:linear-gradient(90deg,rgba(139,92,246,.8),rgba(196,181,253,.6))!important;
-  -webkit-background-clip:text!important;
-  -webkit-text-fill-color:transparent!important;
-  background-clip:text!important;
-}
+/* ── Glow line separator ── */
+.glow-line.mx-3{margin:6px 12px!important;background:linear-gradient(90deg,transparent,rgba(139,92,246,.25) 50%,transparent)!important;height:1px!important;border:none!important;position:relative;z-index:2;}
 
 /* ── Sidebar shimmer sweep — violet ── */
 .sidebar-nav-scroll{position:relative;}
-.sidebar-nav-scroll::after{
-  content:'';position:absolute;top:0;left:0;width:80px;height:200%;
-  background:linear-gradient(90deg,transparent,rgba(139,92,246,.01),rgba(139,92,246,.04),rgba(139,92,246,.01),transparent);
-  transform:translateX(-100%) rotate(12deg);
-  pointer-events:none;z-index:3;
-}
+.sidebar-nav-scroll::after{display:none;}
 
 /* main-content offset for narrower sidebar */
 .main-content{margin-left:240px!important}
@@ -1548,9 +1505,9 @@ h1,h2,h3,h4,h5,h6 {
 
 /* ─── SIDEBAR BRAND (.rksb-*) ──────────────────── */
 .rksb-brand-wrap{
-  position:relative;padding:16px 14px 12px;overflow:hidden;
+  position:relative;padding:12px 12px 8px;overflow:hidden;
   flex-shrink:0;
-  background:linear-gradient(180deg,rgba(139,92,246,.06) 0%,rgba(124,58,237,.025) 40%,transparent 100%);
+  background:linear-gradient(180deg,rgba(139,92,246,.05) 0%,rgba(124,58,237,.02) 40%,transparent 100%);
   border-bottom:1px solid rgba(139,92,246,.06);
   z-index:2;
 }
