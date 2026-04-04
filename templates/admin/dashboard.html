@@ -250,12 +250,6 @@
 .sys-health-fill { height: 100%; border-radius: 50px; transition: width 1.5s cubic-bezier(0.22,1,0.36,1); position: relative; box-shadow: 0 0 10px currentColor; }
 
 /* Ticker Overhaul — Gold */
-.stats-ticker-bar {
-  overflow: hidden; background: linear-gradient(90deg, rgba(139,92,246,0.05), rgba(0,0,0,0.8), rgba(139,92,246,0.05));
-  border-top: 1px solid rgba(139,92,246,0.15); border-bottom: 1px solid rgba(139,92,246,0.15);
-  padding: 10px 0; font-family: 'Courier New', monospace; font-size: 0.8rem; color:#8b5cf6; letter-spacing: 0.15em; margin-bottom: 2rem; border-radius: 0;
-}
-.ticker-text { display: inline-block;  white-space: nowrap; font-weight: 700; text-shadow: 0 0 10px rgba(139,92,246,0.25); }
 
 /* Scan Line Overlay — static subtle */
 .scan-line-overlay {
@@ -598,13 +592,6 @@
     </div>
   </div>
 
-  <!-- Live Intel Ticker -->
-  <div class="stats-ticker-bar mb-4">
-    <span class="ticker-text">
-      SYS.STATUS: NOMINAL &nbsp;·&nbsp; THREAT LEVEL: ELEVATED &nbsp;·&nbsp; ACTIVE MONITORING: {{ stats.total_users }} OPERATIVES &nbsp;·&nbsp; SATELLITE UPLINK: LOCKED &nbsp;·&nbsp; DB SYNC: LIVE &nbsp;·&nbsp; ENCRYPTION: AES-256-GCM &nbsp;·&nbsp; LAST SWEEP: {{ now }} UTC &nbsp;·&nbsp;
-      SYS.STATUS: NOMINAL &nbsp;·&nbsp; THREAT LEVEL: ELEVATED &nbsp;·&nbsp; ACTIVE MONITORING: {{ stats.total_users }} OPERATIVES &nbsp;·&nbsp; SATELLITE UPLINK: LOCKED &nbsp;·&nbsp; DB SYNC: LIVE &nbsp;·&nbsp; ENCRYPTION: AES-256-GCM &nbsp;·&nbsp;
-    </span>
-  </div>
 
   <!-- Enhanced System Health with Auto-Refresh -->
   <div class="row g-3 mb-4">
