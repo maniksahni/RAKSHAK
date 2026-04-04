@@ -304,7 +304,7 @@ def create_app(config_name=None):
 
 
 def _auto_init_db(app):
-    """Auto-create tables & seed admin if DB is empty (Railway/Docker first-run)."""
+    """Auto-create tables & seed admin if DB is empty (first-run)."""
     import time
     for attempt in range(10):
         try:

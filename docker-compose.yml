@@ -1,0 +1,45 @@
+# ── RAKSHAK Local Dev + Production Compose ────────────────────────────────
+# Usage:
+#   Dev:  docker compose up
+#   Prod: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rakshak_root_2024
+      MYSQL_DATABASE: rakshak
+      MYSQL_USER: rakshak_user
+      MYSQL_PASSWORD: rakshak_pass_2024
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prakshak_root_2024"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  web:
+    build: .
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      FLASK_ENV: production
+      PORT: "5001"
+      SECRET_KEY: rakshak-docker-dev-key-change-in-prod
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: rakshak_user
+      DB_PASSWORD: rakshak_pass_2024
+      DB_NAME: rakshak
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
