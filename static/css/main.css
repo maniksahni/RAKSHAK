@@ -1384,60 +1384,50 @@ h1,h2,h3,h4,h5,h6 {
 }
 .sidebar-nav-scroll::before{display:none;}
 
-/* ── Sidebar nav links — dark violet glass ── */
+/* ── Sidebar nav links — clean compact ── */
 .sidebar-link{
-  border-left:3px solid rgba(139,92,246,.08);
-  border-radius:0 10px 10px 0!important;
-  margin:1px 8px 1px 0!important;
-  padding:8px 12px!important;
-  font-size:.78rem!important;
-  font-weight:600!important;
-  transition:all .45s cubic-bezier(.22,1,.36,1)!important;
+  border-left:2px solid transparent;
+  border-radius:0 8px 8px 0!important;
+  margin:0 6px 0 0!important;
+  padding:7px 12px!important;
+  font-size:.76rem!important;
+  font-weight:500!important;
+  transition:all .3s!important;
   position:relative;
-  letter-spacing:.03em!important;
-  color:rgba(196,181,253,.7)!important;
+  letter-spacing:.02em!important;
+  color:rgba(196,181,253,.6)!important;
   z-index:2;
-  background:linear-gradient(135deg,rgba(139,92,246,.03) 0%,rgba(124,58,237,.015) 40%,rgba(255,255,255,.005) 100%)!important;
+  background:transparent!important;
   border-bottom:none!important;
   border-top:none!important;
   border-right:none!important;
   box-shadow:none!important;
 }
-/* Glass shine sweep on hover */
-.sidebar-link::after{
-  content:'';position:absolute;inset:0;border-radius:0 12px 12px 0;
-  background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,rgba(139,92,246,.04) 35%,transparent 65%);
-  opacity:0;transition:opacity .45s;pointer-events:none;
-}
-.sidebar-link:hover::after{opacity:1;}
-/* ── Active link — violet glow ── */
+/* No pseudo-elements on links */
+.sidebar-link::after{display:none!important;}
+/* ── Active link ── */
 .sidebar-link.active{
-  background:linear-gradient(135deg,rgba(139,92,246,.12) 0%,rgba(124,58,237,.06) 50%,transparent 100%)!important;
-  border-left:3px solid rgba(139,92,246,.8)!important;
+  background:rgba(139,92,246,.1)!important;
+  border-left:2px solid #8b5cf6!important;
   color:rgba(255,255,255,.95)!important;
-  font-weight:700!important;
+  font-weight:600!important;
 }
-.sidebar-link.active::before{
-  content:'';position:absolute;left:-3px;top:10%;bottom:10%;width:3px;
-  background:linear-gradient(180deg,rgba(139,92,246,.2),rgba(139,92,246,1),rgba(139,92,246,.2));border-radius:0 2px 2px 0;
-  box-shadow:0 0 14px rgba(139,92,246,.7),0 0 6px rgba(139,92,246,.9),8px 0 24px rgba(139,92,246,.15);
-}
+.sidebar-link.active::before{display:none!important;}
 .sidebar-link.active::after{display:none!important;}
 .sidebar-link.active i{color:#c4b5fd!important;transform:none!important}
 /* ── Hover state ── */
 .sidebar-link:hover:not(.active){
-  background:linear-gradient(135deg,rgba(139,92,246,.08) 0%,rgba(124,58,237,.03) 50%,transparent 100%)!important;
-  border-left:3px solid rgba(139,92,246,.4)!important;
-  color:rgba(255,255,255,.9)!important;
-  transform:translateX(2px)!important;
+  background:rgba(255,255,255,.04)!important;
+  border-left:2px solid rgba(139,92,246,.3)!important;
+  color:rgba(255,255,255,.85)!important;
 }
 /* ── Icon styles ── */
-.sidebar-link i{width:22px!important;text-align:center;font-size:1rem!important;transition:all .3s!important;color:rgba(139,92,246,.6)!important}
-.sidebar-link:hover i{transform:scale(1.15)!important;color:rgba(196,181,253,.9)!important}
+.sidebar-link i{width:20px!important;text-align:center;font-size:.92rem!important;transition:all .2s!important;color:rgba(139,92,246,.5)!important}
+.sidebar-link:hover i{color:rgba(196,181,253,.85)!important}
 .sidebar-link span{position:relative;z-index:1}
 
 /* ── Glow line separator ── */
-.glow-line.mx-3{margin:6px 12px!important;background:linear-gradient(90deg,transparent,rgba(139,92,246,.25) 50%,transparent)!important;height:1px!important;border:none!important;position:relative;z-index:2;}
+.glow-line.mx-3{margin:4px 10px!important;background:linear-gradient(90deg,transparent,rgba(139,92,246,.18) 50%,transparent)!important;height:1px!important;border:none!important;position:relative;z-index:2;}
 
 /* ── Sidebar shimmer sweep — violet ── */
 .sidebar-nav-scroll{position:relative;}
@@ -1505,9 +1495,9 @@ h1,h2,h3,h4,h5,h6 {
 
 /* ─── SIDEBAR BRAND (.rksb-*) ──────────────────── */
 .rksb-brand-wrap{
-  position:relative;padding:12px 12px 8px;overflow:hidden;
+  position:relative;padding:10px 10px 6px;overflow:hidden;
   flex-shrink:0;
-  background:linear-gradient(180deg,rgba(139,92,246,.05) 0%,rgba(124,58,237,.02) 40%,transparent 100%);
+  background:linear-gradient(180deg,rgba(139,92,246,.04),transparent 100%);
   border-bottom:1px solid rgba(139,92,246,.06);
   z-index:2;
 }
