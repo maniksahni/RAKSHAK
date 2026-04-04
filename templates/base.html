@@ -210,10 +210,6 @@
           <span class="rksb-tag">SAFETY PLATFORM</span>
           <span class="rksb-dash" style="background:linear-gradient(90deg,rgba(124,58,237,.15),rgba(124,58,237,.7))"></span>
         </div>
-        <div class="rksb-status">
-          <span class="rksb-dot"></span>
-          <span class="rksb-status-text">SHIELD ACTIVE</span>
-        </div>
       </div>
     </div>
   </div>
@@ -221,10 +217,7 @@
   <!-- ══ Scrollable Nav Section ══ -->
   <div class="sidebar-nav-scroll">
 
-  <hr class="glow-line mx-3" style="margin-top:0;">
-
   {% if current_user.is_admin %}
-  <!-- Admin Section Label -->
   <div class="sb-section-label"><i class="bi bi-shield-lock-fill"></i> COMMAND CENTER</div>
   <a class="sidebar-link {% if request.endpoint=='admin.dashboard' %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">
     <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
@@ -242,8 +235,7 @@
     <i class="bi bi-map"></i> <span>Live Map</span>
   </a>
 
-  <hr class="glow-line mx-3 my-1" style="opacity:0.25;">
-  <div class="sb-section-label"><i class="bi bi-grid-1x2-fill"></i> OPERATIVE FEATURES</div>
+  <div class="sb-section-label" style="margin-top:2px;"><i class="bi bi-grid-1x2-fill"></i> FEATURES</div>
   {% endif %}
 
   <!-- Core User Tools -->
@@ -277,8 +269,7 @@
     <i class="bi bi-phone-vibrate"></i> <span>Fake Call</span>
   </a>
 
-  <hr class="glow-line mx-3">
-  <a class="sidebar-link sb-logout-link" href="{{ url_for('auth.logout') }}">
+  <a class="sidebar-link sb-logout-link" style="margin-top:4px;" href="{{ url_for('auth.logout') }}">
     <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
   </a>
 
@@ -455,12 +446,11 @@
 <style>
 /* ── Section Labels ── */
 .sb-section-label{
-  font-size:.48rem;letter-spacing:.18em;font-weight:800;text-transform:uppercase;
-  padding:4px 12px 2px;display:flex;align-items:center;gap:5px;
-  background:linear-gradient(90deg,rgba(139,92,246,.6),rgba(196,181,253,.5));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-size:.44rem;letter-spacing:.16em;font-weight:800;text-transform:uppercase;
+  padding:6px 12px 2px;display:flex;align-items:center;gap:4px;
+  color:rgba(139,92,246,.45);
 }
-.sb-section-label i{font-size:.5rem;-webkit-text-fill-color:rgba(139,92,246,.5);}
+.sb-section-label i{font-size:.44rem;color:rgba(139,92,246,.4);}
 /* ── Logout link override ── */
 .sb-logout-link{color:rgba(239,68,68,.55)!important;}
 .sb-logout-link:hover{color:rgba(239,68,68,.9)!important;background:linear-gradient(135deg,rgba(239,68,68,.06),transparent)!important;}
