@@ -14,9 +14,9 @@ _pool = None
 
 
 def _db_config():
-    """Build MySQL connection kwargs from config."""
+    """Build MySQL connection kwargs from config (supports Aiven SSL)."""
     cfg = current_app.config
-    return {
+    kwargs = {
         'host':     cfg['DB_HOST'],
         'port':     cfg['DB_PORT'],
         'user':     cfg['DB_USER'],
@@ -25,6 +25,12 @@ def _db_config():
         'connect_timeout': 10,
         'autocommit': False,
     }
+    if cfg.get('DB_SSL'):
+        import ssl
+        kwargs['ssl_ca'] = None
+        kwargs['ssl_verify_cert'] = False
+        kwargs['ssl_disabled'] = False
+    return kwargs
 
 
 def get_pool():

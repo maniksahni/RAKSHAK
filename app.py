@@ -297,6 +297,25 @@ def create_app(config_name=None):
             replace_existing=True,
             misfire_grace_time=30,
         )
+
+        # ── Self-ping keep-alive (prevents Render free tier sleep) ───────
+        keep_alive_url = app.config.get('KEEP_ALIVE_URL', '')
+        if keep_alive_url:
+            def _keep_alive():
+                try:
+                    import requests
+                    requests.get(keep_alive_url, timeout=10)
+                except Exception:
+                    pass
+            scheduler.add_job(
+                _keep_alive,
+                trigger='interval',
+                seconds=600,  # ping every 10 min (Render sleeps at 15 min)
+                id='keep_alive',
+                replace_existing=True,
+            )
+            log.info(f'Keep-alive pinger started → {keep_alive_url}')
+
         scheduler.start()
         log.info('APScheduler started — AI ping check every 120s')
 
