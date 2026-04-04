@@ -20,3 +20,7 @@ services:
         sync: false
       - key: DB_NAME
         sync: false
+      - key: DB_SSL
+        value: "true"
+      - key: KEEP_ALIVE_URL
+        value: https://rakshak.onrender.com/health

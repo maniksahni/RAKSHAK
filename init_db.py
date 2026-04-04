@@ -148,7 +148,12 @@ def _get_conn_kwargs():
     user = os.environ.get('MYSQLUSER') or os.environ.get('DB_USER', 'root')
     pw   = os.environ.get('MYSQLPASSWORD') or os.environ.get('DB_PASSWORD', '')
     db   = os.environ.get('MYSQLDATABASE') or os.environ.get('DB_NAME', 'rakshak')
-    return dict(host=host, port=port, user=user, password=pw, database=db)
+    kwargs = dict(host=host, port=port, user=user, password=pw, database=db)
+    if os.environ.get('DB_SSL', 'false').lower() in ('true', '1', 'yes'):
+        kwargs['ssl_ca'] = None
+        kwargs['ssl_verify_cert'] = False
+        kwargs['ssl_disabled'] = False
+    return kwargs
 
 
 try:
