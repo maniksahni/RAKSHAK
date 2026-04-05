@@ -143,11 +143,11 @@ SEEDS = [
 
 
 def _get_conn_kwargs():
-    host = os.environ.get('MYSQLHOST') or os.environ.get('DB_HOST', 'localhost')
-    port = int(os.environ.get('MYSQLPORT') or os.environ.get('DB_PORT', '3306'))
-    user = os.environ.get('MYSQLUSER') or os.environ.get('DB_USER', 'root')
-    pw   = os.environ.get('MYSQLPASSWORD') or os.environ.get('DB_PASSWORD', '')
-    db   = os.environ.get('MYSQLDATABASE') or os.environ.get('DB_NAME', 'rakshak')
+    host = os.environ.get('DB_HOST', 'localhost')
+    port = int(os.environ.get('DB_PORT', '3306'))
+    user = os.environ.get('DB_USER', 'root')
+    pw   = os.environ.get('DB_PASSWORD', '')
+    db   = os.environ.get('DB_NAME', 'rakshak')
     kwargs = dict(host=host, port=port, user=user, password=pw, database=db)
     if os.environ.get('DB_SSL', 'false').lower() in ('true', '1', 'yes'):
         for ca in ['/etc/ssl/certs/ca-certificates.crt', '/etc/ssl/cert.pem']:
