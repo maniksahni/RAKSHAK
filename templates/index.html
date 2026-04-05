@@ -712,13 +712,9 @@ body::before{
 @keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-/* scroll-reveal: animate in on scroll */
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal.d1{transition-delay:.1s}
-.reveal.d2{transition-delay:.2s}
-.reveal.d3{transition-delay:.3s}
-.reveal.d4{transition-delay:.4s}
+/* scroll-reveal: always visible — no hidden content */
+.reveal{opacity:1!important;transform:none!important}
+.reveal.visible{opacity:1!important;transform:none!important}
 
 /* hero entrance — always visible, animate on load */
 .hero-section .hero-left{animation:slideUp .9s .2s cubic-bezier(.22,1,.36,1) both}
@@ -780,7 +776,7 @@ body::before{
 .stat-micro-icon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);margin:0 auto 12px;transition:all .3s}
 .stat-micro-icon svg{width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .stat-cell:hover .stat-micro-icon{background:rgba(139,92,246,.2);box-shadow:0 0 15px rgba(139,92,246,.3);transform:scale(1.1)}
-.parallax-section{transition:transform .1s linear;will-change:transform}
+.parallax-section{transform:none!important}
 
 
 /* Step card distinct colors */
@@ -1265,9 +1261,9 @@ body::before{
 
 /* Floating animations */
 
-/* ── Stagger-in for child elements ── */
-.stagger-child{opacity:0;transform:translateY(25px) scale(.97);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
-.stagger-child.stagger-visible{opacity:1;transform:translateY(0) scale(1)}
+/* ── Stagger-in for child elements — always visible ── */
+.stagger-child{opacity:1!important;transform:none!important}
+.stagger-child.stagger-visible{opacity:1!important;transform:none!important}
 
 /* ── Magnetic button pull effect ── */
 .btn-magnetic{transition:transform .15s cubic-bezier(.25,.46,.45,.94) !important}
