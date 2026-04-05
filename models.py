@@ -26,9 +26,14 @@ def _db_config():
         'autocommit': False,
     }
     if cfg.get('DB_SSL'):
-        import ssl
-        kwargs['ssl_ca'] = None
-        kwargs['ssl_verify_cert'] = False
+        import os
+        ca_path = cfg.get('DB_SSL_CA', '/etc/ssl/cert.pem')
+        if os.path.exists(ca_path):
+            kwargs['ssl_ca'] = ca_path
+            kwargs['ssl_verify_cert'] = True
+        else:
+            kwargs['ssl_ca'] = None
+            kwargs['ssl_verify_cert'] = False
         kwargs['ssl_disabled'] = False
     return kwargs
 
