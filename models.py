@@ -27,10 +27,12 @@ def _db_config():
     }
     if cfg.get('DB_SSL'):
         import os
-        ca_path = cfg.get('DB_SSL_CA', '/etc/ssl/cert.pem')
-        if os.path.exists(ca_path):
-            kwargs['ssl_ca'] = ca_path
-            kwargs['ssl_verify_cert'] = True
+        # Auto-detect CA cert: Debian/Docker → ca-certificates.crt, macOS → cert.pem
+        for ca in ['/etc/ssl/certs/ca-certificates.crt', '/etc/ssl/cert.pem']:
+            if os.path.exists(ca):
+                kwargs['ssl_ca'] = ca
+                kwargs['ssl_verify_cert'] = True
+                break
         else:
             kwargs['ssl_ca'] = None
             kwargs['ssl_verify_cert'] = False

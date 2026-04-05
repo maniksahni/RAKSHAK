@@ -8,14 +8,16 @@ FROM python:3.11-slim AS base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# System deps for mysqlclient/bcrypt compilation
+# System deps for mysqlclient/bcrypt compilation + SSL certs for TiDB
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         gcc \
         default-libmysqlclient-dev \
         pkg-config \
-        curl && \
-    rm -rf /var/lib/apt/lists/*
+        curl \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    update-ca-certificates
 
 WORKDIR /app
 
