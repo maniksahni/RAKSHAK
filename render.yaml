@@ -11,15 +11,15 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DB_HOST
-        sync: false
+        value: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
       - key: DB_PORT
-        sync: false
+        value: "4000"
       - key: DB_USER
-        sync: false
+        value: 2BZF1MGHQnAAGmx.root
       - key: DB_PASSWORD
         sync: false
       - key: DB_NAME
-        sync: false
+        value: test
       - key: DB_SSL
         value: "true"
       - key: KEEP_ALIVE_URL

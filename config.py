@@ -16,6 +16,7 @@ class Config:
     DB_PASSWORD = os.environ.get('MYSQLPASSWORD') or os.environ.get('DB_PASSWORD', '')
     DB_NAME = os.environ.get('MYSQLDATABASE') or os.environ.get('DB_NAME', 'rakshak')
     DB_SSL = os.environ.get('DB_SSL', 'false').lower() in ('true', '1', 'yes')
+    DB_SSL_CA = os.environ.get('DB_SSL_CA', '/etc/ssl/cert.pem')  # TiDB default CA path
 
     # Self-ping keep-alive (prevents free-tier sleep)
     KEEP_ALIVE_URL = os.environ.get('KEEP_ALIVE_URL', '')  # e.g. https://rakshak.onrender.com/health

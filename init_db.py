@@ -150,8 +150,13 @@ def _get_conn_kwargs():
     db   = os.environ.get('MYSQLDATABASE') or os.environ.get('DB_NAME', 'rakshak')
     kwargs = dict(host=host, port=port, user=user, password=pw, database=db)
     if os.environ.get('DB_SSL', 'false').lower() in ('true', '1', 'yes'):
-        kwargs['ssl_ca'] = None
-        kwargs['ssl_verify_cert'] = False
+        ca_path = os.environ.get('DB_SSL_CA', '/etc/ssl/cert.pem')
+        if os.path.exists(ca_path):
+            kwargs['ssl_ca'] = ca_path
+            kwargs['ssl_verify_cert'] = True
+        else:
+            kwargs['ssl_ca'] = None
+            kwargs['ssl_verify_cert'] = False
         kwargs['ssl_disabled'] = False
     return kwargs
 
