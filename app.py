@@ -343,11 +343,21 @@ def _auto_init_db(app):
     try:
         import mysql.connector
         cfg = app.config
-        conn = mysql.connector.connect(
+        connect_kwargs = dict(
             host=cfg['DB_HOST'], port=cfg['DB_PORT'],
             user=cfg['DB_USER'], password=cfg['DB_PASSWORD'],
             database=cfg['DB_NAME'],
         )
+        if cfg.get('DB_SSL'):
+            for ca in ['/etc/ssl/certs/ca-certificates.crt', '/etc/ssl/cert.pem']:
+                if os.path.exists(ca):
+                    connect_kwargs['ssl_ca'] = ca
+                    connect_kwargs['ssl_verify_cert'] = True
+                    break
+            else:
+                connect_kwargs['ssl_verify_cert'] = False
+            connect_kwargs['ssl_disabled'] = False
+        conn = mysql.connector.connect(**connect_kwargs)
         conn.autocommit = True
         cursor = conn.cursor()
         from init_db import SCHEMA_SQL, SEEDS
