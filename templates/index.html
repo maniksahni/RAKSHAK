@@ -440,6 +440,143 @@ a,button{cursor:none}
   .tech-g{grid-template-columns:1fr 1fr}
   .stats-g{grid-template-columns:1fr}
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   v7 — VISUAL OVERHAUL: SECTION COLORS + CARD VARIETY + NEON
+   Every section has its own color personality. No more uniform dark.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Brighter aurora blobs ── */
+.ab.a1{background:rgba(139,92,246,.55)!important;width:900px!important;height:900px!important}
+.ab.a2{background:rgba(255,59,59,.42)!important}
+.ab.a3{background:rgba(96,165,250,.38)!important}
+.ab.a4{background:rgba(34,211,238,.35)!important}
+.ab.a5{background:rgba(244,114,182,.32)!important}
+
+/* ── Hero — massive center glow ── */
+.hero::before{background:radial-gradient(ellipse,rgba(139,92,246,.28) 0%,rgba(255,59,59,.14) 35%,transparent 65%)!important}
+
+/* ── Section backgrounds with VISIBLE colored gradients ── */
+.stats{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.08) 30%,rgba(139,92,246,.14) 50%,rgba(139,92,246,.08) 70%,var(--bg) 100%)!important}
+.show{background:linear-gradient(180deg,var(--bg) 0%,rgba(255,59,59,.06) 30%,rgba(255,59,59,.11) 50%,rgba(255,59,59,.06) 70%,var(--bg) 100%)!important}
+.how{background:linear-gradient(180deg,var(--bg) 0%,rgba(52,211,153,.06) 30%,rgba(52,211,153,.1) 50%,rgba(52,211,153,.06) 70%,var(--bg) 100%)!important}
+#features{background:linear-gradient(180deg,var(--bg) 0%,rgba(96,165,250,.05) 25%,rgba(139,92,246,.1) 50%,rgba(96,165,250,.05) 75%,var(--bg) 100%)!important}
+.tech{background:linear-gradient(180deg,var(--bg) 0%,rgba(34,211,238,.06) 30%,rgba(34,211,238,.12) 50%,rgba(34,211,238,.06) 70%,var(--bg) 100%)!important}
+.dash{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.05) 30%,rgba(139,92,246,.09) 50%,rgba(139,92,246,.05) 70%,var(--bg) 100%)!important}
+.testi{background:linear-gradient(180deg,var(--bg) 0%,rgba(251,191,36,.04) 30%,rgba(251,191,36,.07) 50%,rgba(251,191,36,.04) 70%,var(--bg) 100%)!important}
+
+/* ── CTA — the WOW section: bright vivid gradient ── */
+.cta{background:linear-gradient(135deg,rgba(139,92,246,.14) 0%,rgba(255,59,59,.12) 20%,rgba(96,165,250,.1) 40%,rgba(34,211,238,.08) 60%,rgba(52,211,153,.1) 80%,rgba(244,114,182,.12) 100%)!important;position:relative}
+.cta::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,59,59,.18),rgba(139,92,246,.1) 40%,transparent 65%);pointer-events:none;animation:ctaGlow 5s ease-in-out infinite;z-index:0}
+@keyframes ctaGlow{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+.cta-in{position:relative;z-index:1!important}
+.cta-p{color:rgba(255,255,255,.6)!important}
+.cta .cta-h{text-shadow:0 0 80px rgba(139,92,246,.25),0 0 150px rgba(255,59,59,.12)}
+.cta .mbtn.pri{box-shadow:0 14px 60px rgba(255,59,59,.5),0 0 140px rgba(255,59,59,.2),0 0 220px rgba(255,59,59,.08),inset 0 1px 0 rgba(255,255,255,.2)!important;animation:ctaBtnPulse 3s ease-in-out infinite}
+@keyframes ctaBtnPulse{0%,100%{box-shadow:0 12px 50px rgba(255,59,59,.45),0 0 100px rgba(255,59,59,.15),inset 0 1px 0 rgba(255,255,255,.18)}50%{box-shadow:0 18px 80px rgba(255,59,59,.65),0 0 180px rgba(255,59,59,.28),0 0 280px rgba(255,59,59,.1),inset 0 1px 0 rgba(255,255,255,.25)}}
+
+/* ── Marquee tinted ── */
+.mq{background:rgba(139,92,246,.04)!important;border-color:rgba(139,92,246,.12)!important}
+
+/* ── Color-coded STAT cards ── */
+.stc:nth-child(1){background:rgba(255,59,59,.08)!important;border-color:rgba(255,59,59,.22)!important}
+.stc:nth-child(1):hover{background:rgba(255,59,59,.14)!important;border-color:rgba(255,59,59,.5)!important;box-shadow:0 0 60px rgba(255,59,59,.15),0 25px 60px rgba(0,0,0,.3)!important}
+.stc:nth-child(1)::before{background:linear-gradient(90deg,transparent,#ff3b3b,transparent)!important;opacity:.8!important}
+.stc:nth-child(2){background:rgba(139,92,246,.08)!important;border-color:rgba(139,92,246,.22)!important}
+.stc:nth-child(2):hover{background:rgba(139,92,246,.14)!important;border-color:rgba(139,92,246,.5)!important;box-shadow:0 0 60px rgba(139,92,246,.15),0 25px 60px rgba(0,0,0,.3)!important}
+.stc:nth-child(2)::before{background:linear-gradient(90deg,transparent,#8b5cf6,transparent)!important;opacity:.8!important}
+.stc:nth-child(3){background:rgba(34,211,238,.08)!important;border-color:rgba(34,211,238,.22)!important}
+.stc:nth-child(3):hover{background:rgba(34,211,238,.14)!important;border-color:rgba(34,211,238,.5)!important;box-shadow:0 0 60px rgba(34,211,238,.15),0 25px 60px rgba(0,0,0,.3)!important}
+.stc:nth-child(3)::before{background:linear-gradient(90deg,transparent,#22d3ee,transparent)!important;opacity:.8!important}
+.stc:nth-child(4){background:rgba(52,211,153,.08)!important;border-color:rgba(52,211,153,.22)!important}
+.stc:nth-child(4):hover{background:rgba(52,211,153,.14)!important;border-color:rgba(52,211,153,.5)!important;box-shadow:0 0 60px rgba(52,211,153,.15),0 25px 60px rgba(0,0,0,.3)!important}
+.stc:nth-child(4)::before{background:linear-gradient(90deg,transparent,#34d399,transparent)!important;opacity:.8!important}
+
+/* ── Color-coded FEATURE bento cards ── */
+.bc:nth-child(1){--bc-c:255,59,59}
+.bc:nth-child(2){--bc-c:139,92,246}
+.bc:nth-child(3){--bc-c:34,211,238}
+.bc:nth-child(4){--bc-c:52,211,153}
+.bc:nth-child(5){--bc-c:251,191,36}
+.bc:nth-child(6){--bc-c:244,114,182}
+.bc{background:rgba(var(--bc-c,139,92,246),.07)!important;border-color:rgba(var(--bc-c,139,92,246),.2)!important}
+.bc:hover{background:rgba(var(--bc-c,139,92,246),.14)!important;border-color:rgba(var(--bc-c,139,92,246),.45)!important;box-shadow:0 0 70px rgba(var(--bc-c),.14),0 25px 65px rgba(0,0,0,.3)!important}
+.bc::before{background:radial-gradient(ellipse at var(--mx,50%) var(--my,0%),rgba(var(--bc-c,139,92,246),.22),transparent 55%)!important}
+.bc .bc-i{background:rgba(var(--bc-c,139,92,246),.14)!important;border-color:rgba(var(--bc-c,139,92,246),.35)!important}
+.bc .bc-i svg{stroke:rgb(var(--bc-c,139,92,246))!important}
+.bc .bc-h{color:rgb(var(--bc-c))!important;filter:brightness(1.4)}
+
+/* ── Color-coded HOW IT WORKS cards ── */
+.hwc:nth-child(1){background:rgba(255,59,59,.07)!important;border-color:rgba(255,59,59,.2)!important}
+.hwc:nth-child(1):hover{background:rgba(255,59,59,.12)!important;border-color:rgba(255,59,59,.45)!important;box-shadow:0 0 55px rgba(255,59,59,.12)!important}
+.hwc:nth-child(1) .hw-i{background:rgba(255,59,59,.14)!important;border-color:rgba(255,59,59,.35)!important}
+.hwc:nth-child(1) .hw-i svg{stroke:#ff6b6b!important}
+.hwc:nth-child(1)::after{background:linear-gradient(90deg,transparent,#ff3b3b,transparent)!important}
+.hwc:nth-child(1) .hw-n{background:linear-gradient(135deg,rgba(255,59,59,.5),rgba(255,59,59,.08))!important;-webkit-background-clip:text;background-clip:text}
+.hwc:nth-child(2){background:rgba(139,92,246,.07)!important;border-color:rgba(139,92,246,.2)!important}
+.hwc:nth-child(2):hover{background:rgba(139,92,246,.12)!important;border-color:rgba(139,92,246,.45)!important;box-shadow:0 0 55px rgba(139,92,246,.12)!important}
+.hwc:nth-child(2)::after{background:linear-gradient(90deg,transparent,#8b5cf6,transparent)!important}
+.hwc:nth-child(2) .hw-n{background:linear-gradient(135deg,rgba(139,92,246,.55),rgba(139,92,246,.1))!important;-webkit-background-clip:text;background-clip:text}
+.hwc:nth-child(3){background:rgba(34,211,238,.07)!important;border-color:rgba(34,211,238,.2)!important}
+.hwc:nth-child(3):hover{background:rgba(34,211,238,.12)!important;border-color:rgba(34,211,238,.45)!important;box-shadow:0 0 55px rgba(34,211,238,.12)!important}
+.hwc:nth-child(3) .hw-i{background:rgba(34,211,238,.14)!important;border-color:rgba(34,211,238,.35)!important}
+.hwc:nth-child(3) .hw-i svg{stroke:#22d3ee!important}
+.hwc:nth-child(3)::after{background:linear-gradient(90deg,transparent,#22d3ee,transparent)!important}
+.hwc:nth-child(3) .hw-n{background:linear-gradient(135deg,rgba(34,211,238,.55),rgba(34,211,238,.1))!important;-webkit-background-clip:text;background-clip:text}
+
+/* ── Holographic TECH cards ── */
+.tkc{background:linear-gradient(135deg,rgba(34,211,238,.06),rgba(139,92,246,.04))!important;border-color:rgba(34,211,238,.18)!important;overflow:hidden}
+.tkc:hover{background:linear-gradient(135deg,rgba(34,211,238,.14),rgba(139,92,246,.1))!important;border-color:rgba(34,211,238,.45)!important;box-shadow:0 0 55px rgba(34,211,238,.14),0 25px 65px rgba(0,0,0,.3)!important}
+.tkc::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,transparent 20%,rgba(34,211,238,.06) 45%,rgba(139,92,246,.04) 55%,transparent 80%);pointer-events:none;transition:opacity .4s;opacity:0}
+.tkc:hover::after{opacity:1}
+.tkc:nth-child(even){background:linear-gradient(135deg,rgba(139,92,246,.06),rgba(34,211,238,.04))!important}
+.tkc:nth-child(even):hover{background:linear-gradient(135deg,rgba(139,92,246,.14),rgba(34,211,238,.1))!important;border-color:rgba(139,92,246,.45)!important;box-shadow:0 0 55px rgba(139,92,246,.14),0 25px 65px rgba(0,0,0,.3)!important}
+
+/* ── Enhanced animated dividers ── */
+.divider{height:3px!important;background:linear-gradient(90deg,transparent 2%,var(--accent2) 15%,var(--red) 30%,var(--cyan) 50%,var(--emerald) 70%,var(--pink) 85%,transparent 98%)!important;opacity:.55;animation:divPulse 4s ease-in-out infinite;box-shadow:0 0 25px rgba(139,92,246,.2),0 0 50px rgba(255,59,59,.1)}
+@keyframes divPulse{0%,100%{opacity:.35;box-shadow:0 0 15px rgba(139,92,246,.1)}50%{opacity:.7;box-shadow:0 0 35px rgba(139,92,246,.3),0 0 70px rgba(255,59,59,.15)}}
+
+/* ── Section header neon glow ── */
+.stit{text-shadow:0 0 80px rgba(139,92,246,.18)}
+.eye{box-shadow:0 0 30px rgba(139,92,246,.12)!important;animation:eyePulse 3s ease-in-out infinite!important}
+@keyframes eyePulse{0%,100%{box-shadow:0 0 20px rgba(139,92,246,.08)}50%{box-shadow:0 0 45px rgba(139,92,246,.2)}}
+
+/* ── Testimonial cards with color borders ── */
+.tc:nth-child(1),.tc:nth-child(6){border-color:rgba(139,92,246,.15)!important}
+.tc:nth-child(1):hover,.tc:nth-child(6):hover{border-color:rgba(139,92,246,.35)!important;box-shadow:0 0 35px rgba(139,92,246,.1)!important}
+.tc:nth-child(2),.tc:nth-child(7){border-color:rgba(255,59,59,.15)!important}
+.tc:nth-child(2):hover,.tc:nth-child(7):hover{border-color:rgba(255,59,59,.35)!important;box-shadow:0 0 35px rgba(255,59,59,.1)!important}
+.tc:nth-child(3),.tc:nth-child(8){border-color:rgba(34,211,238,.15)!important}
+.tc:nth-child(3):hover,.tc:nth-child(8):hover{border-color:rgba(34,211,238,.35)!important;box-shadow:0 0 35px rgba(34,211,238,.1)!important}
+.tc:nth-child(4),.tc:nth-child(9){border-color:rgba(52,211,153,.15)!important}
+.tc:nth-child(4):hover,.tc:nth-child(9):hover{border-color:rgba(52,211,153,.35)!important;box-shadow:0 0 35px rgba(52,211,153,.1)!important}
+.tc:nth-child(5),.tc:nth-child(10){border-color:rgba(251,191,36,.15)!important}
+.tc:nth-child(5):hover,.tc:nth-child(10):hover{border-color:rgba(251,191,36,.35)!important;box-shadow:0 0 35px rgba(251,191,36,.1)!important}
+
+/* ── Dashboard enhanced ── */
+.dash-top{background:rgba(139,92,246,.08)!important;border-bottom-color:rgba(139,92,246,.15)!important}
+.dash-grid{background:rgba(139,92,246,.04)!important}
+
+/* ── Navbar from base.html — override to match landing ── */
+.navbar-rakshak{background:transparent!important;border-bottom:1px solid transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transition:all .5s cubic-bezier(.22,1,.36,1)!important}
+.navbar-rakshak.scrolled,.navbar-rakshak[style*="background"]{background:rgba(10,10,26,.92)!important;backdrop-filter:blur(30px) saturate(1.5)!important;-webkit-backdrop-filter:blur(30px) saturate(1.5)!important;border-bottom-color:rgba(255,255,255,.04)!important}
+
+/* ── Phone showcase red glow boost ── */
+.ph-glow{background:radial-gradient(ellipse at 50% 40%,rgba(255,59,59,.35) 0%,rgba(139,92,246,.25) 40%,transparent 65%)!important}
+
+/* ── Feature phone section list items colored bg on hover ── */
+.sf:hover{box-shadow:0 0 30px rgba(var(--sfc,255,59,59),.08)!important}
+
+/* ── Footer subtle purple tint ── */
+.foot{border-top-color:rgba(139,92,246,.18)!important}
+.ftbot{border-top-color:rgba(139,92,246,.08)!important}
+
+/* ── Terminal section blue tint ── */
+.term-sec{position:relative!important}
+.term-sec::before{content:''!important;position:absolute!important;inset:0!important;background:linear-gradient(180deg,transparent,rgba(96,165,250,.06) 40%,rgba(96,165,250,.08) 50%,rgba(96,165,250,.06) 60%,transparent)!important;pointer-events:none!important;z-index:-1!important}
+
+/* ── Grid overlay slightly more visible ── */
+.grid-overlay{opacity:.1!important}
 </style>
 {% endblock %}
 
@@ -873,7 +1010,7 @@ document.querySelectorAll('.hs-v[data-count]').forEach(el=>{
   (function t(n){const p=Math.min((n-t0)/dur,1);el.textContent=Math.round((1-Math.pow(1-p,4))*tgt)+'+';if(p<1)requestAnimationFrame(t)})(t0)});
 
 /* ═══ 10. NAVBAR + SCROLL PROG + BACK-TOP + CLOCK ═══ */
-const nav=document.getElementById('rk-nav');
+const nav=document.querySelector('.navbar-rakshak');
 if(nav)addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
 
 document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
