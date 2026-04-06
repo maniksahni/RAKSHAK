@@ -65,10 +65,11 @@ def google_login():
     nonce = secrets.token_urlsafe(16)
     session['google_nonce'] = nonce
 
-    callback_url = url_for('google_auth.google_callback', _external=True)
-    # Ensure https in production (Railway terminates SSL at proxy level)
+    callback_url = url_for('google_auth.google_callback', _external=True, _scheme='https')
+    # Fallback: force https if ProxyFix didn't catch it
     if callback_url.startswith('http://') and not os.environ.get('FLASK_DEBUG'):
         callback_url = 'https://' + callback_url[7:]
+    log.info(f'Google OAuth redirect_uri: {callback_url}')
     return google.authorize_redirect(callback_url, nonce=nonce)
 
 
@@ -149,6 +150,7 @@ def google_callback():
         return redirect(url_for('dashboard.index'))
 
     except Exception as e:
-        log.error(f'Google OAuth callback failed: {e}')
-        flash('Google login failed. Please try again or use email/password.', 'error')
+        import traceback
+        log.error(f'Google OAuth callback failed: {e}\n{traceback.format_exc()}')
+        flash(f'Google login failed: {e}', 'error')
         return redirect(url_for('auth.login'))
