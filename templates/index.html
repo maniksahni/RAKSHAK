@@ -775,7 +775,7 @@ a,button{cursor:none}
 (function(){
   const t=document.getElementById('loaderTitle');
   if(t){const s=t.textContent;t.innerHTML='';[...s].forEach((c,i)=>{const e=document.createElement('span');e.textContent=c;e.style.animationDelay=(.3+i*.09)+'s';t.appendChild(e)})}
-  addEventListener('load',()=>setTimeout(()=>{const l=document.getElementById('loader');if(l)l.classList.add('done')},3000));
+  addEventListener('load',()=>setTimeout(()=>{const l=document.getElementById('loader');if(l)l.classList.add('done')},1500));
 })();
 
 /* ═══ 1. MESH CANVAS ═══ */
