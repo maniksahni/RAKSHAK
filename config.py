@@ -35,6 +35,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+    PREFERRED_URL_SCHEME    = 'https'
     WTF_CSRF_SSL_STRICT   = False   # Render proxy terminates SSL; strict check always fails
     SESSION_COOKIE_SECURE   = True
     SESSION_COOKIE_HTTPONLY = True
