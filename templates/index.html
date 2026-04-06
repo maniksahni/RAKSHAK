@@ -1,141 +1,126 @@
 {% extends "base.html" %}
-{% block title %}RAKSHAK — Your Safety, Our Mission{% endblock %}
+{% block title %}RAKSHAK — AI-Powered Women's Safety Platform{% endblock %}
 
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════
-   RAKSHAK — Maximum Impact Landing
-   ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   RAKSHAK — Cinematic Landing Page
+   ═══════════════════════════════════════════════════════════════ */
 :root{
-  --bg:#030306;--bg2:#06060c;
-  --red:#ef4444;--red2:#fca5a5;--red-glow:rgba(239,68,68,.4);
-  --accent:#c084fc;--accent2:#8b5cf6;--accent-glow:rgba(139,92,246,.35);
-  --blue:#3b82f6;--cyan:#06b6d4;--emerald:#10b981;--amber:#f59e0b;
-  --white:#ffffff;--muted:rgba(255,255,255,0.45);
+  --bg:#020204;--bg2:#08080f;
+  --red:#ef4444;--red2:#ff6b6b;
+  --accent:#a78bfa;--accent2:#8b5cf6;--purple:#7c3aed;
+  --blue:#60a5fa;--cyan:#22d3ee;--emerald:#34d399;--amber:#fbbf24;
+  --white:#f0f0f5;--muted:rgba(255,255,255,0.4);
   --bdr:rgba(255,255,255,0.06);
   --sg:'Space Grotesk',sans-serif;--int:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --glow-red:0 0 60px rgba(239,68,68,.3),0 0 120px rgba(239,68,68,.1);
+  --glow-purple:0 0 60px rgba(139,92,246,.3),0 0 120px rgba(139,92,246,.1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--sg);background:var(--bg);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-/* ── Aurora Background ── */
-.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.aurora-orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:.12;animation:auroraFloat 12s ease-in-out infinite}
-.aurora-orb:nth-child(1){width:600px;height:600px;background:#8b5cf6;top:-20%;left:-10%;animation-delay:0s;animation-duration:14s}
-.aurora-orb:nth-child(2){width:500px;height:500px;background:#ef4444;top:30%;right:-15%;animation-delay:-4s;animation-duration:16s}
-.aurora-orb:nth-child(3){width:400px;height:400px;background:#3b82f6;bottom:-10%;left:30%;animation-delay:-8s;animation-duration:18s}
-.aurora-orb:nth-child(4){width:350px;height:350px;background:#06b6d4;top:60%;left:-5%;animation-delay:-6s;animation-duration:20s}
-@keyframes auroraFloat{
-  0%,100%{transform:translate(0,0) scale(1)}
-  25%{transform:translate(60px,-40px) scale(1.1)}
-  50%{transform:translate(-30px,60px) scale(.9)}
-  75%{transform:translate(40px,20px) scale(1.05)}
-}
+/* ── Canvas BG ── */
+#heroBg{position:fixed;inset:0;z-index:0;pointer-events:none}
 
-/* grid overlay */
-.grid-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
-  background-size:60px 60px;
-  mask-image:radial-gradient(ellipse 70% 60% at 50% 0%,black 20%,transparent 80%);
-  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 0%,black 20%,transparent 80%);
-}
+/* noise grain */
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:128px 128px}
 
-.rk-page{position:relative;z-index:1}
+.rk-page{position:relative;z-index:2}
 
 /* ── Navbar ── */
-.rk-nav{position:fixed !important;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:all .4s}
-.rk-nav.scrolled{background:rgba(3,3,6,.92) !important;border-color:rgba(255,255,255,0.04) !important;backdrop-filter:blur(20px) !important;-webkit-backdrop-filter:blur(20px) !important}
+.rk-nav{position:fixed !important;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem) !important;height:62px;background:transparent !important;backdrop-filter:none !important;border-bottom:1px solid transparent !important;transition:all .5s cubic-bezier(.22,1,.36,1)}
+.rk-nav.scrolled{background:rgba(2,2,4,.88) !important;border-color:rgba(255,255,255,0.04) !important;backdrop-filter:blur(24px) saturate(1.4) !important;-webkit-backdrop-filter:blur(24px) saturate(1.4) !important}
 .rk-nav .navbar-brand-text{font-family:var(--sg) !important;font-size:1.1rem !important;font-weight:700 !important;letter-spacing:.2em !important;color:var(--white) !important;text-shadow:none !important}
 .rk-nav .btn-glass{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:500 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 18px !important}
 .rk-nav .btn-rakshak{border-radius:8px !important;font-family:var(--sg) !important;font-size:.83rem !important;font-weight:600 !important;text-transform:none !important;letter-spacing:normal !important;padding:8px 20px !important;background:linear-gradient(135deg,#ef4444,#dc2626) !important;box-shadow:0 0 22px rgba(239,68,68,.35) !important}
 
-/* ═══════════════════════════════════════════
-   SHARED
-═══════════════════════════════════════════*/
-.sec-hd{text-align:center;margin-bottom:3.5rem}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.65rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;font-family:var(--mono);border:1px solid rgba(139,92,246,0.2);padding:6px 18px;border-radius:50px;background:rgba(139,92,246,0.05);position:relative;overflow:hidden}
-.eyebrow::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(139,92,246,.15),transparent);transform:translateX(-100%);animation:eyebrowShine 3s ease-in-out infinite}
-@keyframes eyebrowShine{0%{transform:translateX(-100%)}50%,100%{transform:translateX(100%)}}
-.sec-title{font-family:var(--sg);font-size:clamp(2.5rem,4.5vw,3.8rem);font-weight:800;line-height:1.15;letter-spacing:-0.03em}
-.sec-sub{font-family:var(--int);font-size:1.05rem;color:rgba(255,255,255,0.5);max-width:540px;margin:.8rem auto 0;line-height:1.6}
-.rk-hr{border:none;height:1px;max-width:1380px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06) 50%,transparent)}
+/* ═══════════════ SHARED ═══════════════ */
+.sec-pad{padding:8rem clamp(2rem,6vw,6rem);max-width:1400px;margin:0 auto}
+.sec-hd{text-align:center;margin-bottom:4rem}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.6rem;font-weight:700;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:1.2rem;font-family:var(--mono);border:1px solid rgba(139,92,246,.15);padding:7px 20px;border-radius:50px;background:rgba(139,92,246,.04)}
+.sec-title{font-size:clamp(2.8rem,5vw,4.2rem);font-weight:800;line-height:1.1;letter-spacing:-.04em}
+.sec-sub{font-family:var(--int);font-size:1rem;color:rgba(255,255,255,.4);max-width:520px;margin:1rem auto 0;line-height:1.7}
+.grad{background:linear-gradient(135deg,#fff,var(--accent),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-red{background:linear-gradient(135deg,#ff6b6b,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.divider{border:none;height:1px;max-width:1400px;margin:0 auto;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05) 50%,transparent)}
 
-/* gradient text helper */
-.grad-text{background:linear-gradient(120deg,#fff 0%,#c084fc 40%,#8b5cf6 60%,#3b82f6 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.grad-text-red{background:linear-gradient(120deg,#ef4444,#f97316,#ef4444);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradShift 3s ease-in-out infinite}
-@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+/* ═══════════════ HERO ═══════════════ */
+.hero{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to top,var(--bg),transparent);z-index:1;pointer-events:none}
 
-/* ═══════════════════════════════════════════
-   TECH TICKER
-═══════════════════════════════════════════*/
-.ticker-strip{padding:14px 0;border-bottom:1px solid var(--bdr);border-top:1px solid var(--bdr);overflow:hidden;position:relative;background:rgba(255,255,255,.01)}
-.ticker-strip::before,.ticker-strip::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
-.ticker-strip::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
-.ticker-strip::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
-.ticker-track{display:flex;gap:3rem;animation:tickerScroll 25s linear infinite;width:max-content;align-items:center}
-@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ticker-item{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;color:rgba(255,255,255,.25);white-space:nowrap;text-transform:uppercase}
-.ticker-dot{width:4px;height:4px;border-radius:50%;background:var(--accent2);opacity:.5}
+.hero-inner{position:relative;z-index:2;max-width:900px}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:100px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.05);font-size:.62rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.8);margin-bottom:2.5rem;font-family:var(--mono);animation:fadeSlideUp .8s .2s both}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 10px var(--red)}50%{box-shadow:0 0 20px var(--red),0 0 40px rgba(239,68,68,.25)}}
 
-/* ═══════════════════════════════════════════
-   HERO
-═══════════════════════════════════════════*/
-.hero-section{
-  min-height:calc(100vh - 60px);min-height:calc(100svh - 60px);
-  display:grid;grid-template-columns:1fr min(400px,40vw);gap:2rem;
-  align-items:center;
-  padding:2rem clamp(2rem,6vw,6rem) clamp(3rem,6vh,5rem);
-  max-width:1380px;margin:0 auto;position:relative;
-}
+.hero-h1{font-size:clamp(3.5rem,8vw,7rem);font-weight:800;line-height:.95;letter-spacing:-.06em;margin-bottom:2rem;animation:fadeSlideUp .8s .35s both}
+.hero-h1 .line{display:block}
+.hero-h1 .line-2{background:linear-gradient(135deg,#ffffff 0%,#c084fc 30%,#60a5fa 60%,#22d3ee 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-/* hero radial glow */
-.hero-section::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(139,92,246,.08),rgba(239,68,68,.04),transparent 70%);pointer-events:none}
+.hero-p{font-family:var(--int);font-size:clamp(.95rem,1.5vw,1.15rem);color:rgba(255,255,255,.35);max-width:560px;margin:0 auto 3rem;line-height:1.8;animation:fadeSlideUp .8s .5s both}
 
-.hero-content{position:relative;z-index:1}
-.hero-visual{position:relative;z-index:1;display:flex;justify-content:center;align-items:center}
+.hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:3.5rem;animation:fadeSlideUp .8s .65s both}
 
-.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:100px;border:1px solid rgba(139,92,246,.25);background:rgba(139,92,246,.06);font-size:.65rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.85);margin-bottom:2rem;font-family:var(--mono)}
-.pill-dot{width:5px;height:5px;border-radius:50%;background:var(--red);box-shadow:0 0 7px var(--red);animation:dotPulse 2s ease-in-out infinite}
-@keyframes dotPulse{0%,100%{box-shadow:0 0 7px var(--red)}50%{box-shadow:0 0 14px var(--red),0 0 28px rgba(239,68,68,.3)}}
+/* buttons */
+.btn-hero{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;border-radius:16px;font-family:var(--sg);font-weight:700;font-size:1rem;text-decoration:none;cursor:pointer;transition:all .4s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;border:none}
+.btn-hero.primary{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 8px 30px rgba(239,68,68,.35),inset 0 1px 0 rgba(255,255,255,.15)}
+.btn-hero.primary:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 16px 50px rgba(239,68,68,.5),inset 0 1px 0 rgba(255,255,255,.2);color:#fff}
+.btn-hero.primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,.15),transparent);transform:translateX(-100%);transition:transform .6s}
+.btn-hero.primary:hover::after{transform:translateX(100%)}
+.btn-hero.ghost{background:rgba(255,255,255,.03);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
+.btn-hero.ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff;transform:translateY(-4px)}
 
-.hero-h1{font-size:clamp(3.2rem,5.5vw,5rem);font-weight:800;line-height:1.02;letter-spacing:-.04em;margin-bottom:1.5rem}
-.h1-white{display:block;color:var(--white)}
-.h1-grad{display:block;background:linear-gradient(120deg,#ffffff 0%,#e0e7ff 15%,#c084fc 35%,#8b5cf6 50%,#3b82f6 65%,#e0e7ff 85%,#ffffff 100%);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmerGrad 4s ease-in-out infinite}
-@keyframes shimmerGrad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-meta{display:flex;gap:2.5rem;justify-content:center;animation:fadeSlideUp .8s .8s both}
+.hero-meta-item{text-align:center}
+.hero-meta-val{font-family:var(--sg);font-size:1.8rem;font-weight:800;display:block;line-height:1}
+.hero-meta-val.c1{color:var(--red)}
+.hero-meta-val.c2{color:var(--accent)}
+.hero-meta-val.c3{color:var(--emerald)}
+.hero-meta-lbl{font-family:var(--mono);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-top:4px}
 
-.hero-p{font-size:clamp(.88rem,1.3vw,1rem);color:rgba(255,255,255,.4);max-width:480px;line-height:1.9;margin-bottom:2.4rem;font-family:var(--int)}
+/* ═══════════════ MARQUEE STRIP ═══════════════ */
+.marquee{padding:18px 0;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);overflow:hidden;position:relative;background:rgba(255,255,255,.01)}
+.marquee::before,.marquee::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
+.marquee::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.marquee::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.marquee-track{display:flex;gap:3rem;animation:marqueeScroll 30s linear infinite;width:max-content;align-items:center}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-item{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.marquee-item span{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:rgba(255,255,255,.18);text-transform:uppercase}
+.marquee-item svg{width:16px;height:16px;stroke:var(--accent2);fill:none;stroke-width:1.8;opacity:.3;flex-shrink:0}
 
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:3rem}
+/* ═══════════════ PHONE SHOWCASE ═══════════════ */
+.showcase{padding:6rem 2rem 8rem;position:relative;overflow:hidden}
+.showcase::before{content:'';position:absolute;top:50%;left:50%;width:800px;height:800px;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(139,92,246,.08),rgba(239,68,68,.04),transparent 70%);pointer-events:none}
+.showcase-inner{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.showcase-content{position:relative;z-index:1}
+.showcase-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px}
+.showcase-label::before{content:'';width:24px;height:1px;background:var(--accent2)}
+.showcase-h2{font-size:clamp(2.5rem,4vw,3.5rem);font-weight:800;line-height:1.08;letter-spacing:-.04em;margin-bottom:1.5rem}
+.showcase-p{font-family:var(--int);font-size:.95rem;color:rgba(255,255,255,.35);line-height:1.8;margin-bottom:2.5rem;max-width:440px}
+.showcase-features{display:flex;flex-direction:column;gap:16px}
+.sf{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);transition:all .3s}
+.sf:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);transform:translateX(6px)}
+.sf-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(var(--sf-rgb,239,68,68),.1);border:1px solid rgba(var(--sf-rgb,239,68,68),.2)}
+.sf-icon svg{width:18px;height:18px;stroke:rgb(var(--sf-rgb,239,68,68));fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sf:nth-child(1){--sf-rgb:239,68,68} .sf:nth-child(2){--sf-rgb:139,92,246} .sf:nth-child(3){--sf-rgb:34,211,238} .sf:nth-child(4){--sf-rgb:52,211,153}
+.sf-text{font-size:.88rem;color:rgba(255,255,255,.55);font-family:var(--int)}
+.sf-text strong{color:rgba(255,255,255,.85);font-weight:600}
 
-/* ── Primary Button with animated glow ── */
-.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:14px;font-family:var(--sg);font-weight:700;font-size:1rem;background:linear-gradient(135deg,#ef4444,#dc2626,#b91c1c);color:#fff;border:none;text-decoration:none;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(239,68,68,.4),0 0 0 1px rgba(239,68,68,.2);transition:transform .3s,box-shadow .3s;letter-spacing:0.05em;text-transform:uppercase}
-.btn-primary::before{content:'';position:absolute;inset:-2px;border-radius:16px;background:linear-gradient(135deg,#ef4444,#f97316,#ef4444);opacity:0;transition:opacity .3s;z-index:-1;filter:blur(12px)}
-.btn-primary:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 20px 40px rgba(239,68,68,.5),0 0 0 1px rgba(239,68,68,.3);color:#fff}
-.btn-primary:hover::before{opacity:1}
-
-.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:14px;font-family:var(--sg);font-weight:600;font-size:0.95rem;background:rgba(255,255,255,.02);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.1);text-decoration:none;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px)}
-.btn-outline:hover{transform:translateY(-3px);background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.25);color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-
-.hero-badges{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.hero-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);padding:8px 16px;border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-family:var(--mono);font-size:0.72rem;color:#fff;text-decoration:none;transition:all 0.3s;backdrop-filter:blur(8px)}
-.hero-badge:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px);border-color:rgba(255,255,255,.15);box-shadow:0 8px 20px rgba(0,0,0,.3)}
-.hero-badge.accent{background:rgba(139,92,246,0.04);border-color:rgba(139,92,246,0.15);color:var(--accent)}
-.hero-badge.accent:hover{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.35)}
-.hero-tagline{font-family:var(--mono);font-size:0.65rem;color:rgba(255,255,255,0.2);text-transform:uppercase;letter-spacing:0.12em;margin-top:18px}
-
-/* ── Phone Mockup ── */
-.phone-wrap{position:relative;width:300px;max-width:min(300px,calc(100vw - 32px));margin:0 auto}
-.phone-glow{position:absolute;inset:-50px;border-radius:80px;background:radial-gradient(ellipse at 60% 50%,rgba(139,92,246,.2) 0%,rgba(239,68,68,.08) 40%,transparent 68%);filter:blur(30px);pointer-events:none;z-index:0;animation:phoneBreath 4s ease-in-out infinite}
-@keyframes phoneBreath{0%,100%{opacity:.7;filter:blur(28px)}50%{opacity:1;filter:blur(38px)}}
-.phone-frame{width:300px;background:linear-gradient(165deg,#2a2a2e,#1a1a1c,#2f3033);border:1px solid rgba(255,255,255,0.2);border-radius:50px;padding:14px 12px 24px;position:relative;z-index:2;transform:perspective(1400px) rotateY(-8deg) rotateX(3deg);box-shadow:0 50px 120px rgba(0,0,0,.9),0 0 80px rgba(139,92,246,.08),inset 0 0 0 1px rgba(255,255,255,.04);transition:transform .5s}
-.phone-frame:hover{transform:perspective(1400px) rotateY(-3deg) rotateX(1deg)}
+.showcase-visual{display:flex;justify-content:center;position:relative}
+.phone-wrap{position:relative;width:320px}
+.phone-glow{position:absolute;inset:-60px;border-radius:80px;background:radial-gradient(ellipse at 50% 40%,rgba(139,92,246,.2) 0%,rgba(239,68,68,.06) 50%,transparent 70%);filter:blur(40px);pointer-events:none;animation:phoneGlow 5s ease-in-out infinite}
+@keyframes phoneGlow{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+.phone-frame{width:320px;background:linear-gradient(165deg,#28282c,#18181a,#2a2a2e);border:1.5px solid rgba(255,255,255,0.18);border-radius:54px;padding:14px 12px 24px;position:relative;z-index:2;transform:perspective(1200px) rotateY(-6deg) rotateX(2deg);box-shadow:0 60px 140px rgba(0,0,0,.9),0 0 100px rgba(139,92,246,.06),inset 0 1px 0 rgba(255,255,255,.08);transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.phone-frame:hover{transform:perspective(1200px) rotateY(-2deg) rotateX(1deg)}
 .phone-frame::before{content:'';position:absolute;right:-3px;top:120px;width:3px;height:42px;background:#3a3a3e;border-radius:0 2px 2px 0}
 .phone-frame::after{content:'';position:absolute;left:-3px;top:90px;width:3px;height:24px;background:#3a3a3e;border-radius:2px 0 0 2px;box-shadow:0 40px 0 #3a3a3e,0 85px 0 #3a3a3e}
-.phone-screen{background:#030305;border-radius:42px;overflow:hidden;padding:20px 16px;min-height:480px;position:relative}
+.phone-screen{background:#030305;border-radius:44px;overflow:hidden;padding:20px 16px;min-height:520px;position:relative}
 .dynamic-island{width:55px;height:18px;background:#000;border:1px solid rgba(255,255,255,0.08);border-radius:20px;margin:0 auto 14px;display:flex;align-items:center;justify-content:space-between;padding:0 6px}
 .di-cam{width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#444,#050505)}
 .di-sensor{width:4px;height:4px;border-radius:50%;background:#0a0a0a;border:1px solid rgba(255,255,255,0.04)}
@@ -148,635 +133,485 @@ body{font-family:var(--sg);background:var(--bg);color:var(--white);overflow-x:hi
 .ph-logo{display:flex;align-items:center;gap:5px;font-size:.65rem;font-weight:700;letter-spacing:.12em}
 .ph-logo-shield{width:18px;height:18px;background:var(--red);border-radius:4px;display:flex;align-items:center;justify-content:center}
 .ph-logo-shield svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.ph-live-badge{display:flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);font-size:.5rem;font-weight:700;letter-spacing:.12em;color:rgba(167,243,208,.9)}
+.ph-live{display:flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);font-size:.5rem;font-weight:700;letter-spacing:.12em;color:rgba(167,243,208,.9)}
 .ph-live-dot{width:4px;height:4px;border-radius:50%;background:#10b981;box-shadow:0 0 5px #10b981}
-.ph-sos-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
-.ph-sos-outer{width:100px;height:100px;border-radius:50%;background:rgba(139,92,246,.055);display:flex;align-items:center;justify-content:center}
-.ph-sos-mid{width:82px;height:82px;border-radius:50%;background:rgba(139,92,246,.09);display:flex;align-items:center;justify-content:center}
-.ph-sos-btn{width:64px;height:64px;border-radius:50%;background:linear-gradient(145deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(239,68,68,.55);animation:sosPulse 2s ease-in-out infinite}
-@keyframes sosPulse{0%,100%{box-shadow:0 6px 24px rgba(239,68,68,.55)}50%{box-shadow:0 6px 36px rgba(239,68,68,.8),0 0 0 8px rgba(239,68,68,.12)}}
-.ph-sos-btn svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ph-sos-label{font-size:.55rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:6px}
-.ph-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px}
-.ph-stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:7px 5px;text-align:center}
-.ph-stat-n{font-size:.92rem;font-weight:700;color:#fff;line-height:1}
-.ph-stat-l{font-family:var(--int);font-size:.47rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
-.ph-div{height:1px;background:rgba(255,255,255,.06);margin-bottom:10px}
-.ph-risk{margin-bottom:10px}
-.ph-risk-head{display:flex;justify-content:space-between;font-family:var(--int);font-size:.54rem;margin-bottom:5px}
-.ph-risk-head span:first-child{color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-.ph-risk-val{color:#10b981;font-weight:700}
-.ph-risk-track{height:4px;border-radius:10px;background:rgba(255,255,255,.07)}
-.ph-risk-fill{height:100%;width:0;border-radius:10px;background:linear-gradient(90deg,#059669,#10b981);animation:riskFill 1.5s 1s cubic-bezier(.25,.46,.45,.94) forwards}
-@keyframes riskFill{to{width:17%}}
-.ph-risk-fill::after{content:'';position:absolute;right:0;top:50%;transform:translate(50%,-50%);width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
-.ph-activity-title{font-family:var(--int);font-size:.52rem;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:8px}
+.ph-sos-wrap{display:flex;flex-direction:column;align-items:center;margin:16px 0}
+.ph-sos-ring{width:100px;height:100px;border-radius:50%;background:rgba(239,68,68,.04);display:flex;align-items:center;justify-content:center;border:1px solid rgba(239,68,68,.08)}
+.ph-sos-ring2{width:78px;height:78px;border-radius:50%;background:rgba(239,68,68,.06);display:flex;align-items:center;justify-content:center}
+.ph-sos-btn{width:58px;height:58px;border-radius:50%;background:linear-gradient(145deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(239,68,68,.55);animation:sosPulse 2s ease-in-out infinite}
+@keyframes sosPulse{0%,100%{box-shadow:0 6px 24px rgba(239,68,68,.55)}50%{box-shadow:0 6px 40px rgba(239,68,68,.8),0 0 0 10px rgba(239,68,68,.08)}}
+.ph-sos-btn svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ph-sos-label{font-size:.5rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-top:6px}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:14px 0}
+.ph-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:7px 5px;text-align:center}
+.ph-stat-n{font-size:.88rem;font-weight:700;color:#fff;line-height:1}
+.ph-stat-l{font-family:var(--int);font-size:.45rem;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.ph-sep{height:1px;background:rgba(255,255,255,.05);margin:10px 0}
 .ph-items{display:flex;flex-direction:column;gap:6px}
-.ph-item{display:flex;align-items:center;gap:7px;font-family:var(--int);font-size:.6rem}
+.ph-item{display:flex;align-items:center;gap:7px;font-family:var(--int);font-size:.58rem}
 .ph-item-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .ph-item-dot.r{background:#ef4444;box-shadow:0 0 5px #ef4444}
 .ph-item-dot.g{background:#10b981;box-shadow:0 0 5px #10b981}
 .ph-item-dot.o{background:#f59e0b;box-shadow:0 0 5px #f59e0b}
-.ph-item-txt{flex:1;color:rgba(255,255,255,.45);line-height:1.35}
-.ph-item-txt strong{color:rgba(255,255,255,.8);font-weight:600}
-.ph-item-time{color:rgba(255,255,255,.2);font-size:.52rem;white-space:nowrap}
-.ph-home{width:60px;height:3px;border-radius:3px;background:rgba(255,255,255,.14);margin:14px auto 0}
+.ph-item-txt{flex:1;color:rgba(255,255,255,.4);line-height:1.35}
+.ph-item-txt strong{color:rgba(255,255,255,.75);font-weight:600}
+.ph-item-time{color:rgba(255,255,255,.18);font-size:.5rem;white-space:nowrap}
+.ph-home{width:60px;height:3px;border-radius:3px;background:rgba(255,255,255,.12);margin:14px auto 0}
 
-/* ═══════════════════════════════════════════
-   STATS — glowing cards
-═══════════════════════════════════════════*/
-.stats-section{padding:6rem clamp(2rem,6vw,6rem);max-width:1380px;margin:0 auto}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
-.stat-cell{padding:3rem 2rem;text-align:center;border-radius:24px;position:relative;overflow:hidden;transition:all .4s;background:rgba(255,255,255,.02);border:1px solid var(--bdr)}
-.stat-cell::before{content:'';position:absolute;inset:0;border-radius:24px;background:radial-gradient(ellipse at 50% 0%,var(--stat-glow,.06),transparent 70%);opacity:0;transition:opacity .4s}
-.stat-cell:hover{transform:translateY(-8px);border-color:rgba(255,255,255,.12)}
-.stat-cell:hover::before{opacity:1}
-.stat-num{font-family:var(--sg);font-size:clamp(3rem,4.5vw,4.5rem);font-weight:800;display:block;line-height:1;margin-bottom:0.3rem}
-.stat-cell:nth-child(1){--stat-glow:rgba(239,68,68,.15)} .stat-cell:nth-child(1) .stat-num{color:#ef4444}
-.stat-cell:nth-child(2){--stat-glow:rgba(59,130,246,.15)} .stat-cell:nth-child(2) .stat-num{color:#3b82f6}
-.stat-cell:nth-child(3){--stat-glow:rgba(16,185,129,.15)} .stat-cell:nth-child(3) .stat-num{color:#10b981}
-.stat-cell:nth-child(4){--stat-glow:rgba(139,92,246,.15)} .stat-cell:nth-child(4) .stat-num{color:#8b5cf6}
-.stat-micro-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-.stat-micro-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.stat-cell:nth-child(1) .stat-micro-icon{color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2)}
-.stat-cell:nth-child(2) .stat-micro-icon{color:#3b82f6;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2)}
-.stat-cell:nth-child(3) .stat-micro-icon{color:#10b981;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2)}
-.stat-cell:nth-child(4) .stat-micro-icon{color:#8b5cf6;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2)}
-.stat-lbl{font-family:var(--int);font-size:.82rem;color:rgba(255,255,255,0.4);font-weight:500}
+/* ═══════════════ STATS ═══════════════ */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+.stat-card{text-align:center;padding:3rem 1.5rem;border-radius:24px;background:rgba(255,255,255,.015);border:1px solid var(--bdr);position:relative;overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1)}
+.stat-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--sc-rgb,139,92,246),.4),transparent)}
+.stat-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(var(--sc-rgb,139,92,246),.08),transparent 70%);opacity:0;transition:opacity .4s}
+.stat-card:hover{transform:translateY(-10px);border-color:rgba(var(--sc-rgb,139,92,246),.2)}
+.stat-card:hover::after{opacity:1}
+.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:rgba(var(--sc-rgb,139,92,246),.08);border:1px solid rgba(var(--sc-rgb,139,92,246),.15)}
+.stat-icon svg{width:20px;height:20px;stroke:rgb(var(--sc-rgb,139,92,246));fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stat-val{font-size:clamp(3rem,5vw,4.5rem);font-weight:800;line-height:1;margin-bottom:6px;color:rgb(var(--sc-rgb,139,92,246))}
+.stat-lbl{font-family:var(--int);font-size:.8rem;color:rgba(255,255,255,.35)}
+.stat-card:nth-child(1){--sc-rgb:239,68,68} .stat-card:nth-child(2){--sc-rgb:96,165,250}
+.stat-card:nth-child(3){--sc-rgb:52,211,153} .stat-card:nth-child(4){--sc-rgb:167,139,250}
 
-/* ═══════════════════════════════════════════
-   HOW IT WORKS — timeline connector
-═══════════════════════════════════════════*/
-.how-section{padding:0 clamp(2rem,6vw,6rem) 6rem;max-width:1380px;margin:0 auto}
-.steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:3.5rem;position:relative}
-/* connector line between cards */
-.steps-row::before{content:'';position:absolute;top:50px;left:calc(33.33% - 1rem);right:calc(33.33% - 1rem);height:2px;background:linear-gradient(90deg,rgba(239,68,68,.3),rgba(59,130,246,.3),rgba(16,185,129,.3));z-index:0}
-.step-card{background:rgba(255,255,255,.02);border:1px solid var(--bdr);border-radius:24px;padding:40px 36px;position:relative;overflow:hidden;transition:all 0.4s;z-index:1}
-.step-card::after{content:'';position:absolute;inset:0;border-radius:24px;background:radial-gradient(ellipse at 50% 0%,rgba(var(--step-rgb,239,68,68),.1),transparent 60%);opacity:0;transition:opacity .4s}
-.step-card:hover{border-color:rgba(var(--step-rgb,239,68,68),.3);transform:translateY(-8px);box-shadow:0 30px 60px rgba(0,0,0,.5)}
-.step-card:hover::after{opacity:1}
-.step-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;position:relative;z-index:1}
-.step-big{font-family:var(--sg);font-size:5rem;font-weight:900;line-height:1;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.05em}
-.step-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,rgba(var(--step-rgb,239,68,68),0.15),rgba(var(--step-rgb,239,68,68),0.04));border:1px solid rgba(var(--step-rgb,239,68,68),0.3);display:flex;align-items:center;justify-content:center;transition:all 0.4s}
-.step-card:hover .step-icon{background:rgba(var(--step-rgb,239,68,68),0.8);box-shadow:0 10px 30px rgba(var(--step-rgb,239,68,68),0.4);border-color:#fff}
+/* ═══════════════ HOW IT WORKS ═══════════════ */
+.steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;position:relative}
+.steps-row::before{content:'';position:absolute;top:55px;left:16%;right:16%;height:2px;background:linear-gradient(90deg,rgba(239,68,68,.25),rgba(96,165,250,.25),rgba(52,211,153,.25));z-index:0}
+.step{background:rgba(255,255,255,.015);border:1px solid var(--bdr);border-radius:24px;padding:44px 36px;position:relative;overflow:hidden;transition:all .4s;z-index:1}
+.step::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40%;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--st-rgb,239,68,68),.3),transparent)}
+.step::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(var(--st-rgb,239,68,68),.06),transparent 70%);opacity:0;transition:opacity .4s}
+.step:hover{border-color:rgba(var(--st-rgb,239,68,68),.2);transform:translateY(-10px);box-shadow:0 40px 80px rgba(0,0,0,.4)}
+.step:hover::after{opacity:1}
+.step-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.3em;color:rgba(var(--st-rgb,239,68,68),.6);margin-bottom:2rem;text-transform:uppercase;position:relative;z-index:1}
+.step-icon{width:60px;height:60px;border-radius:18px;background:rgba(var(--st-rgb,239,68,68),.08);border:1px solid rgba(var(--st-rgb,239,68,68),.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.8rem;transition:all .4s;position:relative;z-index:1}
+.step:hover .step-icon{background:rgba(var(--st-rgb,239,68,68),.7);box-shadow:0 12px 30px rgba(var(--st-rgb,239,68,68),.35);border-color:rgba(255,255,255,.3)}
 .step-icon svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.step-h{font-family:var(--sg);font-size:1.6rem;font-weight:800;color:var(--white);margin-bottom:1rem;letter-spacing:-0.02em;position:relative;z-index:1}
-.step-p{font-family:var(--int);font-size:0.95rem;color:rgba(255,255,255,0.5);line-height:1.7;font-weight:400;position:relative;z-index:1}
-.step-card:nth-child(1){--step-rgb:239,68,68}
-.step-card:nth-child(2){--step-rgb:59,130,246}
-.step-card:nth-child(3){--step-rgb:16,185,129}
+.step-h{font-size:1.5rem;font-weight:800;margin-bottom:1rem;letter-spacing:-.02em;position:relative;z-index:1}
+.step-p{font-family:var(--int);font-size:.9rem;color:rgba(255,255,255,.4);line-height:1.8;position:relative;z-index:1}
+.step:nth-child(1){--st-rgb:239,68,68} .step:nth-child(2){--st-rgb:96,165,250} .step:nth-child(3){--st-rgb:52,211,153}
 
-/* ═══════════════════════════════════════════
-   BENTO FEATURES — animated gradient border
-═══════════════════════════════════════════*/
-.bento-section{padding:0 clamp(2rem,6vw,6rem) 6rem;max-width:1380px;margin:0 auto}
-.bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem}
-.bc{border-radius:24px;padding:36px;position:relative;overflow:hidden;transition:all 0.4s;display:flex;flex-direction:column;background:rgba(255,255,255,.02);border:1px solid var(--bdr)}
-/* animated gradient border on hover */
-.bc::before{content:'';position:absolute;inset:-1px;border-radius:25px;background:conic-gradient(from var(--bc-angle,0deg),rgba(var(--bc-rgb,139,92,246),.4),transparent 40%,transparent 60%,rgba(var(--bc-rgb,139,92,246),.2));opacity:0;transition:opacity .4s;z-index:0}
-.bc::after{content:'';position:absolute;inset:1px;border-radius:23px;background:var(--bg);z-index:0}
-.bc:hover::before{opacity:1}
-.bc:hover{transform:translateY(-8px);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+/* ═══════════════ BENTO FEATURES ═══════════════ */
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.bc{border-radius:24px;padding:36px;position:relative;overflow:hidden;transition:all .4s;display:flex;flex-direction:column;background:rgba(255,255,255,.015);border:1px solid var(--bdr)}
+.bc::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40%;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--bc-rgb,139,92,246),.3),transparent)}
+.bc::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(var(--bc-rgb,139,92,246),.06),transparent 70%);opacity:0;transition:opacity .4s}
+.bc:hover{transform:translateY(-10px);border-color:rgba(var(--bc-rgb,139,92,246),.2);box-shadow:0 40px 80px rgba(0,0,0,.4)}
+.bc:hover::after{opacity:1}
 .bc > *{position:relative;z-index:1}
-.bc-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,rgba(var(--bc-rgb,139,92,246),0.15),rgba(var(--bc-rgb,139,92,246),0.04));border:1px solid rgba(var(--bc-rgb,139,92,246),0.25);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;transition:all 0.4s}
-.bc:hover .bc-icon{background:rgba(var(--bc-rgb,139,92,246),0.8);box-shadow:0 10px 30px rgba(var(--bc-rgb,139,92,246),0.4);border-color:#fff}
-.bc-icon svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.bc-h{font-family:var(--sg);font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:0.6rem;letter-spacing:-0.02em}
-.bc-p{font-family:var(--int);font-size:0.92rem;color:rgba(255,255,255,0.5);line-height:1.7;font-weight:400}
-.bc:nth-child(1){--bc-rgb:239,68,68}
-.bc:nth-child(2){--bc-rgb:245,158,11}
-.bc:nth-child(3){--bc-rgb:59,130,246}
-.bc:nth-child(4){--bc-rgb:6,182,212}
-.bc:nth-child(5){--bc-rgb:139,92,246}
-.bc:nth-child(6){--bc-rgb:16,185,129}
+.bc-icon{width:52px;height:52px;border-radius:14px;background:rgba(var(--bc-rgb,139,92,246),.08);border:1px solid rgba(var(--bc-rgb,139,92,246),.15);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;transition:all .4s}
+.bc:hover .bc-icon{background:rgba(var(--bc-rgb,139,92,246),.7);box-shadow:0 10px 25px rgba(var(--bc-rgb,139,92,246),.3);border-color:rgba(255,255,255,.3)}
+.bc-icon svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bc-h{font-size:1.3rem;font-weight:800;margin-bottom:.6rem;letter-spacing:-.02em}
+.bc-p{font-family:var(--int);font-size:.88rem;color:rgba(255,255,255,.4);line-height:1.7}
+.bc:nth-child(1){--bc-rgb:239,68,68} .bc:nth-child(2){--bc-rgb:251,191,36} .bc:nth-child(3){--bc-rgb:96,165,250}
+.bc:nth-child(4){--bc-rgb:34,211,238} .bc:nth-child(5){--bc-rgb:167,139,250} .bc:nth-child(6){--bc-rgb:52,211,153}
 
-/* ═══════════════════════════════════════════
-   TESTIMONIALS
-═══════════════════════════════════════════*/
-.testi-section{padding:6rem 0;max-width:100%;margin:0 auto;overflow:hidden}
-.testi-track-wrap{position:relative;overflow:hidden;margin-top:3rem}
-.testi-track-wrap::before,.testi-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
-.testi-track-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
-.testi-track-wrap::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
-.testi-track{display:flex;gap:1.5rem;animation:testiScroll 40s linear infinite;width:max-content}
+/* ═══════════════ TESTIMONIALS ═══════════════ */
+.testi{padding:8rem 0;overflow:hidden}
+.testi .sec-hd{padding:0 clamp(2rem,6vw,6rem)}
+.testi-wrap{position:relative;overflow:hidden;margin-top:3rem}
+.testi-wrap::before,.testi-wrap::after{content:'';position:absolute;top:0;bottom:0;width:150px;z-index:2;pointer-events:none}
+.testi-wrap::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.testi-wrap::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.testi-track{display:flex;gap:1.5rem;animation:testiScroll 45s linear infinite;width:max-content}
 .testi-track:hover{animation-play-state:paused}
 @keyframes testiScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.testi-card{min-width:350px;max-width:380px;flex-shrink:0;background:rgba(255,255,255,.02);border:1px solid var(--bdr);border-radius:24px;padding:32px 28px;position:relative;overflow:hidden;transition:all 0.4s}
-.testi-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.4)}
-.testi-card::before{content:'\201C';position:absolute;top:10px;right:20px;font-size:5rem;color:rgba(255,255,255,0.03);font-family:serif;line-height:1}
-.testi-stars{display:flex;gap:4px;margin-bottom:1rem;color:#fbbf24;font-size:1rem}
-.testi-text{font-family:var(--int);font-size:0.92rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:1.5rem;font-weight:400}
-.testi-author{display:flex;align-items:center;gap:12px}
-.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--white)}
-.testi-name{font-size:0.88rem;font-weight:700;color:var(--white);font-family:var(--sg)}
-.testi-role{font-family:var(--int);font-size:0.75rem;color:rgba(255,255,255,0.4)}
-.verified-badge{display:inline-flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;color:#10b981;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.18);padding:2px 8px;border-radius:10px;margin-left:6px}
-.verified-badge svg{width:10px;height:10px;fill:#10b981}
-.testi-card:nth-child(5n+1){border-top:2px solid rgba(239,68,68,.3)}
-.testi-card:nth-child(5n+2){border-top:2px solid rgba(59,130,246,.3)}
-.testi-card:nth-child(5n+3){border-top:2px solid rgba(16,185,129,.3)}
-.testi-card:nth-child(5n+4){border-top:2px solid rgba(245,158,11,.3)}
-.testi-card:nth-child(5n+5){border-top:2px solid rgba(139,92,246,.3)}
+.tc{min-width:360px;max-width:380px;flex-shrink:0;background:rgba(255,255,255,.015);border:1px solid var(--bdr);border-radius:24px;padding:32px 28px;transition:all .4s;position:relative}
+.tc:hover{border-color:rgba(255,255,255,.1);transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.tc::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--tc-rgb,239,68,68),.3),transparent)}
+.tc:nth-child(5n+1){--tc-rgb:239,68,68} .tc:nth-child(5n+2){--tc-rgb:96,165,250} .tc:nth-child(5n+3){--tc-rgb:52,211,153}
+.tc:nth-child(5n+4){--tc-rgb:251,191,36} .tc:nth-child(5n+5){--tc-rgb:167,139,250}
+.tc-stars{display:flex;gap:3px;margin-bottom:1rem;color:#fbbf24;font-size:.95rem}
+.tc-text{font-family:var(--int);font-size:.9rem;color:rgba(255,255,255,.6);line-height:1.8;margin-bottom:1.5rem}
+.tc-author{display:flex;align-items:center;gap:12px}
+.tc-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700}
+.tc-name{font-size:.85rem;font-weight:700;font-family:var(--sg)}
+.tc-role{font-family:var(--int);font-size:.72rem;color:rgba(255,255,255,.3)}
+.tc-verified{display:inline-flex;align-items:center;gap:3px;font-size:.55rem;font-weight:600;color:#10b981;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.15);padding:1px 7px;border-radius:8px;margin-left:5px}
+.tc-verified svg{width:9px;height:9px;fill:#10b981}
 
-/* ═══════════════════════════════════════════
-   CTA — epic glow
-═══════════════════════════════════════════*/
-.cta-section{padding:10rem clamp(2rem,6vw,6rem);text-align:center;position:relative;overflow:hidden}
-.cta-glow{position:absolute;inset:0;pointer-events:none}
-.cta-glow::before{content:'';position:absolute;bottom:-20%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(139,92,246,.15),rgba(239,68,68,.08),transparent 70%);filter:blur(60px)}
-.cta-glow::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.4),transparent)}
-.cta-inner{position:relative;z-index:1}
-.cta-eyebrow{display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;background:rgba(139,92,246,0.05);padding:6px 20px;border-radius:50px;border:1px solid rgba(139,92,246,0.15);font-family:var(--mono)}
-.cta-h2{font-size:clamp(3rem,6vw,5.5rem);font-weight:800;line-height:1.05;letter-spacing:-0.04em;margin-bottom:1.5rem}
-.cta-h2 em{font-style:normal;background:linear-gradient(120deg,#fff,#c084fc,#8b5cf6,#3b82f6);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmerGrad 4s ease-in-out infinite}
-.cta-p{font-family:var(--int);font-size:1.05rem;color:rgba(255,255,255,0.45);max-width:500px;margin:0 auto 3rem;line-height:1.7}
-.cta-btns{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}
+/* ═══════════════ CTA ═══════════════ */
+.cta{padding:12rem 2rem;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:1000px;height:800px;background:radial-gradient(ellipse,rgba(139,92,246,.12),rgba(239,68,68,.06),transparent 70%);filter:blur(60px);pointer-events:none}
+.cta::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:500px;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.3),transparent)}
+.cta-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.cta-h2{font-size:clamp(3.5rem,7vw,6rem);font-weight:800;line-height:.95;letter-spacing:-.05em;margin-bottom:1.5rem}
+.cta-p{font-family:var(--int);font-size:1.05rem;color:rgba(255,255,255,.35);max-width:480px;margin:0 auto 3rem;line-height:1.7}
 
-/* ═══════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════*/
-.rk-footer{border-top:1px solid var(--bdr);padding:3rem clamp(2rem,6vw,6rem);max-width:1380px;margin:0 auto}
+/* ═══════════════ FOOTER ═══════════════ */
+.rk-footer{border-top:1px solid var(--bdr);padding:4rem clamp(2rem,6vw,6rem) 2rem;max-width:1400px;margin:0 auto}
 .ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
-.ft-brand{display:flex;align-items:center;gap:12px;margin-bottom:.8rem}
-.ft-brand-name{font-family:var(--sg);font-size:1.05rem;font-weight:700;letter-spacing:0.18em}
+.ft-brand{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.ft-brand-name{font-size:1.05rem;font-weight:700;letter-spacing:.2em}
 .ft-brand-name span{color:var(--red)}
-.ft-brand-desc{font-family:var(--int);font-size:0.78rem;color:rgba(255,255,255,0.25);line-height:1.7;max-width:260px;margin-bottom:1.5rem}
-.ft-col-hd{font-family:var(--mono);font-size:0.55rem;letter-spacing:0.25em;color:rgba(255,255,255,0.15);text-transform:uppercase;margin-bottom:1.2rem;padding-bottom:0.6rem;border-bottom:1px solid rgba(255,255,255,0.04)}
-.ft-link{display:flex;align-items:center;gap:8px;font-family:var(--int);font-size:0.82rem;color:rgba(255,255,255,0.35);text-decoration:none;margin-bottom:0.7rem;transition:all .2s}
-.ft-link:hover{color:rgba(255,255,255,0.8);transform:translateX(4px)}
-.ft-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;opacity:0.5}
-.ft-bottom{padding-top:2rem;border-top:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-.ft-copy{font-family:var(--int);font-size:0.72rem;color:rgba(255,255,255,0.15)}
-.ft-version{font-family:var(--mono);font-size:0.58rem;color:rgba(255,255,255,0.1);letter-spacing:0.1em}
-.footer-social{display:flex;gap:10px;align-items:center}
-.social-icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:pointer}
-.social-icon:hover{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35);transform:translateY(-3px);box-shadow:0 8px 20px rgba(139,92,246,.15)}
-.social-icon svg{width:16px;height:16px;stroke:rgba(255,255,255,.35);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
-.social-icon:hover svg{stroke:var(--accent)}
+.ft-desc{font-family:var(--int);font-size:.78rem;color:rgba(255,255,255,.2);line-height:1.7;max-width:280px;margin-bottom:1.5rem}
+.ft-col-hd{font-family:var(--mono);font-size:.5rem;letter-spacing:.3em;color:rgba(255,255,255,.12);text-transform:uppercase;margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.ft-link{display:flex;align-items:center;gap:8px;font-family:var(--int);font-size:.82rem;color:rgba(255,255,255,.3);text-decoration:none;margin-bottom:.7rem;transition:all .25s}
+.ft-link:hover{color:rgba(255,255,255,.75);transform:translateX(4px)}
+.ft-link svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;opacity:.4}
+.ft-bottom{padding-top:2rem;border-top:1px solid rgba(255,255,255,.03);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.ft-copy{font-family:var(--int);font-size:.7rem;color:rgba(255,255,255,.12)}
+.ft-ver{font-family:var(--mono);font-size:.55rem;color:rgba(255,255,255,.08);letter-spacing:.1em}
+.ft-social{display:flex;gap:10px}
+.ft-social a{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;transition:all .3s;text-decoration:none}
+.ft-social a:hover{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);transform:translateY(-3px)}
+.ft-social a svg{width:16px;height:16px;stroke:rgba(255,255,255,.3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.ft-social a:hover svg{stroke:var(--accent)}
 
-/* ═══════════════════════════════════════════
-   SCROLL PROGRESS
-═══════════════════════════════════════════*/
-.scroll-progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#ef4444,#f97316,#8b5cf6,#3b82f6);z-index:9999;width:0;transition:width .1s linear}
+/* ═══════════════ UTILS ═══════════════ */
+.scroll-progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#ef4444,#8b5cf6,#60a5fa,#22d3ee);z-index:9999;width:0;transition:width .08s linear}
+.back-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;opacity:0;transform:translateY(20px);transition:all .4s;pointer-events:none}
+.back-top.vis{opacity:1;transform:translateY(0);pointer-events:auto}
+.back-top:hover{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4);transform:translateY(-3px)}
+.back-top svg{width:18px;height:18px;stroke:rgba(255,255,255,.5);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
-/* ═══════════════════════════════════════════
-   BACK TO TOP
-═══════════════════════════════════════════*/
-.back-to-top{position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;border-radius:12px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;opacity:0;transform:translateY(20px);transition:all .4s;pointer-events:none}
-.back-to-top.visible{opacity:1;transform:translateY(0);pointer-events:auto}
-.back-to-top:hover{background:rgba(139,92,246,.25);border-color:rgba(139,92,246,.5);transform:translateY(-3px);box-shadow:0 8px 20px rgba(139,92,246,.2)}
-.back-to-top svg{width:18px;height:18px;stroke:rgba(255,255,255,.6);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+/* animations */
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.reveal.vis{opacity:1;transform:translateY(0)}
 
-/* ═══════════════════════════════════════════
-   ANIMATIONS
-═══════════════════════════════════════════*/
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-.reveal{opacity:1;transform:none}
-.reveal.animate-in{animation:slideUp .7s cubic-bezier(.22,1,.36,1) both}
-.reveal.animate-in-left{animation:slideLeft .7s cubic-bezier(.22,1,.36,1) both}
-.reveal.animate-in-scale{animation:scaleIn .7s cubic-bezier(.22,1,.36,1) both}
-
-/* stagger children */
-.stagger > *:nth-child(1){animation-delay:.05s}
-.stagger > *:nth-child(2){animation-delay:.12s}
-.stagger > *:nth-child(3){animation-delay:.19s}
-.stagger > *:nth-child(4){animation-delay:.26s}
-.stagger > *:nth-child(5){animation-delay:.33s}
-.stagger > *:nth-child(6){animation-delay:.4s}
-
-/* ═══════════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════════*/
+/* ═══════════════ RESPONSIVE ═══════════════ */
 @media(max-width:1100px){
-  .hero-section{grid-template-columns:1fr;text-align:center;gap:2.5rem}
-  .hero-visual{display:flex;justify-content:center}
-  .hero-btns{justify-content:center}
-  .hero-badges{justify-content:center}
-  .hero-p{max-width:100%}
-  .bento-grid{grid-template-columns:1fr 1fr}
+  .showcase-inner{grid-template-columns:1fr;text-align:center}
+  .showcase-content{order:2}
+  .showcase-visual{order:1}
+  .showcase-label{justify-content:center}
+  .showcase-p{margin-left:auto;margin-right:auto}
+  .showcase-features{max-width:440px;margin:0 auto}
+  .bento{grid-template-columns:1fr 1fr}
   .steps-row::before{display:none}
 }
 @media(max-width:768px){
   .steps-row{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
   .ft-grid{grid-template-columns:1fr}
-  .aurora-orb{opacity:.06}
+  .hero-meta{gap:1.5rem}
 }
 @media(max-width:640px){
-  .hero-section{grid-template-columns:1fr;gap:1.75rem}
-  .hero-visual{padding:0 10px}
-  .phone-wrap{transform:scale(.9);transform-origin:center top}
-  .phone-frame{transform:none}
-  .bento-grid{grid-template-columns:1fr}
-  .cta-btns{flex-direction:column;align-items:center}
-  .ft-grid{grid-template-columns:1fr}
+  .bento{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr}
+  .hero-cta{flex-direction:column;align-items:center}
+  .phone-wrap{transform:scale(.85);transform-origin:center top}
+  .phone-frame{transform:none}
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Aurora BG -->
-<div class="aurora">
-  <div class="aurora-orb"></div>
-  <div class="aurora-orb"></div>
-  <div class="aurora-orb"></div>
-  <div class="aurora-orb"></div>
-</div>
-<div class="grid-overlay"></div>
+<canvas id="heroBg"></canvas>
+<div class="noise"></div>
 
-<div class="scroll-progress" id="scrollProgress"></div>
-<div class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+<div class="scroll-progress" id="scrollProg"></div>
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
   <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
 </div>
 
 <div class="rk-page">
 
-<!-- ══════════ HERO ══════════ -->
-<section class="hero-section">
-  <div class="hero-content" style="animation:slideUp .7s .1s ease both">
-    <div class="pill">
-      <span class="pill-dot"></span>
-      AI-Powered · Women's Safety · Real-Time
-    </div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-pill"><span class="hero-dot"></span> AI-Powered Women's Safety Platform</div>
 
     <h1 class="hero-h1">
-      <span class="h1-white">Your Safety,</span>
-      <span class="h1-grad">Our Mission.</span>
+      <span class="line">Your Safety,</span>
+      <span class="line line-2">Our Mission.</span>
     </h1>
 
-    <p class="hero-p">
-      RAKSHAK detects danger in real time, silently alerts your trusted circle,
-      and maps threat zones — automatically. If you go silent for 6 minutes, our AI fires SOS for you.
-    </p>
+    <p class="hero-p">Real-time threat detection, silent SOS alerts, and AI-powered danger zone mapping. If you go silent for 6 minutes, RAKSHAK fires SOS for you — automatically.</p>
 
-    <div class="hero-btns">
-      <a href="{{ url_for('auth.register') }}" class="btn-primary">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Get Protected Free
+    <div class="hero-cta">
+      <a href="{{ url_for('auth.register') }}" class="btn-hero primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Get Protected — Free
       </a>
-      <a href="#how" class="btn-outline">
-        How It Works
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
+      <a href="#how" class="btn-hero ghost">How It Works</a>
     </div>
 
-    <div class="hero-badges">
-      <a href="https://github.com/maniksahni/RAKSHAK" target="_blank" class="hero-badge">
-        <i class="bi bi-github" style="font-size:1.1rem"></i>
-        <strong>Open Source</strong>
-      </a>
-      <div class="hero-badge accent">
-        <i class="bi bi-shield-check" style="font-size:1rem"></i>
-        <strong>14+</strong> Safety Features
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-val c1" data-count="14">0</span>
+        <div class="hero-meta-lbl">Safety Features</div>
       </div>
-      <div class="hero-badge accent">
-        <i class="bi bi-broadcast" style="font-size:1rem"></i>
-        <strong>24/7</strong> Protection
+      <div class="hero-meta-item">
+        <span class="hero-meta-val c2">&lt;1.2s</span>
+        <div class="hero-meta-lbl">SOS Latency</div>
       </div>
-    </div>
-    <div class="hero-tagline">Built for women's safety · Powered by AI · Made in India</div>
-  </div>
-
-  <!-- PHONE MOCKUP -->
-  <div class="hero-visual" style="animation:slideUp .8s .3s ease both">
-    <div class="phone-wrap">
-      <div class="phone-glow"></div>
-      <div class="phone-frame">
-        <div class="phone-screen">
-          <div class="dynamic-island">
-            <div class="di-cam"></div>
-            <div class="di-sensor"></div>
-          </div>
-          <div class="ph-status">
-            <span class="ph-time">9:41</span>
-            <div style="display:flex;gap:4px;align-items:center">
-              <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 7C1 4 4 1 5 1C6 1 9 4 9 7" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round"/><path d="M3 7C3 5.5 4 4.5 5 4.5C6 4.5 7 5.5 7 7" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round"/><circle cx="5" cy="7" r="0.8" fill="rgba(255,255,255,0.5)"/></svg>
-              <div class="ph-bat"></div>
-            </div>
-          </div>
-          <div class="ph-header">
-            <div class="ph-logo">
-              <div class="ph-logo-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-              RAKSHAK
-            </div>
-            <div class="ph-live-badge"><span class="ph-live-dot"></span>Live</div>
-          </div>
-          <div class="ph-sos-wrap">
-            <div class="ph-sos-outer"><div class="ph-sos-mid"><div class="ph-sos-btn">
-              <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </div></div></div>
-            <div class="ph-sos-label">Tap to trigger SOS</div>
-          </div>
-          <div class="ph-stats">
-            <div class="ph-stat"><div class="ph-stat-n">3</div><div class="ph-stat-l">Contacts</div></div>
-            <div class="ph-stat"><div class="ph-stat-n" style="color:#10b981">Low</div><div class="ph-stat-l">Risk</div></div>
-            <div class="ph-stat"><div class="ph-stat-n">5</div><div class="ph-stat-l">Zones</div></div>
-          </div>
-          <div class="ph-div"></div>
-          <div class="ph-risk">
-            <div class="ph-risk-head"><span>Risk Level</span><span class="ph-risk-val">Low — Safe</span></div>
-            <div class="ph-risk-track"><div class="ph-risk-fill"></div></div>
-          </div>
-          <div class="ph-div"></div>
-          <div class="ph-activity-title">Recent Activity</div>
-          <div class="ph-items">
-            <div class="ph-item"><div class="ph-item-dot r"></div><div class="ph-item-txt"><strong>SOS Sent</strong> · 3 contacts notified</div><div class="ph-item-time">now</div></div>
-            <div class="ph-item"><div class="ph-item-dot g"></div><div class="ph-item-txt"><strong>Sys Ping OK</strong> · Risk low</div><div class="ph-item-time">2m</div></div>
-            <div class="ph-item"><div class="ph-item-dot o"></div><div class="ph-item-txt"><strong>Zone Alert</strong> · 480m away</div><div class="ph-item-time">5m</div></div>
-          </div>
-          <div class="ph-home"></div>
-        </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-val c3">24/7</span>
+        <div class="hero-meta-lbl">Always On</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ TECH TICKER ══════════ -->
-<div class="ticker-strip">
-  <div class="ticker-track" id="tickerTrack">
-    <span class="ticker-item"><span class="ticker-dot"></span>Real-Time GPS Tracking</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>AI Threat Detection</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>One-Tap SOS</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Danger Zone Mapping</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Auto-SOS on Silence</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Evidence Vault</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Encrypted Broadcast</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Community Safety Network</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Court-Ready Reports</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>24/7 Protection</span>
-    <!-- duplicate for seamless scroll -->
-    <span class="ticker-item"><span class="ticker-dot"></span>Real-Time GPS Tracking</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>AI Threat Detection</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>One-Tap SOS</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Danger Zone Mapping</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Auto-SOS on Silence</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Evidence Vault</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Encrypted Broadcast</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Community Safety Network</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Court-Ready Reports</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>24/7 Protection</span>
+<!-- ═══════ MARQUEE ═══════ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>One-Tap SOS</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>AI Threat Engine</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Danger Zone Map</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>End-to-End Encrypted</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Evidence Vault</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Auto-SOS on Silence</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.8 19.79 19.79 0 010 .22 2 2 0 012 0h3"/></svg><span>Instant Contact Alerts</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Admin Command Center</span></span>
+    <!-- duplicate -->
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>One-Tap SOS</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>AI Threat Engine</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Danger Zone Map</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>End-to-End Encrypted</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Evidence Vault</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Auto-SOS on Silence</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.8 19.79 19.79 0 010 .22 2 2 0 012 0h3"/></svg><span>Instant Contact Alerts</span></span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span>Admin Command Center</span></span>
   </div>
 </div>
 
-<!-- ══════════ STATS ══════════ -->
-<section id="stats-section">
-  <div class="stats-section">
-    <div class="sec-hd reveal">
-      <span class="eyebrow">Platform Stats</span>
-      <h2 class="sec-title">Numbers that <span class="grad-text">protect.</span></h2>
-    </div>
-    <div class="stats-grid reveal stagger">
-      <div class="stat-cell">
-        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        <span class="stat-num" data-target="11" data-suffix="">0</span>
-        <div class="stat-lbl">Safety Modules</div>
-      </div>
-      <div class="stat-cell">
-        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-        <span class="stat-num" data-target="120" data-suffix="s">0</span>
-        <div class="stat-lbl">AI Heartbeat Interval</div>
-      </div>
-      <div class="stat-cell">
-        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
-        <span class="stat-num" data-target="42" data-suffix="">0</span>
-        <div class="stat-lbl">Hotspots Mapped</div>
-      </div>
-      <div class="stat-cell">
-        <div class="stat-micro-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <span class="stat-num" data-target="5" data-suffix="km">0</span>
-        <div class="stat-lbl">Safe Places Radius</div>
+<!-- ═══════ PHONE SHOWCASE ═══════ -->
+<section class="showcase">
+  <div class="showcase-inner">
+    <div class="showcase-content reveal">
+      <div class="showcase-label">Live Preview</div>
+      <h2 class="showcase-h2">Protection at your<br><span class="grad">fingertips.</span></h2>
+      <p class="showcase-p">A single tap triggers an encrypted emergency broadcast. Your GPS coordinates, trusted contacts, and incident data — all captured instantly.</p>
+      <div class="showcase-features">
+        <div class="sf">
+          <div class="sf-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+          <div class="sf-text"><strong>One-Tap SOS</strong> — instant emergency broadcast</div>
+        </div>
+        <div class="sf">
+          <div class="sf-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="sf-text"><strong>AI Heartbeat</strong> — auto-SOS after 6min silence</div>
+        </div>
+        <div class="sf">
+          <div class="sf-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="sf-text"><strong>Live Tracking</strong> — real-time GPS sharing</div>
+        </div>
+        <div class="sf">
+          <div class="sf-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+          <div class="sf-text"><strong>Encrypted</strong> — military-grade AES-256</div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
-
-<hr class="rk-hr">
-
-<!-- ══════════ HOW IT WORKS ══════════ -->
-<section id="how">
-  <div class="how-section">
-    <div class="sec-hd reveal">
-      <span class="eyebrow">How it works</span>
-      <h2 class="sec-title">Three steps to <span class="grad-text-red">safety.</span></h2>
-    </div>
-    <div class="steps-row stagger">
-      <div class="step-card reveal">
-        <div class="step-top"><div class="step-big">01</div><div class="step-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg></div></div>
-        <div class="step-h">One Tap. Instant Alert.</div>
-        <p class="step-p">Press SOS once. No menus, no confirmation. RAKSHAK fires in under a second — GPS captured, contacts notified.</p>
-      </div>
-      <div class="step-card reveal">
-        <div class="step-top"><div class="step-big">02</div><div class="step-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div></div>
-        <div class="step-h">GPS. Captured Silently.</div>
-        <p class="step-p">Your exact coordinates are captured and encrypted the moment SOS triggers. No manual input needed.</p>
-      </div>
-      <div class="step-card reveal">
-        <div class="step-top"><div class="step-big">03</div><div class="step-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.8 19.79 19.79 0 010 .22 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.1 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg></div></div>
-        <div class="step-h">Your Circle. Notified.</div>
-        <p class="step-p">Up to 5 trusted contacts receive live location alerts with real-time push notifications. Instantly.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="rk-hr">
-
-<!-- ══════════ FEATURES ══════════ -->
-<section id="features">
-  <div class="bento-section">
-    <div class="sec-hd reveal">
-      <span class="eyebrow">Features</span>
-      <h2 class="sec-title">Everything you need to <span class="grad-text">stay safe.</span></h2>
-      <p class="sec-sub">Six powerful modules working together, around the clock.</p>
-    </div>
-    <div class="bento-grid stagger">
-      <div class="bc reveal">
-        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-        <div class="bc-h">SOS Emergency</div>
-        <p class="bc-p">One-tap emergency trigger with instant GPS capture and encrypted broadcast to your trusted contacts.</p>
-      </div>
-      <div class="bc reveal">
-        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-        <div class="bc-h">AI Threat Engine</div>
-        <p class="bc-p">Silent 2-minute heartbeat pings detect inactivity. Missed pings auto-deploy SOS after 6 minutes.</p>
-      </div>
-      <div class="bc reveal">
-        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        <div class="bc-h">Danger Zone Map</div>
-        <p class="bc-p">Community-sourced danger zones on a live map. Entering a hot-zone triggers automatic proximity alerts.</p>
-      </div>
-      <div class="bc reveal">
-        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-        <div class="bc-h">Admin Dashboard</div>
-        <p class="bc-p">Command center with live tracking, risk scores, user management, and crisis analytics for admins.</p>
-      </div>
-      <div class="bc reveal">
-        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
-        <div class="bc-h">Evidence Vault</div>
-        <p class="bc-p">Tamper-proof incident reports with GPS data, timestamps, and contact logs — exportable as court-ready PDFs.</p>
-      </div>
-      <div class="bc reveal">
-        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-        <div class="bc-h">Secure Auth</div>
-        <p class="bc-p">Google OAuth + bcrypt hashing, CSRF protection, and rate limiting. Your data stays yours.</p>
+    <div class="showcase-visual reveal">
+      <div class="phone-wrap">
+        <div class="phone-glow"></div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="dynamic-island"><div class="di-cam"></div><div class="di-sensor"></div></div>
+            <div class="ph-status">
+              <span class="ph-time">9:41</span>
+              <div style="display:flex;gap:4px;align-items:center">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 7C1 4 4 1 5 1C6 1 9 4 9 7" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round"/><path d="M3 7C3 5.5 4 4.5 5 4.5C6 4.5 7 5.5 7 7" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round"/><circle cx="5" cy="7" r=".8" fill="rgba(255,255,255,0.5)"/></svg>
+                <div class="ph-bat"></div>
+              </div>
+            </div>
+            <div class="ph-header">
+              <div class="ph-logo"><div class="ph-logo-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div> RAKSHAK</div>
+              <div class="ph-live"><span class="ph-live-dot"></span>Live</div>
+            </div>
+            <div class="ph-sos-wrap">
+              <div class="ph-sos-ring"><div class="ph-sos-ring2"><div class="ph-sos-btn">
+                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div></div></div>
+              <div class="ph-sos-label">Tap to trigger SOS</div>
+            </div>
+            <div class="ph-grid">
+              <div class="ph-stat"><div class="ph-stat-n">3</div><div class="ph-stat-l">Contacts</div></div>
+              <div class="ph-stat"><div class="ph-stat-n" style="color:#10b981">Low</div><div class="ph-stat-l">Risk</div></div>
+              <div class="ph-stat"><div class="ph-stat-n">5</div><div class="ph-stat-l">Zones</div></div>
+            </div>
+            <div class="ph-sep"></div>
+            <div class="ph-items">
+              <div class="ph-item"><div class="ph-item-dot r"></div><div class="ph-item-txt"><strong>SOS Sent</strong> · 3 contacts notified</div><div class="ph-item-time">now</div></div>
+              <div class="ph-item"><div class="ph-item-dot g"></div><div class="ph-item-txt"><strong>Sys Ping OK</strong> · Risk low</div><div class="ph-item-time">2m</div></div>
+              <div class="ph-item"><div class="ph-item-dot o"></div><div class="ph-item-txt"><strong>Zone Alert</strong> · 480m away</div><div class="ph-item-time">5m</div></div>
+            </div>
+            <div class="ph-home"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<hr class="rk-hr">
+<hr class="divider">
 
-<!-- ══════════ TESTIMONIALS ══════════ -->
-<section class="testi-section">
-  <div class="sec-hd reveal" style="padding:0 clamp(2rem,6vw,6rem)">
+<!-- ═══════ STATS ═══════ -->
+<section id="stats-section" class="sec-pad">
+  <div class="sec-hd reveal">
+    <span class="eyebrow">Platform Stats</span>
+    <h2 class="sec-title">Numbers that <span class="grad">protect.</span></h2>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="stat-val" data-target="11">0</div>
+      <div class="stat-lbl">Safety Modules</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="stat-val" data-target="120" data-suffix="s">0</div>
+      <div class="stat-lbl">AI Heartbeat Interval</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+      <div class="stat-val" data-target="42">0</div>
+      <div class="stat-lbl">Hotspots Mapped</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="stat-val" data-target="5" data-suffix="km">0</div>
+      <div class="stat-lbl">Safe Places Radius</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ HOW IT WORKS ═══════ -->
+<section id="how" class="sec-pad">
+  <div class="sec-hd reveal">
+    <span class="eyebrow">How it works</span>
+    <h2 class="sec-title">Three steps to <span class="grad-red">safety.</span></h2>
+  </div>
+  <div class="steps-row">
+    <div class="step reveal">
+      <div class="step-num">Step 01</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg></div>
+      <div class="step-h">One Tap. Instant Alert.</div>
+      <p class="step-p">Press SOS once. No menus, no confirmation. RAKSHAK fires in under a second — GPS captured, contacts notified.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">Step 02</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="step-h">GPS. Captured Silently.</div>
+      <p class="step-p">Your exact coordinates are captured and encrypted the moment SOS triggers. No manual input needed.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">Step 03</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.8 19.79 19.79 0 010 .22 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.1 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg></div>
+      <div class="step-h">Your Circle. Notified.</div>
+      <p class="step-p">Up to 5 trusted contacts receive live location alerts with real-time push notifications. Instantly.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ FEATURES ═══════ -->
+<section id="features" class="sec-pad">
+  <div class="sec-hd reveal">
+    <span class="eyebrow">Features</span>
+    <h2 class="sec-title">Everything you need to <span class="grad">stay safe.</span></h2>
+    <p class="sec-sub">Six powerful modules working together, around the clock.</p>
+  </div>
+  <div class="bento">
+    <div class="bc reveal">
+      <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <div class="bc-h">SOS Emergency</div>
+      <p class="bc-p">One-tap emergency trigger with instant GPS capture and encrypted broadcast to your trusted contacts.</p>
+    </div>
+    <div class="bc reveal">
+      <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <div class="bc-h">AI Threat Engine</div>
+      <p class="bc-p">Silent 2-minute heartbeat pings detect inactivity. Missed pings auto-deploy SOS after 6 minutes.</p>
+    </div>
+    <div class="bc reveal">
+      <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="bc-h">Danger Zone Map</div>
+      <p class="bc-p">Community-sourced danger zones on a live map. Entering a hot-zone triggers automatic proximity alerts.</p>
+    </div>
+    <div class="bc reveal">
+      <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+      <div class="bc-h">Admin Dashboard</div>
+      <p class="bc-p">Command center with live tracking, risk scores, user management, and crisis analytics for admins.</p>
+    </div>
+    <div class="bc reveal">
+      <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
+      <div class="bc-h">Evidence Vault</div>
+      <p class="bc-p">Tamper-proof incident reports with GPS data, timestamps, and contact logs — exportable as court-ready PDFs.</p>
+    </div>
+    <div class="bc reveal">
+      <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+      <div class="bc-h">Secure Auth</div>
+      <p class="bc-p">Google OAuth + bcrypt hashing, CSRF protection, and rate limiting. Your data stays yours.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ TESTIMONIALS ═══════ -->
+<section class="testi">
+  <div class="sec-hd reveal">
     <span class="eyebrow">Testimonials</span>
-    <h2 class="sec-title">Real stories from <span class="grad-text">real users.</span></h2>
+    <h2 class="sec-title">Trusted by <span class="grad">real users.</span></h2>
     <p class="sec-sub">Hear from women who feel safer every day with RAKSHAK.</p>
   </div>
-  <div class="testi-track-wrap">
-    <div class="testi-track" id="testiTrack">
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">A</div>
-          <div>
-            <div class="testi-name">Ananya R. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
-            <div class="testi-role">College Student, Delhi</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">M</div>
-          <div>
-            <div class="testi-name">Meera S. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
-            <div class="testi-role">IT Professional, Mumbai</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"The auto-SOS after silence is genius. As someone who commutes late, knowing it watches over me even if I can't press a button is amazing."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">P</div>
-          <div>
-            <div class="testi-name">Priya K. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
-            <div class="testi-role">Nurse, Bangalore</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"I recommended RAKSHAK to all my hostel friends. The evidence vault and PDF reports give us real documentation if something happens."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">S</div>
-          <div>
-            <div class="testi-name">Sneha D. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
-            <div class="testi-role">Law Student, Pune</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"Finally a safety app that doesn't need me to unlock my phone during an emergency. The shake and voice triggers are lifesavers."</p>
-        <div class="testi-author">
-          <div class="testi-avatar">R</div>
-          <div>
-            <div class="testi-name">Riya T. <span class="verified-badge"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Verified</span></div>
-            <div class="testi-role">Teacher, Chennai</div>
-          </div>
-        </div>
-      </div>
-      <!-- Duplicates for seamless scroll -->
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p>
-        <div class="testi-author"><div class="testi-avatar">A</div><div><div class="testi-name">Ananya R.</div><div class="testi-role">College Student, Delhi</div></div></div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p>
-        <div class="testi-author"><div class="testi-avatar">M</div><div><div class="testi-name">Meera S.</div><div class="testi-role">IT Professional, Mumbai</div></div></div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"The auto-SOS after silence is genius. As someone who commutes late, knowing it watches over me even if I can't press a button is amazing."</p>
-        <div class="testi-author"><div class="testi-avatar">P</div><div><div class="testi-name">Priya K.</div><div class="testi-role">Nurse, Bangalore</div></div></div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"I recommended RAKSHAK to all my hostel friends. The evidence vault and PDF reports give us real documentation if something happens."</p>
-        <div class="testi-author"><div class="testi-avatar">S</div><div><div class="testi-name">Sneha D.</div><div class="testi-role">Law Student, Pune</div></div></div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
-        <p class="testi-text">"Finally a safety app that doesn't need me to unlock my phone during an emergency. The shake and voice triggers are lifesavers."</p>
-        <div class="testi-author"><div class="testi-avatar">R</div><div><div class="testi-name">Riya T.</div><div class="testi-role">Teacher, Chennai</div></div></div>
-      </div>
+  <div class="testi-wrap">
+    <div class="testi-track">
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p><div class="tc-author"><div class="tc-avatar">A</div><div><div class="tc-name">Ananya R.<span class="tc-verified"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-role">College Student, Delhi</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p><div class="tc-author"><div class="tc-avatar">M</div><div><div class="tc-name">Meera S.<span class="tc-verified"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-role">IT Professional, Mumbai</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"The auto-SOS after silence is genius. As someone who commutes late, knowing it watches over me even if I can't press a button is amazing."</p><div class="tc-author"><div class="tc-avatar">P</div><div><div class="tc-name">Priya K.<span class="tc-verified"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-role">Nurse, Bangalore</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"I recommended RAKSHAK to all my hostel friends. The evidence vault and PDF reports give us real documentation if something happens."</p><div class="tc-author"><div class="tc-avatar">S</div><div><div class="tc-name">Sneha D.<span class="tc-verified"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-role">Law Student, Pune</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"Finally a safety app that doesn't need me to unlock my phone during an emergency. The shake and voice triggers are lifesavers."</p><div class="tc-author"><div class="tc-avatar">R</div><div><div class="tc-name">Riya T.<span class="tc-verified"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-role">Teacher, Chennai</div></div></div></div>
+      <!-- duplicates -->
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p><div class="tc-author"><div class="tc-avatar">A</div><div><div class="tc-name">Ananya R.</div><div class="tc-role">College Student, Delhi</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p><div class="tc-author"><div class="tc-avatar">M</div><div><div class="tc-name">Meera S.</div><div class="tc-role">IT Professional, Mumbai</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"The auto-SOS after silence is genius. As someone who commutes late, knowing it watches over me even if I can't press a button is amazing."</p><div class="tc-author"><div class="tc-avatar">P</div><div><div class="tc-name">Priya K.</div><div class="tc-role">Nurse, Bangalore</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"I recommended RAKSHAK to all my hostel friends. The evidence vault and PDF reports give us real documentation if something happens."</p><div class="tc-author"><div class="tc-avatar">S</div><div><div class="tc-name">Sneha D.</div><div class="tc-role">Law Student, Pune</div></div></div></div>
+      <div class="tc"><div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-text">"Finally a safety app that doesn't need me to unlock my phone during an emergency. The shake and voice triggers are lifesavers."</p><div class="tc-author"><div class="tc-avatar">R</div><div><div class="tc-name">Riya T.</div><div class="tc-role">Teacher, Chennai</div></div></div></div>
     </div>
   </div>
 </section>
 
-<hr class="rk-hr">
-
-<!-- ══════════ CTA ══════════ -->
-<section class="cta-section">
-  <div class="cta-glow"></div>
+<!-- ═══════ CTA ═══════ -->
+<section class="cta">
   <div class="cta-inner reveal">
-    <div class="cta-eyebrow">Join RAKSHAK</div>
-    <h2 class="cta-h2">Ready to feel <em>safe?</em></h2>
+    <span class="eyebrow">Start Now</span>
+    <h2 class="cta-h2">Ready to feel<br><span class="grad">protected?</span></h2>
     <p class="cta-p">Sign up in 30 seconds. No credit card. No hidden fees. Just real protection — always on, always watching.</p>
-    <div class="cta-btns">
-      <a href="{{ url_for('auth.register') }}" class="btn-primary" style="font-size:1.1rem;padding:16px 40px">
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="{{ url_for('auth.register') }}" class="btn-hero primary" style="font-size:1.1rem;padding:18px 44px">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Get Protected — Free
       </a>
-      <a href="{{ url_for('auth.login') }}" class="btn-outline" style="font-size:1.1rem;padding:16px 36px">Sign In</a>
+      <a href="{{ url_for('auth.login') }}" class="btn-hero ghost" style="font-size:1.05rem;padding:18px 36px">Sign In</a>
     </div>
   </div>
 </section>
 
-<!-- ══════════ FOOTER ══════════ -->
-<footer style="border-top:1px solid var(--bdr);padding:3rem clamp(2rem,6vw,6rem) 2rem">
-  <div class="rk-footer">
-    <div class="ft-grid">
-      <div>
-        <div class="ft-brand">
-          <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="36" height="36" style="filter:drop-shadow(0 0 8px rgba(139,92,246,.6));object-fit:contain">
-          <div class="ft-brand-name"><span>RAKSHAK</span></div>
-        </div>
-        <div class="ft-brand-desc">Real-time Alert & Knowledge System for Hazard And Crisis — protecting lives through always-on safety technology.</div>
-        <div class="footer-social">
-          <div class="social-icon" title="GitHub"><svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div>
-          <div class="social-icon" title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
-        </div>
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="rk-footer">
+  <div class="ft-grid">
+    <div>
+      <div class="ft-brand">
+        <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="RAKSHAK" width="36" height="36" style="filter:drop-shadow(0 0 10px rgba(139,92,246,.5));object-fit:contain">
+        <div class="ft-brand-name"><span>RAKSHAK</span></div>
       </div>
-      <div>
-        <div class="ft-col-hd">Platform</div>
-        <a href="{{ url_for('auth.login') }}" class="ft-link"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign In</a>
-        <a href="{{ url_for('auth.register') }}" class="ft-link"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Register Free</a>
-        <a href="#features" class="ft-link"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Features</a>
-        <a href="#how" class="ft-link"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>How It Works</a>
-      </div>
-      <div>
-        <div class="ft-col-hd">Security</div>
-        <a href="#" class="ft-link"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Encryption</a>
-        <a href="#" class="ft-link"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Privacy Policy</a>
-        <a href="#" class="ft-link"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Terms of Service</a>
+      <div class="ft-desc">Real-time Alert & Knowledge System for Hazard And Crisis — protecting lives through always-on safety technology.</div>
+      <div class="ft-social">
+        <a href="https://github.com/maniksahni/RAKSHAK" target="_blank" title="GitHub"><svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></a>
+        <a href="#" title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
       </div>
     </div>
-    <div class="ft-bottom">
-      <span class="ft-copy">&copy; 2026 RAKSHAK &middot; Made in India &#127470;&#127475;</span>
-      <span class="ft-version">v3.1 &middot; RENDER CLOUD</span>
+    <div>
+      <div class="ft-col-hd">Platform</div>
+      <a href="{{ url_for('auth.login') }}" class="ft-link"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign In</a>
+      <a href="{{ url_for('auth.register') }}" class="ft-link"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Register Free</a>
+      <a href="#features" class="ft-link"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Features</a>
+      <a href="#how" class="ft-link"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>How It Works</a>
     </div>
+    <div>
+      <div class="ft-col-hd">Security</div>
+      <a href="#" class="ft-link"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Encryption</a>
+      <a href="#" class="ft-link"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Privacy Policy</a>
+      <a href="#" class="ft-link"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Terms of Service</a>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <span class="ft-copy">&copy; 2026 RAKSHAK &middot; Made in India &#127470;&#127475;</span>
+    <span class="ft-ver">v3.1 &middot; RENDER CLOUD</span>
   </div>
 </footer>
 
@@ -785,98 +620,93 @@ body{font-family:var(--sg);background:var(--bg);color:var(--white);overflow-x:hi
 
 {% block extra_js %}
 <script>
-/* navbar scroll */
-const nav = document.getElementById('rk-nav');
-if (nav) window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), {passive:true});
+/* ═══════ ANIMATED MESH BACKGROUND ═══════ */
+(function(){
+  const c=document.getElementById('heroBg'),x=c.getContext('2d');
+  let w,h,pts=[];
+  function resize(){w=c.width=innerWidth;h=c.height=innerHeight;pts=[];
+    for(let i=0;i<60;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5});
+  }
+  resize(); addEventListener('resize',resize);
+  function draw(){
+    x.clearRect(0,0,w,h);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>w)p.vx*=-1;
+      if(p.y<0||p.y>h)p.vy*=-1;
+      x.beginPath();x.arc(p.x,p.y,p.r,0,Math.PI*2);
+      x.fillStyle='rgba(139,92,246,0.15)';x.fill();
+    });
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<180){
+          x.beginPath();x.moveTo(pts[i].x,pts[i].y);x.lineTo(pts[j].x,pts[j].y);
+          x.strokeStyle=`rgba(139,92,246,${.06*(1-d/180)})`;x.lineWidth=.5;x.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════ NAVBAR SCROLL ═══════ */
+const nav=document.getElementById('rk-nav');
+if(nav)addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
 
 /* smooth anchors */
-document.querySelectorAll('a[href^="#"]').forEach(a =>
-  a.addEventListener('click', e => {
-    const t = document.querySelector(a.getAttribute('href'));
-    if (t) { e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
-  })
-);
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const t=document.querySelector(a.getAttribute('href'));
+  if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}
+}));
 
-/* scroll progress bar */
-(function(){
-  const bar = document.getElementById('scrollProgress');
-  if (!bar) return;
-  window.addEventListener('scroll', function() {
-    const pct = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100;
-    bar.style.width = pct + '%';
-  }, {passive:true});
-})();
+/* ═══════ SCROLL PROGRESS ═══════ */
+const bar=document.getElementById('scrollProg');
+if(bar)addEventListener('scroll',()=>{bar.style.width=(document.documentElement.scrollTop/(document.documentElement.scrollHeight-document.documentElement.clientHeight))*100+'%'},{passive:true});
 
-/* scroll-reveal with stagger */
-const revealIO = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('animate-in');
-      /* stagger children if parent has .stagger */
-      if (e.target.classList.contains('stagger')) {
-        [...e.target.children].forEach((c, i) => {
-          c.style.opacity = '0';
-          c.style.transform = 'translateY(24px)';
-          c.style.transition = `opacity .5s ${i * .08}s cubic-bezier(.22,1,.36,1), transform .5s ${i * .08}s cubic-bezier(.22,1,.36,1)`;
-          requestAnimationFrame(() => { c.style.opacity = '1'; c.style.transform = 'translateY(0)'; });
-        });
-      }
-      revealIO.unobserve(e.target);
-    }
-  });
-}, {threshold:0.05, rootMargin:'0px 0px -50px 0px'});
-document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+/* ═══════ SCROLL REVEAL ═══════ */
+const rio=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');rio.unobserve(e.target)}});
+},{threshold:.08,rootMargin:'0px 0px -60px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>rio.observe(el));
 
-/* stat counters */
-function counter(el) {
-  if (el._done) return; el._done = true;
-  const target = +el.dataset.target, suffix = el.dataset.suffix || '';
-  const dur = 1800, t0 = performance.now();
-  (function tick(now) {
-    const p = Math.min((now - t0) / dur, 1);
-    const ease = 1 - Math.pow(1 - p, 4);
-    el.textContent = Math.round(ease * target) + suffix;
-    if (p < 1) requestAnimationFrame(tick);
+/* ═══════ STAT COUNTERS ═══════ */
+function count(el){
+  if(el._d)return;el._d=1;
+  const tgt=+el.dataset.target,sfx=el.dataset.suffix||'',dur=2000,t0=performance.now();
+  (function t(now){
+    const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,4);
+    el.textContent=Math.round(e*tgt)+sfx;
+    if(p<1)requestAnimationFrame(t);
   })(t0);
 }
-const statsIO = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('.stat-num[data-target]').forEach(counter);
-      statsIO.unobserve(e.target);
-    }
-  });
-}, {threshold:0.3});
-const s = document.getElementById('stats-section');
-if (s) statsIO.observe(s);
+const sio=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.stat-val[data-target]').forEach(count);sio.unobserve(e.target)}});
+},{threshold:.3});
+const ss=document.getElementById('stats-section');
+if(ss)sio.observe(ss);
 
-/* back to top */
-(function(){
-  const btn = document.getElementById('backToTop');
-  if(!btn) return;
-  window.addEventListener('scroll', () => btn.classList.toggle('visible', window.scrollY > 600), {passive:true});
-})();
+/* hero counter */
+document.querySelectorAll('.hero-meta-val[data-count]').forEach(el=>{
+  const tgt=+el.dataset.count,dur=1500,t0=performance.now();
+  (function t(now){
+    const p=Math.min((now-t0)/dur,1);
+    el.textContent=Math.round((1-Math.pow(1-p,4))*tgt)+'+';
+    if(p<1)requestAnimationFrame(t);
+  })(t0);
+});
 
-/* live clock in phone */
-(function(){
-  const el = document.querySelector('.ph-time');
-  if(!el) return;
-  function tick(){
-    const d = new Date();
-    el.textContent = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-  }
-  tick(); setInterval(tick, 10000);
-})();
+/* ═══════ BACK TO TOP ═══════ */
+const btt=document.getElementById('backTop');
+if(btt)addEventListener('scroll',()=>btt.classList.toggle('vis',scrollY>600),{passive:true});
 
-/* animated gradient border angle for bento cards */
+/* ═══════ PHONE CLOCK ═══════ */
 (function(){
-  let angle = 0;
-  function tick() {
-    angle = (angle + .3) % 360;
-    document.querySelectorAll('.bc').forEach(c => c.style.setProperty('--bc-angle', angle + 'deg'));
-    requestAnimationFrame(tick);
-  }
-  tick();
+  const el=document.querySelector('.ph-time');
+  if(!el)return;
+  function t(){const d=new Date();el.textContent=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
+  t();setInterval(t,10000);
 })();
 </script>
 {% endblock %}
