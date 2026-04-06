@@ -783,7 +783,7 @@ a,button{cursor:none}
   const c=document.getElementById('meshCanvas'),g=c.getContext('2d');
   let w,h,pts=[];
   function rz(){w=c.width=innerWidth;h=c.height=innerHeight;pts=[];
-    const n=Math.min(90,Math.floor(w*h/12000));
+    const n=Math.min(50,Math.floor(w*h/20000));
     for(let i=0;i<n;i++)pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*2+.5})}
   rz();addEventListener('resize',rz);
   let mx=w/2,my=h/2;
