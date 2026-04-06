@@ -113,9 +113,9 @@ a,button{cursor:none}
 @property --angle{syntax:'<angle>';initial-value:0deg;inherits:false}
 @keyframes rotateBorder{to{--angle:360deg}}
 
-/* ═══════════════════ REVEAL ═══════════════════ */
-.rv{opacity:0;transform:translateY(50px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
-.rv.vis{opacity:1;transform:translateY(0)}
+/* ═══════════════════ REVEAL (with blur-in) ═══════════════════ */
+.rv{opacity:0;transform:translateY(50px) scale(.97);filter:blur(10px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),filter .9s cubic-bezier(.22,1,.36,1)}
+.rv.vis{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
 .rv-d1{transition-delay:.1s}.rv-d2{transition-delay:.2s}.rv-d3{transition-delay:.3s}
 .rv-d4{transition-delay:.4s}.rv-d5{transition-delay:.5s}.rv-d6{transition-delay:.6s}
 
@@ -577,6 +577,38 @@ a,button{cursor:none}
 
 /* ── Grid overlay slightly more visible ── */
 .grid-overlay{opacity:.1!important}
+
+/* ── Trust badges section ── */
+.trust{padding:3rem 2rem;position:relative;z-index:2;background:linear-gradient(180deg,rgba(139,92,246,.03),rgba(139,92,246,.06),rgba(139,92,246,.03));border-top:1px solid rgba(139,92,246,.08);border-bottom:1px solid rgba(139,92,246,.08)}
+.trust-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap}
+.trust-t{font-family:var(--mono);font-size:.55rem;letter-spacing:.5em;text-transform:uppercase;color:rgba(255,255,255,.3);flex-shrink:0}
+.trust-items{display:flex;align-items:center;gap:2.5rem;flex-wrap:wrap;justify-content:center}
+.trust-item{text-align:center}
+.trust-n{display:block;font-size:1.6rem;font-weight:900;line-height:1;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.trust-l{font-family:var(--mono);font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:4px;display:block}
+.trust-sep{width:1px;height:36px;background:linear-gradient(180deg,transparent,rgba(139,92,246,.3),transparent)}
+@media(max-width:768px){.trust-in{flex-direction:column}.trust-items{gap:1.5rem}}
+
+/* ── Text scramble effect ── */
+.scramble-char{display:inline-block;transition:color .1s}
+.scramble-char.scrambling{color:var(--accent);opacity:.6}
+
+/* ── Cursor particle trail ── */
+.c-particle{position:fixed;pointer-events:none;z-index:10000;border-radius:50%;mix-blend-mode:screen;will-change:transform,opacity}
+
+/* ── Animated gradient orb in hero ── */
+.hero-orb{position:absolute;width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;z-index:0;pointer-events:none;background:conic-gradient(from 0deg,rgba(139,92,246,.25),rgba(255,59,59,.2),rgba(34,211,238,.15),rgba(52,211,153,.12),rgba(244,114,182,.18),rgba(139,92,246,.25));filter:blur(120px);animation:orbSpin 20s linear infinite,orbPulse 8s ease-in-out infinite}
+@keyframes orbSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes orbPulse{0%,100%{opacity:.5;width:600px;height:600px}50%{opacity:.8;width:750px;height:750px}}
+
+/* ── Animated moving gradient on body ── */
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(135deg,rgba(139,92,246,.04) 0%,transparent 25%,rgba(255,59,59,.03) 50%,transparent 75%,rgba(34,211,238,.04) 100%);background-size:400% 400%;animation:bodyGradient 25s ease infinite}
+@keyframes bodyGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* ── Stat cards with animated ring ── */
+.stc{position:relative}
+.st-ring{position:absolute;top:12px;right:12px;width:32px;height:32px;opacity:.3}
+.st-ring circle{fill:none;stroke-width:2;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1.5s cubic-bezier(.22,1,.36,1)}
 </style>
 {% endblock %}
 
@@ -625,6 +657,7 @@ a,button{cursor:none}
 
 <!-- ═══════ HERO ═══════ -->
 <section class="hero" id="hero">
+  <div class="hero-orb"></div>
   <div class="hero-in">
     <div class="hero-pill"><span class="hero-dot"></span> AI-POWERED SAFETY &mdash; ALWAYS WATCHING</div>
     <h1 class="hero-h1">
@@ -667,6 +700,22 @@ a,button{cursor:none}
     <div class="mqi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Evidence Vault</span></div>
   </div>
 </div>
+
+<!-- ═══════ TRUST BADGES ═══════ -->
+<section class="trust rv">
+  <div class="trust-in">
+    <span class="trust-t">Trusted by</span>
+    <div class="trust-items">
+      <div class="trust-item"><span class="trust-n">50+</span><span class="trust-l">Colleges</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><span class="trust-n">2800+</span><span class="trust-l">Active Users</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><span class="trust-n">24/7</span><span class="trust-l">AI Monitoring</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><span class="trust-n">4.9&#9733;</span><span class="trust-l">User Rating</span></div>
+    </div>
+  </div>
+</section>
 
 <!-- ═══════ STATS ═══════ -->
 <section class="stats" id="stats-section">
@@ -1034,5 +1083,78 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
   const fls=document.querySelectorAll('.fl');if(!fls.length)return;
   addEventListener('scroll',()=>{const sy=scrollY;
     fls.forEach((f,i)=>{const speed=.02+i*.008;f.style.transform=`translateY(${sy*speed}px)`})},{passive:true})})();
+
+/* ═══ 12. TEXT SCRAMBLE on section headings ═══ */
+(function(){
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
+  function scramble(el){
+    if(el._scrambled)return;el._scrambled=true;
+    const original=el.textContent;
+    const spans=[];
+    el.innerHTML='';
+    [...original].forEach(ch=>{
+      const s=document.createElement('span');
+      s.textContent=ch;s.dataset.char=ch;
+      s.style.display='inline-block';
+      el.appendChild(s);spans.push(s);
+    });
+    spans.forEach((s,i)=>{
+      if(s.dataset.char===' '||s.dataset.char==='\u00A0')return;
+      let iter=0;const maxIter=4+Math.floor(Math.random()*4);
+      const iv=setInterval(()=>{
+        if(iter>=maxIter){s.textContent=s.dataset.char;s.style.color='';clearInterval(iv);return}
+        s.textContent=chars[Math.floor(Math.random()*chars.length)];
+        s.style.color='rgba(139,92,246,.7)';iter++;
+      },40+i*8);
+    });
+  }
+  const sio=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){scramble(e.target);sio.unobserve(e.target)}
+  })},{threshold:.5});
+  document.querySelectorAll('.stit,.term-h,.show-h,.cta-h').forEach(el=>sio.observe(el));
+})();
+
+/* ═══ 13. CURSOR PARTICLE TRAIL ═══ */
+(function(){
+  if(matchMedia('(max-width:768px)').matches)return;
+  const colors=['rgba(139,92,246,.6)','rgba(255,59,59,.5)','rgba(34,211,238,.5)','rgba(52,211,153,.5)','rgba(244,114,182,.5)'];
+  let particles=[];let mx=0,my=0;let frame=0;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+  function tick(){
+    frame++;
+    if(frame%3===0&&particles.length<25){
+      const p=document.createElement('div');
+      p.className='c-particle';
+      const size=Math.random()*5+2;
+      const color=colors[Math.floor(Math.random()*colors.length)];
+      Object.assign(p.style,{
+        left:mx+'px',top:my+'px',width:size+'px',height:size+'px',
+        background:color,boxShadow:`0 0 ${size*3}px ${color}`,
+        opacity:'1',transform:'translate(-50%,-50%) scale(1)'
+      });
+      document.body.appendChild(p);
+      const life={el:p,x:mx,y:my,vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5,ttl:40,age:0};
+      particles.push(life);
+    }
+    particles.forEach(p=>{
+      p.age++;p.x+=p.vx;p.y+=p.vy;p.vy+=.02;
+      const prog=p.age/p.ttl;
+      p.el.style.left=p.x+'px';p.el.style.top=p.y+'px';
+      p.el.style.opacity=1-prog;
+      p.el.style.transform=`translate(-50%,-50%) scale(${1-prog*.6})`;
+    });
+    particles=particles.filter(p=>{
+      if(p.age>=p.ttl){p.el.remove();return false}return true;
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ═══ 14. NAVBAR SCROLL CLASS (base.html navbar) ═══ */
+(function(){
+  const nb=document.querySelector('.navbar-rakshak');
+  if(nb)addEventListener('scroll',()=>nb.classList.toggle('scrolled',scrollY>40),{passive:true});
+})();
 </script>
 {% endblock %}
