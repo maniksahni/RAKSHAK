@@ -25,7 +25,7 @@
 </p>
 
 <p align="center">
-  <a href="https://rakshak-u4ev.onrender.com"><img src="https://img.shields.io/badge/🌐_LIVE-rakshak--u4ev.onrender.com-e94560?style=for-the-badge&labelColor=1a1a2e" alt="Live Site"/></a>
+  <a href="https://rakshak.up.railway.app"><img src="https://img.shields.io/badge/🌐_LIVE-rakshak.up.railway.app-e94560?style=for-the-badge&labelColor=1a1a2e" alt="Live Site"/></a>
 </p>
 
 <p align="center">
@@ -33,7 +33,7 @@
   <img src="https://img.shields.io/badge/Flask-3.0-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask"/>
   <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL"/>
   <img src="https://img.shields.io/badge/Socket.IO-Realtime-010101?style=flat-square&logo=socket.io&logoColor=white" alt="SocketIO"/>
-  <img src="https://img.shields.io/badge/Render-Deployed-46E3B7?style=flat-square&logo=render&logoColor=white" alt="Render"/>
+  <img src="https://img.shields.io/badge/Railway-Deployed-0B0D0E?style=flat-square&logo=railway&logoColor=white" alt="Railway"/>
   <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=flat-square&logo=bootstrap&logoColor=white" alt="Bootstrap"/>
   <img src="https://img.shields.io/badge/PWA-Installable-5A0FC8?style=flat-square&logo=pwa&logoColor=white" alt="PWA"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"/>
@@ -64,7 +64,7 @@ Whether walking alone at night or navigating unfamiliar areas, RAKSHAK acts as a
 <table>
   <tr>
     <td align="center"><strong>🔗 Live URL</strong></td>
-    <td><a href="https://rakshak-u4ev.onrender.com">https://rakshak-u4ev.onrender.com</a></td>
+    <td><a href="https://rakshak.up.railway.app">https://rakshak.up.railway.app</a></td>
   </tr>
   <tr>
     <td align="center"><strong>🔐 Authentication</strong></td>
@@ -178,7 +178,7 @@ Whether walking alone at night or navigating unfamiliar areas, RAKSHAK acts as a
   <img src="static/images/screenshot-admin.png" alt="Admin Panel" width="45%"/>
 </p>
 
-<p align="center"><em>Screenshots coming soon — visit the <a href="https://rakshak-u4ev.onrender.com">live demo</a> to explore!</em></p>
+<p align="center"><em>Screenshots coming soon — visit the <a href="https://rakshak.up.railway.app">live demo</a> to explore!</em></p>
 
 ---
 
@@ -238,7 +238,7 @@ MYSQL_DATABASE=rakshak
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 
-# Production (Render + TiDB Cloud)
+# Production (Railway + TiDB Cloud)
 FLASK_ENV=production
 DB_HOST=your-tidb-host
 DB_PORT=4000
@@ -246,7 +246,7 @@ DB_USER=your-tidb-user
 DB_PASSWORD=your-tidb-password
 DB_NAME=test
 DB_SSL=true
-KEEP_ALIVE_URL=https://rakshak-u4ev.onrender.com/health
+KEEP_ALIVE_URL=https://rakshak.up.railway.app/health
 ```
 
 ---
@@ -342,5 +342,5 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 </p>
 
 <p align="center">
-  <a href="https://rakshak-u4ev.onrender.com">🌐 Visit RAKSHAK</a>
+  <a href="https://rakshak.up.railway.app">🌐 Visit RAKSHAK</a>
 </p>
