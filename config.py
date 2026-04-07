@@ -41,6 +41,19 @@ class ProductionConfig(Config):
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
 
+    # ── Performance: gzip compression ─────────────────────────────────────
+    COMPRESS_REGISTER  = True
+    COMPRESS_MIMETYPES = [
+        'text/html', 'text/css', 'text/javascript',
+        'application/javascript', 'application/json',
+        'image/svg+xml',
+    ]
+    COMPRESS_LEVEL     = 6   # balanced speed/ratio
+    COMPRESS_MIN_SIZE  = 500 # bytes — don't compress tiny responses
+
+    # ── Performance: static asset browser caching (1 week) ───────────────
+    SEND_FILE_MAX_AGE_DEFAULT = 604800  # 7 days in seconds
+
 
 config = {
     'development': DevelopmentConfig,

@@ -46,7 +46,7 @@ def get_pool():
         cfg = _db_config()
         _pool = mysql.connector.pooling.MySQLConnectionPool(
             pool_name='rakshak_pool',
-            pool_size=5,
+            pool_size=10,     # 2 workers × 5 connections each
             pool_reset_session=True,
             **cfg,
         )
