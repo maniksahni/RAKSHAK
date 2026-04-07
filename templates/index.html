@@ -1,7 +1,11 @@
-{% extends "base.html" %}
-{% block title %}RAKSHAK — AI-Powered Women's Safety Platform{% endblock %}
-
-{% block extra_css %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="RAKSHAK — AI-Powered Women's Safety Platform. Real-time threat detection, auto-SOS, danger zone mapping.">
+<title>RAKSHAK — AI-Powered Women's Safety Platform</title>
+<link rel="icon" href="{{ url_for('static', filename='img/rakshak_logo.png') }}" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
@@ -456,14 +460,7 @@ a,button{cursor:none}
 /* ── Hero — massive center glow ── */
 .hero::before{background:radial-gradient(ellipse,rgba(139,92,246,.28) 0%,rgba(255,59,59,.14) 35%,transparent 65%)!important}
 
-/* ── Section backgrounds with VISIBLE colored gradients ── */
-.stats{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.08) 30%,rgba(139,92,246,.14) 50%,rgba(139,92,246,.08) 70%,var(--bg) 100%)!important}
-.show{background:linear-gradient(180deg,var(--bg) 0%,rgba(255,59,59,.06) 30%,rgba(255,59,59,.11) 50%,rgba(255,59,59,.06) 70%,var(--bg) 100%)!important}
-.how{background:linear-gradient(180deg,var(--bg) 0%,rgba(52,211,153,.06) 30%,rgba(52,211,153,.1) 50%,rgba(52,211,153,.06) 70%,var(--bg) 100%)!important}
-#features{background:linear-gradient(180deg,var(--bg) 0%,rgba(96,165,250,.05) 25%,rgba(139,92,246,.1) 50%,rgba(96,165,250,.05) 75%,var(--bg) 100%)!important}
-.tech{background:linear-gradient(180deg,var(--bg) 0%,rgba(34,211,238,.06) 30%,rgba(34,211,238,.12) 50%,rgba(34,211,238,.06) 70%,var(--bg) 100%)!important}
-.dash{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.05) 30%,rgba(139,92,246,.09) 50%,rgba(139,92,246,.05) 70%,var(--bg) 100%)!important}
-.testi{background:linear-gradient(180deg,var(--bg) 0%,rgba(251,191,36,.04) 30%,rgba(251,191,36,.07) 50%,rgba(251,191,36,.04) 70%,var(--bg) 100%)!important}
+/* ── (v7 section bg overrides removed — standalone solid colors used) ── */
 
 /* ── CTA — the WOW section: bright vivid gradient ── */
 .cta{background:linear-gradient(135deg,rgba(139,92,246,.14) 0%,rgba(255,59,59,.12) 20%,rgba(96,165,250,.1) 40%,rgba(34,211,238,.08) 60%,rgba(52,211,153,.1) 80%,rgba(244,114,182,.12) 100%)!important;position:relative}
@@ -557,9 +554,7 @@ a,button{cursor:none}
 .dash-top{background:rgba(139,92,246,.08)!important;border-bottom-color:rgba(139,92,246,.15)!important}
 .dash-grid{background:rgba(139,92,246,.04)!important}
 
-/* ── Navbar from base.html — override to match landing ── */
-.navbar-rakshak{background:transparent!important;border-bottom:1px solid transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transition:all .5s cubic-bezier(.22,1,.36,1)!important}
-.navbar-rakshak.scrolled,.navbar-rakshak[style*="background"]{background:rgba(10,10,26,.92)!important;backdrop-filter:blur(30px) saturate(1.5)!important;-webkit-backdrop-filter:blur(30px) saturate(1.5)!important;border-bottom-color:rgba(255,255,255,.04)!important}
+/* ── (navbar handled by standalone .rk-nav) ── */
 
 /* ── Phone showcase red glow boost ── */
 .ph-glow{background:radial-gradient(ellipse at 50% 40%,rgba(255,59,59,.35) 0%,rgba(139,92,246,.25) 40%,transparent 65%)!important}
@@ -655,15 +650,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .rv-zoom{opacity:0;transform:scale(.85);filter:blur(14px);transition:all 1s cubic-bezier(.22,1,.36,1)}
 .rv-zoom.vis{opacity:1;transform:scale(1);filter:blur(0)}
 
-/* ── SECTION BACKGROUNDS CRANKED TO MAX ── */
-.stats{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.12) 25%,rgba(139,92,246,.22) 50%,rgba(139,92,246,.12) 75%,var(--bg) 100%)!important}
-.show{background:linear-gradient(180deg,var(--bg) 0%,rgba(255,59,59,.1) 25%,rgba(255,59,59,.18) 50%,rgba(255,59,59,.1) 75%,var(--bg) 100%)!important}
-.how{background:linear-gradient(180deg,var(--bg) 0%,rgba(52,211,153,.08) 25%,rgba(52,211,153,.16) 50%,rgba(52,211,153,.08) 75%,var(--bg) 100%)!important}
-#features{background:linear-gradient(180deg,var(--bg) 0%,rgba(96,165,250,.08) 20%,rgba(139,92,246,.16) 50%,rgba(96,165,250,.08) 80%,var(--bg) 100%)!important}
-.tech{background:linear-gradient(180deg,var(--bg) 0%,rgba(34,211,238,.1) 25%,rgba(34,211,238,.18) 50%,rgba(34,211,238,.1) 75%,var(--bg) 100%)!important}
-.dash{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.08) 25%,rgba(255,59,59,.12) 50%,rgba(139,92,246,.08) 75%,var(--bg) 100%)!important}
-.testi{background:linear-gradient(180deg,var(--bg) 0%,rgba(251,191,36,.06) 25%,rgba(251,191,36,.12) 50%,rgba(251,191,36,.06) 75%,var(--bg) 100%)!important}
-.cta{background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(255,59,59,.2) 25%,rgba(96,165,250,.16) 50%,rgba(34,211,238,.14) 75%,rgba(52,211,153,.18))!important}
+/* ── SECTION BACKGROUNDS — now handled by standalone solid colors at end of CSS ── */
 
 /* ── GLASS CARD NEON BORDERS ── */
 .stc,.bc,.hwc,.tkc,.tc{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 32px rgba(0,0,0,.3)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
@@ -761,10 +748,42 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
   .stv{font-size:2.8rem!important}
   .hero-orb{width:400px!important;height:400px!important}
 }
-</style>
-{% endblock %}
+/* ═══════════════════ STANDALONE NAVBAR ═══════════════════ */
+.rk-nav{position:fixed;top:0;left:0;right:0;z-index:10000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.5rem,4vw,3.5rem);height:64px;background:transparent;backdrop-filter:none;border-bottom:1px solid transparent;transition:all .5s cubic-bezier(.22,1,.36,1)}
+.rk-nav.scrolled{background:rgba(10,10,26,.95);backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);border-bottom-color:rgba(255,255,255,.06)}
+.rk-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.rk-nav-brand img{width:32px;height:32px;filter:drop-shadow(0 0 12px rgba(139,92,246,.5));object-fit:contain}
+.rk-nav-brand span{font-family:var(--sg);font-size:1.1rem;font-weight:800;letter-spacing:.22em;background:linear-gradient(135deg,#fff,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.rk-nav-actions{display:flex;align-items:center;gap:12px}
+.rk-nav-link{font-family:var(--sg);font-size:.85rem;font-weight:500;color:rgba(255,255,255,.6);text-decoration:none;padding:8px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);transition:all .3s;cursor:none}
+.rk-nav-link:hover{color:#fff;border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.08)}
+.rk-nav-btn{font-family:var(--sg);font-size:.85rem;font-weight:600;color:#fff;text-decoration:none;padding:8px 22px;border-radius:10px;background:linear-gradient(135deg,#ff3b3b,#dc2626);box-shadow:0 0 30px rgba(255,59,59,.35);transition:all .3s;cursor:none}
+.rk-nav-btn:hover{box-shadow:0 0 50px rgba(255,59,59,.5);transform:translateY(-2px)}
 
-{% block content %}
+/* ═══════════════════ SOLID SECTION BACKGROUNDS ═══════════════════ */
+.stats{background:linear-gradient(180deg,#0a0a1a 0%,#140d30 30%,#1a1040 50%,#140d30 70%,#0a0a1a 100%)}
+.show{background:linear-gradient(180deg,#0a0a1a 0%,#1c0c10 30%,#241014 50%,#1c0c10 70%,#0a0a1a 100%)}
+.how{background:linear-gradient(180deg,#0a0a1a 0%,#0c1a14 30%,#0e2018 50%,#0c1a14 70%,#0a0a1a 100%)}
+#features{background:linear-gradient(180deg,#0a0a1a 0%,#0e0e28 30%,#121236 50%,#0e0e28 70%,#0a0a1a 100%)}
+.tech{background:linear-gradient(180deg,#0a0a1a 0%,#0a161e 30%,#0c1c28 50%,#0a161e 70%,#0a0a1a 100%)}
+.dash{background:linear-gradient(180deg,#0a0a1a 0%,#120d22 30%,#16102c 50%,#120d22 70%,#0a0a1a 100%)}
+.testi{background:linear-gradient(180deg,#0a0a1a 0%,#18140a 30%,#201a0c 50%,#18140a 70%,#0a0a1a 100%)}
+.cta{background:linear-gradient(135deg,#180e3a 0%,#2a1565 30%,#351a80 50%,#2a1565 70%,#180e3a 100%)}
+</style>
+</head>
+<body>
+
+<!-- ═══════ NAVBAR ═══════ -->
+<nav class="rk-nav" id="rkNav">
+  <a href="/" class="rk-nav-brand">
+    <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" width="32" height="32" alt="RAKSHAK">
+    <span>RAKSHAK</span>
+  </a>
+  <div class="rk-nav-actions">
+    <a href="{{ url_for('auth.login') }}" class="rk-nav-link">Sign In</a>
+    <a href="{{ url_for('auth.register') }}" class="rk-nav-btn">Get Protected</a>
+  </div>
+</nav>
 
 <!-- ═══════ LOADING SCREEN ═══════ -->
 <div class="loader" id="loader">
@@ -1118,9 +1137,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 <a href="#hero" class="btt" id="btt"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></a>
 
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
 /* ═══ 0. LOADER ═══ */
 (function(){
@@ -1316,9 +1333,9 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
   tick();
 })();
 
-/* ═══ 14. NAVBAR SCROLL CLASS (base.html navbar) ═══ */
+/* ═══ 14. NAVBAR SCROLL CLASS ═══ */
 (function(){
-  const nb=document.querySelector('.navbar-rakshak');
+  const nb=document.getElementById('rkNav');
   if(nb)addEventListener('scroll',()=>nb.classList.toggle('scrolled',scrollY>40),{passive:true});
 })();
 
@@ -1378,4 +1395,5 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
   });
 })();
 </script>
-{% endblock %}
+</body>
+</html>
