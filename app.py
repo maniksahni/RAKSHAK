@@ -174,6 +174,9 @@ def create_app(config_name=None):
     app.register_blueprint(gemini_bp,        url_prefix='/aria')
     app.register_blueprint(guardian_bp,      url_prefix='/guardian')
 
+    # Exempt internal APIs from CSRF as they are invoked via fetch without tokens
+    csrf.exempt(gemini_bp)
+    csrf.exempt(guardian_bp)
     # ── Google OAuth ──────────────────────────────────────────────────────
     register_google_oauth(app)
 
