@@ -9,12 +9,12 @@ class Config:
     WTF_CSRF_TIME_LIMIT = 3600
     WTF_CSRF_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE']  # Allow GET without CSRF token
 
-    # Database — TiDB Cloud / any MySQL provider
-    DB_HOST = os.environ.get('DB_HOST', 'localhost')
-    DB_PORT = int(os.environ.get('DB_PORT', 3306))
-    DB_USER = os.environ.get('DB_USER', 'root')
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
-    DB_NAME = os.environ.get('DB_NAME', 'rakshak')
+    # Database — TiDB Cloud / any MySQL provider (also supports Railway native env vars)
+    DB_HOST = os.environ.get('MYSQLHOST', os.environ.get('DB_HOST', 'localhost'))
+    DB_PORT = int(os.environ.get('MYSQLPORT', os.environ.get('DB_PORT', 3306)))
+    DB_USER = os.environ.get('MYSQLUSER', os.environ.get('DB_USER', 'root'))
+    DB_PASSWORD = os.environ.get('MYSQLPASSWORD', os.environ.get('DB_PASSWORD', ''))
+    DB_NAME = os.environ.get('MYSQLDATABASE', os.environ.get('DB_NAME', 'rakshak'))
     DB_SSL = os.environ.get('DB_SSL', 'false').lower() in ('true', '1', 'yes')
     DB_SSL_CA = os.environ.get('DB_SSL_CA', '/etc/ssl/cert.pem')  # TiDB default CA path
 
