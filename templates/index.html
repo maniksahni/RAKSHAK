@@ -463,7 +463,7 @@ a,button{cursor:none}
 /* ── (v7 section bg overrides removed — standalone solid colors used) ── */
 
 /* ── CTA — the WOW section: bright vivid gradient ── */
-.cta{background:linear-gradient(135deg,rgba(139,92,246,.14) 0%,rgba(255,59,59,.12) 20%,rgba(96,165,250,.1) 40%,rgba(34,211,238,.08) 60%,rgba(52,211,153,.1) 80%,rgba(244,114,182,.12) 100%)!important;position:relative}
+.cta{position:relative}
 .cta::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,59,59,.18),rgba(139,92,246,.1) 40%,transparent 65%);pointer-events:none;animation:ctaGlow 5s ease-in-out infinite;z-index:0}
 @keyframes ctaGlow{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 .cta-in{position:relative;z-index:1!important}
@@ -760,15 +760,24 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .rk-nav-btn{font-family:var(--sg);font-size:.85rem;font-weight:600;color:#fff;text-decoration:none;padding:8px 22px;border-radius:10px;background:linear-gradient(135deg,#ff3b3b,#dc2626);box-shadow:0 0 30px rgba(255,59,59,.35);transition:all .3s;cursor:none}
 .rk-nav-btn:hover{box-shadow:0 0 50px rgba(255,59,59,.5);transform:translateY(-2px)}
 
-/* ═══════════════════ SOLID SECTION BACKGROUNDS ═══════════════════ */
-.stats{background:linear-gradient(180deg,#0a0a1a 0%,#140d30 30%,#1a1040 50%,#140d30 70%,#0a0a1a 100%)}
-.show{background:linear-gradient(180deg,#0a0a1a 0%,#1c0c10 30%,#241014 50%,#1c0c10 70%,#0a0a1a 100%)}
-.how{background:linear-gradient(180deg,#0a0a1a 0%,#0c1a14 30%,#0e2018 50%,#0c1a14 70%,#0a0a1a 100%)}
-#features{background:linear-gradient(180deg,#0a0a1a 0%,#0e0e28 30%,#121236 50%,#0e0e28 70%,#0a0a1a 100%)}
-.tech{background:linear-gradient(180deg,#0a0a1a 0%,#0a161e 30%,#0c1c28 50%,#0a161e 70%,#0a0a1a 100%)}
-.dash{background:linear-gradient(180deg,#0a0a1a 0%,#120d22 30%,#16102c 50%,#120d22 70%,#0a0a1a 100%)}
-.testi{background:linear-gradient(180deg,#0a0a1a 0%,#18140a 30%,#201a0c 50%,#18140a 70%,#0a0a1a 100%)}
-.cta{background:linear-gradient(135deg,#180e3a 0%,#2a1565 30%,#351a80 50%,#2a1565 70%,#180e3a 100%)}
+/* ═══════════════════ SOLID SECTION BACKGROUNDS — BOLD VISIBLE COLORS ═══════════════════ */
+.stats{background:linear-gradient(180deg,#0a0a1a 0%,#1e1060 25%,#281575 50%,#1e1060 75%,#0a0a1a 100%)}
+.stats::before{background:none}
+.show{background:linear-gradient(180deg,#0a0a1a 0%,#2e1018 25%,#3d1520 50%,#2e1018 75%,#0a0a1a 100%)}
+.show::before{background:none}
+.how{background:linear-gradient(180deg,#0a0a1a 0%,#0e2e1e 25%,#123d28 50%,#0e2e1e 75%,#0a0a1a 100%)}
+.how::before{background:none}
+#features{background:linear-gradient(180deg,#0a0a1a 0%,#14145a 25%,#1a1a78 50%,#14145a 75%,#0a0a1a 100%)}
+.tech{background:linear-gradient(180deg,#0a0a1a 0%,#0c2838 25%,#10354d 50%,#0c2838 75%,#0a0a1a 100%)}
+.tech::before{background:none}
+.dash{background:linear-gradient(180deg,#0a0a1a 0%,#1e1040 25%,#281555 50%,#1e1040 75%,#0a0a1a 100%)}
+.dash::before{background:none}
+.testi{background:linear-gradient(180deg,#0a0a1a 0%,#2a2010 25%,#382a15 50%,#2a2010 75%,#0a0a1a 100%)}
+.cta{background:linear-gradient(135deg,#1a0a45 0%,#351a90 25%,#4520b0 50%,#351a90 75%,#1a0a45 100%)}
+.cta::before{background:radial-gradient(ellipse at 50% 50%,rgba(255,59,59,.3),rgba(139,92,246,.2) 40%,transparent 60%)}
+.cta::after{background:radial-gradient(ellipse at 30% 70%,rgba(34,211,238,.2),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(244,114,182,.15),transparent 50%)}
+.trust{background:linear-gradient(180deg,rgba(139,92,246,.08),rgba(139,92,246,.16),rgba(139,92,246,.08));border-top:1px solid rgba(139,92,246,.25);border-bottom:1px solid rgba(139,92,246,.25)}
+.mq{background:linear-gradient(90deg,rgba(139,92,246,.06),rgba(255,59,59,.05),rgba(34,211,238,.06));border-top:1px solid rgba(139,92,246,.18);border-bottom:1px solid rgba(139,92,246,.18)}
 </style>
 </head>
 <body>
