@@ -123,7 +123,6 @@ def create_app(config_name=None):
         cors_allowed_origins=cors_origins,
         logger=False,
         engineio_logger=False,
-        allow_upgrades=False,
         ping_timeout=60,
         ping_interval=25,
     )
