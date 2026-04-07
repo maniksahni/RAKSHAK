@@ -6,7 +6,7 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/health')
 def health_check():
-    """Health check — used by Docker, Render, any platform."""
+    """Health check — used by Docker, Railway, any platform."""
     try:
         from models import query_db
         query_db('SELECT 1', one=True)
