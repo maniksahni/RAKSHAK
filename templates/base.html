@@ -308,6 +308,11 @@
     <span style="color:#fca5a5;">Valkyrie Protocol</span>
     <span style="font-size:.40rem;font-weight:900;letter-spacing:.1em;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:2px 7px;border-radius:8px;margin-left:auto;flex-shrink:0;box-shadow:0 0 5px rgba(239,68,68,0.5);">DEAD-MAN</span>
   </a>
+  <a class="sidebar-link {% if request.endpoint=='vision_shield.index' %}active{% endif %}" href="{{ url_for('vision_shield.index') }}" style="position:relative;">
+    <i class="bi bi-eye-fill" style="color:#3b82f6;"></i>
+    <span style="color:#93c5fd;">Vision Shield AI</span>
+    <span style="font-size:.40rem;font-weight:900;letter-spacing:.1em;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;padding:2px 6px;border-radius:8px;margin-left:auto;flex-shrink:0;">CAMERA</span>
+  </a>
   {% endif %}
 
   <a class="sidebar-link sb-logout-link" style="margin-top:4px;" href="{{ url_for('auth.logout') }}">
