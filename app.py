@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_compress import Compress
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from config import config
@@ -19,6 +20,7 @@ socketio  = SocketIO()
 login_manager = LoginManager()
 csrf      = CSRFProtect()
 limiter   = Limiter(key_func=get_remote_address)
+compress  = Compress()
 scheduler = BackgroundScheduler(timezone='UTC', daemon=True)
 
 
@@ -128,6 +130,7 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     csrf.init_app(app)
     limiter.init_app(app)
+    compress.init_app(app)
 
     login_manager.login_view    = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
