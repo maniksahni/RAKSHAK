@@ -143,32 +143,36 @@ def create_app(config_name=None):
     app.teardown_appcontext(close_db)
 
     # ── Blueprints ────────────────────────────────────────────────────────
-    from modules.auth.routes          import auth_bp
-    from modules.auth.google_oauth    import google_bp, register_google_oauth
-    from modules.sos.routes           import sos_bp, dashboard_bp
-    from modules.ai_engine.routes     import ai_bp
-    from modules.danger_zones.routes  import danger_bp
-    from modules.admin.routes         import admin_bp
-    from modules.main.routes          import main_bp
-    from modules.safety_tips.routes   import safety_tips_bp
-    from modules.emergency.routes     import emergency_bp
-    from modules.safe_walk.routes     import safe_walk_bp
-    from modules.fake_call.routes     import fake_call_bp
-    from modules.safety_score.routes  import safety_score_bp
+    from modules.auth.routes               import auth_bp
+    from modules.auth.google_oauth         import google_bp, register_google_oauth
+    from modules.sos.routes                import sos_bp, dashboard_bp
+    from modules.ai_engine.routes          import ai_bp
+    from modules.danger_zones.routes       import danger_bp
+    from modules.admin.routes              import admin_bp
+    from modules.main.routes               import main_bp
+    from modules.safety_tips.routes        import safety_tips_bp
+    from modules.emergency.routes          import emergency_bp
+    from modules.safe_walk.routes          import safe_walk_bp
+    from modules.fake_call.routes          import fake_call_bp
+    from modules.safety_score.routes       import safety_score_bp
+    from modules.gemini_guardian.routes    import gemini_bp
+    from modules.guardian_network.routes   import guardian_bp
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp,      url_prefix='/auth')
+    app.register_blueprint(auth_bp,          url_prefix='/auth')
     app.register_blueprint(google_bp)
-    app.register_blueprint(sos_bp,       url_prefix='/sos')
+    app.register_blueprint(sos_bp,           url_prefix='/sos')
     app.register_blueprint(dashboard_bp)
-    app.register_blueprint(ai_bp,        url_prefix='/ai')
-    app.register_blueprint(danger_bp,    url_prefix='/danger-zones')
-    app.register_blueprint(admin_bp,     url_prefix='/admin')
-    app.register_blueprint(safety_tips_bp, url_prefix='/safety-tips')
-    app.register_blueprint(emergency_bp,   url_prefix='/emergency')
-    app.register_blueprint(safe_walk_bp,   url_prefix='/safe-walk')
-    app.register_blueprint(fake_call_bp,   url_prefix='/fake-call')
-    app.register_blueprint(safety_score_bp, url_prefix='/safety-score')
+    app.register_blueprint(ai_bp,            url_prefix='/ai')
+    app.register_blueprint(danger_bp,        url_prefix='/danger-zones')
+    app.register_blueprint(admin_bp,         url_prefix='/admin')
+    app.register_blueprint(safety_tips_bp,   url_prefix='/safety-tips')
+    app.register_blueprint(emergency_bp,     url_prefix='/emergency')
+    app.register_blueprint(safe_walk_bp,     url_prefix='/safe-walk')
+    app.register_blueprint(fake_call_bp,     url_prefix='/fake-call')
+    app.register_blueprint(safety_score_bp,  url_prefix='/safety-score')
+    app.register_blueprint(gemini_bp,        url_prefix='/aria')
+    app.register_blueprint(guardian_bp,      url_prefix='/guardian')
 
     # ── Google OAuth ──────────────────────────────────────────────────────
     register_google_oauth(app)
@@ -375,6 +379,75 @@ def _auto_init_db(app):
         log.info('DB init complete — tables created & admin seeded.')
     except Exception as e:
         log.error(f'Auto DB init failed: {e}')
+
+    # Run guardian/AI migrations (idempotent — adds columns if missing)
+    _auto_migrate_guardian(app)
+
+
+def _auto_migrate_guardian(app):
+    """Add Guardian Angel columns & ai_chat_logs table if they don't exist."""
+    COLUMN_MIGRATIONS = [
+        ('guardian_active',    'ALTER TABLE users ADD COLUMN guardian_active BOOLEAN DEFAULT FALSE'),
+        ('guardian_lat',       'ALTER TABLE users ADD COLUMN guardian_lat DECIMAL(10,8) DEFAULT NULL'),
+        ('guardian_lng',       'ALTER TABLE users ADD COLUMN guardian_lng DECIMAL(11,8) DEFAULT NULL'),
+        ('guardian_radius_km', 'ALTER TABLE users ADD COLUMN guardian_radius_km DECIMAL(4,2) DEFAULT 1.0'),
+        ('guardian_since',     'ALTER TABLE users ADD COLUMN guardian_since TIMESTAMP NULL DEFAULT NULL'),
+    ]
+    TABLE_MIGRATIONS = [
+        """CREATE TABLE IF NOT EXISTS ai_chat_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        session_id VARCHAR(64) NOT NULL,
+        role VARCHAR(10) NOT NULL,
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""",
+    ]
+    try:
+        import mysql.connector
+        cfg = app.config
+        connect_kwargs = dict(
+            host=cfg['DB_HOST'], port=cfg['DB_PORT'],
+            user=cfg['DB_USER'], password=cfg['DB_PASSWORD'],
+            database=cfg['DB_NAME'],
+        )
+        if cfg.get('DB_SSL'):
+            for ca in ['/etc/ssl/certs/ca-certificates.crt', '/etc/ssl/cert.pem']:
+                if os.path.exists(ca):
+                    connect_kwargs['ssl_ca'] = ca
+                    connect_kwargs['ssl_verify_cert'] = True
+                    break
+            else:
+                connect_kwargs['ssl_verify_cert'] = False
+            connect_kwargs['ssl_disabled'] = False
+        conn = mysql.connector.connect(**connect_kwargs)
+        conn.autocommit = True
+        cursor = conn.cursor()
+
+        # Column migrations (skip duplicates)
+        for col_name, sql in COLUMN_MIGRATIONS:
+            try:
+                cursor.execute(sql)
+                log.info(f'Guardian migration: added column {col_name}')
+            except mysql.connector.Error as e:
+                if e.errno == 1060:  # Duplicate column
+                    pass
+                else:
+                    log.warning(f'Guardian migration {col_name}: {e}')
+
+        # Table migrations
+        for sql in TABLE_MIGRATIONS:
+            try:
+                cursor.execute(sql)
+            except Exception:
+                pass
+
+        cursor.close()
+        conn.close()
+        log.info('Guardian migrations complete.')
+    except Exception as e:
+        log.warning(f'Guardian migration skipped (non-fatal): {e}')
 
 
 if __name__ == '__main__':
