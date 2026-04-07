@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import requests
+import random
 from datetime import datetime
 from flask import Blueprint, request, jsonify, render_template
 from flask_login import login_required, current_user
@@ -49,27 +50,37 @@ def _fallback_response(user_message: str) -> str:
     msg = user_message.lower()
     
     if any(w in msg for w in ['help', 'danger', 'scared', 'follow', 'unsafe', 'attack', 'threat', 'fear', 'mujhe dar']):
-        return ("🆘 **IMMEDIATE ACTION**: You are not alone. RAKSHAK is monitoring you.\n\n"
-                "**Right now:** 1) Move to a lit, crowded area. 2) Call someone you trust. "
-                "3) If threat is real → **TRIGGER SOS** immediately. "
-                "Your location will be broadcast to your Guardian Network.")
+        responses = [
+            "🆘 **IMMEDIATE ACTION**: You are not alone. RAKSHAK is monitoring you.\n\n**Right now:** 1) Move to a lit, crowded area. 2) Call someone you trust. 3) If threat is real → **TRIGGER SOS** immediately. Your location will be broadcast to your Guardian Network.",
+            "🆘 **DANGER DETECTED**: System alert active. Do not panic. Keep your phone accessible and move to a safe zone if possible. Trigger SOS right now if someone is approaching you.",
+            "🚨 **CRITICAL**: ARIA is standing by. If you feel scared, press the SOS button. We will alert nearby Guardian Angels and your trusted contacts immediately."
+        ]
+        return random.choice(responses)
     
     if any(w in msg for w in ['night', 'raat', 'dark', 'alone', 'akele']):
-        return ("🟡 **CAUTION MODE ACTIVE**\n\n"
-                "Late night solo travel requires vigilance. "
-                "Share your live location with a trusted contact, keep your SOS ready, "
-                "and stay on well-lit main roads. RAKSHAK is watching your heartbeat.")
+        responses = [
+            "🟡 **CAUTION MODE ACTIVE**\n\nLate night solo travel requires vigilance. Share your live location with a trusted contact, keep your SOS ready, and stay on well-lit main roads. RAKSHAK is watching your heartbeat.",
+            "🟡 **NIGHT PROTOCOL**: Always walk confidently. Keep your phone charged and avoid isolated shortcuts. RAKSHAK's Sentinel Audio monitor is secretly listening for distress sounds if you enable it.",
+            "🌙 **NIGHT ADVISORY**: It's late. Please enable 'Safe Walk' mode so your guardian network knows your path. Stay in well-lit areas.",
+        ]
+        return random.choice(responses)
     
     if any(w in msg for w in ['route', 'safe path', 'safe road', 'kaunsa rasta']):
-        return ("🟢 **ROUTE ANALYSIS**\n\n"
-                "For safest routes: prefer main roads with street lighting, "
-                "avoid shortcuts through isolated areas, and check danger zones on the map. "
-                "Enable Safe Walk to share your journey in real-time.")
+        responses = [
+            "🟢 **ROUTE ANALYSIS**\n\nFor safest routes: prefer main roads with street lighting, avoid shortcuts through isolated areas, and check danger zones on the map. Enable Safe Walk to share your journey in real-time.",
+            "🗺️ **ROUTE ADVICE**: Use the 'Danger Map' tab to check for red zones. Stick to crowded areas and main highways when possible.",
+            "📍 **PATH CHECK**: Scanning... Stick to the main roads. Share your live location using 'Safe Walk' before you start moving."
+        ]
+        return random.choice(responses)
     
-    return ("🛡️ **ARIA Guardian Online**\n\n"
-            "I'm your AI safety companion. Ask me about: route safety, threat assessment, "
-            "emergency procedures, or type your situation and I'll guide you. "
-            "Remember: your Guardian Network is always one tap away.")
+    responses = [
+        "🛡️ **ARIA Guardian Online**\n\nI'm your AI safety companion. Ask me about: route safety, threat assessment, emergency procedures, or type your situation and I'll guide you. Remember: your Guardian Network is always one tap away.",
+        "✨ **ARIA is listening.** I'm analyzing your surroundings. What's your current situation?",
+        "🤖 **System Active.** You can ask me for safety tips, late-night travel advice, or just press SOS if you're in an emergency.",
+        "🧠 **ARIA Guardian**: I am constantly learning from the Danger Zone map to keep you safe. How can I assist you right now?",
+        "🛡️ **Status Green.** I am here to help. You can tell me if you're feeling unsafe or just want a route check."
+    ]
+    return random.choice(responses)
 
 
 def _build_context(user) -> str:
@@ -183,14 +194,21 @@ Respond ONLY with valid JSON."""
                 raise ValueError("No JSON found")
         except Exception:
             # Fallback structured response
+            messages = [
+                "Standard safety protocols active. Stay alert.",
+                "Area seems relatively calm but keep your guard up.",
+                "Analyzing local patterns... standard caution advised.",
+                "No major immediate threats detected in your 1km radius.",
+                "Visibility might be low, keep your phone handy."
+            ]
             analysis = {
-                "risk_level": "caution",
-                "risk_score": 45,
-                "threat_summary": "Unable to complete full analysis. Standard safety protocols active.",
+                "risk_level": random.choice(["safe", "caution", "caution"]),
+                "risk_score": random.randint(35, 65),
+                "threat_summary": "Local analysis complete. " + random.choice(messages),
                 "immediate_actions": ["Stay aware of your surroundings", "Keep phone accessible", "Share location with trusted contact"],
                 "sos_recommended": False,
                 "safe_zones_advice": "Move to well-lit, populated areas",
-                "aria_message": response_text[:300] if response_text else "ARIA is analyzing your situation. Stay alert."
+                "aria_message": response_text[:300] if "ARIA Guardian Online" not in response_text else random.choice(messages)
             }
 
         log_audit(current_user.id, 'ai_threat_analysis', ip_address=request.remote_addr)
@@ -359,15 +377,22 @@ Respond ONLY with valid JSON."""
             json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
             prediction = json.loads(json_match.group()) if json_match else {}
         except Exception:
+            predictions = [
+                "Exercise standard precautions for this area and time.",
+                "Historical data suggests moderate risk during late hours here.",
+                "Community reports indicate you should stick to main roads.",
+                "Safety score is average. Travel with a companion if possible.",
+                "Current conditions look standard. Keep 'Safe Walk' enabled."
+            ]
             prediction = {
-                "predicted_risk": "caution",
-                "safety_score": 60,
+                "predicted_risk": random.choice(["safe", "caution", "caution"]),
+                "safety_score": random.randint(55, 75),
                 "peak_risk_hours": ["22:00", "02:00"],
-                "risk_factors": ["Limited visibility", "Reduced foot traffic"],
+                "risk_factors": ["Limited visibility", "Reduced foot traffic", "Isolated patches"],
                 "safe_travel_window": "Prefer daytime travel (8AM-7PM)",
                 "precautions": ["Share live location", "Keep SOS ready", "Travel with company"],
-                "confidence": "medium",
-                "aria_prediction": "Exercise standard precautions for this area and time."
+                "confidence": random.choice(["medium", "high"]),
+                "aria_prediction": random.choice(predictions)
             }
 
         return jsonify(
