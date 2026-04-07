@@ -8,12 +8,10 @@ FROM python:3.11-slim AS base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# System deps for mysqlclient/bcrypt compilation + SSL certs for TiDB
+# System deps: curl for health checks + SSL certs for TiDB
+# (mysql-connector-python is pure Python — no gcc/libmysql needed)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        gcc \
-        default-libmysqlclient-dev \
-        pkg-config \
         curl \
         ca-certificates && \
     rm -rf /var/lib/apt/lists/* && \
@@ -38,5 +36,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 EXPOSE ${PORT:-8080}
 
-# Production entrypoint with proper signal handling
-CMD ["sh", "-c", "python init_db.py && gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:${PORT:-8080} --timeout 120 --graceful-timeout 30 --keep-alive 5 --max-requests 1000 --max-requests-jitter 50 --access-logfile - --error-logfile - wsgi:app"]
+# Production entrypoint — app.py auto-inits DB on first run via _auto_init_db()
+CMD ["sh", "-c", "gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:${PORT:-8080} --timeout 120 --graceful-timeout 30 --keep-alive 5 --max-requests 1000 --max-requests-jitter 50 --access-logfile - --error-logfile - wsgi:app"]

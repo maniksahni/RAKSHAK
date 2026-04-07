@@ -162,39 +162,40 @@ def _get_conn_kwargs():
     return kwargs
 
 
-try:
-    conn = mysql.connector.connect(**_get_conn_kwargs())
-    conn.autocommit = True
-    cursor = conn.cursor()
-
-    # Execute schema
-    for stmt in SCHEMA_SQL:
-        cursor.execute(stmt)
-    print("✅ All tables created successfully.")
-
-    # Clean old seed users (Priya, System Admin) if they exist
+if __name__ == '__main__':
     try:
-        cursor.execute("DELETE FROM users WHERE email IN ('priya@example.com', 'admin@rakshak.com') AND full_name IN ('Priya Sharma', 'System Admin')")
-        print("  🧹 Cleaned old seed users.")
-    except Exception as e:
-        print(f"  ℹ️  Cleanup note: {e}")
+        conn = mysql.connector.connect(**_get_conn_kwargs())
+        conn.autocommit = True
+        cursor = conn.cursor()
 
-    # Seed
-    for seed in SEEDS:
+        # Execute schema
+        for stmt in SCHEMA_SQL:
+            cursor.execute(stmt)
+        print("✅ All tables created successfully.")
+
+        # Clean old seed users (Priya, System Admin) if they exist
         try:
-            cursor.execute(seed)
+            cursor.execute("DELETE FROM users WHERE email IN ('priya@example.com', 'admin@rakshak.com') AND full_name IN ('Priya Sharma', 'System Admin')")
+            print("  🧹 Cleaned old seed users.")
         except Exception as e:
-            print(f"  ℹ️  Seed note: {e}")
+            print(f"  ℹ️  Cleanup note: {e}")
 
-    # Verify
-    cursor.execute("SELECT COUNT(*) FROM users")
-    count = cursor.fetchone()[0]
-    print(f"✅ Database ready — {count} user(s) seeded.")
+        # Seed
+        for seed in SEEDS:
+            try:
+                cursor.execute(seed)
+            except Exception as e:
+                print(f"  ℹ️  Seed note: {e}")
 
-    cursor.close()
-    conn.close()
-    print("✅ Database initialisation complete!")
+        # Verify
+        cursor.execute("SELECT COUNT(*) FROM users")
+        count = cursor.fetchone()[0]
+        print(f"✅ Database ready — {count} user(s) seeded.")
 
-except Exception as e:
-    print(f"❌ DB init failed: {e}")
-    sys.exit(1)
+        cursor.close()
+        conn.close()
+        print("✅ Database initialisation complete!")
+
+    except Exception as e:
+        print(f"❌ DB init failed: {e}")
+        sys.exit(1)
