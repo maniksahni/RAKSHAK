@@ -201,14 +201,27 @@ Respond ONLY with valid JSON."""
                 "No major immediate threats detected in your 1km radius.",
                 "Visibility might be low, keep your phone handy."
             ]
+            actions_lists = [
+                ["Stay aware of your surroundings", "Keep phone accessible", "Share location with trusted contact"],
+                ["Move to a crowded area", "Check your surroundings", "Stay near CCTV cameras if possible"],
+                ["Avoid talking to strangers", "Keep your belongings secure", "Walk confidently and stay alert"],
+                ["Wait in a well-lit shop/cafe", "Call a friend or family member", "Be ready to use SOS"],
+            ]
+            advice_lists = [
+                "Move to well-lit, populated areas",
+                "Find the nearest public transport hub",
+                "Stay on main roads, avoid narrow alleys",
+                "Look for 24/7 stores or gas stations",
+                "Head towards areas with security personnel"
+            ]
             analysis = {
                 "risk_level": random.choice(["safe", "caution", "caution"]),
                 "risk_score": random.randint(35, 65),
                 "threat_summary": "Local analysis complete. " + random.choice(messages),
-                "immediate_actions": ["Stay aware of your surroundings", "Keep phone accessible", "Share location with trusted contact"],
+                "immediate_actions": random.choice(actions_lists),
                 "sos_recommended": False,
-                "safe_zones_advice": "Move to well-lit, populated areas",
-                "aria_message": response_text[:300] if "ARIA Guardian Online" not in response_text else random.choice(messages)
+                "safe_zones_advice": random.choice(advice_lists),
+                "aria_message": random.choice(messages)
             }
 
         log_audit(current_user.id, 'ai_threat_analysis', ip_address=request.remote_addr)
@@ -384,13 +397,30 @@ Respond ONLY with valid JSON."""
                 "Safety score is average. Travel with a companion if possible.",
                 "Current conditions look standard. Keep 'Safe Walk' enabled."
             ]
+            factors_lists = [
+                ["Limited visibility", "Reduced foot traffic", "Isolated patches"],
+                ["High historical incident rate", "Poor street lighting"],
+                ["Sparse population density at this hour", "Distance from safe zones"],
+                ["Recent community alerts in this sector", "Lack of public transport"],
+            ]
+            precautions_lists = [
+                ["Share live location", "Keep SOS ready", "Travel with company"],
+                ["Avoid shortcuts", "Trust your gut feelings", "Book a verified cab"],
+                ["Walk briskly", "Do not use headphones", "Keep your hands free"],
+            ]
+            windows = [
+                "Prefer daytime travel (8AM-7PM)",
+                "Best to travel between 9AM and 5PM",
+                "Avoid the 11PM - 4AM bracket",
+                "Travel safely before sunset"
+            ]
             prediction = {
                 "predicted_risk": random.choice(["safe", "caution", "caution"]),
                 "safety_score": random.randint(55, 75),
-                "peak_risk_hours": ["22:00", "02:00"],
-                "risk_factors": ["Limited visibility", "Reduced foot traffic", "Isolated patches"],
-                "safe_travel_window": "Prefer daytime travel (8AM-7PM)",
-                "precautions": ["Share live location", "Keep SOS ready", "Travel with company"],
+                "peak_risk_hours": [f"{random.randint(20,23)}:00", f"0{random.randint(1,4)}:00"],
+                "risk_factors": random.choice(factors_lists),
+                "safe_travel_window": random.choice(windows),
+                "precautions": random.choice(precautions_lists),
                 "confidence": random.choice(["medium", "high"]),
                 "aria_prediction": random.choice(predictions)
             }
