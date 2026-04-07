@@ -609,6 +609,158 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 .stc{position:relative}
 .st-ring{position:absolute;top:12px;right:12px;width:32px;height:32px;opacity:.3}
 .st-ring circle{fill:none;stroke-width:2;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1.5s cubic-bezier(.22,1,.36,1)}
+
+/* ═══════════════════════════════════════════════════════════════
+   v8 — NUCLEAR BOMB: MAXIMUM VISUAL DESTRUCTION
+   Animated gradient mesh, orbit rings, neon borders, scroll zoom,
+   glassmorphism, horizontal parallax, 3D transforms, MAXIMUM GLOW
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── ANIMATED GRADIENT MESH (Stripe-style) ── */
+.gradient-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.gm-blob{position:absolute;border-radius:50%;filter:blur(100px);will-change:transform;mix-blend-mode:screen}
+.gm-blob.gm1{width:50vw;height:50vw;max-width:700px;max-height:700px;top:-15%;left:-10%;background:radial-gradient(circle,rgba(139,92,246,.4),transparent 70%);animation:gmFloat1 18s ease-in-out infinite}
+.gm-blob.gm2{width:45vw;height:45vw;max-width:600px;max-height:600px;top:20%;right:-12%;background:radial-gradient(circle,rgba(255,59,59,.35),transparent 70%);animation:gmFloat2 22s ease-in-out infinite}
+.gm-blob.gm3{width:55vw;height:55vw;max-width:800px;max-height:800px;bottom:-20%;left:20%;background:radial-gradient(circle,rgba(34,211,238,.3),transparent 70%);animation:gmFloat3 20s ease-in-out infinite}
+.gm-blob.gm4{width:40vw;height:40vw;max-width:550px;max-height:550px;top:50%;left:60%;background:radial-gradient(circle,rgba(52,211,153,.25),transparent 70%);animation:gmFloat4 16s ease-in-out infinite}
+@keyframes gmFloat1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(15vw,10vh) scale(1.2)}66%{transform:translate(-5vw,20vh) scale(.9)}}
+@keyframes gmFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-12vw,15vh) scale(1.15)}66%{transform:translate(8vw,-10vh) scale(.85)}}
+@keyframes gmFloat3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(10vw,-12vh) scale(1.1)}66%{transform:translate(-8vw,8vh) scale(.95)}}
+@keyframes gmFloat4{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-15vw,-8vh) scale(1.2)}66%{transform:translate(12vw,12vh) scale(.88)}}
+
+/* ── HERO ORBIT RINGS ── */
+.hero-orbits{position:absolute;inset:0;z-index:1;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.hero-ring{position:absolute;border-radius:50%;border:1px solid;animation:ringRot linear infinite}
+.hero-ring:nth-child(1){width:300px;height:300px;border-color:rgba(139,92,246,.2);animation-duration:25s}
+.hero-ring:nth-child(2){width:500px;height:500px;border-color:rgba(255,59,59,.15);animation-duration:35s;animation-direction:reverse}
+.hero-ring:nth-child(3){width:700px;height:700px;border-color:rgba(34,211,238,.1);animation-duration:45s}
+.hero-ring::after{content:'';position:absolute;width:8px;height:8px;border-radius:50%;top:-4px;left:50%;transform:translateX(-50%)}
+.hero-ring:nth-child(1)::after{background:var(--accent2);box-shadow:0 0 20px var(--accent2),0 0 40px rgba(139,92,246,.4)}
+.hero-ring:nth-child(2)::after{background:var(--red);box-shadow:0 0 20px var(--red),0 0 40px rgba(255,59,59,.4)}
+.hero-ring:nth-child(3)::after{background:var(--cyan);box-shadow:0 0 20px var(--cyan),0 0 40px rgba(34,211,238,.4)}
+@keyframes ringRot{to{transform:rotate(360deg)}}
+
+/* ── HERO ORB BOOSTED ── */
+.hero-orb{width:800px!important;height:800px!important;background:conic-gradient(from 0deg,rgba(139,92,246,.4),rgba(255,59,59,.35),rgba(34,211,238,.3),rgba(52,211,153,.2),rgba(244,114,182,.3),rgba(251,191,36,.2),rgba(139,92,246,.4))!important;filter:blur(100px)!important}
+
+/* ── HERO TEXT NEON GLOW ── */
+.hero-h1 .ln-1{text-shadow:0 0 80px rgba(255,255,255,.15),0 0 160px rgba(139,92,246,.1);color:#fff!important;-webkit-text-fill-color:#fff!important}
+.hero-h1 .ch{color:#fff!important}
+.hero-pill{box-shadow:0 0 30px rgba(255,59,59,.15),0 0 60px rgba(255,59,59,.06)!important;border-color:rgba(255,59,59,.35)!important;background:rgba(255,59,59,.18)!important}
+.hero-p{color:rgba(255,255,255,.72)!important}
+.hero-stats .hs-v{font-size:3rem!important}
+.hero-stats .hs-l{color:rgba(255,255,255,.55)!important}
+
+/* ── SCROLL ZOOM REVEAL ── */
+.rv-zoom{opacity:0;transform:scale(.85);filter:blur(14px);transition:all 1s cubic-bezier(.22,1,.36,1)}
+.rv-zoom.vis{opacity:1;transform:scale(1);filter:blur(0)}
+
+/* ── SECTION BACKGROUNDS CRANKED TO MAX ── */
+.stats{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.12) 25%,rgba(139,92,246,.22) 50%,rgba(139,92,246,.12) 75%,var(--bg) 100%)!important}
+.show{background:linear-gradient(180deg,var(--bg) 0%,rgba(255,59,59,.1) 25%,rgba(255,59,59,.18) 50%,rgba(255,59,59,.1) 75%,var(--bg) 100%)!important}
+.how{background:linear-gradient(180deg,var(--bg) 0%,rgba(52,211,153,.08) 25%,rgba(52,211,153,.16) 50%,rgba(52,211,153,.08) 75%,var(--bg) 100%)!important}
+#features{background:linear-gradient(180deg,var(--bg) 0%,rgba(96,165,250,.08) 20%,rgba(139,92,246,.16) 50%,rgba(96,165,250,.08) 80%,var(--bg) 100%)!important}
+.tech{background:linear-gradient(180deg,var(--bg) 0%,rgba(34,211,238,.1) 25%,rgba(34,211,238,.18) 50%,rgba(34,211,238,.1) 75%,var(--bg) 100%)!important}
+.dash{background:linear-gradient(180deg,var(--bg) 0%,rgba(139,92,246,.08) 25%,rgba(255,59,59,.12) 50%,rgba(139,92,246,.08) 75%,var(--bg) 100%)!important}
+.testi{background:linear-gradient(180deg,var(--bg) 0%,rgba(251,191,36,.06) 25%,rgba(251,191,36,.12) 50%,rgba(251,191,36,.06) 75%,var(--bg) 100%)!important}
+.cta{background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(255,59,59,.2) 25%,rgba(96,165,250,.16) 50%,rgba(34,211,238,.14) 75%,rgba(52,211,153,.18))!important}
+
+/* ── GLASS CARD NEON BORDERS ── */
+.stc,.bc,.hwc,.tkc,.tc{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 32px rgba(0,0,0,.3)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
+
+/* ── ANIMATED RAINBOW BORDER on feature cards ── */
+.bc{position:relative;z-index:1}
+.bc::after{content:''!important;position:absolute!important;inset:-1px!important;border-radius:21px!important;padding:1px!important;background:conic-gradient(from var(--angle,0deg),rgba(var(--bc-c,139,92,246),.5),transparent 40%,rgba(var(--bc-c,139,92,246),.3) 60%,transparent 80%)!important;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0)!important;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0)!important;-webkit-mask-composite:xor!important;mask-composite:exclude!important;animation:rotateBorder 5s linear infinite!important;z-index:-1!important;pointer-events:none!important}
+
+/* ── STAT CARDS — BIGGER NUMBERS ── */
+.stv{font-size:4rem!important;letter-spacing:-.04em}
+.stc-i{font-size:2.8rem!important}
+.stc{padding:3.2rem 2rem!important}
+
+/* ── NEON LINE DIVIDERS ── */
+.divider{height:3px!important;position:relative;overflow:visible!important}
+.divider::before{content:'';position:absolute;top:-4px;left:10%;right:10%;height:12px;background:inherit;filter:blur(12px);opacity:.6;border-radius:50%}
+
+/* ── TRUST SECTION GLOW ── */
+.trust{background:linear-gradient(180deg,rgba(139,92,246,.06),rgba(139,92,246,.12),rgba(139,92,246,.06))!important;border-color:rgba(139,92,246,.2)!important}
+.trust-n{font-size:2.2rem!important;text-shadow:0 0 40px rgba(139,92,246,.3)}
+.trust-sep{background:linear-gradient(180deg,transparent,rgba(139,92,246,.5),transparent)!important}
+
+/* ── CTA SECTION — ACTUALLY BRIGHT ── */
+.cta::before{background:radial-gradient(ellipse at 50% 50%,rgba(255,59,59,.25),rgba(139,92,246,.18) 40%,transparent 60%)!important}
+.cta::after{background:radial-gradient(ellipse at 30% 70%,rgba(34,211,238,.15),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(244,114,182,.12),transparent 50%)!important}
+.cta .eye{background:rgba(255,59,59,.18)!important;border-color:rgba(255,59,59,.35)!important;color:var(--red2)!important}
+.cta-h{font-size:clamp(3.5rem,7vw,5.5rem)!important}
+.cta-p{color:rgba(255,255,255,.65)!important;font-size:1.12rem!important}
+
+/* ── LOADING SCREEN ENHANCED ── */
+.loader{background:radial-gradient(ellipse at center,#0f0f2e,#0a0a1a 70%)!important}
+.loader-title{font-size:3rem!important;letter-spacing:.6em!important;background:linear-gradient(135deg,#fff,#c084fc,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.loader-title span{-webkit-text-fill-color:transparent}
+.loader-sub{color:rgba(255,255,255,.55)!important;font-size:.65rem!important}
+
+/* ── BIGGER SECTION HEADINGS ── */
+.stit{font-size:clamp(3rem,5.5vw,4.8rem)!important}
+.ssub{font-size:1.08rem!important;color:rgba(255,255,255,.62)!important;max-width:580px!important}
+.eye{font-size:.65rem!important;padding:10px 28px!important;background:rgba(139,92,246,.16)!important;border-color:rgba(139,92,246,.3)!important}
+
+/* ── TERMINAL — BRIGHTER CODE ── */
+.tw-body{background:rgba(8,8,20,.95)!important}
+.tw-bar{background:rgba(255,255,255,.1)!important}
+.tc_{color:rgba(139,92,246,.6)!important}
+.tk{color:#c084fc!important}
+.ts{color:#4ade80!important}
+.tf{color:#93c5fd!important}
+.tn{color:#fcd34d!important}
+.to{color:rgba(255,255,255,.8)!important}
+.tw-border{box-shadow:0 60px 140px rgba(0,0,0,.7),0 0 120px rgba(139,92,246,.12)!important}
+
+/* ── PHONE GLOW BOOST ── */
+.ph-glow{background:radial-gradient(ellipse at 50% 40%,rgba(255,59,59,.45) 0%,rgba(139,92,246,.3) 35%,transparent 60%)!important}
+.ph-f{box-shadow:0 80px 180px rgba(0,0,0,.9),0 0 200px rgba(139,92,246,.2),0 0 100px rgba(255,59,59,.1),inset 0 1px 0 rgba(255,255,255,.1)!important}
+
+/* ── DASHBOARD — NEON GRID ── */
+.dash-bdr{box-shadow:0 80px 160px rgba(0,0,0,.6),0 0 140px rgba(139,92,246,.1)!important}
+.dash-cv{font-size:2.8rem!important}
+.dash-map{min-height:250px!important}
+.md{width:10px!important;height:10px!important}
+
+/* ── FEATURE LIST ITEMS GLOW ── */
+.sf{background:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.15)!important;backdrop-filter:blur(8px)!important}
+.sf:hover{background:rgba(255,255,255,.16)!important;border-color:rgba(255,255,255,.25)!important;box-shadow:0 0 40px rgba(var(--sfc,255,59,59),.12),0 15px 40px rgba(0,0,0,.3)!important}
+
+/* ── BACK TO TOP — NEON ── */
+.btt{background:rgba(139,92,246,.18)!important;border-color:rgba(139,92,246,.35)!important;box-shadow:0 0 30px rgba(139,92,246,.15)!important}
+.btt:hover{background:rgba(139,92,246,.4)!important;box-shadow:0 0 50px rgba(139,92,246,.3)!important}
+
+/* ── SCROLL PROGRESS — THICKER ── */
+.sprog{height:4px!important;box-shadow:0 0 25px var(--accent2),0 0 50px rgba(239,68,68,.4),0 0 80px rgba(34,211,238,.2)!important}
+
+/* ── FOOTER GLOW ── */
+.foot{border-top:2px solid transparent!important;border-image:linear-gradient(90deg,transparent,rgba(139,92,246,.4),rgba(255,59,59,.3),rgba(34,211,238,.3),transparent) 1!important}
+.ftbn{background:linear-gradient(135deg,#fff,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.3rem!important}
+
+/* ── MARQUEE GLOW ── */
+.mq{background:linear-gradient(90deg,rgba(139,92,246,.04),rgba(255,59,59,.03),rgba(34,211,238,.04))!important;border-top:1px solid rgba(139,92,246,.15)!important;border-bottom:1px solid rgba(139,92,246,.15)!important}
+.mqi span{color:rgba(255,255,255,.55)!important}
+.mqi svg{opacity:.8!important}
+
+/* ── HOW-IT-WORKS — BIGGER STEP NUMBERS ── */
+.hw-n{font-size:5rem!important}
+.hw-i{width:72px!important;height:72px!important}
+.hwc h3{font-size:1.3rem!important}
+
+/* ── TECH CARDS — BIGGER EMOJIS ── */
+.tk-i{font-size:3.2rem!important}
+.tk-n{font-size:1rem!important;font-weight:800!important}
+.tkc{padding:2.8rem 1.8rem!important}
+
+@media(max-width:768px){
+  .hero-orbits{display:none}
+  .gradient-mesh{opacity:.5}
+  .stv{font-size:2.8rem!important}
+  .hero-orb{width:400px!important;height:400px!important}
+}
 </style>
 {% endblock %}
 
@@ -628,6 +780,14 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
   <div class="loader-title" id="loaderTitle">RAKSHAK</div>
   <div class="loader-sub">INITIALIZING SECURITY PROTOCOLS</div>
   <div class="loader-bar"><i></i></div>
+</div>
+
+<!-- ═══════ ANIMATED GRADIENT MESH (Stripe-style) ═══════ -->
+<div class="gradient-mesh">
+  <div class="gm-blob gm1"></div>
+  <div class="gm-blob gm2"></div>
+  <div class="gm-blob gm3"></div>
+  <div class="gm-blob gm4"></div>
 </div>
 
 <!-- ═══════ BACKGROUNDS ═══════ -->
@@ -658,6 +818,11 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 <!-- ═══════ HERO ═══════ -->
 <section class="hero" id="hero">
   <div class="hero-orb"></div>
+  <div class="hero-orbits">
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
+  </div>
   <div class="hero-in">
     <div class="hero-pill"><span class="hero-dot"></span> AI-POWERED SAFETY &mdash; ALWAYS WATCHING</div>
     <h1 class="hero-h1">
@@ -739,7 +904,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
     <div class="term-badges"><span class="tb">Python</span><span class="tb">Flask</span><span class="tb">SocketIO</span><span class="tb">TiDB</span><span class="tb">AI/ML</span></div>
   </div>
   <div class="term-vis rv">
-    <div class="tw-border">
+    <div class="tw-border rv-zoom">
       <div class="tw-inner">
         <div class="tw-bar"><span class="tw-dot r"></span><span class="tw-dot y"></span><span class="tw-dot g"></span><span class="tw-title">rakshak_engine.py</span></div>
         <div class="tw-body" id="termBody">
@@ -781,7 +946,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
       </div>
     </div>
     <div class="show-v rv">
-      <div class="ph-w" id="phoneWrap">
+      <div class="ph-w rv-zoom" id="phoneWrap">
         <div class="ph-glow"></div>
         <div class="ph-f" id="phoneFrame">
           <div class="ph-s">
@@ -856,7 +1021,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
 <!-- ═══════ DASHBOARD MOCKUP ═══════ -->
 <section class="dash">
   <div class="shd rv"><span class="eye">Admin Command Center</span><h2 class="stit">Real-time <span class="grad">threat dashboard.</span></h2><p class="ssub">Monitor every user, every zone, every alert — all in one place.</p></div>
-  <div class="dash-bdr rv">
+  <div class="dash-bdr rv rv-zoom">
     <div class="dash-in">
       <div class="dash-top"><div class="dash-top-l"><div class="dash-dot"></div><span class="dash-tt">RAKSHAK COMMAND CENTER</span></div><div class="dash-badge">2 ACTIVE ALERTS</div></div>
       <div class="dash-grid">
@@ -947,7 +1112,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
       <a href="#" class="ftl"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Terms of Service</a>
     </div>
   </div>
-  <div class="ftbot"><span class="ftcpy">&copy; 2026 RAKSHAK &middot; Made in India &#127470;&#127475;</span><span class="ftver">v5.0 &middot; RENDER</span></div>
+  <div class="ftbot"><span class="ftcpy">&copy; 2026 RAKSHAK &middot; Made in India &#127470;&#127475;</span><span class="ftver">v8.0 &middot; RENDER</span></div>
 </footer>
 
 <a href="#hero" class="btt" id="btt"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></a>
@@ -1155,6 +1320,62 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
 (function(){
   const nb=document.querySelector('.navbar-rakshak');
   if(nb)addEventListener('scroll',()=>nb.classList.toggle('scrolled',scrollY>40),{passive:true});
+})();
+
+/* ═══ 15. SCROLL-ZOOM REVEAL for big sections ═══ */
+(function(){
+  const zio=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('vis');zio.unobserve(e.target)}
+  })},{threshold:.1,rootMargin:'0px 0px -80px 0px'});
+  document.querySelectorAll('.rv-zoom').forEach(el=>zio.observe(el));
+})();
+
+/* ═══ 16. CLICK RIPPLE on page ═══ */
+(function(){
+  if(matchMedia('(max-width:768px)').matches)return;
+  document.addEventListener('click',e=>{
+    const r=document.createElement('div');
+    Object.assign(r.style,{
+      position:'fixed',left:e.clientX+'px',top:e.clientY+'px',
+      width:'0',height:'0',borderRadius:'50%',
+      background:'radial-gradient(circle,rgba(139,92,246,.3),rgba(255,59,59,.15),transparent)',
+      transform:'translate(-50%,-50%)',pointerEvents:'none',zIndex:'9999',
+      transition:'all .6s cubic-bezier(.22,1,.36,1)',opacity:'1'
+    });
+    document.body.appendChild(r);
+    requestAnimationFrame(()=>{
+      r.style.width='200px';r.style.height='200px';r.style.opacity='0';
+    });
+    setTimeout(()=>r.remove(),700);
+  });
+})();
+
+/* ═══ 17. HORIZONTAL PARALLAX on gradient mesh ═══ */
+(function(){
+  const blobs=document.querySelectorAll('.gm-blob');if(!blobs.length)return;
+  addEventListener('scroll',()=>{
+    const sy=scrollY;
+    blobs.forEach((b,i)=>{
+      const sx=(i%2===0?1:-1)*sy*.03;
+      const extra=b.style.animation?'':'';
+      b.style.marginLeft=sx+'px';
+      b.style.marginTop=(sy*(.01+i*.005))+'px';
+    });
+  },{passive:true});
+})();
+
+/* ═══ 18. SECTION TILT on mousemove (subtle) ═══ */
+(function(){
+  if(matchMedia('(max-width:1024px)').matches)return;
+  document.querySelectorAll('.stats-g,.bento,.how-g,.tech-g').forEach(g=>{
+    g.addEventListener('mousemove',e=>{
+      const r=g.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      g.style.transform=`perspective(2000px) rotateX(${y*-3}deg) rotateY(${x*3}deg)`;
+    });
+    g.addEventListener('mouseleave',()=>{g.style.transform='';});
+  });
 })();
 </script>
 {% endblock %}
