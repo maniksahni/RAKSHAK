@@ -4,7 +4,7 @@ import logging
 import requests
 import random
 from datetime import datetime
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, session
 from flask_login import login_required, current_user
 from models import query_db, log_audit
 
@@ -44,6 +44,18 @@ def _call_gemini(messages: list, max_tokens: int = 512) -> str:
     user_msg = messages[-1]['parts'][0]['text'] if messages else ''
     return _fallback_response(user_msg)
 
+def _pick_unique(key: str, lst: list):
+    """Pick a random item from lst, ensuring it's different from the last request if possible."""
+    last_val = session.get(key)
+    # Need to compare strings since lists might be serialized or mutated
+    avail = [x for x in lst if str(x) != last_val]
+    if not avail:
+        avail = lst
+    chosen = random.choice(avail)
+    session[key] = str(chosen)
+    session.modified = True
+    return chosen
+
 
 def _fallback_response(user_message: str) -> str:
     """Intelligent local fallback when Gemini API is unavailable."""
@@ -55,7 +67,7 @@ def _fallback_response(user_message: str) -> str:
             "🆘 **DANGER DETECTED**: System alert active. Do not panic. Keep your phone accessible and move to a safe zone if possible. Trigger SOS right now if someone is approaching you.",
             "🚨 **CRITICAL**: ARIA is standing by. If you feel scared, press the SOS button. We will alert nearby Guardian Angels and your trusted contacts immediately."
         ]
-        return random.choice(responses)
+        return _pick_unique('aria_help', responses)
     
     if any(w in msg for w in ['night', 'raat', 'dark', 'alone', 'akele']):
         responses = [
@@ -63,7 +75,7 @@ def _fallback_response(user_message: str) -> str:
             "🟡 **NIGHT PROTOCOL**: Always walk confidently. Keep your phone charged and avoid isolated shortcuts. RAKSHAK's Sentinel Audio monitor is secretly listening for distress sounds if you enable it.",
             "🌙 **NIGHT ADVISORY**: It's late. Please enable 'Safe Walk' mode so your guardian network knows your path. Stay in well-lit areas.",
         ]
-        return random.choice(responses)
+        return _pick_unique('aria_night', responses)
     
     if any(w in msg for w in ['route', 'safe path', 'safe road', 'kaunsa rasta']):
         responses = [
@@ -71,7 +83,7 @@ def _fallback_response(user_message: str) -> str:
             "🗺️ **ROUTE ADVICE**: Use the 'Danger Map' tab to check for red zones. Stick to crowded areas and main highways when possible.",
             "📍 **PATH CHECK**: Scanning... Stick to the main roads. Share your live location using 'Safe Walk' before you start moving."
         ]
-        return random.choice(responses)
+        return _pick_unique('aria_route', responses)
     
     responses = [
         "🛡️ **ARIA Guardian Online**\n\nI'm your AI safety companion. Ask me about: route safety, threat assessment, emergency procedures, or type your situation and I'll guide you. Remember: your Guardian Network is always one tap away.",
@@ -80,7 +92,7 @@ def _fallback_response(user_message: str) -> str:
         "🧠 **ARIA Guardian**: I am constantly learning from the Danger Zone map to keep you safe. How can I assist you right now?",
         "🛡️ **Status Green.** I am here to help. You can tell me if you're feeling unsafe or just want a route check."
     ]
-    return random.choice(responses)
+    return _pick_unique('aria_default', responses)
 
 
 def _build_context(user) -> str:
@@ -215,13 +227,13 @@ Respond ONLY with valid JSON."""
                 "Head towards areas with security personnel"
             ]
             analysis = {
-                "risk_level": random.choice(["safe", "caution", "caution"]),
+                "risk_level": _pick_unique('t_lvl', ["safe", "caution", "caution"]),
                 "risk_score": random.randint(35, 65),
-                "threat_summary": "Local analysis complete. " + random.choice(messages),
-                "immediate_actions": random.choice(actions_lists),
+                "threat_summary": "Local analysis complete. " + _pick_unique('t_sum', messages),
+                "immediate_actions": _pick_unique('t_act', actions_lists),
                 "sos_recommended": False,
-                "safe_zones_advice": random.choice(advice_lists),
-                "aria_message": random.choice(messages)
+                "safe_zones_advice": _pick_unique('t_adv', advice_lists),
+                "aria_message": _pick_unique('t_msg', messages)
             }
 
         log_audit(current_user.id, 'ai_threat_analysis', ip_address=request.remote_addr)
@@ -415,14 +427,14 @@ Respond ONLY with valid JSON."""
                 "Travel safely before sunset"
             ]
             prediction = {
-                "predicted_risk": random.choice(["safe", "caution", "caution"]),
+                "predicted_risk": _pick_unique('p_rsk', ["safe", "caution", "caution"]),
                 "safety_score": random.randint(55, 75),
                 "peak_risk_hours": [f"{random.randint(20,23)}:00", f"0{random.randint(1,4)}:00"],
-                "risk_factors": random.choice(factors_lists),
-                "safe_travel_window": random.choice(windows),
-                "precautions": random.choice(precautions_lists),
-                "confidence": random.choice(["medium", "high"]),
-                "aria_prediction": random.choice(predictions)
+                "risk_factors": _pick_unique('p_fac', factors_lists),
+                "safe_travel_window": _pick_unique('p_win', windows),
+                "precautions": _pick_unique('p_pre', precautions_lists),
+                "confidence": _pick_unique('p_con', ["medium", "high"]),
+                "aria_prediction": _pick_unique('p_ari', predictions)
             }
 
         return jsonify(
