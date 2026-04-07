@@ -1,6 +1,6 @@
 # ── RAKSHAK Production Dockerfile ─────────────────────────────────────────
 # Multi-stage, minimal, production-hardened
-# Works on: Render, Fly.io, AWS ECS, GCP Cloud Run, any Docker host
+# Works on: Railway, Render, Fly.io, AWS ECS, GCP Cloud Run, any Docker host
 
 FROM python:3.11-slim AS base
 

@@ -298,7 +298,7 @@ def create_app(config_name=None):
             misfire_grace_time=30,
         )
 
-        # ── Self-ping keep-alive (prevents Render free tier sleep) ───────
+        # ── Self-ping keep-alive (prevents Railway idle timeout) ──────────
         keep_alive_url = app.config.get('KEEP_ALIVE_URL', '')
         if keep_alive_url:
             def _keep_alive():
@@ -310,7 +310,7 @@ def create_app(config_name=None):
             scheduler.add_job(
                 _keep_alive,
                 trigger='interval',
-                seconds=600,  # ping every 10 min (Render sleeps at 15 min)
+                seconds=600,  # ping every 10 min to keep Railway alive
                 id='keep_alive',
                 replace_existing=True,
             )
