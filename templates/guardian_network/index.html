@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+{% block title %}Guardian Angel Network · RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+.gn-page { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Hero Banner ── */
+.gn-hero {
+  background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(16,185,129,0.06) 100%);
+  border: 1px solid rgba(139,92,246,0.15);
+  border-radius: 20px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.gn-hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.gn-hero-icon {
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(109,40,217,0.4));
+  border: 1.5px solid rgba(139,92,246,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 30px rgba(139,92,246,0.2);
+}
+.gn-hero-text h1 {
+  font-size: 1.3rem; font-weight: 900;
+  margin: 0 0 4px;
+  background: linear-gradient(135deg, #fff, #c4b5fd);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.gn-hero-text p {
+  font-size: 0.78rem; color: rgba(255,255,255,0.45);
+  margin: 0; line-height: 1.6; max-width: 480px;
+}
+.gn-hero-stats {
+  margin-left: auto;
+  display: flex; gap: 20px;
+  flex-shrink: 0;
+}
+.gn-hero-stat {
+  text-align: center;
+}
+.gn-hero-stat .num {
+  font-size: 1.6rem; font-weight: 900;
+  color: #8b5cf6;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(139,92,246,0.4);
+}
+.gn-hero-stat .lbl {
+  font-size: 0.56rem; letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.3); font-weight: 700;
+  margin-top: 3px;
+}
+
+/* ── Main Grid ── */
+.gn-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+
+/* ── Toggle Card ── */
+.gn-toggle-card {
+  background: rgba(8,6,18,0.95);
+  border: 1px solid rgba(139,92,246,0.15);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.gn-card-header {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.08), transparent);
+  border-bottom: 1px solid rgba(139,92,246,0.08);
+  display: flex; align-items: center; gap: 10px;
+}
+.gn-card-header h2 {
+  font-size: 0.82rem; font-weight: 800;
+  letter-spacing: 0.07em; color: rgba(255,255,255,0.85);
+  margin: 0;
+}
+.gn-card-header .subtext {
+  font-size: 0.62rem; color: rgba(255,255,255,0.3); margin: 0;
+}
+.gn-card-body { padding: 20px; }
+
+/* ── Toggle Switch ── */
+.gn-toggle-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+.guardian-toggle { position: relative; width: 56px; height: 28px; flex-shrink: 0; }
+.guardian-toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  left: 3px; top: 3px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+input:checked + .toggle-slider {
+  background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(109,40,217,0.7));
+  border-color: rgba(139,92,246,0.6);
+  box-shadow: 0 0 16px rgba(139,92,246,0.3);
+}
+input:checked + .toggle-slider::before {
+  transform: translateX(28px);
+  background: #fff;
+}
+.gn-toggle-text h3 {
+  font-size: 0.88rem; font-weight: 800; color: #fff; margin: 0 0 2px;
+}
+.gn-toggle-text p {
+  font-size: 0.7rem; color: rgba(255,255,255,0.4); margin: 0; line-height: 1.5;
+}
+
+/* ── Radius Slider ── */
+.gn-radius-section { margin-bottom: 14px; }
+.gn-radius-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.7rem; color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+}
+.gn-radius-label span { color: #c4b5fd; font-weight: 700; }
+input[type="range"] {
+  width: 100%; height: 4px;
+  background: rgba(139,92,246,0.15);
+  border-radius: 4px; outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  box-shadow: 0 0 8px rgba(139,92,246,0.5);
+  cursor: pointer;
+}
+
+/* ── Status display ── */
+.gn-status-display {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  background: rgba(139,92,246,0.06);
+  border: 1px solid rgba(139,92,246,0.15);
+  border-radius: 10px;
+  font-size: 0.75rem; color: rgba(255,255,255,0.6);
+}
+.gn-status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.gn-status-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16,185,129,0.6);
+  animation: ariaPulse 2s infinite;
+}
+@keyframes ariaPulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(0.8); }
+}
+
+/* ── Nearby Map viz ── */
+.gn-map-card {
+  background: rgba(8,6,18,0.95);
+  border: 1px solid rgba(139,92,246,0.15);
+  border-radius: 18px; overflow: hidden;
+}
+#guardian-map {
+  width: 100%; height: 320px;
+  background: linear-gradient(135deg, rgba(6,4,14,1), rgba(12,8,24,1));
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.map-placeholder {
+  text-align: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.75rem;
+}
+.map-placeholder i { font-size: 2rem; display: block; margin-bottom: 8px; color: rgba(139,92,246,0.3); }
+
+/* ── Guardian list ── */
+.gn-list-card {
+  background: rgba(8,6,18,0.95);
+  border: 1px solid rgba(139,92,246,0.15);
+  border-radius: 18px; overflow: hidden;
+}
+.gn-guardian-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+.gn-guardian-item:hover { background: rgba(139,92,246,0.04); }
+.gn-guardian-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(109,40,217,0.35));
+  border: 1px solid rgba(139,92,246,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.gn-guardian-info h4 {
+  font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.8);
+  margin: 0 0 2px;
+}
+.gn-guardian-info p {
+  font-size: 0.63rem; color: rgba(255,255,255,0.35); margin: 0;
+}
+.gn-guardian-dist {
+  margin-left: auto;
+  font-size: 0.68rem; font-weight: 700;
+  color: #8b5cf6;
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.2);
+  padding: 3px 10px; border-radius: 20px;
+  white-space: nowrap;
+}
+.gn-empty {
+  padding: 32px;
+  text-align: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.78rem;
+}
+.gn-empty i { font-size: 2rem; display: block; margin-bottom: 8px; color: rgba(139,92,246,0.2); }
+
+/* ── How it works ── */
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+.how-step {
+  text-align: center;
+  padding: 14px 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+}
+.how-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(139,92,246,0.15);
+  border: 1px solid rgba(139,92,246,0.3);
+  font-size: 0.75rem; font-weight: 900; color: #c4b5fd;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px;
+}
+.how-step p { font-size: 0.68rem; color: rgba(255,255,255,0.45); margin: 0; line-height: 1.5; }
+.how-step .step-icon { font-size: 1.3rem; margin-bottom: 6px; }
+
+@media (max-width: 900px) {
+  .gn-grid { grid-template-columns: 1fr; }
+  .gn-hero-stats { display: none; }
+  .how-steps { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="gn-page">
+
+  <!-- Hero Banner -->
+  <div class="gn-hero">
+    <div class="gn-hero-icon">🛡️</div>
+    <div class="gn-hero-text">
+      <h1>Guardian Angel Network</h1>
+      <p>Opt-in as a Guardian Angel — jab koi user 1km range mein SOS trigger kare, tum real-time alert paoge. Ek community jahan hum sab ek doosre ke liye shield hain.</p>
+    </div>
+    <div class="gn-hero-stats">
+      <div class="gn-hero-stat">
+        <div class="num" id="active-count">--</div>
+        <div class="lbl">ACTIVE NOW</div>
+      </div>
+      <div class="gn-hero-stat">
+        <div class="num" id="network-count">--</div>
+        <div class="lbl">TOTAL NETWORK</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="gn-grid">
+
+    <!-- Left: Toggle + Map -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Guardian Toggle Card -->
+      <div class="gn-toggle-card">
+        <div class="gn-card-header">
+          <i class="bi bi-shield-shaded" style="color:#8b5cf6;font-size:1rem;"></i>
+          <div>
+            <h2>MY GUARDIAN STATUS</h2>
+            <p class="subtext">Toggle to join or leave the Guardian Angel Network</p>
+          </div>
+        </div>
+        <div class="gn-card-body">
+          <div class="gn-toggle-section">
+            <label class="guardian-toggle">
+              <input type="checkbox" id="guardian-toggle" onchange="toggleGuardian(this)">
+              <span class="toggle-slider"></span>
+            </label>
+            <div class="gn-toggle-text">
+              <h3 id="toggle-title">Off-Duty</h3>
+              <p id="toggle-desc">Enable to become a Guardian Angel and protect others in your area</p>
+            </div>
+          </div>
+
+          <div class="gn-radius-section">
+            <div class="gn-radius-label">
+              Alert Radius <span id="radius-display">1.0 km</span>
+            </div>
+            <input type="range" min="0.5" max="3" step="0.5" value="1"
+                   id="radius-slider" oninput="updateRadius(this.value)"
+                   style="margin:0;">
+          </div>
+
+          <div class="gn-status-display" id="gn-status-display">
+            <div class="gn-status-dot" id="gn-status-dot"></div>
+            <span id="gn-status-text">Loading status...</span>
+          </div>
+
+          <!-- How it works -->
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="step-icon">📍</div>
+              <div class="how-step-num">1</div>
+              <p>Toggle ON aur apni location share karo</p>
+            </div>
+            <div class="how-step">
+              <div class="step-icon">🚨</div>
+              <div class="how-step-num">2</div>
+              <p>Nearby SOS trigger hone pe instant alert milega</p>
+            </div>
+            <div class="how-step">
+              <div class="step-icon">🤝</div>
+              <div class="how-step-num">3</div>
+              <p>Decide karo — physically help karna hai ya nahi</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nearby Guardians on Map -->
+      <div class="gn-map-card">
+        <div class="gn-card-header">
+          <i class="bi bi-map-fill" style="color:#8b5cf6;font-size:1rem;"></i>
+          <div>
+            <h2>GUARDIAN RADAR</h2>
+            <p class="subtext">Active guardians near you (anonymized)</p>
+          </div>
+        </div>
+        <div id="guardian-map">
+          <div class="map-placeholder">
+            <i class="bi bi-broadcast"></i>
+            Enable Guardian Mode to see nearby angels
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Nearby Guardian List -->
+    <div>
+      <div class="gn-list-card">
+        <div class="gn-card-header">
+          <i class="bi bi-people-fill" style="color:#8b5cf6;font-size:1rem;"></i>
+          <div>
+            <h2>NEARBY ANGELS</h2>
+            <p class="subtext">Active within 2km</p>
+          </div>
+        </div>
+        <div id="guardian-list">
+          <div class="gn-empty">
+            <i class="bi bi-broadcast"></i>
+            Enable location to see nearby guardians
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let userLoc = null;
+let guardianActive = false;
+let currentRadius = 1.0;
+
+// ── On Load ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  loadStats();
+  loadStatus();
+  // Get location silently
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      loadNearby();
+    }, () => {}, { timeout: 8000, enableHighAccuracy: true });
+  }
+});
+
+// ── Network Stats ────────────────────────────────────────
+async function loadStats() {
+  try {
+    const res = await fetch('/guardian/stats');
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('active-count').textContent = data.stats.active_guardians || 0;
+      document.getElementById('network-count').textContent = data.stats.total_network || 0;
+    }
+  } catch (e) {}
+}
+
+// ── Load Status ──────────────────────────────────────────
+async function loadStatus() {
+  try {
+    const res = await fetch('/guardian/status');
+    const data = await res.json();
+    if (data.success) {
+      guardianActive = data.guardian_active || false;
+      const toggle = document.getElementById('guardian-toggle');
+      toggle.checked = guardianActive;
+      updateToggleUI(guardianActive, data.nearby_count || 0);
+      if (data.radius_km) {
+        currentRadius = data.radius_km;
+        document.getElementById('radius-slider').value = data.radius_km;
+        document.getElementById('radius-display').textContent = data.radius_km.toFixed(1) + ' km';
+      }
+    }
+  } catch (e) {
+    document.getElementById('gn-status-text').textContent = 'Status unavailable';
+  }
+}
+
+// ── Toggle Guardian ──────────────────────────────────────
+async function toggleGuardian(checkbox) {
+  if (checkbox.checked) {
+    // Opt in — need location
+    if (!userLoc) {
+      try {
+        const pos = await new Promise((res, rej) =>
+          navigator.geolocation.getCurrentPosition(res, rej, { timeout: 8000, enableHighAccuracy: true })
+        );
+        userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      } catch (e) {
+        checkbox.checked = false;
+        alert('Location access required to become a Guardian Angel. Please enable GPS.');
+        return;
+      }
+    }
+    try {
+      const res = await fetch('/guardian/opt-in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          latitude: userLoc.lat, longitude: userLoc.lng,
+          radius_km: currentRadius
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        guardianActive = true;
+        updateToggleUI(true, data.nearby_guardians || 0);
+        loadNearby();
+        showToast('🛡️ You are now a Guardian Angel!', 'success');
+      }
+    } catch (e) {
+      checkbox.checked = false;
+      showToast('Failed to activate guardian mode', 'error');
+    }
+  } else {
+    // Opt out
+    try {
+      await fetch('/guardian/opt-out', { method: 'POST' });
+      guardianActive = false;
+      updateToggleUI(false, 0);
+      showToast('Guardian Angel mode deactivated', 'info');
+    } catch (e) {}
+  }
+}
+
+function updateToggleUI(active, nearbyCount) {
+  const dot = document.getElementById('gn-status-dot');
+  const text = document.getElementById('gn-status-text');
+  const title = document.getElementById('toggle-title');
+  const desc = document.getElementById('toggle-desc');
+
+  if (active) {
+    dot.classList.add('online');
+    title.textContent = '🛡️ On Duty — Guardian Active';
+    desc.textContent = `You are protecting your area. ${nearbyCount} other angel${nearbyCount !== 1 ? 's' : ''} active nearby.`;
+    text.textContent = `Broadcasting presence · ${currentRadius.toFixed(1)}km alert radius`;
+  } else {
+    dot.classList.remove('online');
+    title.textContent = 'Off-Duty';
+    desc.textContent = 'Enable to become a Guardian Angel and protect others in your area';
+    text.textContent = 'Not broadcasting — stealth mode';
+  }
+}
+
+function updateRadius(val) {
+  currentRadius = parseFloat(val);
+  document.getElementById('radius-display').textContent = val + ' km';
+  // Re-opt-in with new radius if active
+  if (guardianActive && userLoc) {
+    fetch('/guardian/opt-in', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ latitude: userLoc.lat, longitude: userLoc.lng, radius_km: currentRadius })
+    }).catch(() => {});
+  }
+}
+
+// ── Load Nearby Guardians ────────────────────────────────
+async function loadNearby() {
+  if (!userLoc) return;
+  try {
+    const res = await fetch('/guardian/nearby', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ latitude: userLoc.lat, longitude: userLoc.lng, radius_km: 2.0 })
+    });
+    const data = await res.json();
+    renderGuardianList(data.guardians || []);
+    renderGuardianMap(data.guardians || []);
+  } catch (e) {}
+}
+
+// ── Render List ──────────────────────────────────────────
+function renderGuardianList(guardians) {
+  const el = document.getElementById('guardian-list');
+  const icons = ['🦸', '🛡️', '⚡', '🌟', '💎'];
+  if (!guardians.length) {
+    el.innerHTML = `<div class="gn-empty">
+      <i class="bi bi-person-check"></i>
+      No guardians nearby right now.<br>
+      <span style="font-size:0.65rem;color:rgba(255,255,255,0.2);">Be the first angel in your area!</span>
+    </div>`;
+    return;
+  }
+  el.innerHTML = guardians.map((g, i) => `
+    <div class="gn-guardian-item">
+      <div class="gn-guardian-avatar">${icons[i % icons.length]}</div>
+      <div class="gn-guardian-info">
+        <h4>Guardian Angel</h4>
+        <p>Active ${g.active_since_min || 0} min · On duty</p>
+      </div>
+      <div class="gn-guardian-dist">${g.distance_display}</div>
+    </div>`).join('');
+}
+
+// ── Render Map (Canvas-based radar) ─────────────────────
+function renderGuardianMap(guardians) {
+  const mapEl = document.getElementById('guardian-map');
+  mapEl.innerHTML = '';
+  const canvas = document.createElement('canvas');
+  canvas.width = mapEl.clientWidth || 500;
+  canvas.height = 320;
+  canvas.style.width = '100%';
+  canvas.style.height = '320px';
+  mapEl.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+  const maxR = Math.min(cx, cy) * 0.85;
+
+  // Background
+  ctx.fillStyle = 'rgba(6,4,14,1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Radar rings
+  [0.33, 0.66, 1.0].forEach(f => {
+    ctx.beginPath();
+    ctx.arc(cx, cy, maxR * f, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(139,92,246,${0.06 + f * 0.04})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Crosshairs
+  ctx.strokeStyle = 'rgba(139,92,246,0.07)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(cx, cy - maxR); ctx.lineTo(cx, cy + maxR); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - maxR, cy); ctx.lineTo(cx + maxR, cy); ctx.stroke();
+
+  // Ring labels
+  ctx.fillStyle = 'rgba(139,92,246,0.3)';
+  ctx.font = '9px monospace';
+  ctx.fillText('1km', cx + maxR * 0.33 + 4, cy - 4);
+  ctx.fillText('2km', cx + maxR * 0.66 + 4, cy - 4);
+
+  // Sweep animation
+  let angle = 0;
+  function drawSweep() {
+    // Redraw base
+    ctx.fillStyle = 'rgba(6,4,14,0.15)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Sweep
+    const grad = ctx.createConicalGradient ? null : null;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    const sweepGrad = ctx.createLinearGradient(0, 0, maxR, 0);
+    sweepGrad.addColorStop(0, 'rgba(139,92,246,0.3)');
+    sweepGrad.addColorStop(1, 'rgba(139,92,246,0)');
+    ctx.fillStyle = sweepGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, maxR, -0.35, 0.35);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Center dot (user)
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#8b5cf6';
+    ctx.shadowColor = '#8b5cf6';
+    ctx.shadowBlur = 15;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Guardian blips
+    guardians.forEach((g, i) => {
+      if (!g.distance_km) return;
+      const fraction = Math.min(g.distance_km / 2.0, 1.0);
+      const dotAngle = (i * 137.5) * (Math.PI / 180); // golden angle spread
+      const r = fraction * maxR;
+      const bx = cx + Math.cos(dotAngle) * r;
+      const by = cy + Math.sin(dotAngle) * r;
+      ctx.beginPath();
+      ctx.arc(bx, by, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#10b981';
+      ctx.shadowColor = '#10b981';
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // Label
+      ctx.fillStyle = 'rgba(16,185,129,0.7)';
+      ctx.font = '8px monospace';
+      ctx.fillText(g.distance_display, bx + 8, by + 3);
+    });
+
+    // No guardians placeholder
+    if (!guardians.length) {
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('No guardians in range', cx, cy + maxR + 20);
+      ctx.textAlign = 'left';
+    }
+
+    angle += 0.015;
+    requestAnimationFrame(drawSweep);
+  }
+  drawSweep();
+}
+
+// ── Toast helper (from base) ─────────────────────────────
+function showToast(msg, type) {
+  if (typeof window.showToast === 'function') {
+    window.showToast(msg, type);
+  }
+}
+
+// Refresh every 30s if active
+setInterval(() => {
+  if (guardianActive && userLoc) loadNearby();
+  loadStats();
+}, 30000);
+</script>
+{% endblock %}
