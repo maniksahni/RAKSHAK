@@ -6,7 +6,7 @@ python /app/init_db.py
 echo "=== RAKSHAK starting on port ${PORT} ==="
 exec gunicorn \
   --worker-class eventlet \
-  -w 2 \
+  -w 1 \
   --worker-connections 1000 \
   --bind "0.0.0.0:${PORT}" \
   --timeout 120 \
