@@ -8,9 +8,9 @@ main_bp = Blueprint('main', __name__)
 def health_check():
     """Health check — used by Docker, Railway, any platform."""
     try:
-        from models import query_db
-        query_db('SELECT 1', one=True)
-        return jsonify(status='healthy', service='RAKSHAK'), 200
+        from healer import build_health_response
+        payload, code = build_health_response()
+        return jsonify(payload), code
     except Exception as e:
         return jsonify(status='unhealthy', error=str(e)), 503
 

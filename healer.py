@@ -192,13 +192,8 @@ def init_healer(app):
     Call this once inside create_app().
     """
 
-    # ── /health endpoint ──────────────────
-    @app.route('/health')
-    def health():
-        payload, code = build_health_response()
-        return jsonify(payload), code
-
     # ── /ping (Railway uptime check) ──────
+    # NOTE: /health is registered in modules/main/routes.py
     @app.route('/ping')
     def ping_alive():
         return jsonify(ok=True, ts=datetime.utcnow().isoformat()), 200
@@ -250,7 +245,15 @@ def init_healer(app):
                 error='An internal error occurred. Our system has logged it.'
             ), 500
 
-        from flask import render_template
-        return render_template('errors/500.html'), 500
+        # Inline error page — avoids TemplateNotFound if errors/500.html is missing
+        html = '''<!DOCTYPE html><html><head><title>Error — RAKSHAK</title>
+        <style>body{background:#060608;color:#fff;font-family:sans-serif;
+        display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+        .box{text-align:center;padding:40px;}</style></head>
+        <body><div class="box"><h1>&#9888;&#65039; Internal Error</h1>
+        <p>Something went wrong. Please try again.</p>
+        <a href="/" style="color:#c4b5fd">Go Home</a></div></body></html>'''
+        from flask import make_response
+        return make_response(html, 500)
 
     logger.info('RAKSHAK self-healing system initialised.')
