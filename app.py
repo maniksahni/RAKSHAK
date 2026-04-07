@@ -158,6 +158,7 @@ def create_app(config_name=None):
     from modules.gemini_guardian.routes    import gemini_bp
     from modules.guardian_network.routes   import guardian_bp
     from modules.valkyrie.routes           import valkyrie_bp
+    from modules.vision_shield.routes      import vision_shield_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp,          url_prefix='/auth')
@@ -172,9 +173,9 @@ def create_app(config_name=None):
     app.register_blueprint(safe_walk_bp,     url_prefix='/safe-walk')
     app.register_blueprint(fake_call_bp,     url_prefix='/fake-call')
     app.register_blueprint(safety_score_bp,  url_prefix='/safety-score')
-    app.register_blueprint(gemini_bp,        url_prefix='/aria')
     app.register_blueprint(guardian_bp,      url_prefix='/guardian')
     app.register_blueprint(valkyrie_bp,      url_prefix='/valkyrie')
+    app.register_blueprint(vision_shield_bp, url_prefix='/vision-shield')
 
     # Exempt internal APIs from CSRF as they are invoked via fetch without tokens
     csrf.exempt(gemini_bp)
