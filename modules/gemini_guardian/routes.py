@@ -39,42 +39,9 @@ You have access to user's current risk level, location context, and nearby dange
 
 
 def _call_gemini(messages: list, max_tokens: int = 512) -> str:
-    """Call Gemini API with conversation history."""
-    api_key = os.environ.get('GEMINI_API_KEY', '')
-    if not api_key:
-        return _fallback_response(messages[-1]['parts'][0]['text'] if messages else '')
-
-    payload = {
-        "system_instruction": {
-            "parts": [{"text": RAKSHAK_SYSTEM_PROMPT}]
-        },
-        "contents": messages,
-        "generationConfig": {
-            "maxOutputTokens": max_tokens,
-            "temperature": 0.7,
-            "topP": 0.9,
-        },
-        "safetySettings": [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_ONLY_HIGH"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_ONLY_HIGH"},
-        ]
-    }
-
-    try:
-        resp = requests.post(
-            f"{GEMINI_API_URL}?key={api_key}",
-            json=payload,
-            timeout=15
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        return data['candidates'][0]['content']['parts'][0]['text']
-    except requests.Timeout:
-        return "🔴 ARIA is experiencing high load. Core safety features remain active. If in danger, trigger SOS immediately."
-    except Exception as e:
-        log.error(f"Gemini API error: {e}")
-        return _fallback_response(messages[-1]['parts'][0]['text'] if messages else '')
+    """Local rule-based inference engine. No API Key required!"""
+    user_msg = messages[-1]['parts'][0]['text'] if messages else ''
+    return _fallback_response(user_msg)
 
 
 def _fallback_response(user_message: str) -> str:
