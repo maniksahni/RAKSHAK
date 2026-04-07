@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block title %}Valkyrie Protocol — RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── VALKYRIE DEAD-MAN SWITCH UI ── */
+body, html {
+  background: #000;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.valkyrie-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 70px);
+  position: relative;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.v-bg {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150vw; height: 150vw;
+  background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, rgba(0,0,0,1) 60%);
+  z-index: -1;
+}
+
+/* Header */
+.v-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeInDown 1s ease;
+}
+.v-header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 2.5rem;
+  letter-spacing: 0.2em;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(139,92,246,0.8);
+  margin: 0;
+  text-transform: uppercase;
+}
+.v-header p {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+
+/* Fingerprint Zone */
+.v-zone {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: rgba(139,92,246,0.05);
+  border: 2px solid rgba(139,92,246,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 50px rgba(139,92,246,0.1), inset 0 0 30px rgba(139,92,246,0.1);
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.v-zone:active, .v-zone.active {
+  background: rgba(139,92,246,0.2);
+  border-color: rgba(139,92,246,1);
+  box-shadow: 0 0 80px rgba(139,92,246,0.6), inset 0 0 60px rgba(139,92,246,0.4);
+  transform: scale(0.95);
+}
+
+.v-fingerprint {
+  font-size: 6rem;
+  color: rgba(139,92,246,0.8);
+  filter: drop-shadow(0 0 15px rgba(139,92,246,1));
+  pointer-events: none;
+  transition: all 0.2s;
+}
+.v-zone:active .v-fingerprint, .v-zone.active .v-fingerprint {
+  transform: scale(1.1);
+  color: #fff;
+}
+
+/* Rings */
+.v-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(139,92,246,0.4);
+  pointer-events: none;
+  animation: spin 20s linear infinite;
+}
+.v-ring-1 { width: 300px; height: 300px; animation-duration: 25s; border-style: solid; border-color: rgba(139,92,246,0.1); }
+.v-ring-2 { width: 360px; height: 360px; animation-direction: reverse; border-color: rgba(139,92,246,0.2); }
+.v-ring-3 { width: 420px; height: 420px; animation-duration: 15s; border: 2px dotted rgba(139,92,246,0.3); }
+
+@keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+/* Status Text */
+.v-status {
+  margin-top: 50px;
+  text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.7);
+  height: 30px;
+  transition: color 0.3s;
+}
+
+/* Armed State */
+body.armed .v-header h1 { color: #f87171; text-shadow: 0 0 20px rgba(239,68,68,0.8); }
+body.armed .v-zone { border-color: rgba(239,68,68,1); background: rgba(239,68,68,0.2); box-shadow: 0 0 80px rgba(239,68,68,0.6); }
+body.armed .v-fingerprint { color: #fff; }
+body.armed .v-bg { background: radial-gradient(circle, rgba(239,68,68,0.2) 0%, rgba(0,0,0,1) 60%); }
+body.armed .v-ring { border-color: rgba(239,68,68,0.4); }
+
+/* Countdown Overlay */
+.v-countdown-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15,0,0,0.95);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.v-countdown-overlay.active {
+  opacity: 1; pointer-events: all;
+  animation: bgFlash 1s infinite alternate;
+}
+
+@keyframes bgFlash {
+  0% { background: rgba(15,0,0,0.95); }
+  100% { background: rgba(40,0,0,0.95); }
+}
+
+.c-number {
+  font-size: 12rem;
+  font-weight: 900;
+  color: #ef4444;
+  text-shadow: 0 0 50px #ef4444;
+  font-family: 'Space Grotesk', sans-serif;
+  line-height: 1;
+}
+
+.c-text {
+  font-size: 1.5rem;
+  color: #fff;
+  letter-spacing: 0.2em;
+  margin-top: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* PIN Pad */
+.pin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 40px;
+}
+.pin-btn {
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 1.8rem;
+  font-family: 'Space Grotesk', sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.pin-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.9); }
+.pin-display {
+  display: flex; gap: 15px; margin-top: 30px;
+}
+.pin-dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.4);
+}
+.pin-dot.filled {
+  background: #fff; border-color: #fff;
+  box-shadow: 0 0 15px #fff;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="valkyrie-container">
+  <div class="v-bg"></div>
+  
+  <div class="v-header">
+    <h1>VALKYRIE</h1>
+    <p>Dead-Man Switch Protocol</p>
+  </div>
+
+  <div class="v-ring v-ring-1"></div>
+  <div class="v-ring v-ring-2"></div>
+  <div class="v-ring v-ring-3"></div>
+
+  <div class="v-zone" id="v-zone" 
+       onmousedown="handlePress()" ontouchstart="handlePress()"
+       onmouseup="handleRelease()" onmouseleave="handleRelease()" ontouchend="handleRelease()">
+    <i class="bi bi-fingerprint v-fingerprint"></i>
+  </div>
+
+  <div class="v-status" id="v-status">HOLD TO ARM SYSTEM</div>
+
+</div>
+
+<!-- COUNTDOWN OVERLAY -->
+<div class="v-countdown-overlay" id="v-countdown">
+  <div class="c-text">PROTOCOL DROPPED — SOS IN</div>
+  <div class="c-number" id="c-num">5</div>
+  
+  <div class="pin-display" id="pin-display">
+    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+
+  <div class="pin-grid">
+    <div class="pin-btn" onclick="enterPin(1)">1</div>
+    <div class="pin-btn" onclick="enterPin(2)">2</div>
+    <div class="pin-btn" onclick="enterPin(3)">3</div>
+    <div class="pin-btn" onclick="enterPin(4)">4</div>
+    <div class="pin-btn" onclick="enterPin(5)">5</div>
+    <div class="pin-btn" onclick="enterPin(6)">6</div>
+    <div class="pin-btn" onclick="enterPin(7)">7</div>
+    <div class="pin-btn" onclick="enterPin(8)">8</div>
+    <div class="pin-btn" onclick="enterPin(9)">9</div>
+    <div class="pin-btn" style="visibility:hidden"></div>
+    <div class="pin-btn" onclick="enterPin(0)">0</div>
+    <div class="pin-btn" onclick="clearPin()" style="font-size:1.2rem; border:none"><i class="bi bi-backspace"></i></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Logic
+let isPressing = false;
+let isArmed = false;
+let countdownTimer = null;
+let timeLeft = 5;
+let enteredPin = "";
+const CORRECT_PIN = "1234"; // Hardcoded for demo/project purposes
+
+const zone = document.getElementById('v-zone');
+const statusText = document.getElementById('v-status');
+const overlay = document.getElementById('v-countdown');
+const numVal = document.getElementById('c-num');
+const dots = document.querySelectorAll('.pin-dot');
+
+function handlePress() {
+  if(countdownTimer) return; // If already counting down, ignore
+  isPressing = true;
+  zone.classList.add('active');
+  document.body.classList.add('armed');
+  statusText.textContent = "SYSTEM ARMED. DO NOT RELEASE.";
+  statusText.style.color = "#ef4444";
+  
+  // Tactical beep
+  if(window.tacticalAnnounce) {
+    tacticalAnnounce("Valkyrie Protocol Armed.");
+  }
+}
+
+function handleRelease() {
+  if(!isPressing) return;
+  isPressing = false;
+  zone.classList.remove('active');
+  
+  if(document.body.classList.contains('armed')) {
+    triggerCountdown();
+  } else {
+    statusText.textContent = "HOLD TO ARM SYSTEM";
+    statusText.style.color = "rgba(255,255,255,0.7)";
+  }
+}
+
+function triggerCountdown() {
+  if(countdownTimer) return;
+  overlay.classList.add('active');
+  timeLeft = 5;
+  numVal.textContent = timeLeft;
+  enteredPin = "";
+  updateDots();
+  
+  if(window.tacticalAnnounce) tacticalAnnounce("Protocol dropped. Enter authorization code.");
+
+  countdownTimer = setInterval(() => {
+    timeLeft--;
+    numVal.textContent = timeLeft;
+    
+    // Play alert beep
+    const p = document.createElement('audio');
+    p.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAE="; 
+    p.play().catch(e=>e);
+
+    if(timeLeft <= 0) {
+      clearInterval(countdownTimer);
+      fireSOS();
+    }
+  }, 1000);
+}
+
+function enterPin(num) {
+  if(enteredPin.length < 4) {
+    enteredPin += num;
+    updateDots();
+    if(enteredPin.length === 4) {
+      verifyPin();
+    }
+  }
+}
+
+function clearPin() {
+  enteredPin = enteredPin.slice(0, -1);
+  updateDots();
+}
+
+function updateDots() {
+  dots.forEach((dot, idx) => {
+    if(idx < enteredPin.length) dot.classList.add('filled');
+    else dot.classList.remove('filled');
+  });
+}
+
+function verifyPin() {
+  if(enteredPin === CORRECT_PIN) {
+    // DISARM
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+    overlay.classList.remove('active');
+    document.body.classList.remove('armed');
+    statusText.textContent = "SYSTEM DISARMED SAFE.";
+    statusText.style.color = "#10b981";
+    setTimeout(() => {
+      statusText.textContent = "HOLD TO ARM SYSTEM";
+      statusText.style.color = "rgba(255,255,255,0.7)";
+    }, 3000);
+    if(window.tacticalAnnounce) tacticalAnnounce("Authorization accepted. Stand down.");
+  } else {
+    // WRONG PIN
+    enteredPin = "";
+    updateDots();
+    numVal.style.color = "#fff";
+    setTimeout(()=> numVal.style.color = "#ef4444", 200);
+  }
+}
+
+function fireSOS() {
+  overlay.innerHTML = `
+    <i class="bi bi-broadcast" style="font-size:8rem; color:#ef4444; animation:pulse 1s infinite"></i>
+    <div class="c-text" style="color:#ef4444">CRITICAL SOS BROADCASTED</div>
+    <p style="color:#fff; margin-top:20px; font-family:'Space Grotesk'">Location locked. Guardians notified.</p>
+    <button onclick="location.href='/'" class="btn-rakshak mt-4" style="background:#ef4444; border:none; padding:10px 30px">SYSTEM OVERRIDE</button>
+  `;
+  if(window._fireGlobalSOS) window._fireGlobalSOS();
+}
+
+// Add simple pulse anim
+const style = document.createElement('style');
+style.innerHTML = `@keyframes pulse { 0% { transform:scale(1); opacity:1;} 100% { transform:scale(1.5); opacity:0;} }`;
+document.head.appendChild(style);
+
+</script>
+{% endblock %}
