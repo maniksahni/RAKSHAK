@@ -19,7 +19,7 @@ class Config:
     DB_SSL_CA = os.environ.get('DB_SSL_CA', '/etc/ssl/cert.pem')  # TiDB default CA path
 
     # Self-ping keep-alive (prevents free-tier sleep)
-    KEEP_ALIVE_URL = os.environ.get('KEEP_ALIVE_URL', '')  # e.g. https://rakshak.onrender.com/health
+    KEEP_ALIVE_URL = os.environ.get('KEEP_ALIVE_URL', '')  # e.g. https://rakshak.up.railway.app/health
 
     # Rate limiting
     RATELIMIT_STORAGE_URL = 'memory://'
@@ -36,7 +36,7 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     PREFERRED_URL_SCHEME    = 'https'
-    WTF_CSRF_SSL_STRICT   = False   # Render proxy terminates SSL; strict check always fails
+    WTF_CSRF_SSL_STRICT   = False   # Railway proxy terminates SSL; strict check always fails
     SESSION_COOKIE_SECURE   = True
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
