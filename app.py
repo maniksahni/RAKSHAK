@@ -172,6 +172,7 @@ def create_app(config_name=None):
     app.register_blueprint(safe_walk_bp,     url_prefix='/safe-walk')
     app.register_blueprint(fake_call_bp,     url_prefix='/fake-call')
     app.register_blueprint(safety_score_bp,  url_prefix='/safety-score')
+    app.register_blueprint(gemini_bp,        url_prefix='/aria')
     app.register_blueprint(guardian_bp,      url_prefix='/guardian')
     app.register_blueprint(valkyrie_bp,      url_prefix='/valkyrie')
 
