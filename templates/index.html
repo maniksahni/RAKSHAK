@@ -1051,17 +1051,33 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
 /* ═══ 12. TEXT SCRAMBLE on section headings ═══ */
 (function(){
   const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
+  function scrambleTextNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (!node.textContent.trim()) return [];
+      const original = node.textContent;
+      const frag = document.createDocumentFragment();
+      const spans = [];
+      [...original].forEach(ch => {
+        const s = document.createElement('span');
+        s.textContent = ch === ' ' ? '\u00A0' : ch;
+        s.dataset.char = ch;
+        s.style.display = 'inline-block';
+        frag.appendChild(s);
+        spans.push(s);
+      });
+      node.parentNode.replaceChild(frag, node);
+      return spans;
+    }
+    let spans = [];
+    Array.from(node.childNodes).forEach(child => {
+      spans = spans.concat(scrambleTextNode(child) || []);
+    });
+    return spans;
+  }
+
   function scramble(el){
     if(el._scrambled)return;el._scrambled=true;
-    const original=el.textContent;
-    const spans=[];
-    el.innerHTML='';
-    [...original].forEach(ch=>{
-      const s=document.createElement('span');
-      s.textContent=ch;s.dataset.char=ch;
-      s.style.display='inline-block';
-      el.appendChild(s);spans.push(s);
-    });
+    const spans = scrambleTextNode(el);
     spans.forEach((s,i)=>{
       if(s.dataset.char===' '||s.dataset.char==='\u00A0')return;
       let iter=0;const maxIter=4+Math.floor(Math.random()*4);
