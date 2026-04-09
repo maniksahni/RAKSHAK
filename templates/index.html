@@ -1061,7 +1061,6 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
         const s = document.createElement('span');
         s.textContent = ch === ' ' ? '\u00A0' : ch;
         s.dataset.char = ch;
-        s.style.display = 'inline-block';
         frag.appendChild(s);
         spans.push(s);
       });
