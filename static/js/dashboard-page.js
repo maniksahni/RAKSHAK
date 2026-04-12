@@ -37,28 +37,32 @@
   tick(); setInterval(tick, 1000);
 })();
 
-/* ── GPS coords in header ── */
+/* ── Shared GPS (single watchPosition for entire dashboard) ── */
 (function(){
   if (!navigator.geolocation) return;
-  navigator.geolocation.watchPosition(pos => {
+  var gpsCbs = [];
+  window._onGPS = function(cb) { gpsCbs.push(cb); };
+  navigator.geolocation.watchPosition(function(pos) {
     window.currentLat = pos.coords.latitude;
     window.currentLng = pos.coords.longitude;
-    const wrap = document.getElementById('dsh-gps-block');
-    const el   = document.getElementById('dsh-gps-coords');
+    gpsCbs.forEach(function(cb) { cb(pos); });
+  }, null, { enableHighAccuracy:true, maximumAge:10000 });
+  window._onGPS(function(pos) {
+    var wrap = document.getElementById('dsh-gps-block');
+    var el   = document.getElementById('dsh-gps-coords');
     if (el) el.innerHTML = pos.coords.latitude.toFixed(4) + '° N<br>' + pos.coords.longitude.toFixed(4) + '° E';
     if (wrap) wrap.style.display = 'flex';
-    // Personal Safety Index GPS ring
-    const acc = pos.coords.accuracy || 50;
-    const gpsPct = Math.round(Math.max(10, Math.min(100, 100-(acc-5)/1.5)));
-    const ring = document.getElementById('si-ring-gps');
-    const pct  = document.getElementById('si-pct-gps');
-    const bar  = document.getElementById('si-bar-gps');
-    const sub  = document.getElementById('si-sub-gps');
+    var acc = pos.coords.accuracy || 50;
+    var gpsPct = Math.round(Math.max(10, Math.min(100, 100-(acc-5)/1.5)));
+    var ring = document.getElementById('si-ring-gps');
+    var pct  = document.getElementById('si-pct-gps');
+    var bar  = document.getElementById('si-bar-gps');
+    var sub  = document.getElementById('si-sub-gps');
     if (ring) ring.style.strokeDashoffset = 125.66 * (1-gpsPct/100);
     if (pct)  pct.textContent  = gpsPct + '%';
     if (bar)  bar.style.width  = gpsPct + '%';
     if (sub)  sub.textContent  = 'Accuracy ±' + Math.round(acc) + 'm · ' + pos.coords.latitude.toFixed(3) + '°N';
-  }, null, { enableHighAccuracy:true, maximumAge:10000 });
+  });
 })();
 
 /* ── Tactical Command Strip ── */
@@ -80,9 +84,9 @@
   }
   updateCmdNet();
   window.addEventListener('online', updateCmdNet); window.addEventListener('offline', updateCmdNet);
-  if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(pos => {
-      const el = document.getElementById('cmd-gps');
+  if (window._onGPS) {
+    window._onGPS(function(pos) {
+      var el = document.getElementById('cmd-gps');
       if (el) { el.innerHTML=pos.coords.latitude.toFixed(4)+'°N '+pos.coords.longitude.toFixed(4)+'°E'; el.style.color='#10b981'; }
     });
   }
@@ -304,23 +308,32 @@ setTimeout(fetchNearbyPlaces, 800);
   if(summaryEl){if(weekCount===0)summaryEl.textContent='No alerts this week — you are doing great! Stay vigilant.';else if(weekCount<=2)summaryEl.textContent=weekCount+' alert(s) this week. Risk level is manageable. Stay cautious.';else summaryEl.textContent=weekCount+' alerts this week. Consider reviewing your safety routines.';}
 })();
 
-/* ── Mouse Parallax for Background ── */
+/* ── Mouse Parallax for Background (throttled 30fps, pauses when hidden) ── */
 (function(){
-  let mouseX=0,mouseY=0,currentX=0,currentY=0;
+  let mouseX=0,mouseY=0,currentX=0,currentY=0,rafId=null,lastFrame=0;
   const grid=document.getElementById('cyber-grid'), orbRed=document.getElementById('orb-red'), orbBlue=document.getElementById('orb-blue'), orbPurple=document.getElementById('orb-purple');
   document.addEventListener('mousemove',e=>{ mouseX=(e.clientX/window.innerWidth-0.5)*2; mouseY=(e.clientY/window.innerHeight-0.5)*2; });
-  function animateParallax(){
+  function animateParallax(ts){
+    rafId=null;
+    if(ts-lastFrame<32){rafId=requestAnimationFrame(animateParallax);return;}
+    lastFrame=ts;
     if(typeof window.matchMedia==='function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      requestAnimationFrame(animateParallax); return;
+      if(!document.hidden)rafId=requestAnimationFrame(animateParallax); return;
     }
-    currentX+=(mouseX-currentX)*0.058; currentY+=(mouseY-currentY)*0.058;
-    if(grid)grid.style.transform=`translate(${currentX*13}px,${currentY*9}px) perspective(980px) rotateX(${currentY*2.6}deg) rotateY(${currentX*-2.6}deg)`;
-    if(orbRed){orbRed.style.marginLeft=`${currentX*30}px`;orbRed.style.marginTop=`${currentY*22}px`;}
-    if(orbBlue){orbBlue.style.marginLeft=`${currentX*-24}px`;orbBlue.style.marginTop=`${currentY*-18}px`;}
-    if(orbPurple){orbPurple.style.marginLeft=`${currentX*19}px`;orbPurple.style.marginTop=`${currentY*15}px`;}
-    requestAnimationFrame(animateParallax);
+    if (Math.abs(mouseX - currentX) < 0.001 && Math.abs(mouseY - currentY) < 0.001) {
+      currentX = mouseX; currentY = mouseY;
+    } else {
+      currentX+=(mouseX-currentX)*0.058; currentY+=(mouseY-currentY)*0.058;
+      if(grid)grid.style.transform=`translate(${currentX*13}px,${currentY*9}px) perspective(980px) rotateX(${currentY*2.6}deg) rotateY(${currentX*-2.6}deg)`;
+      if(orbRed){orbRed.style.marginLeft=`${currentX*30}px`;orbRed.style.marginTop=`${currentY*22}px`;}
+      if(orbBlue){orbBlue.style.marginLeft=`${currentX*-24}px`;orbBlue.style.marginTop=`${currentY*-18}px`;}
+      if(orbPurple){orbPurple.style.marginLeft=`${currentX*19}px`;orbPurple.style.marginTop=`${currentY*15}px`;}
+    }
+    if(!document.hidden)rafId=requestAnimationFrame(animateParallax);
   }
-  requestAnimationFrame(animateParallax);
+  function startParallax(){if(!rafId&&!document.hidden)rafId=requestAnimationFrame(animateParallax);}
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){if(rafId){cancelAnimationFrame(rafId);rafId=null;}}else startParallax();});
+  startParallax();
 })();
 
 /* ── SOS Particle Effect ── */

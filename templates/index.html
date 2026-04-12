@@ -928,45 +928,53 @@ a,button{cursor:none}
   addEventListener('load',()=>setTimeout(()=>{const l=document.getElementById('loader');if(l)l.classList.add('done')},1500));
 })();
 
-/* ═══ 1. MESH CANVAS ═══ */
+/* ═══ 1. MESH CANVAS (optimized: 30fps, fewer particles, squared distance) ═══ */
 (function(){
   const c=document.getElementById('meshCanvas'),g=c.getContext('2d');
-  let w,h,pts=[];
+  let w,h,pts=[],rafId=null,lastFrame=0;
   function rz(){w=c.width=innerWidth;h=c.height=innerHeight;pts=[];
-    const n=Math.min(50,Math.floor(w*h/20000));
+    const n=Math.min(28,Math.floor(w*h/35000));
     for(let i=0;i<n;i++)pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*2+.5})}
   rz();addEventListener('resize',rz);
   let mx=w/2,my=h/2;
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
-  function dr(){
+  const LINK_D=190,LINK_D2=LINK_D*LINK_D,MOUSE_D2=57600;
+  function dr(ts){
+    rafId=null;
+    if(ts-lastFrame<32){rafId=requestAnimationFrame(dr);return;}
+    lastFrame=ts;
     g.clearRect(0,0,w,h);
     pts.forEach(p=>{
       p.x+=p.vx;p.y+=p.vy;
       if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
-      const dx=p.x-mx,dy=p.y-my,md=Math.sqrt(dx*dx+dy*dy);
-      if(md<240){const f=.2*(1-md/240);p.x+=dx*f*.1;p.y+=dy*f*.1}
+      const dx=p.x-mx,dy=p.y-my,md2=dx*dx+dy*dy;
+      if(md2<MOUSE_D2){const f=.2*(1-Math.sqrt(md2)/240);p.x+=dx*f*.1;p.y+=dy*f*.1}
       g.beginPath();g.arc(p.x,p.y,p.r,0,Math.PI*2);
       g.fillStyle='rgba(139,92,246,0.18)';g.fill();
     });
     for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
-      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);
-      if(d<190){g.beginPath();g.moveTo(pts[i].x,pts[i].y);g.lineTo(pts[j].x,pts[j].y);
-        g.strokeStyle=`rgba(139,92,246,${.07*(1-d/190)})`;g.lineWidth=.6;g.stroke()}}
-    requestAnimationFrame(dr)}
-  dr();
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d2=dx*dx+dy*dy;
+      if(d2<LINK_D2){const d=Math.sqrt(d2);g.beginPath();g.moveTo(pts[i].x,pts[i].y);g.lineTo(pts[j].x,pts[j].y);
+        g.strokeStyle=`rgba(139,92,246,${.07*(1-d/LINK_D)})`;g.lineWidth=.6;g.stroke()}}
+    if(!document.hidden)rafId=requestAnimationFrame(dr)}
+  function startMesh(){if(!rafId&&!document.hidden)rafId=requestAnimationFrame(dr);}
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){if(rafId){cancelAnimationFrame(rafId);rafId=null;}}else startMesh();});
+  startMesh();
 })();
 
-/* ═══ 2. CURSOR ═══ */
+/* ═══ 2. CURSOR (pauses when hidden) ═══ */
 (function(){
   const c=document.getElementById('cur'),s=document.getElementById('curSpot');
   if(!c||!s||matchMedia('(max-width:768px)').matches)return;
-  let cx=0,cy=0,tx=0,ty=0;
+  let cx=0,cy=0,tx=0,ty=0,rafId=null;
   addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY});
-  function tk(){cx+=(tx-cx)*.1;cy+=(ty-cy)*.1;
+  function tk(){rafId=null;cx+=(tx-cx)*.1;cy+=(ty-cy)*.1;
     c.style.left=tx+'px';c.style.top=ty+'px';
     s.style.left=cx+'px';s.style.top=cy+'px';
-    requestAnimationFrame(tk)}
-  tk();
+    if(!document.hidden)rafId=requestAnimationFrame(tk)}
+  function startCur(){if(!rafId&&!document.hidden)rafId=requestAnimationFrame(tk);}
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)startCur();});
+  startCur();
   document.querySelectorAll('a,button,[data-mag],.bc,.stc,.sf,.tc,.ftl,.fts a,.btt,.tkc,.hwc').forEach(el=>{
     el.addEventListener('mouseenter',()=>c.classList.add('h'));
     el.addEventListener('mouseleave',()=>c.classList.remove('h'))});
@@ -1093,15 +1101,17 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
   document.querySelectorAll('.stit,.term-h,.show-h,.cta-h').forEach(el=>sio.observe(el));
 })();
 
-/* ═══ 13. CURSOR PARTICLE TRAIL ═══ */
+/* ═══ 13. CURSOR PARTICLE TRAIL (throttled, pauses when hidden) ═══ */
 (function(){
   if(matchMedia('(max-width:768px)').matches)return;
   const colors=['rgba(139,92,246,.6)','rgba(255,59,59,.5)','rgba(34,211,238,.5)','rgba(52,211,153,.5)','rgba(244,114,182,.5)'];
-  let particles=[];let mx=0,my=0;let frame=0;
+  let particles=[];let mx=0,my=0;let frame=0;let rafId=null;
   addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
   function tick(){
+    rafId=null;
+    if(document.hidden){return;}
     frame++;
-    if(frame%3===0&&particles.length<25){
+    if(frame%5===0&&particles.length<15){
       const p=document.createElement('div');
       p.className='c-particle';
       const size=Math.random()*5+2;
@@ -1112,8 +1122,7 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
         opacity:'1',transform:'translate(-50%,-50%) scale(1)'
       });
       document.body.appendChild(p);
-      const life={el:p,x:mx,y:my,vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5,ttl:40,age:0};
-      particles.push(life);
+      particles.push({el:p,x:mx,y:my,vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5,ttl:40,age:0});
     }
     particles.forEach(p=>{
       p.age++;p.x+=p.vx;p.y+=p.vy;p.vy+=.02;
@@ -1125,9 +1134,11 @@ if(sh)addEventListener('scroll',()=>{if(scrollY>100)sh.style.opacity='0'},{passi
     particles=particles.filter(p=>{
       if(p.age>=p.ttl){p.el.remove();return false}return true;
     });
-    requestAnimationFrame(tick);
+    rafId=requestAnimationFrame(tick);
   }
-  tick();
+  function start(){if(!rafId&&!document.hidden)rafId=requestAnimationFrame(tick);}
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)start();});
+  start();
 })();
 
 /* ═══ 14. NAVBAR SCROLL CLASS ═══ */
