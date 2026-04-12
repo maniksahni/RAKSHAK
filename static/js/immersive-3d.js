@@ -97,6 +97,20 @@
       return;
     }
     states.forEach(function (s) {
+      // Optimizaton: skip DOM updates if settled
+      if (Math.abs(s.tx - s.cx) < 0.001 && Math.abs(s.ty - s.cy) < 0.001) {
+        s.cx = s.tx;
+        s.cy = s.ty;
+        if (s.tx === 0 && s.ty === 0) {
+          if (s.settled) return;
+          s.settled = true;
+          resetState(s);
+          return;
+        }
+      } else {
+        s.settled = false;
+      }
+
       s.cx += (s.tx - s.cx) * LERP;
       s.cy += (s.ty - s.cy) * LERP;
       var rx = s.cy * -s.maxRx;
@@ -148,9 +162,20 @@
     });
   }
 
-  function loop() {
+  var rafId = null;
+  var lastFrame = 0;
+
+  function loop(ts) {
+    rafId = null;
+    // Throttle to ~30fps
+    if (ts - lastFrame < 32) { rafId = requestAnimationFrame(loop); return; }
+    lastFrame = ts;
     tick();
-    requestAnimationFrame(loop);
+    if (!document.hidden) rafId = requestAnimationFrame(loop);
+  }
+
+  function startLoop() {
+    if (!rafId && !document.hidden) rafId = requestAnimationFrame(loop);
   }
 
   function boot() {
@@ -160,15 +185,15 @@
         if (!motionReduced()) collect();
       });
     }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+      else startLoop();
+    });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      boot();
-      requestAnimationFrame(loop);
-    });
+    document.addEventListener('DOMContentLoaded', function () { boot(); startLoop(); });
   } else {
-    boot();
-    requestAnimationFrame(loop);
+    boot(); startLoop();
   }
 })();
