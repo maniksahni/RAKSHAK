@@ -374,11 +374,35 @@ a,button{cursor:none}
 .hwc:nth-child(1)::after{background:linear-gradient(90deg,transparent,#ff3b3b,transparent)}
 .hwc:nth-child(2)::after{background:linear-gradient(90deg,transparent,#8b5cf6,transparent)}
 .hwc:nth-child(3)::after{background:linear-gradient(90deg,transparent,#22d3ee,transparent)}
-.hw-illus{width:100%;height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;border-radius:12px;overflow:hidden}
-.hw-illus svg{width:100%;height:100%}
-.hw-illus-1{background:linear-gradient(135deg,rgba(255,59,59,.1),rgba(255,59,59,.03))}
-.hw-illus-2{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(139,92,246,.03))}
-.hw-illus-3{background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(34,211,238,.03))}
+.hw-mock{width:100%;border-radius:12px;padding:14px;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.hw-mock-1{background:linear-gradient(135deg,rgba(255,59,59,.08),rgba(255,59,59,.02));border:1px solid rgba(255,59,59,.15)}
+.hw-mock-2{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(139,92,246,.02));border:1px solid rgba(139,92,246,.15);display:flex;flex-direction:column;align-items:center;padding:20px 14px}
+.hw-mock-3{background:linear-gradient(135deg,rgba(34,211,238,.08),rgba(34,211,238,.02));border:1px solid rgba(34,211,238,.15)}
+.hw-mock-bar{display:flex;gap:5px;margin-bottom:12px}
+.hw-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15)}
+.hw-mock-bar .hw-dot:first-child{background:rgba(255,59,59,.5)}
+.hw-mock-bar .hw-dot:nth-child(2){background:rgba(255,200,50,.4)}
+.hw-mock-bar .hw-dot:last-child{background:rgba(52,211,153,.4)}
+.hw-mock-body{display:flex;flex-direction:column;gap:8px}
+.hw-field{height:28px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.hw-field-short{width:65%}
+.hw-btn-mock{height:30px;border-radius:6px;background:linear-gradient(135deg,rgba(255,59,59,.5),rgba(255,59,59,.3));display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.08em}
+.hw-divider-mock{height:1px;background:rgba(255,255,255,.08);margin:2px 0}
+.hw-btn-google{height:30px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;gap:6px;font-size:.6rem;font-weight:600;color:rgba(255,255,255,.6)}
+.hw-g-icon{font-weight:800;font-size:.75rem;color:#4285f4}
+.hw-shield-ring{width:80px;height:80px;border-radius:50%;border:2px solid rgba(139,92,246,.3);display:flex;align-items:center;justify-content:center;position:relative;animation:hw-pulse 2.5s ease-in-out infinite}
+.hw-shield-ring::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(139,92,246,.12);animation:hw-pulse 2.5s ease-in-out infinite .4s}
+.hw-shield-ring::after{content:'';position:absolute;inset:-16px;border-radius:50%;border:1px solid rgba(139,92,246,.06);animation:hw-pulse 2.5s ease-in-out infinite .8s}
+@keyframes hw-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:.7}}
+.hw-shield-icon{position:absolute;width:36px;height:36px}
+.hw-shield-icon svg{width:100%;height:100%}
+.hw-pulse-label{margin-top:14px;font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.15em;color:rgba(139,92,246,.7);text-transform:uppercase}
+.hw-heartbeat-line{width:100%;height:40px;margin-bottom:10px;overflow:hidden}
+.hw-heartbeat-line svg{width:200%;height:100%;animation:hw-scroll 3s linear infinite}
+@keyframes hw-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.hw-status-row{display:flex;align-items:center;gap:8px;font-size:.65rem;color:rgba(255,255,255,.55);padding:4px 0;font-family:var(--mono)}
+.hw-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hw-dot-green{background:#10b981;box-shadow:0 0 6px rgba(16,185,129,.5)}
 .hw-step{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.8rem}
 .hwc:nth-child(1) .hw-step{color:rgba(255,59,59,.7)}
 .hwc:nth-child(2) .hw-step{color:rgba(139,92,246,.7)}
@@ -784,9 +808,45 @@ a,button{cursor:none}
 <section class="how">
   <div class="shd rv"><span class="eye">3 Simple Steps</span><h2 class="stit">How <span class="grad">RAKSHAK</span> protects you.</h2><p class="ssub">Set up once, stay protected forever. Zero configuration needed after signup.</p></div>
   <div class="how-g">
-    <div class="hwc rv rv-d1"><div class="hw-illus hw-illus-1"><svg viewBox="0 0 200 120" fill="none"><rect x="40" y="20" width="120" height="80" rx="12" stroke="rgba(255,59,59,.4)" stroke-width="1.5"/><circle cx="100" cy="50" r="18" stroke="rgba(255,59,59,.6)" stroke-width="1.5"/><path d="M100 68c-14 0-26 8-30 20h60c-4-12-16-20-30-20z" stroke="rgba(255,59,59,.5)" stroke-width="1.5"/><circle cx="140" cy="35" r="10" fill="rgba(255,59,59,.15)" stroke="rgba(255,59,59,.5)" stroke-width="1.2"/><path d="M137 35h6m-3-3v6" stroke="rgba(255,59,59,.7)" stroke-width="1.5" stroke-linecap="round"/><rect x="55" y="85" width="30" height="6" rx="3" fill="rgba(255,59,59,.15)"/><rect x="95" y="85" width="50" height="6" rx="3" fill="rgba(255,59,59,.1)"/></svg></div><div class="hw-step">Step 1</div><div class="hw-i"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div><h3>Create Account</h3><p>Sign up with Google OAuth or email in under 30 seconds. Add your emergency contacts.</p></div>
-    <div class="hwc rv rv-d2"><div class="hw-illus hw-illus-2"><svg viewBox="0 0 200 120" fill="none"><path d="M100 10l-50 25v35c0 30 50 45 50 45s50-15 50-45V35z" stroke="rgba(139,92,246,.5)" stroke-width="1.5" fill="rgba(139,92,246,.06)"/><circle cx="100" cy="60" r="22" stroke="rgba(139,92,246,.4)" stroke-width="1" stroke-dasharray="4 3"/><circle cx="100" cy="60" r="8" fill="rgba(139,92,246,.25)"/><circle cx="100" cy="60" r="3" fill="rgba(139,92,246,.6)"/><path d="M70 45c-2-8 2-16 10-18m50 18c2-8-2-16-10-18" stroke="rgba(139,92,246,.3)" stroke-width="1" stroke-linecap="round"/><path d="M85 85l5-8h20l5 8" stroke="rgba(139,92,246,.4)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="hw-step">Step 2</div><div class="hw-i"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>Activate Shield</h3><p>Toggle the AI guardian on. It starts sending heartbeat pings automatically every 2 minutes.</p></div>
-    <div class="hwc rv rv-d3"><div class="hw-illus hw-illus-3"><svg viewBox="0 0 200 120" fill="none"><rect x="30" y="25" width="140" height="75" rx="10" stroke="rgba(34,211,238,.4)" stroke-width="1.5"/><path d="M50 75l20-25 15 12 25-32 20 18 20-13" stroke="rgba(34,211,238,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="50" cy="75" r="4" fill="rgba(34,211,238,.5)"/><circle cx="70" cy="50" r="4" fill="rgba(34,211,238,.5)"/><circle cx="85" cy="62" r="4" fill="rgba(34,211,238,.5)"/><circle cx="110" cy="30" r="4" fill="rgba(34,211,238,.5)"/><circle cx="130" cy="48" r="4" fill="rgba(34,211,238,.5)"/><circle cx="150" cy="35" r="4" fill="rgba(34,211,238,.5)"/><line x1="30" y1="85" x2="170" y2="85" stroke="rgba(34,211,238,.2)" stroke-width="1"/><text x="44" y="96" fill="rgba(34,211,238,.35)" font-size="8" font-family="monospace">24/7</text><text x="90" y="96" fill="rgba(34,211,238,.35)" font-size="8" font-family="monospace">ACTIVE</text><text x="136" y="96" fill="rgba(34,211,238,.35)" font-size="8" font-family="monospace">SAFE</text></svg></div><div class="hw-step">Step 3</div><div class="hw-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h3>Stay Protected</h3><p>RAKSHAK watches 24/7. If something goes wrong, auto-SOS triggers and alerts everyone instantly.</p></div>
+    <div class="hwc rv rv-d1">
+      <div class="hw-mock hw-mock-1">
+        <div class="hw-mock-bar"><span class="hw-dot"></span><span class="hw-dot"></span><span class="hw-dot"></span></div>
+        <div class="hw-mock-body">
+          <div class="hw-field"></div>
+          <div class="hw-field hw-field-short"></div>
+          <div class="hw-btn-mock">Sign Up</div>
+          <div class="hw-divider-mock"></div>
+          <div class="hw-btn-google"><span class="hw-g-icon">G</span> Continue with Google</div>
+        </div>
+      </div>
+      <div class="hw-step">Step 1</div>
+      <div class="hw-i"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
+      <h3>Create Account</h3>
+      <p>Sign up with Google OAuth or email in under 30 seconds. Add your emergency contacts.</p>
+    </div>
+    <div class="hwc rv rv-d2">
+      <div class="hw-mock hw-mock-2">
+        <div class="hw-shield-ring"></div>
+        <div class="hw-shield-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(139,92,246,.9)" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <div class="hw-pulse-label">AI Shield Active</div>
+      </div>
+      <div class="hw-step">Step 2</div>
+      <div class="hw-i"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <h3>Activate Shield</h3>
+      <p>Toggle the AI guardian on. It starts sending heartbeat pings automatically every 2 minutes.</p>
+    </div>
+    <div class="hwc rv rv-d3">
+      <div class="hw-mock hw-mock-3">
+        <div class="hw-heartbeat-line"><svg viewBox="0 0 200 60" preserveAspectRatio="none"><polyline points="0,30 30,30 40,10 50,50 60,30 90,30 100,10 110,50 120,30 150,30 160,10 170,50 180,30 200,30" fill="none" stroke="rgba(34,211,238,.7)" stroke-width="2"/></svg></div>
+        <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> All contacts notified</div>
+        <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> GPS locked &amp; streaming</div>
+        <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> Auto-SOS armed</div>
+      </div>
+      <div class="hw-step">Step 3</div>
+      <div class="hw-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <h3>Stay Protected</h3>
+      <p>RAKSHAK watches 24/7. If something goes wrong, auto-SOS triggers and alerts everyone instantly.</p>
+    </div>
   </div>
 </section>
 
