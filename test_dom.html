@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <div id="test">Hello <span>World</span></div>
+  <script>
+    try {
+      function scrambleTextNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          if (!node.textContent.trim()) return [];
+          const original = node.textContent;
+          const frag = document.createDocumentFragment();
+          const spans = [];
+          [...original].forEach(ch => {
+            const s = document.createElement('span');
+            s.textContent = ch === ' ' ? '\u00A0' : ch;
+            s.dataset.char = ch;
+            s.style.display = 'inline-block';
+            frag.appendChild(s);
+            spans.push(s);
+          });
+          node.parentNode.replaceChild(frag, node);
+          return spans;
+        }
+        let spans = [];
+        Array.from(node.childNodes).forEach(child => {
+          spans = spans.concat(scrambleTextNode(child) || []);
+        });
+        return spans;
+      }
+      scrambleTextNode(document.getElementById('test'));
+      console.log('SUCCESS:', document.getElementById('test').innerHTML);
+    } catch(err) {
+      console.log('ERROR:', err.message, err.stack);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1153 @@
+{% extends "base.html" %}
+
+{% block title %}Vision Shield — Silent Gesture SOS · RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════════════════
+   VISION SHIELD — Premium Gesture SOS UI
+   ══════════════════════════════════════════════════════════════ */
+
+/* -- Page-level reset for full immersive canvas -- */
+body, html {
+  overflow: hidden;
+  height: 100vh;
+  background: #000208;
+}
+
+.vs-wrapper {
+  position: fixed;
+  top: 70px; left: 240px; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* ── HEADER ── */
+.vs-header {
+  text-align: center;
+  z-index: 20;
+  animation: fadeInDown 0.8s cubic-bezier(.22,1,.36,1);
+}
+.vs-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 1.9rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #60a5fa, #818cf8, #c4b5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  text-shadow: none;
+}
+.vs-subtitle {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: rgba(148, 163, 184, 0.6);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.vs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(99,102,241,0.12);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 20px;
+  padding: 3px 12px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #a5b4fc;
+  margin-top: 8px;
+}
+.vs-badge-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #818cf8;
+  box-shadow: 0 0 6px #818cf8;
+  animation: blink 1.4s ease infinite;
+}
+
+/* ── MAIN SCENE ── */
+.vs-scene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 20;
+  flex: 1;
+  max-height: 520px;
+  width: 100%;
+}
+
+/* ── CAMERA FEED ── */
+.vs-cam-frame {
+  position: relative;
+  width: 480px;
+  max-width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(99,102,241,0.25);
+  box-shadow:
+    0 0 0 1px rgba(99,102,241,0.1),
+    0 0 40px rgba(99,102,241,0.12),
+    0 30px 60px rgba(0,0,0,0.6);
+  background: #000;
+  flex-shrink: 0;
+}
+#vs-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror */
+  filter: brightness(0.9) contrast(1.05);
+}
+#vs-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1); /* Mirror matching video */
+}
+
+/* Scanning overlay lines */
+.vs-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(99,102,241,0.018) 2px,
+    rgba(99,102,241,0.018) 4px
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Corner brackets */
+.vs-corner {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-color: rgba(99,102,241,0.7);
+  border-style: solid;
+  z-index: 6;
+  transition: border-color 0.3s;
+}
+.vs-corner.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+.vs-corner.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+.vs-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+.vs-corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+
+.vs-cam-frame.armed .vs-corner { border-color: #ef4444; }
+.vs-cam-frame.gesture-detected .vs-corner { border-color: #10b981; animation: cornerPulse 0.4s ease infinite alternate; }
+@keyframes cornerPulse { to { border-color: #34d399; } }
+
+/* Scan line sweep animation */
+.vs-sweep {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,0.6), transparent);
+  box-shadow: 0 0 12px rgba(99,102,241,0.4);
+  animation: sweepDown 3s linear infinite;
+  z-index: 7;
+  pointer-events: none;
+}
+@keyframes sweepDown {
+  0% { transform: translateY(0); opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { transform: translateY(360px); opacity: 0; }
+}
+
+/* Status HUD on camera */
+.vs-cam-hud {
+  position: absolute;
+  bottom: 10px;
+  left: 10px; right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Courier New', monospace;
+  font-size: 0.55rem;
+  color: rgba(148,163,184,0.7);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  z-index: 8;
+  pointer-events: none;
+}
+.vs-cam-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.vs-cam-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+}
+.vs-cam-dot.active { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+/* ── CONTROL PANEL ── */
+.vs-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 240px;
+  flex-shrink: 0;
+}
+
+/* Gesture Cards */
+.vs-gesture-card {
+  background: rgba(15,15,30,0.7);
+  border: 1px solid rgba(99,102,241,0.15);
+  border-radius: 14px;
+  padding: 12px 14px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.vs-gesture-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 0% 50%, rgba(99,102,241,0.05), transparent 60%);
+}
+.vs-gesture-card.active {
+  border-color: rgba(16,185,129,0.5);
+  background: rgba(16,185,129,0.06);
+  box-shadow: 0 0 20px rgba(16,185,129,0.12);
+}
+.vs-gesture-card.danger-active {
+  border-color: rgba(239,68,68,0.5);
+  background: rgba(239,68,68,0.06);
+  box-shadow: 0 0 20px rgba(239,68,68,0.15);
+}
+.vs-gesture-icon {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+.vs-gesture-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.85);
+  text-transform: uppercase;
+}
+.vs-gesture-desc {
+  font-size: 0.58rem;
+  color: rgba(148,163,184,0.55);
+  margin-top: 2px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.vs-gesture-status {
+  position: absolute;
+  top: 10px; right: 10px;
+  font-size: 0.42rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: rgba(99,102,241,0.1);
+  border: 1px solid rgba(99,102,241,0.2);
+  color: rgba(148,163,184,0.5);
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+.vs-gesture-card.active .vs-gesture-status {
+  background: rgba(16,185,129,0.15);
+  border-color: rgba(16,185,129,0.4);
+  color: #34d399;
+}
+.vs-gesture-card.danger-active .vs-gesture-status {
+  background: rgba(239,68,68,0.15);
+  border-color: rgba(239,68,68,0.4);
+  color: #fca5a5;
+}
+
+/* Progress bar for hold gestures */
+.vs-hold-bar-wrap {
+  height: 3px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.vs-hold-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+  transition: width 0.1s linear;
+}
+.vs-gesture-card.danger-active .vs-hold-bar {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+/* Detection confidence meter */
+.vs-confidence {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+.vs-conf-label {
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(148,163,184,0.4);
+  text-transform: uppercase;
+}
+.vs-conf-val {
+  font-family: 'Courier New', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: rgba(148,163,184,0.5);
+  transition: color 0.3s;
+}
+.vs-gesture-card.active .vs-conf-val { color: #34d399; }
+.vs-gesture-card.danger-active .vs-conf-val { color: #fca5a5; }
+
+/* ── MAIN TOGGLE ── */
+.vs-main-btn {
+  background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(67,56,202,0.25));
+  border: 1px solid rgba(99,102,241,0.4);
+  border-radius: 14px;
+  padding: 14px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  transition: all 0.3s cubic-bezier(.22,1,.36,1);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+.vs-main-btn:hover {
+  background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(67,56,202,0.4));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99,102,241,0.3);
+}
+.vs-main-btn.armed {
+  background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(185,28,28,0.3));
+  border-color: rgba(239,68,68,0.5);
+  color: #fca5a5;
+}
+.vs-main-btn.armed:hover {
+  box-shadow: 0 8px 20px rgba(239,68,68,0.3);
+}
+.vs-btn-icon { font-size: 1rem; }
+
+/* ── ALERT OVERLAY ── */
+.vs-alert-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.vs-alert-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.vs-alert-ring {
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  border: 3px solid rgba(239,68,68,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: alertPulseRing 0.8s ease infinite;
+}
+@keyframes alertPulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4), inset 0 0 30px rgba(239,68,68,0.1); }
+  70% { box-shadow: 0 0 0 30px rgba(239,68,68,0), inset 0 0 30px rgba(239,68,68,0.25); }
+  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), inset 0 0 30px rgba(239,68,68,0.1); }
+}
+.vs-alert-icon {
+  font-size: 4.5rem;
+  filter: drop-shadow(0 0 20px rgba(239,68,68,0.8));
+}
+.vs-alert-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 1.8rem;
+  letter-spacing: 0.18em;
+  color: #ef4444;
+  text-shadow: 0 0 30px rgba(239,68,68,0.6);
+  text-transform: uppercase;
+}
+.vs-alert-msg {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  max-width: 340px;
+  line-height: 1.7;
+}
+.vs-alert-dismiss {
+  padding: 10px 32px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+.vs-alert-dismiss:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── PERMISSION REQUEST ── */
+.vs-permission-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,2,8,0.95);
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInDown 0.5s ease;
+}
+.vs-permission-card {
+  background: rgba(10,10,25,0.9);
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: 24px;
+  padding: 40px 36px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(99,102,241,0.1);
+}
+.vs-perm-icon { font-size: 3.5rem; margin-bottom: 16px; }
+.vs-perm-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+.vs-perm-desc {
+  font-size: 0.82rem;
+  color: rgba(148,163,184,0.7);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+.vs-perm-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 8px 24px rgba(99,102,241,0.4);
+}
+.vs-perm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(99,102,241,0.5);
+}
+.vs-perm-note {
+  font-size: 0.62rem;
+  color: rgba(148,163,184,0.35);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* ── Gesture Legend ── */
+.vs-legend {
+  background: rgba(10,10,25,0.5);
+  border: 1px solid rgba(99,102,241,0.1);
+  border-radius: 12px;
+  padding: 10px 14px;
+  z-index: 20;
+}
+.vs-legend-title {
+  font-size: 0.45rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: rgba(99,102,241,0.5);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.vs-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 0.6rem;
+  color: rgba(148,163,184,0.6);
+  font-weight: 600;
+}
+.vs-legend-row:last-child { margin-bottom: 0; }
+.vs-legend-glyph {
+  font-size: 1.1rem;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.vs-legend-action {
+  font-size: 0.5rem;
+  background: rgba(99,102,241,0.1);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: 6px;
+  padding: 1px 6px;
+  color: #a5b4fc;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.vs-legend-action.danger {
+  background: rgba(239,68,68,0.1);
+  border-color: rgba(239,68,68,0.25);
+  color: #fca5a5;
+}
+
+/* ── LOADING PANEL ── */
+.vs-loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  border-radius: 20px;
+  gap: 12px;
+}
+.vs-spinner {
+  width: 40px; height: 40px;
+  border: 2px solid rgba(99,102,241,0.15);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.vs-loading-text {
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(99,102,241,0.7);
+  text-transform: uppercase;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .vs-wrapper { left: 0; top: 60px; padding: 12px; }
+  .vs-scene { flex-direction: column; gap: 12px; }
+  .vs-cam-frame { width: 100%; max-width: 400px; }
+  .vs-panel { width: 100%; flex-direction: row; flex-wrap: wrap; }
+  .vs-gesture-card { flex: 1; min-width: 140px; }
+  .vs-legend { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ PERMISSION MODAL ══ -->
+<div class="vs-permission-modal" id="vs-perm-modal">
+  <div class="vs-permission-card">
+    <div class="vs-perm-icon">📸</div>
+    <div class="vs-perm-title">Camera Access Required</div>
+    <div class="vs-perm-desc">
+      Vision Shield uses your front camera to detect silent distress gestures.
+      No footage is recorded, stored, or transmitted — all processing happens locally on your device.
+    </div>
+    <button class="vs-perm-btn" id="vs-perm-allow-btn">
+      <i class="bi bi-camera-video-fill me-2"></i>Enable Vision Shield
+    </button>
+    <div class="vs-perm-note">
+      🔒 100% local processing · Zero cloud uploads · AES-256 encrypted session
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN WRAPPER ══ -->
+<div class="vs-wrapper">
+
+  <!-- Header -->
+  <div class="vs-header">
+    <h1 class="vs-title">Vision Shield</h1>
+    <p class="vs-subtitle">Silent Gesture SOS · AI-Powered Hand Recognition</p>
+    <div class="vs-badge">
+      <span class="vs-badge-dot"></span>
+      <span>MediaPipe · Real-time Detection · Zero Upload</span>
+    </div>
+  </div>
+
+  <!-- Scene -->
+  <div class="vs-scene">
+
+    <!-- Camera Frame -->
+    <div class="vs-cam-frame" id="vs-cam-frame">
+      <video id="vs-video" autoplay muted playsinline></video>
+      <canvas id="vs-canvas"></canvas>
+      <div class="vs-scanlines"></div>
+      <div class="vs-sweep"></div>
+      <div class="vs-corner tl"></div>
+      <div class="vs-corner tr"></div>
+      <div class="vs-corner bl"></div>
+      <div class="vs-corner br"></div>
+
+      <!-- Loading state -->
+      <div class="vs-loading" id="vs-loading">
+        <div class="vs-spinner"></div>
+        <div class="vs-loading-text" id="vs-loading-text">Initialising MediaPipe...</div>
+      </div>
+
+      <!-- HUD bar -->
+      <div class="vs-cam-hud">
+        <div class="vs-cam-status">
+          <div class="vs-cam-dot" id="vs-cam-dot"></div>
+          <span id="vs-cam-label">OFFLINE</span>
+        </div>
+        <span id="vs-fps-display">0 FPS</span>
+        <div class="vs-cam-status">
+          <i class="bi bi-hand-index" style="font-size:0.6rem; color:rgba(148,163,184,0.5);"></i>
+          <span id="vs-hand-count">0 HANDS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="vs-panel">
+
+      <!-- Gesture: Open Palm / STOP -->
+      <div class="vs-gesture-card" id="gc-stop">
+        <div class="vs-gesture-status" id="gs-stop">WATCHING</div>
+        <div class="vs-gesture-icon">🖐</div>
+        <div class="vs-gesture-name">Open Palm</div>
+        <div class="vs-gesture-desc">Raise open hand — hold 2s to broadcast silent SOS alert</div>
+        <div class="vs-hold-bar-wrap">
+          <div class="vs-hold-bar" id="hb-stop"></div>
+        </div>
+        <div class="vs-confidence">
+          <span class="vs-conf-label">Confidence</span>
+          <span class="vs-conf-val" id="conf-stop">0%</span>
+        </div>
+      </div>
+
+      <!-- Gesture: Fist / Panic -->
+      <div class="vs-gesture-card" id="gc-fist">
+        <div class="vs-gesture-status" id="gs-fist">WATCHING</div>
+        <div class="vs-gesture-icon">✊</div>
+        <div class="vs-gesture-name">Closed Fist</div>
+        <div class="vs-gesture-desc">Clench fist — hold 2s to fire immediate SOS distress signal</div>
+        <div class="vs-hold-bar-wrap">
+          <div class="vs-hold-bar" id="hb-fist"></div>
+        </div>
+        <div class="vs-confidence">
+          <span class="vs-conf-label">Confidence</span>
+          <span class="vs-conf-val" id="conf-fist">0%</span>
+        </div>
+      </div>
+
+      <!-- Gesture: Victory / Cancel -->
+      <div class="vs-gesture-card" id="gc-v">
+        <div class="vs-gesture-status" id="gs-v">WATCHING</div>
+        <div class="vs-gesture-icon">✌️</div>
+        <div class="vs-gesture-name">V-Sign</div>
+        <div class="vs-gesture-desc">Two-finger V — disarms any pending alert, safe confirmation</div>
+        <div class="vs-confidence">
+          <span class="vs-conf-label">Confidence</span>
+          <span class="vs-conf-val" id="conf-v">0%</span>
+        </div>
+      </div>
+
+      <!-- Main ARM/DISARM Button -->
+      <button class="vs-main-btn" id="vs-arm-btn" onclick="toggleArmed()">
+        <i class="bi bi-eye-fill vs-btn-icon" id="vs-arm-icon"></i>
+        <span id="vs-arm-text">ARM VISION SHIELD</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Gesture Legend -->
+  <div class="vs-legend">
+    <div class="vs-legend-title"><i class="bi bi-hand-index-thumb"></i> Gesture Reference</div>
+    <div class="vs-legend-row">
+      <span class="vs-legend-glyph">🖐</span>
+      <span>Open Palm — hold 2s</span>
+      <span class="vs-legend-action danger">SOS</span>
+    </div>
+    <div class="vs-legend-row">
+      <span class="vs-legend-glyph">✊</span>
+      <span>Closed Fist — hold 2s</span>
+      <span class="vs-legend-action danger">PANIC</span>
+    </div>
+    <div class="vs-legend-row">
+      <span class="vs-legend-glyph">✌️</span>
+      <span>V-Sign — instant</span>
+      <span class="vs-legend-action">DISARM</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ SOS ALERT OVERLAY ══ -->
+<div class="vs-alert-overlay" id="vs-alert-overlay">
+  <div class="vs-alert-ring">
+    <div class="vs-alert-icon">🆘</div>
+  </div>
+  <div class="vs-alert-title">SOS BROADCAST</div>
+  <div class="vs-alert-msg">
+    Gesture SOS detected.<br>
+    Transmitting your location to Guardian Network now.
+  </div>
+  <button class="vs-alert-dismiss" onclick="dismissAlert()">
+    <i class="bi bi-x-circle me-1"></i> DISMISS ALERT
+  </button>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- MediaPipe Hands CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════════════════════════
+   VISION SHIELD — Gesture Detection Engine
+   ════════════════════════════════════════════════════════════════ */
+
+const VS = {
+  armed: false,
+  running: false,
+  hands: null,
+  camera: null,
+  video: document.getElementById('vs-video'),
+  canvas: document.getElementById('vs-canvas'),
+  ctx: null,
+  camFrame: document.getElementById('vs-cam-frame'),
+  loadingEl: document.getElementById('vs-loading'),
+  loadingText: document.getElementById('vs-loading-text'),
+  camDot: document.getElementById('vs-cam-dot'),
+  camLabel: document.getElementById('vs-cam-label'),
+  fpsEl: document.getElementById('vs-fps-display'),
+  handCountEl: document.getElementById('vs-hand-count'),
+
+  /* Gesture hold state */
+  holdState: {
+    stop: { count: 0, threshold: 24 },   /* ~2s @ ~12fps */
+    fist: { count: 0, threshold: 24 },
+  },
+
+  lastGesture: null,
+  lastFrameTime: performance.now(),
+  frameCount: 0,
+  sosTriggered: false,
+};
+
+VS.ctx = VS.canvas.getContext('2d');
+
+/* ── Utility: draw landmarks ── */
+function drawHand(landmarks, isRightHand) {
+  const ctx = VS.ctx;
+  const w = VS.canvas.width;
+  const h = VS.canvas.height;
+
+  // Connection pairs (MediaPipe standard)
+  const CONNECTIONS = [
+    [0,1],[1,2],[2,3],[3,4],
+    [0,5],[5,6],[6,7],[7,8],
+    [5,9],[9,10],[10,11],[11,12],
+    [9,13],[13,14],[14,15],[15,16],
+    [13,17],[17,18],[18,19],[19,20],
+    [0,17]
+  ];
+
+  const color = isRightHand ? 'rgba(99,102,241,0.8)' : 'rgba(99,102,241,0.8)';
+  const jointColor = isRightHand ? '#818cf8' : '#818cf8';
+
+  // Draw connections
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = '#6366f1';
+  ctx.shadowBlur = 5;
+  for (const [a, b] of CONNECTIONS) {
+    if (!landmarks[a] || !landmarks[b]) continue;
+    ctx.beginPath();
+    ctx.moveTo(landmarks[a].x * w, landmarks[a].y * h);
+    ctx.lineTo(landmarks[b].x * w, landmarks[b].y * h);
+    ctx.stroke();
+  }
+
+  // Draw joints
+  ctx.shadowBlur = 8;
+  for (const lm of landmarks) {
+    ctx.beginPath();
+    ctx.arc(lm.x * w, lm.y * h, 3, 0, Math.PI * 2);
+    ctx.fillStyle = jointColor;
+    ctx.fill();
+
+    /* Key joints: fingertips glow */
+    if ([4,8,12,16,20].includes(landmarks.indexOf(lm))) {
+      ctx.beginPath();
+      ctx.arc(lm.x * w, lm.y * h, 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(196,181,253,0.4)';
+      ctx.fill();
+    }
+  }
+  ctx.shadowBlur = 0;
+}
+
+/* ── Gesture Classification ── */
+function classifyGesture(landmarks) {
+  /* Landmark indices:
+     4=thumb tip, 8=index tip, 12=middle tip, 16=ring tip, 20=pinky tip
+     2=thumb MCP, 5=index MCP, 9=middle MCP, 13=ring MCP, 17=pinky MCP
+     6=index PIP, 10=middle PIP, 14=ring PIP, 18=pinky PIP
+  */
+  const tip = (i) => landmarks[i];
+  const pip = { index: landmarks[6], middle: landmarks[10], ring: landmarks[14], pinky: landmarks[18] };
+  const mcp = { index: landmarks[5], middle: landmarks[9], ring: landmarks[13], pinky: landmarks[17] };
+
+  const fingerExtended = (tipIdx, pipIdx) => {
+    return tip(tipIdx).y < landmarks[pipIdx].y;
+  };
+
+  const thumbExtended = () => {
+    /* Thumb is extended if tip is significantly to the side */
+    const thumb = tip(4);
+    const thumbBase = landmarks[2];
+    return Math.abs(thumb.x - thumbBase.x) > 0.07;
+  };
+
+  const indexUp = fingerExtended(8, 6);
+  const middleUp = fingerExtended(12, 10);
+  const ringUp = fingerExtended(16, 14);
+  const pinkyUp = fingerExtended(20, 18);
+  const thumbUp = thumbExtended();
+
+  const extCount = [indexUp, middleUp, ringUp, pinkyUp].filter(Boolean).length;
+
+  /* Open Palm: 4+ fingers extended */
+  if (extCount >= 4) {
+    return { gesture: 'stop', confidence: Math.min(100, extCount * 22 + (thumbUp ? 12 : 0)) };
+  }
+
+  /* V-sign: index + middle up, ring + pinky down */
+  if (indexUp && middleUp && !ringUp && !pinkyUp) {
+    const spread = Math.abs(tip(8).x - tip(12).x);
+    const conf = Math.min(100, Math.round(50 + spread * 400));
+    return { gesture: 'v', confidence: conf };
+  }
+
+  /* Closed Fist: no fingers extended */
+  if (extCount === 0 && !thumbUp) {
+    return { gesture: 'fist', confidence: 90 };
+  }
+
+  return { gesture: null, confidence: 0 };
+}
+
+/* ── Update gesture card UI ── */
+function updateCard(id, gesture, conf, holdPct) {
+  const mapping = { stop: 'stop', fist: 'fist', v: 'v' };
+  Object.keys(mapping).forEach(key => {
+    const card = document.getElementById('gc-' + key);
+    const statusEl = document.getElementById('gs-' + key);
+    const confEl = document.getElementById('conf-' + key);
+    const barEl = document.getElementById('hb-' + key);
+
+    const isActive = (key === gesture);
+    card.classList.remove('active', 'danger-active');
+
+    if (isActive) {
+      const cls = (key === 'v') ? 'active' : 'danger-active';
+      card.classList.add(cls);
+      statusEl.textContent = key === 'v' ? 'DISARM' : 'DETECTED';
+      if (confEl) confEl.textContent = conf + '%';
+      if (barEl) barEl.style.width = holdPct + '%';
+    } else {
+      statusEl.textContent = 'WATCHING';
+      if (confEl) confEl.textContent = '0%';
+      if (barEl) barEl.style.width = '0%';
+    }
+  });
+}
+
+/* ── SOS Trigger ── */
+function triggerGestureSOS(type) {
+  if (VS.sosTriggered) return;
+  VS.sosTriggered = true;
+
+  /* Show alert overlay */
+  document.getElementById('vs-alert-overlay').classList.add('active');
+
+  /* Announce */
+  if (window.tacticalAnnounce) tacticalAnnounce('Vision Shield SOS detected. Broadcasting distress signal.');
+
+  /* Fire SOS */
+  if (window._fireGlobalSOS) {
+    window._fireGlobalSOS();
+  } else {
+    /* Fallback direct fire */
+    navigator.geolocation.getCurrentPosition(pos => {
+      fetch('/sos/trigger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          trigger_type: 'gesture_' + type,
+          accuracy: pos.coords.accuracy
+        })
+      }).then(r => r.json()).then(d => {
+        if (typeof showToast === 'function') {
+          showToast(d.success ? '🆘 GESTURE SOS BROADCAST SENT' : (d.error || 'SOS failed'), d.success ? 'sos' : 'error');
+        }
+      }).catch(() => {});
+    }, () => {
+      if (typeof showToast === 'function') showToast('GPS unavailable — SOS queued', 'error');
+    });
+  }
+}
+
+function dismissAlert() {
+  document.getElementById('vs-alert-overlay').classList.remove('active');
+  VS.sosTriggered = false;
+  /* Reset hold state */
+  VS.holdState.stop.count = 0;
+  VS.holdState.fist.count = 0;
+}
+
+/* ── MediaPipe Results Callback ── */
+function onResults(results) {
+  const now = performance.now();
+  VS.frameCount++;
+  if (now - VS.lastFrameTime >= 1000) {
+    const fps = Math.round(VS.frameCount * 1000 / (now - VS.lastFrameTime));
+    VS.fpsEl.textContent = fps + ' FPS';
+    VS.frameCount = 0;
+    VS.lastFrameTime = now;
+  }
+
+  /* Resize canvas to match video */
+  VS.canvas.width = VS.video.videoWidth || 480;
+  VS.canvas.height = VS.video.videoHeight || 360;
+
+  const ctx = VS.ctx;
+  ctx.clearRect(0, 0, VS.canvas.width, VS.canvas.height);
+
+  const handCount = results.multiHandLandmarks ? results.multiHandLandmarks.length : 0;
+  VS.handCountEl.textContent = handCount + ' HAND' + (handCount !== 1 ? 'S' : '');
+
+  if (!VS.armed) {
+    updateCard(null, null, 0, 0);
+    return;
+  }
+
+  if (!results.multiHandLandmarks || handCount === 0) {
+    VS.holdState.stop.count = 0;
+    VS.holdState.fist.count = 0;
+    updateCard(null, null, 0, 0);
+    VS.camFrame.classList.remove('gesture-detected');
+    return;
+  }
+
+  /* Process first hand */
+  const landmarks = results.multiHandLandmarks[0];
+  const handedness = results.multiHandedness ? results.multiHandedness[0].label : 'Right';
+
+  drawHand(landmarks, handedness === 'Right');
+
+  const { gesture, confidence } = classifyGesture(landmarks);
+
+  /* V-sign: instant disarm */
+  if (gesture === 'v') {
+    VS.holdState.stop.count = 0;
+    VS.holdState.fist.count = 0;
+    updateCard(null, 'v', confidence, 0);
+    VS.camFrame.classList.add('gesture-detected');
+    VS.camFrame.classList.remove('armed');
+    if (window.tacticalAnnounce) tacticalAnnounce('Vision Shield disarmed. Clear.');
+    return;
+  }
+
+  /* Hold gestures */
+  ['stop', 'fist'].forEach(key => {
+    if (gesture === key) {
+      VS.holdState[key].count++;
+      const pct = Math.min(100, (VS.holdState[key].count / VS.holdState[key].threshold) * 100);
+      updateCard(null, key, confidence, pct);
+      VS.camFrame.classList.add('gesture-detected');
+
+      if (VS.holdState[key].count >= VS.holdState[key].threshold && !VS.sosTriggered) {
+        triggerGestureSOS(key);
+      }
+    } else {
+      VS.holdState[key].count = Math.max(0, VS.holdState[key].count - 3);
+    }
+  });
+
+  if (!gesture) {
+    VS.camFrame.classList.remove('gesture-detected');
+    updateCard(null, null, 0, 0);
+  }
+}
+
+/* ── Arm / Disarm Toggle ── */
+function toggleArmed() {
+  if (!VS.running) {
+    if (typeof showToast === 'function') showToast('Start Vision Shield first — enable camera.', 'error');
+    return;
+  }
+  VS.armed = !VS.armed;
+  const btn = document.getElementById('vs-arm-btn');
+  const icon = document.getElementById('vs-arm-icon');
+  const text = document.getElementById('vs-arm-text');
+
+  if (VS.armed) {
+    btn.classList.add('armed');
+    icon.className = 'bi bi-shield-fill-exclamation vs-btn-icon';
+    text.textContent = 'DISARM SHIELD';
+    VS.camFrame.classList.add('armed');
+    if (window.tacticalAnnounce) tacticalAnnounce('Vision Shield armed. Gesture monitoring active.');
+    if (typeof showToast === 'function') showToast('🛡️ Vision Shield Armed — Monitoring Gestures', 'success');
+  } else {
+    btn.classList.remove('armed');
+    icon.className = 'bi bi-eye-fill vs-btn-icon';
+    text.textContent = 'ARM VISION SHIELD';
+    VS.camFrame.classList.remove('armed', 'gesture-detected');
+    VS.holdState.stop.count = 0;
+    VS.holdState.fist.count = 0;
+    updateCard(null, null, 0, 0);
+    if (typeof showToast === 'function') showToast('Vision Shield Disarmed', 'info');
+  }
+}
+
+/* ── Initialize MediaPipe ── */
+async function initVisionShield() {
+  VS.loadingText.textContent = 'Loading MediaPipe Hands...';
+
+  try {
+    VS.hands = new Hands({
+      locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    VS.hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 0,       /* Lite model — fast */
+      minDetectionConfidence: 0.65,
+      minTrackingConfidence: 0.6
+    });
+
+    VS.hands.onResults(onResults);
+
+    VS.loadingText.textContent = 'Accessing Camera...';
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false
+    });
+
+    VS.video.srcObject = stream;
+    await VS.video.play();
+
+    VS.loadingText.textContent = 'Starting hand tracking...';
+
+    /* Use MediaPipe Camera utility for frame processing */
+    VS.camera = new Camera(VS.video, {
+      onFrame: async () => {
+        await VS.hands.send({ image: VS.video });
+      },
+      width: 640,
+      height: 480
+    });
+
+    await VS.camera.start();
+
+    /* All good — hide loading */
+    VS.loadingEl.style.display = 'none';
+    VS.running = true;
+
+    VS.camDot.classList.add('active');
+    VS.camLabel.textContent = 'LIVE · TRACKING';
+
+    if (typeof showToast === 'function') showToast('✅ Vision Shield camera online', 'success');
+
+  } catch (err) {
+    VS.loadingText.textContent = 'ERROR: ' + (err.message || 'Camera unavailable');
+    console.error('Vision Shield init error:', err);
+    if (typeof showToast === 'function') showToast('Camera error: ' + (err.message || 'Access denied'), 'error');
+  }
+}
+
+/* ── Permission Modal ── */
+document.getElementById('vs-perm-allow-btn').addEventListener('click', async function () {
+  document.getElementById('vs-perm-modal').style.display = 'none';
+  await initVisionShield();
+});
+
+/* ── Auto-try if permissions already granted ── */
+navigator.permissions?.query({ name: 'camera' }).then(result => {
+  if (result.state === 'granted') {
+    document.getElementById('vs-perm-modal').style.display = 'none';
+    initVisionShield();
+  }
+}).catch(() => {
+  /* Permissions API not available — show modal */
+});
+</script>
+{% endblock %}
