@@ -3,11 +3,9 @@
   "configurations": [
     {
       "name": "rakshak",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "cd /Users/maniksahni/Desktop/RAKSHAK && python3 -c \"import os; port=int(os.environ.get('PORT',5001)); os.environ['FLASK_ENV']='development'; from app import create_app, socketio; app=create_app('development'); socketio.run(app, host='0.0.0.0', port=port, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)\""],
-      "port": 5001,
-      "autoPort": true,
-      "cwd": "/Users/maniksahni/Desktop/RAKSHAK"
+      "runtimeExecutable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "runtimeArgs": ["-c", "import os,sys; os.chdir('/Users/maniksahni/Desktop/RAKSHAK'); sys.path.insert(0,'/Users/maniksahni/Desktop/RAKSHAK'); port=int(os.environ.get('PORT','5001')); os.environ['FLASK_ENV']='development'; from app import create_app, socketio; app=create_app('development'); socketio.run(app, host='0.0.0.0', port=port, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)"],
+      "port": 5001
     }
   ]
 }
