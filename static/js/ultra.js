@@ -190,18 +190,23 @@ document.addEventListener('visibilitychange', () => { tabVisible = !document.hid
     card.appendChild(holo);
     card.style.position = 'relative';
 
+    // rAF-throttled mousemove so we update style at most once per frame
+    let pending = false, lx = 0, ly = 0;
     card.addEventListener('mousemove', e => {
       const r = card.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width) * 100;
-      const y = ((e.clientY - r.top) / r.height) * 100;
-      holo.style.setProperty('--hx', x + '%');
-      holo.style.setProperty('--hy', y + '%');
-      holo.style.opacity = '1';
+      lx = ((e.clientX - r.left) / r.width) * 100;
+      ly = ((e.clientY - r.top) / r.height) * 100;
+      if (!pending) {
+        pending = true;
+        requestAnimationFrame(() => {
+          holo.style.setProperty('--hx', lx + '%');
+          holo.style.setProperty('--hy', ly + '%');
+          holo.style.opacity = '1';
+          pending = false;
+        });
+      }
     });
-
-    card.addEventListener('mouseleave', () => {
-      holo.style.opacity = '0';
-    });
+    card.addEventListener('mouseleave', () => { holo.style.opacity = '0'; });
   });
 })();
 
@@ -218,15 +223,24 @@ document.addEventListener('visibilitychange', () => { tabVisible = !document.hid
     sec.style.position = 'relative';
     sec.insertBefore(glow, sec.firstChild);
 
+    // rAF-throttle: batch mousemove updates to one per frame (not per mouse event).
+    // Keep left/top (centered via CSS transform:translate(-50%,-50%)) — don't override transform.
+    let pending = false, lx = 0, ly = 0;
     sec.addEventListener('mousemove', e => {
       const r = sec.getBoundingClientRect();
-      glow.style.left = (e.clientX - r.left) + 'px';
-      glow.style.top = (e.clientY - r.top) + 'px';
-      glow.style.opacity = '1';
+      lx = e.clientX - r.left;
+      ly = e.clientY - r.top;
+      if (!pending) {
+        pending = true;
+        requestAnimationFrame(() => {
+          glow.style.left = lx + 'px';
+          glow.style.top = ly + 'px';
+          glow.style.opacity = '1';
+          pending = false;
+        });
+      }
     });
-    sec.addEventListener('mouseleave', () => {
-      glow.style.opacity = '0';
-    });
+    sec.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
   });
 })();
 
