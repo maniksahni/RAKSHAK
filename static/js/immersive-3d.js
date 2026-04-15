@@ -6,10 +6,10 @@
   'use strict';
 
   var PERSPECTIVE = 1580;
-  var TILT_MAX_RX = 24;
-  var TILT_MAX_RY = 28;
-  var GLASS_MAX_RX = 14;
-  var GLASS_MAX_RY = 16;
+  var TILT_MAX_RX = 12;   // halved from 24 — heavy perspective recalcs
+  var TILT_MAX_RY = 14;   // halved from 28
+  var GLASS_MAX_RX = 8;   // reduced from 14
+  var GLASS_MAX_RY = 10;  // reduced from 16
   var LERP = 0.19;
 
   var states = [];
@@ -131,19 +131,10 @@
         'deg) translateZ(' +
         zLift +
         'px)';
-      if (s.scale3d) t += ' scale3d(1.045,1.045,1.045)';
+      if (s.scale3d) t += ' scale3d(1.035,1.035,1.035)';
       s.el.style.transform = t;
-      var dist = 20 + Math.abs(s.cx) * 16 + Math.abs(s.cy) * 12;
-      s.el.style.filter =
-        'drop-shadow(' +
-        s.cx * -8 +
-        'px ' +
-        (s.cy * -7 + 6) +
-        'px ' +
-        dist +
-        'px rgba(88,28,135,0.22)) drop-shadow(0 ' +
-        (12 + s.cy * -4) +
-        'px 28px rgba(0,0,0,0.35))';
+      // Filter drop-shadow REMOVED — was the heaviest per-frame cost (forces full composite pass on every tilted card).
+      // The inner boxShadow below provides the same sense of depth at far lower GPU cost.
       if (s.inner) {
         var z = 18 + Math.abs(s.cx) * 18;
         s.inner.style.transform = 'translateZ(' + z + 'px)';
@@ -152,12 +143,7 @@
           'px ' +
           s.cy * -28 +
           'px 64px rgba(124,58,237,0.26), 0 22px 52px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)';
-        s.inner.style.setProperty(
-          'filter',
-          'brightness(' +
-            (1.02 + Math.abs(s.cx) * 0.04 + Math.abs(s.cy) * 0.03) +
-            ') saturate(1.08)'
-        );
+        // Inner brightness/saturate filter also removed — was compounding with host filter for 2x composite cost.
       }
     });
   }
