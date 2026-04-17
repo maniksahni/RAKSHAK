@@ -9,3 +9,5 @@ venv/
 .claude/worktrees/
 node_modules/
 .venv/
+.vscode/
+.idea/
