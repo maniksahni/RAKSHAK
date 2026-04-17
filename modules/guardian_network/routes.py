@@ -163,7 +163,7 @@ def alert_guardians():
         dlng = radius_km / (111.0 * abs(max(0.01, math.cos(math.radians(lat)))))
 
         nearby_guardians = query_db(
-            """SELECT id FROM users
+            """SELECT id, guardian_lat, guardian_lng FROM users
                WHERE guardian_active=TRUE
                  AND id != %s
                  AND guardian_lat BETWEEN %s AND %s
@@ -175,8 +175,8 @@ def alert_guardians():
         alerted_count = 0
         for g in nearby_guardians:
             dist = haversine_km(lat, lng,
-                                float(query_db("SELECT guardian_lat FROM users WHERE id=%s", (g['id'],), one=True)['guardian_lat'] or 0),
-                                float(query_db("SELECT guardian_lng FROM users WHERE id=%s", (g['id'],), one=True)['guardian_lng'] or 0))
+                                float(g['guardian_lat'] or 0),
+                                float(g['guardian_lng'] or 0))
             if dist <= radius_km:
                 # Send in-app notification to guardian
                 query_db(

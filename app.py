@@ -115,7 +115,7 @@ def create_app(config_name=None):
     cors_origins = (
         os.environ.get('ALLOWED_ORIGINS', '*')
         if config_name == 'development'
-        else os.environ.get('ALLOWED_ORIGINS', '*')
+        else os.environ.get('ALLOWED_ORIGINS', '')  # production: restrict to configured origin only
     )
     socketio.init_app(
         app,

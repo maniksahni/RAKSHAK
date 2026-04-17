@@ -11,8 +11,8 @@ from models import query_db, log_audit
 log = logging.getLogger('rakshak')
 gemini_bp = Blueprint('gemini', __name__)
 
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-
+# NOTE: ARIA runs on a local inference engine (no external API key required).
+# Gemini API integration is reserved for future premium tier.
 RAKSHAK_SYSTEM_PROMPT = """You are ARIA — Advanced Rakshak Intelligence Assistant — an elite AI safety guardian embedded in RAKSHAK, India's most advanced women's safety platform.
 
 Your mission is to protect women and provide real-time safety intelligence. You are:
