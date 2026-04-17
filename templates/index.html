@@ -487,12 +487,13 @@ a,button{cursor:none}
 
 /* ═══════════════════ TESTIMONIALS ═══════════════════ */
 /* Section bg matches overall navy theme — fade masks use same colour so they blend perfectly. */
-.testi{padding:6rem 0 5rem;overflow:hidden;background:linear-gradient(180deg,var(--bg) 0%,rgba(10,8,30,.98) 40%,rgba(8,6,24,.98) 60%,var(--bg) 100%)}
+.testi{padding:5rem 0 3rem;overflow:hidden;background:linear-gradient(180deg,var(--bg) 0%,rgba(10,8,30,.98) 40%,rgba(8,6,24,.98) 60%,var(--bg) 100%)}
 .testi-w{overflow:hidden;position:relative;padding:1.5rem 0}
-/* Wide fade masks (360px) that match the section's actual bg — key fix for partial-card bleed */
-.testi-w::before,.testi-w::after{content:'';position:absolute;top:0;bottom:0;width:360px;z-index:2;pointer-events:none}
-.testi-w::before{left:0;background:linear-gradient(90deg,#06061a 30%,rgba(6,6,26,.85) 60%,transparent)}
-.testi-w::after{right:0;background:linear-gradient(270deg,#06061a 30%,rgba(6,6,26,.85) 60%,transparent)}
+/* 460px solid-then-fade masks — solid zone covers 60% so a half-visible card
+   is fully opaque before text becomes legible; only the last 40% fades out. */
+.testi-w::before,.testi-w::after{content:'';position:absolute;top:0;bottom:0;width:460px;z-index:2;pointer-events:none}
+.testi-w::before{left:0;background:linear-gradient(90deg,#06061a 0%,#06061a 60%,transparent)}
+.testi-w::after{right:0;background:linear-gradient(270deg,#06061a 0%,#06061a 60%,transparent)}
 .testi-t{display:flex;gap:1.5rem;animation:ttScroll 45s linear infinite;width:max-content;will-change:transform;contain:layout style paint}
 @keyframes ttScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 /* Fixed height cards so all rows are uniform — no more jagged bottom edge */
@@ -514,7 +515,7 @@ a,button{cursor:none}
 .tc-rl{font-family:var(--int);font-size:.66rem;color:rgba(255,255,255,.22);margin-top:2px}
 
 /* ═══════════════════ CTA ═══════════════════ */
-.cta{padding:9rem 2rem;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#180e3a 0%,#2a1565 30%,#351a80 50%,#2a1565 70%,#180e3a 100%)}
+.cta{padding:5rem 2rem 7rem;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#180e3a 0%,#2a1565 30%,#351a80 50%,#2a1565 70%,#180e3a 100%)}
 .cta::before{content:'';position:absolute;top:50%;left:50%;width:1200px;height:1200px;transform:translate(-50%,-50%);background:radial-gradient(ellipse at 50% 50%,rgba(255,59,59,.25),rgba(139,92,246,.18) 40%,transparent 60%);pointer-events:none}
 .cta::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(34,211,238,.15),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(244,114,182,.12),transparent 50%);pointer-events:none;animation:ctaGlow 5s ease-in-out infinite;z-index:0}
 @keyframes ctaGlow{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
