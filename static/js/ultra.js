@@ -74,8 +74,9 @@ document.addEventListener('visibilitychange', () => { tabVisible = !document.hid
     sec.style.position = 'relative';
     sec.insertBefore(glow, sec.firstChild);
 
-    // rAF-throttle: batch mousemove updates to one per frame (not per mouse event).
-    // Keep left/top (centered via CSS transform:translate(-50%,-50%)) — don't override transform.
+    // rAF-throttle: one DOM write per frame max.
+    // Use transform:translate3d only — left/top trigger layout on every move.
+    // Glow is 420×420; translate by (lx-210, ly-210) centres it on the cursor.
     let pending = false, lx = 0, ly = 0;
     sec.addEventListener('mousemove', e => {
       const r = sec.getBoundingClientRect();
@@ -84,8 +85,7 @@ document.addEventListener('visibilitychange', () => { tabVisible = !document.hid
       if (!pending) {
         pending = true;
         requestAnimationFrame(() => {
-          glow.style.left = lx + 'px';
-          glow.style.top = ly + 'px';
+          glow.style.transform = 'translate3d(' + (lx - 210) + 'px,' + (ly - 210) + 'px,0)';
           glow.style.opacity = '1';
           pending = false;
         });
