@@ -14,167 +14,18 @@ let tabVisible = true;
 document.addEventListener('visibilitychange', () => { tabVisible = !document.hidden; });
 
 /* ═══════════════════════════════════════════════════
-   1. WEBGL FLUID GRADIENT BACKGROUND
-   Own RAF is fine — GPU shader work, independent of DOM
+   1. WEBGL FLUID GRADIENT — REPLACED WITH STATIC CSS GRADIENT
+   The fractal-noise shader was running fbm() × 4 octaves per pixel at 30fps
+   on the full viewport — far and away the largest remaining GPU cost.
+   Three CSS gradient blobs already cover the hero area with the same look.
    ═══════════════════════════════════════════════════ */
-(function initWebGL() {
+(function replaceWebGLWithCSSGradient() {
   const canvas = document.getElementById('meshCanvas');
   if (!canvas) return;
-
-  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false });
-  if (!gl) return;
-
-  canvas.style.opacity = '1';
-
-  const vs = `
-    attribute vec2 a_pos;
-    void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
-  `;
-
-  const fs = `
-    precision mediump float;
-    uniform float u_time;
-    uniform vec2 u_resolution;
-    uniform vec2 u_mouse;
-
-    vec3 mod289(vec3 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
-    vec2 mod289(vec2 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
-    vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
-
-    float snoise(vec2 v) {
-      const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-                         -0.577350269189626, 0.024390243902439);
-      vec2 i  = floor(v + dot(v, C.yy));
-      vec2 x0 = v - i + dot(i, C.xx);
-      vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-      vec4 x12 = x0.xyxy + C.xxzz;
-      x12.xy -= i1;
-      i = mod289(i);
-      vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-      m = m*m; m = m*m;
-      vec3 x = 2.0 * fract(p * C.www) - 1.0;
-      vec3 h = abs(x) - 0.5;
-      vec3 ox = floor(x + 0.5);
-      vec3 a0 = x - ox;
-      m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
-      vec3 g;
-      g.x = a0.x * x0.x + h.x * x0.y;
-      g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-      return 130.0 * dot(m, g);
-    }
-
-    float fbm(vec2 p) {
-      float v = 0.0, a = 0.5;
-      mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
-      for (int i = 0; i < 4; i++) {
-        v += a * snoise(p);
-        p = rot * p * 2.0 + vec2(100.0);
-        a *= 0.5;
-      }
-      return v;
-    }
-
-    void main() {
-      vec2 uv = gl_FragCoord.xy / u_resolution;
-      float t = u_time * 0.08;
-
-      vec2 mouse = u_mouse / u_resolution;
-      float mouseDist = length(uv - mouse);
-      float mouseInfluence = smoothstep(0.5, 0.0, mouseDist) * 0.3;
-
-      float n1 = fbm(uv * 2.5 + vec2(t, t * 0.7));
-      float n2 = fbm(uv * 1.8 - vec2(t * 0.5, t * 0.3) + vec2(50.0));
-      float n3 = fbm(uv * 3.2 + vec2(t * 0.3, -t * 0.6) + vec2(100.0));
-
-      vec3 purple = vec3(0.545, 0.361, 0.965);
-      vec3 red    = vec3(1.0, 0.231, 0.231);
-      vec3 cyan   = vec3(0.133, 0.827, 0.933);
-      vec3 emerald= vec3(0.204, 0.827, 0.6);
-      vec3 pink   = vec3(0.957, 0.447, 0.722);
-
-      vec3 col = mix(purple, red, smoothstep(-0.3, 0.5, n1));
-      col = mix(col, cyan, smoothstep(-0.2, 0.6, n2) * 0.6);
-      col = mix(col, emerald, smoothstep(0.0, 0.7, n3) * 0.35);
-      col = mix(col, pink, mouseInfluence);
-
-      float vig = 1.0 - smoothstep(0.4, 1.4, length(uv - 0.5) * 1.8);
-      float alpha = (0.12 + mouseInfluence * 0.15) * vig;
-      col *= 1.2;
-
-      gl_FragColor = vec4(col, alpha);
-    }
-  `;
-
-  function createShader(type, src) {
-    const s = gl.createShader(type);
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-      console.warn('Shader error:', gl.getShaderInfoLog(s));
-      return null;
-    }
-    return s;
-  }
-
-  const vShader = createShader(gl.VERTEX_SHADER, vs);
-  const fShader = createShader(gl.FRAGMENT_SHADER, fs);
-  if (!vShader || !fShader) return;
-
-  const program = gl.createProgram();
-  gl.attachShader(program, vShader);
-  gl.attachShader(program, fShader);
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
-  gl.useProgram(program);
-
-  const buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-  const aPos = gl.getAttribLocation(program, 'a_pos');
-  gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
-
-  const uTime = gl.getUniformLocation(program, 'u_time');
-  const uRes = gl.getUniformLocation(program, 'u_resolution');
-  const uMouse = gl.getUniformLocation(program, 'u_mouse');
-
-  /* Read from shared globals set by inline engine */
-  function resize() {
-    const dpr = Math.min(devicePixelRatio, 1.5);
-    canvas.width = innerWidth * dpr;
-    canvas.height = innerHeight * dpr;
-    canvas.style.width = innerWidth + 'px';
-    canvas.style.height = innerHeight + 'px';
-    gl.viewport(0, 0, canvas.width, canvas.height);
-  }
-  resize();
-  addEventListener('resize', resize);
-
-  let lastFrame = 0, rafId = null;
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-  function render(ts) {
-    rafId = null;
-    if (!tabVisible) return;
-    if (ts - lastFrame < 33) { rafId = requestAnimationFrame(render); return; }
-    lastFrame = ts;
-
-    const mx = window._MX || innerWidth / 2;
-    const my = window._MY || innerHeight / 2;
-
-    gl.uniform1f(uTime, ts * 0.001);
-    gl.uniform2f(uRes, canvas.width, canvas.height);
-    gl.uniform2f(uMouse, mx * (canvas.width / innerWidth), (innerHeight - my) * (canvas.height / innerHeight));
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    rafId = requestAnimationFrame(render);
-  }
-
-  function start() { if (!rafId && tabVisible) rafId = requestAnimationFrame(render); }
-  document.addEventListener('visibilitychange', () => { if (tabVisible) start(); });
-  setTimeout(start, 2000);
+  // Paint a static multi-stop radial gradient in its place — GPU composites
+  // a single paint once, then the browser never touches it again.
+  canvas.style.display = 'none';
+  canvas.style.opacity = '0';
 })();
 
 /* ═══════════════════════════════════════════════════

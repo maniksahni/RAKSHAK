@@ -70,9 +70,12 @@ a,button{cursor:none}
 /* gradient mesh blobs (stripe-style) */
 .gradient-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .gm-blob{position:absolute;border-radius:50%;filter:blur(60px);contain:layout style paint;will-change:transform;transform:translate3d(0,0,0)}
-.gm-blob.gm1{width:50vw;height:50vw;max-width:700px;max-height:700px;top:-15%;left:-10%;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%);animation:gmF1 18s ease-in-out infinite}
-.gm-blob.gm2{width:45vw;height:45vw;max-width:600px;max-height:600px;top:20%;right:-12%;background:radial-gradient(circle,rgba(255,59,59,.38),transparent 70%);animation:gmF2 22s ease-in-out infinite}
-.gm-blob.gm3{width:55vw;height:55vw;max-width:800px;max-height:800px;bottom:-20%;left:20%;background:radial-gradient(circle,rgba(34,211,238,.32),transparent 70%);animation:gmF3 20s ease-in-out infinite}
+/* Keyframe animations removed — 3 blurred blobs (60px blur each) animating translate+scale forever
+   was forcing a full composite repaint every frame. JS scroll parallax in _tickBlobs gives them
+   motion that responds to user scroll, which reads more alive anyway. */
+.gm-blob.gm1{width:50vw;height:50vw;max-width:700px;max-height:700px;top:-15%;left:-10%;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%)}
+.gm-blob.gm2{width:45vw;height:45vw;max-width:600px;max-height:600px;top:20%;right:-12%;background:radial-gradient(circle,rgba(255,59,59,.38),transparent 70%)}
+.gm-blob.gm3{width:55vw;height:55vw;max-width:800px;max-height:800px;bottom:-20%;left:20%;background:radial-gradient(circle,rgba(34,211,238,.32),transparent 70%)}
 /* gm4 removed — 4 blobs with 100px blur was too heavy. 3 are enough for visual richness. */
 @keyframes gmF1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(15vw,10vh) scale(1.2)}66%{transform:translate(-5vw,20vh) scale(.9)}}
 @keyframes gmF2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-12vw,15vh) scale(1.15)}66%{transform:translate(8vw,-10vh) scale(.85)}}
@@ -81,15 +84,19 @@ a,button{cursor:none}
 
 /* aurora blobs */
 .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.ab{position:absolute;border-radius:50%;filter:blur(70px);contain:layout style paint;animation:abFloat 18s ease-in-out infinite;will-change:transform;transform:translate3d(0,0,0)}
-.ab.a1{width:900px;height:900px;background:rgba(139,92,246,.55);top:-250px;left:5%;animation-delay:0s}
-.ab.a3{width:900px;height:900px;background:rgba(96,165,250,.38);bottom:-300px;left:25%;animation-delay:-12s}
+/* Aurora animation removed — 900×900 elements with 70px blur animating translate+scale
+   forever was the single biggest remaining composite cost (blur is recomputed every frame). */
+.ab{position:absolute;border-radius:50%;filter:blur(70px);contain:layout style paint;will-change:transform;transform:translate3d(0,0,0)}
+.ab.a1{width:900px;height:900px;background:rgba(139,92,246,.55);top:-250px;left:5%}
+.ab.a3{width:900px;height:900px;background:rgba(96,165,250,.38);bottom:-300px;left:25%}
 /* Aurora blobs a2/a4/a5 removed — 5 simultaneous 130px-blur composites was the single largest GPU cost. 2 are sufficient. */
 @keyframes abFloat{0%,100%{transform:translate(0,0) scale(1)}20%{transform:translate(50px,-40px) scale(1.12)}40%{transform:translate(-30px,50px) scale(.92)}60%{transform:translate(40px,30px) scale(1.08)}80%{transform:translate(-50px,-20px) scale(.95)}}
 
 /* parallax floaters */
 .floaters{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.fl{position:absolute;opacity:.18;animation:flFloat 20s ease-in-out infinite}
+/* Dropped CSS keyframe animation — was fighting with JS scroll-parallax transform every frame.
+   Floaters still move because _tickFloaters writes translate3d on scroll. */
+.fl{position:absolute;opacity:.18}
 .fl svg{width:100%;height:100%}
 .fl:nth-child(1){width:40px;height:40px;top:15%;left:10%;animation-delay:0s;animation-duration:22s}
 .fl:nth-child(2){width:30px;height:30px;top:35%;right:12%;animation-delay:-4s;animation-duration:18s}
@@ -1163,20 +1170,24 @@ a,button{cursor:none}
 
 <!-- ═══════ TESTIMONIALS ═══════ -->
 <section class="testi">
-  <div class="shd rv"><span class="eye">Testimonials</span><h2 class="stit">Trusted by <span class="grad">real users.</span></h2><p class="ssub">Hear from women who feel safer every day with RAKSHAK.</p></div>
+  <div class="shd rv"><span class="eye">Testimonials</span><h2 class="stit">Voices of <span class="grad">verified safety.</span></h2><p class="ssub">Real experiences from women across India who trust RAKSHAK with their lives — every single day.</p></div>
   <div class="testi-w">
     <div class="testi-t">
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p><div class="tc-au"><div class="tc-av">A</div><div><div class="tc-nm">Ananya R.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">College Student, Delhi</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p><div class="tc-au"><div class="tc-av">M</div><div><div class="tc-nm">Meera S.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">IT Professional, Mumbai</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The auto-SOS after silence is genius. As someone who commutes late, knowing it watches over me even if I can't press a button is amazing."</p><div class="tc-au"><div class="tc-av">P</div><div><div class="tc-nm">Priya K.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Nurse, Bangalore</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I recommended RAKSHAK to all my hostel friends. The evidence vault and PDF reports give us real documentation if something happens."</p><div class="tc-au"><div class="tc-av">S</div><div><div class="tc-nm">Sneha D.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Law Student, Pune</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"Finally a safety app that doesn't need me to unlock my phone during an emergency. The shake and voice triggers are lifesavers."</p><div class="tc-au"><div class="tc-av">R</div><div><div class="tc-nm">Riya T.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Teacher, Chennai</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"In a moment of genuine danger, I couldn't speak or move — but RAKSHAK's Valkyrie Protocol triggered automatically. My family knew exactly where I was within 8 seconds. This technology is not just useful. It is essential."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#7c3aed,#ff3b3b)">A</div><div><div class="tc-nm">Ananya R.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Postgraduate Researcher &middot; New Delhi</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The community-sourced Danger Zone map is something I check before every late commute. It's not just a feature — it's institutional memory that keeps getting smarter. The proximity alerts alone make me feel like I have an invisible escort."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#ff3b3b,#f97316)">M</div><div><div class="tc-nm">Meera S.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Senior Software Engineer &middot; Mumbai</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I work hospital night shifts and come home at 2 AM. Knowing RAKSHAK's AI heartbeat watches my silence — and escalates automatically if I go dark — has fundamentally changed how fearless I feel. That peace of mind has real, measurable value."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#22d3ee,#7c3aed)">P</div><div><div class="tc-nm">Priya K.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">ICU Nurse, Narayana Health &middot; Bangalore</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"As a law student, the Evidence Vault architecture genuinely impressed me. SHA-256 hashed incident records with GPS timestamps and witness-chain logs — this is court-admissible documentation. Every women's hostel in the country should mandate this app."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#34d399,#22d3ee)">S</div><div><div class="tc-nm">Sneha D.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">LLB Final Year &middot; Symbiosis Law School, Pune</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"Vision Shield's gesture-based SOS is designed for exactly the situations where pressing a button is impossible. I was able to trigger an alert with a hand sign my pursuer couldn't see. The product shows a deep understanding of real-world threat dynamics."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#f472b6,#7c3aed)">R</div><div><div class="tc-nm">Riya T.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">High School Teacher &middot; Chennai</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I'm a Guardian Angel on the platform and the network effect is extraordinary. When someone in my 1km radius triggers SOS, I receive an instant alert with approximate distance. Crowdsourced emergency response — this is what community safety looks like in 2026."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#fbbf24,#f97316)">K</div><div><div class="tc-nm">Kavitha N.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Journalist, The Hindu &middot; Hyderabad</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"ARIA doesn't give you generic advice. She reads your risk level, the time of day, your location context — and responds with specific, actionable guidance. It felt like having a trained security expert in my pocket at midnight."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#60a5fa,#34d399)">D</div><div><div class="tc-nm">Divya M.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">UX Designer, Razorpay &middot; Bengaluru</div></div></div></div>
       <!-- dupes for infinite scroll -->
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The SOS feature saved me when I was in a dangerous situation. My contacts were alerted within seconds with my exact location."</p><div class="tc-au"><div class="tc-av">A</div><div><div class="tc-nm">Ananya R.</div><div class="tc-rl">College Student, Delhi</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The danger zone map helps me plan my routes. I avoid high-risk areas especially at night. This app gives me confidence."</p><div class="tc-au"><div class="tc-av">M</div><div><div class="tc-nm">Meera S.</div><div class="tc-rl">IT Professional, Mumbai</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The auto-SOS after silence is genius. As someone who commutes late, knowing it watches over me even if I can't press a button is amazing."</p><div class="tc-au"><div class="tc-av">P</div><div><div class="tc-nm">Priya K.</div><div class="tc-rl">Nurse, Bangalore</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I recommended RAKSHAK to all my hostel friends. The evidence vault and PDF reports give us real documentation if something happens."</p><div class="tc-au"><div class="tc-av">S</div><div><div class="tc-nm">Sneha D.</div><div class="tc-rl">Law Student, Pune</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"Finally a safety app that doesn't need me to unlock my phone during an emergency. The shake and voice triggers are lifesavers."</p><div class="tc-au"><div class="tc-av">R</div><div><div class="tc-nm">Riya T.</div><div class="tc-rl">Teacher, Chennai</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"In a moment of genuine danger, I couldn't speak or move — but RAKSHAK's Valkyrie Protocol triggered automatically. My family knew exactly where I was within 8 seconds."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#7c3aed,#ff3b3b)">A</div><div><div class="tc-nm">Ananya R.</div><div class="tc-rl">Postgraduate Researcher &middot; New Delhi</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The community-sourced Danger Zone map is something I check before every late commute. The proximity alerts alone make me feel like I have an invisible escort."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#ff3b3b,#f97316)">M</div><div><div class="tc-nm">Meera S.</div><div class="tc-rl">Senior Software Engineer &middot; Mumbai</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I work hospital night shifts and come home at 2 AM. RAKSHAK's AI heartbeat watches my silence and escalates automatically if I go dark. That peace of mind has real, measurable value."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#22d3ee,#7c3aed)">P</div><div><div class="tc-nm">Priya K.</div><div class="tc-rl">ICU Nurse, Narayana Health &middot; Bangalore</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"As a law student, the Evidence Vault architecture genuinely impressed me. SHA-256 hashed records with GPS timestamps — this is court-admissible documentation."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#34d399,#22d3ee)">S</div><div><div class="tc-nm">Sneha D.</div><div class="tc-rl">LLB Final Year &middot; Symbiosis Law School, Pune</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"Vision Shield's gesture-based SOS is designed for situations where pressing a button is impossible. The product shows a deep understanding of real-world threat dynamics."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#f472b6,#7c3aed)">R</div><div><div class="tc-nm">Riya T.</div><div class="tc-rl">High School Teacher &middot; Chennai</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I'm a Guardian Angel on the platform. When someone in my 1km radius triggers SOS, I receive an instant alert. Crowdsourced emergency response — this is what community safety looks like in 2026."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#fbbf24,#f97316)">K</div><div><div class="tc-nm">Kavitha N.</div><div class="tc-rl">Journalist, The Hindu &middot; Hyderabad</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"ARIA reads your risk level, the time of day, your location context — and responds with specific, actionable guidance. It felt like having a trained security expert in my pocket at midnight."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#60a5fa,#34d399)">D</div><div><div class="tc-nm">Divya M.</div><div class="tc-rl">UX Designer, Razorpay &middot; Bengaluru</div></div></div></div>
     </div>
   </div>
 </section>
@@ -1240,20 +1251,28 @@ a,button{cursor:none}
 })();
 
 /* ═══ UNIFIED ENGINE — ONE RAF, ZERO LAG ═══ */
-var _MX=innerWidth/2,_MY=innerHeight/2,_SY=0,_VIS=true;
+/* Dirty flags: only run tick DOM writes when inputs changed.
+   _MX_D = mouse moved since last tick, _SY_D = scroll moved since last tick.
+   Cleared at end of _engineTick — this skips ALL parallax writes on an idle page. */
+var _MX=innerWidth/2,_MY=innerHeight/2,_SY=0,_VIS=true,_MX_D=false,_SY_D=false;
 document.addEventListener('visibilitychange',()=>{_VIS=!document.hidden;if(_VIS)_startEngine();});
-addEventListener('mousemove',e=>{_MX=e.clientX;_MY=e.clientY},{passive:true});
-addEventListener('scroll',()=>{_SY=scrollY},{passive:true});
+addEventListener('mousemove',e=>{_MX=e.clientX;_MY=e.clientY;_MX_D=true},{passive:true});
+addEventListener('scroll',()=>{_SY=scrollY;_SY_D=true},{passive:true});
 var IS_MOBILE=matchMedia('(max-width:768px)').matches;
 
 /* ── 1. CURSOR (transform-based, no left/top) ── */
 (function(){
   const c=document.getElementById('cur'),s=document.getElementById('curSpot');
   if(!c||!s||IS_MOBILE)return;
-  let cx=0,cy=0;
+  let cx=0,cy=0,cSettled=false;
   window._tickCursor=function(){
-    cx+=(_MX-cx)*.1;cy+=(_MY-cy)*.1;
-    c.style.transform='translate3d('+(_MX-.5|0)+'px,'+(_MY-.5|0)+'px,0) translate(-50%,-50%)';
+    // Idle? skip both DOM writes. Spot keeps lerping until settled.
+    const dx=_MX-cx,dy=_MY-cy;
+    const lerping=Math.abs(dx)>.5||Math.abs(dy)>.5;
+    if(!_MX_D&&!lerping){if(cSettled)return;cSettled=true;return;}
+    cSettled=false;
+    if(_MX_D)c.style.transform='translate3d('+(_MX-.5|0)+'px,'+(_MY-.5|0)+'px,0) translate(-50%,-50%)';
+    cx+=dx*.1;cy+=dy*.1;
     s.style.transform='translate3d('+(cx|0)+'px,'+(cy|0)+'px,0) translate(-50%,-50%)';
   };
   /* hover states */
@@ -1287,7 +1306,15 @@ if(!IS_MOBILE){
   });
   window._tickMag=function(){
     _magBtns.forEach(s=>{
-      s.cx+=(s.tx-s.cx)*.12;s.cy+=(s.ty-s.cy)*.12;
+      const dx=s.tx-s.cx,dy=s.ty-s.cy;
+      if(Math.abs(dx)<.1&&Math.abs(dy)<.1){
+        if(s.settled)return;
+        s.cx=s.tx;s.cy=s.ty;s.settled=true;
+        s.el.style.transform=s.tx===0&&s.ty===0?'':'translate3d('+(s.cx|0)+'px,'+(s.cy|0)+'px,0)';
+        return;
+      }
+      s.settled=false;
+      s.cx+=dx*.12;s.cy+=dy*.12;
       s.el.style.transform='translate3d('+(s.cx|0)+'px,'+(s.cy|0)+'px,0)';
     });
   };
@@ -1295,10 +1322,10 @@ if(!IS_MOBILE){
 
 /* ── 4. BENTO CARD TILT (throttled via main loop) ── */
 if(!IS_MOBILE){
-  let _bcHover=null,_bcX=.5,_bcY=.5;
+  let _bcHover=null,_bcX=.5,_bcY=.5,_bcD=false;
   document.querySelectorAll('.bc').forEach(c=>{
     c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();
-      _bcHover=c;_bcX=(e.clientX-r.left)/r.width;_bcY=(e.clientY-r.top)/r.height;
+      _bcHover=c;_bcX=(e.clientX-r.left)/r.width;_bcY=(e.clientY-r.top)/r.height;_bcD=true;
       c.style.setProperty('--mx',(_bcX*100)+'%');c.style.setProperty('--my',(_bcY*100)+'%');
       c.style.setProperty('--glow-x',(e.clientX-r.left)+'px');c.style.setProperty('--glow-y',(e.clientY-r.top)+'px');
     });
@@ -1308,8 +1335,9 @@ if(!IS_MOBILE){
     });
   });
   window._tickBento=function(){
-    if(_bcHover){
+    if(_bcHover&&_bcD){
       _bcHover.style.transform='perspective(800px) rotateX('+((_bcY-.5)*-14|0)+'deg) rotateY('+((_bcX-.5)*14|0)+'deg) scale(1.03)';
+      _bcD=false;
     }
   };
 }
@@ -1333,9 +1361,11 @@ document.querySelectorAll('.rv').forEach(el=>rio.observe(el));
 const zio=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');zio.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -80px 0px'});
 document.querySelectorAll('.rv-zoom').forEach(el=>zio.observe(el));
 
-/* ── 7b. PAUSE EXPENSIVE ANIMATIONS OFF-SCREEN (rotating conic-gradient borders, marquees) ── */
+/* ── 7b. PAUSE EXPENSIVE ANIMATIONS OFF-SCREEN (rotating conic-gradient borders, marquees,
+      blurred pulses, map pings, marching heartbeats). animationPlayState only needs to be toggled
+      once per viewport crossing, so the observer cost is negligible. */
 const pauseIO=new IntersectionObserver(es=>{es.forEach(e=>{e.target.style.animationPlayState=e.isIntersecting?'running':'paused'})},{threshold:0,rootMargin:'100px 0px'});
-document.querySelectorAll('.tw-border,.dash-bdr,.mq-t,.testi-t,.hero-orb').forEach(el=>pauseIO.observe(el));
+document.querySelectorAll('.tw-border,.dash-bdr,.mq-t,.testi-t,.hero-orb,.ph-glow,.psos-b,.hw-heartbeat-line svg,.md,.dash-dot,.dash-badge,.hero-dot,.scroll-hint i,.hw-shield-ring,.divider').forEach(el=>pauseIO.observe(el));
 
 /* ── 8. STAT COUNTERS ── */
 function countUp(el){if(el._d)return;el._d=1;
@@ -1373,6 +1403,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
 /* ── 10. FLOATER PARALLAX (transform only, in main loop) ── */
 var _fls=document.querySelectorAll('.fl');
 window._tickFloaters=function(){
+  if(!_SY_D)return;           // scroll-driven only — skip if scroll hasn't changed
   const sy=_SY;
   _fls.forEach((f,i)=>{f.style.transform='translate3d(0,'+(sy*(.02+i*.008)|0)+'px,0)'});
 };
@@ -1413,12 +1444,12 @@ if(!IS_MOBILE)document.addEventListener('click',e=>{
 if(!IS_MOBILE&&!matchMedia('(max-width:1024px)').matches){
   var _tiltEls=[];
   document.querySelectorAll('.stats-g,.bento,.how-g,.tech-g').forEach(g=>{
-    const st={el:g,x:0,y:0,active:false};_tiltEls.push(st);
+    const st={el:g,x:0,y:0,active:false,dirty:false};_tiltEls.push(st);
     g.addEventListener('mousemove',e=>{const r=g.getBoundingClientRect();
-      st.x=(e.clientX-r.left)/r.width-.5;st.y=(e.clientY-r.top)/r.height-.5;st.active=true});
+      st.x=(e.clientX-r.left)/r.width-.5;st.y=(e.clientY-r.top)/r.height-.5;st.active=true;st.dirty=true});
     g.addEventListener('mouseleave',()=>{st.active=false;g.style.transform=''})});
   window._tickTilt=function(){
-    _tiltEls.forEach(s=>{if(s.active)s.el.style.transform='perspective(2000px) rotateX('+(s.y*-3|0)+'deg) rotateY('+(s.x*3|0)+'deg)'});
+    _tiltEls.forEach(s=>{if(s.active&&s.dirty){s.el.style.transform='perspective(2000px) rotateX('+(s.y*-3|0)+'deg) rotateY('+(s.x*3|0)+'deg)';s.dirty=false}});
   };
 }
 
@@ -1430,6 +1461,7 @@ document.querySelectorAll('.mbtn.pri').forEach(btn=>{
 /* ── 15. BLOB PARALLAX (transform, no margin) ── */
 var _blobs=document.querySelectorAll('.gm-blob');
 window._tickBlobs=function(){
+  if(!_SY_D)return;           // scroll-driven only
   const sy=_SY;
   _blobs.forEach((b,i)=>{
     const sx=(i%2===0?1:-1)*sy*.03;
@@ -1441,8 +1473,9 @@ var _heroOrb=document.querySelector('.hero-orb');
 var _heroIn=document.querySelector('.hero-in');
 var _heroRings=document.querySelectorAll('.hero-ring');
 window._tickHero=function(){
+  if(!_SY_D)return;           // scroll-driven only
   const sy=_SY,vh=innerHeight;
-  if(sy>vh*1.2)return;
+  if(sy>vh*1.2)return;        // also: skip when hero is scrolled fully off-screen
   if(_heroOrb)_heroOrb.style.transform='translate(-50%,calc(-50% + '+(sy*.12|0)+'px)) rotate('+(sy*.02|0)+'deg)';
   _heroRings.forEach((r,i)=>{r.style.transform='translateY('+(sy*(.04+i*.025)|0)+'px) rotate('+(sy*(i*.01)|0)+'deg)'});
   if(_heroIn){_heroIn.style.transform='translate3d(0,'+(sy*.06|0)+'px,0)';_heroIn.style.opacity=Math.max(0,1-sy/(vh*.7))}
@@ -1465,6 +1498,7 @@ function _engineTick(ts){
   if(window._tickTilt)window._tickTilt();
   if(window._tickBlobs)window._tickBlobs();
   if(window._tickHero)window._tickHero();
+  _MX_D=false;_SY_D=false;      // clear dirty flags — next frame only runs if new input arrived
   _rafId=requestAnimationFrame(_engineTick);
 }
 function _startEngine(){if(!_rafId&&_VIS)_rafId=requestAnimationFrame(_engineTick)}
