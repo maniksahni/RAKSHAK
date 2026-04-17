@@ -486,24 +486,34 @@ a,button{cursor:none}
 @keyframes mdRing{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(2.2);opacity:0}}
 
 /* ═══════════════════ TESTIMONIALS ═══════════════════ */
-/* Grid layout — replaced broken infinite-marquee. No partial cards, no fade masks, no dead space. */
-.testi{padding:5rem clamp(2rem,6vw,5rem) 4rem;background:linear-gradient(180deg,var(--bg) 0%,rgba(10,8,30,.98) 50%,var(--bg) 100%)}
-.testi-w{max-width:1300px;margin:0 auto}
-.testi-t{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
-@media(max-width:900px){.testi-t{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:580px){.testi-t{grid-template-columns:1fr}}
-/* Only show first 6 cards — 6 is divisible by 3, 2 and 1, so grid stays full on every breakpoint (no orphan row) */
-.tc:nth-child(n+7){display:none}
-.tc{padding:2rem 2rem 1.8rem;border-radius:20px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);transition:transform .4s cubic-bezier(.22,1,.36,1),border-color .4s,background .4s,box-shadow .4s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 32px rgba(0,0,0,.35);display:flex;flex-direction:column}
+/* Infinite horizontal marquee. 14 cards = 7 originals + 7 dupes. Using margin-right instead of gap
+   so each card+gap is a uniform unit — translateX(-50%) slides exactly 7 units, aligning the first
+   dupe onto the original starting position for a seamless loop. Edge mask fades partial cards out. */
+.testi{padding:5rem 0 4rem;background:linear-gradient(180deg,var(--bg) 0%,rgba(10,8,30,.98) 50%,var(--bg) 100%);overflow:hidden}
+.testi > .shd{padding:0 clamp(2rem,6vw,5rem)}
+.testi-w{max-width:100%;margin:2rem 0 0;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 140px,#000 calc(100% - 140px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 140px,#000 calc(100% - 140px),transparent 100%);overflow:hidden;padding:1rem 0}
+.testi-t{display:flex;width:max-content;animation:tscroll 80s linear infinite;will-change:transform}
+.testi-w:hover .testi-t{animation-play-state:paused}
+@keyframes tscroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@media(prefers-reduced-motion:reduce){.testi-t{animation:none}}
+.tc{min-width:340px;max-width:340px;flex-shrink:0;margin-right:1.4rem;padding:2rem 2rem 1.8rem;border-radius:20px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);transition:transform .4s cubic-bezier(.22,1,.36,1),border-color .4s,background .4s,box-shadow .4s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 32px rgba(0,0,0,.35);display:flex;flex-direction:column}
 .tc:hover{background:rgba(255,255,255,.04);transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 16px 48px rgba(0,0,0,.45)}
-/* Individual accent borders per card */
-.tc:nth-child(1){border-color:rgba(139,92,246,.2)}.tc:nth-child(1):hover{border-color:rgba(139,92,246,.45);box-shadow:0 0 40px rgba(139,92,246,.12),0 16px 48px rgba(0,0,0,.4)}
-.tc:nth-child(2){border-color:rgba(255,59,59,.2)}.tc:nth-child(2):hover{border-color:rgba(255,59,59,.45);box-shadow:0 0 40px rgba(255,59,59,.12),0 16px 48px rgba(0,0,0,.4)}
-.tc:nth-child(3){border-color:rgba(34,211,238,.2)}.tc:nth-child(3):hover{border-color:rgba(34,211,238,.45);box-shadow:0 0 40px rgba(34,211,238,.12),0 16px 48px rgba(0,0,0,.4)}
-.tc:nth-child(4){border-color:rgba(52,211,153,.2)}.tc:nth-child(4):hover{border-color:rgba(52,211,153,.45);box-shadow:0 0 40px rgba(52,211,153,.12),0 16px 48px rgba(0,0,0,.4)}
-.tc:nth-child(5){border-color:rgba(251,191,36,.2)}.tc:nth-child(5):hover{border-color:rgba(251,191,36,.45);box-shadow:0 0 40px rgba(251,191,36,.12),0 16px 48px rgba(0,0,0,.4)}
-.tc:nth-child(6){border-color:rgba(244,114,182,.2)}.tc:nth-child(6):hover{border-color:rgba(244,114,182,.45);box-shadow:0 0 40px rgba(244,114,182,.12),0 16px 48px rgba(0,0,0,.4)}
-/* Quote text fills remaining height so all cards in a row align bottoms */
+/* Accent borders — applied to both originals (1-7) and dupes (8-14) */
+.tc:nth-child(1),.tc:nth-child(8){border-color:rgba(139,92,246,.2)}
+.tc:nth-child(1):hover,.tc:nth-child(8):hover{border-color:rgba(139,92,246,.45);box-shadow:0 0 40px rgba(139,92,246,.12),0 16px 48px rgba(0,0,0,.4)}
+.tc:nth-child(2),.tc:nth-child(9){border-color:rgba(255,59,59,.2)}
+.tc:nth-child(2):hover,.tc:nth-child(9):hover{border-color:rgba(255,59,59,.45);box-shadow:0 0 40px rgba(255,59,59,.12),0 16px 48px rgba(0,0,0,.4)}
+.tc:nth-child(3),.tc:nth-child(10){border-color:rgba(34,211,238,.2)}
+.tc:nth-child(3):hover,.tc:nth-child(10):hover{border-color:rgba(34,211,238,.45);box-shadow:0 0 40px rgba(34,211,238,.12),0 16px 48px rgba(0,0,0,.4)}
+.tc:nth-child(4),.tc:nth-child(11){border-color:rgba(52,211,153,.2)}
+.tc:nth-child(4):hover,.tc:nth-child(11):hover{border-color:rgba(52,211,153,.45);box-shadow:0 0 40px rgba(52,211,153,.12),0 16px 48px rgba(0,0,0,.4)}
+.tc:nth-child(5),.tc:nth-child(12){border-color:rgba(251,191,36,.2)}
+.tc:nth-child(5):hover,.tc:nth-child(12):hover{border-color:rgba(251,191,36,.45);box-shadow:0 0 40px rgba(251,191,36,.12),0 16px 48px rgba(0,0,0,.4)}
+.tc:nth-child(6),.tc:nth-child(13){border-color:rgba(244,114,182,.2)}
+.tc:nth-child(6):hover,.tc:nth-child(13):hover{border-color:rgba(244,114,182,.45);box-shadow:0 0 40px rgba(244,114,182,.12),0 16px 48px rgba(0,0,0,.4)}
+.tc:nth-child(7),.tc:nth-child(14){border-color:rgba(96,165,250,.2)}
+.tc:nth-child(7):hover,.tc:nth-child(14):hover{border-color:rgba(96,165,250,.45);box-shadow:0 0 40px rgba(96,165,250,.12),0 16px 48px rgba(0,0,0,.4)}
+/* Quote text fills remaining height so author row lines up at the bottom on every card */
 .tc-tx{font-family:var(--int);font-size:.87rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:1.3rem;flex:1}
 .tc-st{color:var(--amber);font-size:.9rem;margin-bottom:.8rem;letter-spacing:3px;text-shadow:0 0 12px rgba(251,191,36,.3)}
 .tc-au{display:flex;align-items:center;gap:12px}
@@ -512,6 +522,7 @@ a,button{cursor:none}
 .tc-vr{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:.5rem;color:var(--emerald);letter-spacing:.08em}
 .tc-vr svg{width:11px;height:11px;stroke:var(--emerald);fill:none;stroke-width:2}
 .tc-rl{font-family:var(--int);font-size:.66rem;color:rgba(255,255,255,.22);margin-top:2px}
+@media(max-width:768px){.tc{min-width:280px;max-width:280px;margin-right:1rem}.testi-w{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 60px,#000 calc(100% - 60px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 60px,#000 calc(100% - 60px),transparent 100%)}}
 
 /* ═══════════════════ CTA ═══════════════════ */
 .cta{padding:5rem 2rem 7rem;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#180e3a 0%,#2a1565 30%,#351a80 50%,#2a1565 70%,#180e3a 100%)}
@@ -1373,7 +1384,7 @@ document.querySelectorAll('.rv-zoom').forEach(el=>zio.observe(el));
       blurred pulses, map pings, marching heartbeats). animationPlayState only needs to be toggled
       once per viewport crossing, so the observer cost is negligible. */
 const pauseIO=new IntersectionObserver(es=>{es.forEach(e=>{e.target.style.animationPlayState=e.isIntersecting?'running':'paused'})},{threshold:0,rootMargin:'100px 0px'});
-document.querySelectorAll('.tw-border,.dash-bdr,.mq-t,.hero-orb,.ph-glow,.psos-b,.hw-heartbeat-line svg,.md,.dash-dot,.dash-badge,.hero-dot,.scroll-hint i,.hw-shield-ring,.divider').forEach(el=>pauseIO.observe(el));
+document.querySelectorAll('.tw-border,.dash-bdr,.mq-t,.hero-orb,.ph-glow,.psos-b,.hw-heartbeat-line svg,.md,.dash-dot,.dash-badge,.hero-dot,.scroll-hint i,.hw-shield-ring,.divider,.testi-t').forEach(el=>pauseIO.observe(el));
 
 /* ── 8. STAT COUNTERS ── */
 function countUp(el){if(el._d)return;el._d=1;
