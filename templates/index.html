@@ -492,8 +492,8 @@ a,button{cursor:none}
 .testi-t{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
 @media(max-width:900px){.testi-t{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:580px){.testi-t{grid-template-columns:1fr}}
-/* Hide the duplicate cards (added for old marquee loop) — only show first 6 */
-.tc:nth-child(n+8){display:none}
+/* Only show first 6 cards — 6 is divisible by 3, 2 and 1, so grid stays full on every breakpoint (no orphan row) */
+.tc:nth-child(n+7){display:none}
 .tc{padding:2rem 2rem 1.8rem;border-radius:20px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);transition:transform .4s cubic-bezier(.22,1,.36,1),border-color .4s,background .4s,box-shadow .4s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 32px rgba(0,0,0,.35);display:flex;flex-direction:column}
 .tc:hover{background:rgba(255,255,255,.04);transform:translateY(-6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 16px 48px rgba(0,0,0,.45)}
 /* Individual accent borders per card */
