@@ -238,8 +238,8 @@ def init_healer(app):
         if (request.path.startswith('/sos') or
                 request.path.startswith('/ai') or
                 request.path.startswith('/danger') or
-                request.path.startswith('/admin') and
-                request.headers.get('X-Requested-With') == 'XMLHttpRequest'):
+                (request.path.startswith('/admin') and
+                 request.headers.get('X-Requested-With') == 'XMLHttpRequest')):
             return jsonify(
                 success=False,
                 error='An internal error occurred. Our system has logged it.'
