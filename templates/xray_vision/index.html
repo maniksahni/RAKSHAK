@@ -1794,19 +1794,29 @@ a, button { cursor: inherit; }
 
   function getAutoXrayPortal(pose) {
     if (!pose) return null;
-    const required = [11, 12, 23, 24];
-    if (!required.every(idx => pose[idx] && pose[idx].visibility > 0.28)) return null;
-
     const lShoulder = getPoseScreenPoint(pose, 11);
     const rShoulder = getPoseScreenPoint(pose, 12);
-    const lHip = getPoseScreenPoint(pose, 23);
-    const rHip = getPoseScreenPoint(pose, 24);
-    if (!lShoulder || !rShoulder || !lHip || !rHip) return null;
+    if (!pose[11] || !pose[12] || pose[11].visibility <= 0.18 || pose[12].visibility <= 0.18) return null;
+    if (!lShoulder || !rShoulder) return null;
 
     const shoulderMid = averagePoints([lShoulder, rShoulder]);
+    const shoulderSpan = Math.max(96, dist(lShoulder, rShoulder));
+    const lHipRaw = pose[23] && pose[23].visibility > 0.16 ? getPoseScreenPoint(pose, 23) : null;
+    const rHipRaw = pose[24] && pose[24].visibility > 0.16 ? getPoseScreenPoint(pose, 24) : null;
+
+    let lHip = lHipRaw;
+    let rHip = rHipRaw;
+    if (lHip && !rHip) rHip = { x: shoulderMid.x + (shoulderMid.x - lHip.x), y: lHip.y };
+    if (rHip && !lHip) lHip = { x: shoulderMid.x - (rHip.x - shoulderMid.x), y: rHip.y };
+    if (!lHip || !rHip) {
+      const estHipY = Math.min(H - 44, shoulderMid.y + shoulderSpan * 1.55);
+      const hipOffset = shoulderSpan * 0.34;
+      lHip = { x: shoulderMid.x - hipOffset, y: estHipY };
+      rHip = { x: shoulderMid.x + hipOffset, y: estHipY };
+    }
+
     const hipMid = averagePoints([lHip, rHip]);
     const centerX = (shoulderMid.x + hipMid.x) * 0.5;
-    const shoulderSpan = Math.max(96, dist(lShoulder, rShoulder));
     const hipSpan = Math.max(shoulderSpan * 0.82, dist(lHip, rHip));
     const torsoHeight = Math.max(180, hipMid.y - shoulderMid.y);
     const width = Math.min(W * 0.72, Math.max(shoulderSpan * 2.05, hipSpan * 1.72, 260));
@@ -1822,6 +1832,61 @@ a, button { cursor: inherit; }
       rIndex: { x: right, y: bottom },
       lIndex: { x: left, y: bottom }
     };
+  }
+
+  function drawXrayHandGuide(handLm) {
+    if (!handLm) return;
+    const wrist = lmScale(handLm[0]);
+    const palmLeft = lmScale(handLm[5]);
+    const palmRight = lmScale(handLm[17]);
+    const indexTip = lmScale(handLm[8]);
+    const middleTip = lmScale(handLm[12]);
+    const thumbTip = lmScale(handLm[4]);
+    const palmCenter = averagePoints([wrist, palmLeft, palmRight, lmScale(handLm[9])]);
+    const radius = Math.max(28, getPalmSpan(handLm) * 0.82);
+    const orbit = radius * 1.28;
+    const pulse = 0.8 + Math.sin(frame * 0.08) * 0.08;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+
+    ctx.strokeStyle = `rgba(255,255,255,${0.3 * pulse})`;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(palmCenter.x, palmCenter.y, orbit, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = theme.scanColor;
+    ctx.lineWidth = 1.6;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = theme.scanCore;
+    for (let i = 0; i < 4; i++) {
+      const ang = frame * 0.03 + i * (Math.PI / 2);
+      const inner = orbit * 0.58;
+      const outer = orbit * 0.98;
+      ctx.beginPath();
+      ctx.moveTo(palmCenter.x + Math.cos(ang) * inner, palmCenter.y + Math.sin(ang) * inner);
+      ctx.lineTo(palmCenter.x + Math.cos(ang) * outer, palmCenter.y + Math.sin(ang) * outer);
+      ctx.stroke();
+    }
+
+    ctx.shadowBlur = 0;
+    [thumbTip, indexTip, middleTip].forEach((pt, idx) => {
+      const ring = 6 + idx * 1.8 + Math.sin(frame * 0.06 + idx) * 1.2;
+      ctx.strokeStyle = idx === 1 ? '#ffffff' : theme.accent;
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, ring, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = `rgba(255,255,255,${0.22 + idx * 0.08})`;
+      ctx.beginPath();
+      ctx.moveTo(palmCenter.x, palmCenter.y);
+      ctx.lineTo(pt.x, pt.y);
+      ctx.stroke();
+    });
+
+    ctx.restore();
   }
 
   function drawTouchAura(handLm, side = 'solo', intensity = 0.65, detail = 1) {
@@ -2423,7 +2488,9 @@ a, button { cursor: inherit; }
       statusEl.style.color = sosFired ? '#ff4444' : (isGlitching ? '#ff4444' : theme.accent);
       statusEl.style.textShadow = `0 0 15px ${isGlitching ? '#ff0000' : theme.accent}`;
     } else if (!currentHands || currentHands.length < 2) {
-      statusEl.textContent = 'BODY LOCK: RAISE BOTH HANDS TO ARM PORTAL';
+      statusEl.textContent = xrayAutoScanThisFrame
+        ? 'BODY LOCK ACTIVE: RAISE BOTH HANDS'
+        : 'BODY LOCK: RAISE BOTH HANDS TO ARM PORTAL';
       statusEl.style.color = theme.accent2;
       statusEl.style.textShadow = `0 0 12px ${theme.accent2}`;
     } else {
@@ -2437,6 +2504,8 @@ a, button { cursor: inherit; }
 
     if (auraMode && primaryHand) {
       drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
+    } else if (!auraMode && currentHands && currentHands.length) {
+      currentHands.forEach(hand => drawXrayHandGuide(hand));
     }
 
     if (!auraMode && portalAlpha > 0.01 && lThumb && rThumb) {
