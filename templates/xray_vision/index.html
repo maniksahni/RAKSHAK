@@ -2902,9 +2902,16 @@ a, button { cursor: inherit; }
     sparkBurst = sparkBurst.filter(s => s.life > 0);
     sparkBurst.forEach(s => { s.update(); s.draw(); });
 
-    /* ── MEDIAPIPE-CLASSIC SKELETON (matches reference video 101%) ── */
+    /* ── TOUCHDESIGNER AURA + MEDIAPIPE-CLASSIC SKELETON ──
+       drawTouchAura = rich rainbow wheel / digit stream / orbital nodes
+         (what the reference video actually shows — busy, colorful, alive)
+       drawHandSkeleton = MediaPipe green lines + red dots
+         (the signature skeleton that sits on top of the aura)
+       Order matters: aura first (background), skeleton on top (hero). */
     if (auraMode && primaryHand) {
-      // AURA mode = single hand, skeleton is the hero element
+      // full TouchDesigner aura wheel follows the hand
+      drawTouchAura(primaryHand, handSide, 0.75 + portalAlpha * 0.25, perf.auraDetail);
+
       // small orbital crown hovers above the palm as a signature flourish
       const palmCenter = getHandCenter(primaryHand);
       const palmSpan = Math.max(40, getPalmSpan(primaryHand));
@@ -2915,6 +2922,7 @@ a, button { cursor: inherit; }
         0.55 + portalAlpha * 0.45,
         now
       );
+      // skeleton on top
       drawHandSkeleton(primaryHand, {
         lineWidth: 3.4,
         dotRadius: 5.8,
@@ -2932,6 +2940,10 @@ a, button { cursor: inherit; }
         ctx.fillRect(lerpPortal.x, lerpPortal.y, lerpPortal.w, lerpPortal.h);
         ctx.restore();
       }
+      /* Aura wheels around each hand in xray mode too (slightly dimmer so
+         the portal viewport stays the main focus) */
+      drawTouchAura(leftSideHand,  'left',  0.55 + portalAlpha * 0.25, perf.auraDetail * 0.9);
+      drawTouchAura(rightSideHand, 'right', 0.55 + portalAlpha * 0.25, perf.auraDetail * 0.9);
       /* Orbital crown hovers above the midpoint between hands once hands are stable.
          Fades in with portalAlpha so it only appears when the gesture holds. */
       if (portalAlpha > 0.35) {
@@ -2964,8 +2976,10 @@ a, button { cursor: inherit; }
         drawWristBox: true
       });
     } else if (!auraMode && (leftSideHand || rightSideHand)) {
-      // single hand visible while searching for the second — still show skeleton
+      // single hand visible while searching for the second — still show aura + skeleton
       const onlyHand = leftSideHand || rightSideHand;
+      const onlySide = lmScale(onlyHand[9]).x < W * 0.5 ? 'left' : 'right';
+      drawTouchAura(onlyHand, onlySide, 0.55, perf.auraDetail * 0.9);
       drawHandSkeleton(onlyHand, {
         lineWidth: 3.0,
         dotRadius: 5.0,
