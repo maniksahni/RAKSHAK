@@ -202,6 +202,87 @@ body, html {
 }
 .vs-cam-dot.active { background: #10b981; box-shadow: 0 0 6px #10b981; }
 
+/* ══ Creative effects: Three.js 3D canvas ══ */
+.vs-3d-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);             /* Mirror to match video */
+  pointer-events: none;
+  z-index: 6;                         /* above scanlines, below HUD/corners */
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(.22,1,.36,1);
+}
+.vs-cam-frame.fx-torus .vs-3d-canvas { opacity: 1; }
+
+/* ══ Chrome mode — SVG filter + CSS tonal shift on the video ══ */
+.vs-cam-frame.fx-chrome #vs-video {
+  filter: url(#vsChromeDistort) saturate(0.35) contrast(1.7) brightness(1.15) hue-rotate(-8deg);
+  transition: filter 0.25s ease;
+}
+
+/* ══ Effect toggle bar (top-right of camera) ══ */
+.vs-fx-bar {
+  position: absolute;
+  top: 10px;
+  right: 50px;                         /* leaves room for corner bracket */
+  display: flex;
+  gap: 4px;
+  z-index: 9;
+  padding: 3px;
+  background: rgba(10, 10, 22, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.22,1,.36,1);
+}
+/* Reveal bar once camera is streaming (running state added via JS) */
+.vs-cam-frame.streaming .vs-fx-bar { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.vs-fx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: rgba(226,232,240,0.72);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  cursor: inherit;
+  transition: all 0.2s ease;
+}
+.vs-fx-btn i { font-size: 0.62rem; }
+.vs-fx-btn:hover {
+  background: rgba(99,102,241,0.12);
+  color: #c4b5fd;
+}
+.vs-fx-btn.active {
+  background: rgba(0,255,0,0.14);
+  border-color: rgba(0,255,0,0.35);
+  color: #86efac;
+  box-shadow: 0 0 10px rgba(0,255,0,0.2);
+}
+.vs-fx-btn.vs-fx-cycle.active {
+  background: rgba(255,45,58,0.14);
+  border-color: rgba(255,45,58,0.4);
+  color: #fca5a5;
+  box-shadow: 0 0 10px rgba(255,45,58,0.22);
+  animation: fxCyclePulse 1.6s ease infinite alternate;
+}
+@keyframes fxCyclePulse {
+  to { box-shadow: 0 0 16px rgba(255,45,58,0.35); }
+}
+
 /* ── CONTROL PANEL ── */
 .vs-panel {
   display: flex;
@@ -637,12 +718,30 @@ body, html {
     <div class="vs-cam-frame" id="vs-cam-frame">
       <video id="vs-video" autoplay muted playsinline></video>
       <canvas id="vs-canvas"></canvas>
+      <!-- Three.js torus ring overlay canvas (above skeleton, below HUD) -->
+      <canvas id="vs-3d-canvas" class="vs-3d-canvas"></canvas>
       <div class="vs-scanlines"></div>
       <div class="vs-sweep"></div>
       <div class="vs-corner tl"></div>
       <div class="vs-corner tr"></div>
       <div class="vs-corner bl"></div>
       <div class="vs-corner br"></div>
+
+      <!-- Creative effect toggle bar -->
+      <div class="vs-fx-bar" id="vs-fx-bar">
+        <button class="vs-fx-btn" data-fx="circle" title="Face aura circle">
+          <i class="bi bi-circle"></i><span>CIRCLE</span>
+        </button>
+        <button class="vs-fx-btn" data-fx="torus" title="3D torus ring above head">
+          <i class="bi bi-record-circle"></i><span>TORUS</span>
+        </button>
+        <button class="vs-fx-btn" data-fx="chrome" title="Chrome mirror distortion">
+          <i class="bi bi-droplet-half"></i><span>CHROME</span>
+        </button>
+        <button class="vs-fx-btn vs-fx-cycle" data-fx="cycle" title="Auto-cycle all effects every 4s">
+          <i class="bi bi-arrow-repeat"></i><span>CYCLE</span>
+        </button>
+      </div>
 
       <!-- Loading state -->
       <div class="vs-loading" id="vs-loading">
@@ -758,10 +857,35 @@ body, html {
 {% endblock %}
 
 {% block extra_js %}
-<!-- MediaPipe Hands CDN -->
+<!-- ═══ Creative overlay libraries (load before inline script) ═══ -->
+<!-- MediaPipe Hands — 21-point hand tracking -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<!-- MediaPipe Face Detection — light model (~500KB) for face bbox (circle/chrome/torus anchoring) -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js" crossorigin="anonymous"></script>
+<!-- Three.js r160 — minimal build for 3D torus ring overlay -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" crossorigin="anonymous"></script>
+
+<!-- ═══ Chrome distortion SVG filter (browser-native GLSL approximation) ═══ -->
+<svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
+  <defs>
+    <filter id="vsChromeDistort" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="turbulence" baseFrequency="0.018 0.028" numOctaves="2" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feColorMatrix in="displaced" type="matrix" values="
+        0.78 0.22 0.22 0 0.04
+        0.22 0.78 0.28 0 0.06
+        0.28 0.28 0.88 0 0.10
+        0    0    0    1 0" result="tinted"/>
+      <feComponentTransfer in="tinted">
+        <feFuncR type="gamma" amplitude="1.2" exponent="0.85" offset="0"/>
+        <feFuncG type="gamma" amplitude="1.2" exponent="0.85" offset="0"/>
+        <feFuncB type="gamma" amplitude="1.3" exponent="0.8" offset="0.02"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+</svg>
 
 <script>
 'use strict';
@@ -774,9 +898,11 @@ const VS = {
   armed: false,
   running: false,
   hands: null,
+  faceDetection: null,
   camera: null,
   video: document.getElementById('vs-video'),
   canvas: document.getElementById('vs-canvas'),
+  canvas3d: document.getElementById('vs-3d-canvas'),
   ctx: null,
   camFrame: document.getElementById('vs-cam-frame'),
   loadingEl: document.getElementById('vs-loading'),
@@ -795,7 +921,15 @@ const VS = {
   lastGesture: null,
   lastFrameTime: performance.now(),
   frameCount: 0,
+  frameIdx: 0,                         /* frame counter for throttling face detection */
   sosTriggered: false,
+
+  /* ══ Creative effects state ══ */
+  faceBox: null,                       /* {cx, cy, w, h} in canvas coords, or null */
+  fx: { circle: false, torus: false, chrome: false, cycle: false },
+  cycleTimer: null,
+  cyclePhase: 0,                       /* index into CYCLE_SEQ */
+  three: null,                          /* { scene, camera, renderer, torus } once initialized */
 };
 
 VS.ctx = VS.canvas.getContext('2d');
@@ -816,10 +950,9 @@ function drawHand(landmarks, isRightHand) {
     [0,17]
   ];
 
-  /* Classic MediaPipe look: bright green bones + red joints.
-     High contrast = max visibility in low-light / for elderly users.
-     Matches the standard CV demo aesthetic shown in reference video. */
-  const lineColor = '#00FF88';      // bright green (slight cyan tilt for brand cohesion)
+  /* Classic MediaPipe look: pure bright green bones + red joints.
+     Matches the exact demo aesthetic shown in reference video. */
+  const lineColor = '#00FF00';      // pure green (exact video match)
   const jointColor = '#FF2D3A';     // bright red
   const jointOutline = '#FFFFFF';   // white ring for pop against skin tones
 
@@ -828,8 +961,8 @@ function drawHand(landmarks, isRightHand) {
   ctx.lineWidth = 2.5;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  ctx.shadowColor = '#00FF88';
-  ctx.shadowBlur = 6;
+  ctx.shadowColor = '#00FF00';
+  ctx.shadowBlur = 7;
   for (const [a, b] of CONNECTIONS) {
     if (!landmarks[a] || !landmarks[b]) continue;
     ctx.beginPath();
@@ -868,6 +1001,214 @@ function drawHand(landmarks, isRightHand) {
   }
   ctx.shadowBlur = 0;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   CREATIVE EFFECTS — face circle, Three.js torus, chrome distortion
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Face Detection onResults — stash bbox in VS.faceBox (canvas coords) */
+function onFaceResults(results) {
+  if (!results || !results.detections || results.detections.length === 0) {
+    VS.faceBox = null;
+    return;
+  }
+  const det = results.detections[0];
+  const bb = det.boundingBox;            /* normalized 0..1 (xCenter, yCenter, w, h) */
+  const w = VS.canvas.width;
+  const h = VS.canvas.height;
+  VS.faceBox = {
+    cx: bb.xCenter * w,
+    cy: bb.yCenter * h,
+    w: bb.width * w,
+    h: bb.height * h,
+  };
+}
+
+/* Draw translucent aura circle around detected face — matches ~7s frame of reference video */
+function drawFaceCircle() {
+  if (!VS.fx.circle || !VS.faceBox) return;
+  const { cx, cy, w: fw, h: fh } = VS.faceBox;
+  const ctx = VS.ctx;
+  const r = Math.max(fw, fh) * 0.85;
+
+  /* Soft radial aura (bright core → transparent edge) */
+  const grad = ctx.createRadialGradient(cx, cy, r * 0.55, cx, cy, r);
+  grad.addColorStop(0,    'rgba(255,255,255,0.00)');
+  grad.addColorStop(0.75, 'rgba(0,255,0,0.08)');
+  grad.addColorStop(0.92, 'rgba(0,255,0,0.28)');
+  grad.addColorStop(1,    'rgba(0,255,0,0.00)');
+
+  ctx.save();
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  /* Outline ring */
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+  ctx.lineWidth = 1.2;
+  ctx.shadowColor = '#00FF00';
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.95, 0, Math.PI * 2);
+  ctx.stroke();
+
+  /* Secondary inner ring — extra depth like in reference */
+  ctx.strokeStyle = 'rgba(0,255,0,0.35)';
+  ctx.lineWidth = 0.8;
+  ctx.shadowBlur = 5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.75, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+/* ── Three.js: minimal scene with a metallic torus ring above the head ── */
+function initThreeScene() {
+  if (VS.three || typeof THREE === 'undefined') return;
+
+  const cv = VS.canvas3d;
+  cv.width = VS.canvas.width || 480;
+  cv.height = VS.canvas.height || 360;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, cv.width / cv.height, 0.1, 100);
+  camera.position.set(0, 0, 5);
+
+  const renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true });
+  renderer.setSize(cv.width, cv.height, false);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  /* Torus — large radius with metallic-ish look via MeshPhongMaterial
+     (avoids PBR env-map weight; close enough for demo) */
+  const geom = new THREE.TorusGeometry(1.1, 0.12, 24, 80);
+  const mat = new THREE.MeshPhongMaterial({
+    color: 0xffffff,
+    emissive: 0x224433,
+    specular: 0xaaffcc,
+    shininess: 90,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.92,
+  });
+  const torus = new THREE.Mesh(geom, mat);
+  scene.add(torus);
+
+  /* Inner thinner ring for sci-fi depth */
+  const innerGeom = new THREE.TorusGeometry(0.85, 0.04, 16, 64);
+  const innerMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.55 });
+  const innerTorus = new THREE.Mesh(innerGeom, innerMat);
+  scene.add(innerTorus);
+
+  /* Lights — key + rim for metallic highlight */
+  scene.add(new THREE.AmbientLight(0x404060, 0.8));
+  const key = new THREE.DirectionalLight(0xffffff, 1.2);
+  key.position.set(2, 3, 2);
+  scene.add(key);
+  const rim = new THREE.PointLight(0x88ffaa, 1.5, 8);
+  rim.position.set(-2, 1, 1);
+  scene.add(rim);
+
+  VS.three = { scene, camera, renderer, torus, innerTorus };
+}
+
+/* Per-frame: position torus above detected face, rotate for life */
+function renderTorus() {
+  if (!VS.three || !VS.fx.torus) return;
+  const { scene, camera, renderer, torus, innerTorus } = VS.three;
+
+  /* Resize WebGL canvas if video canvas changed */
+  const cv = VS.canvas3d;
+  if (cv.width !== VS.canvas.width || cv.height !== VS.canvas.height) {
+    cv.width = VS.canvas.width;
+    cv.height = VS.canvas.height;
+    renderer.setSize(cv.width, cv.height, false);
+    camera.aspect = cv.width / cv.height;
+    camera.updateProjectionMatrix();
+  }
+
+  /* Map face bbox to 3D world space.
+     Canvas goes x:[0..w], y:[0..h] → NDC [-1..1] at z=0 (plane at z=0) */
+  let targetX = 0, targetY = 1.2;      /* default: center, above */
+  let scale = 1;
+  if (VS.faceBox) {
+    const { cx, cy, w: fw, h: fh } = VS.faceBox;
+    const w = VS.canvas.width, h = VS.canvas.height;
+    /* NDC-ish: tune vertical to sit ABOVE the head — offset up by 0.9 × face height */
+    targetX = ((cx / w) * 2 - 1) * 2.5;
+    targetY = (((cy - fh * 0.9) / h) * -2 + 1) * 1.6;
+    scale = Math.max(0.7, Math.min(1.4, (fw / w) * 4.2));
+  }
+
+  torus.position.set(targetX, targetY, 0);
+  torus.scale.setScalar(scale);
+  torus.rotation.x += 0.006;
+  torus.rotation.y += 0.018;
+
+  innerTorus.position.copy(torus.position);
+  innerTorus.scale.setScalar(scale);
+  innerTorus.rotation.y -= 0.03;
+  innerTorus.rotation.z += 0.012;
+
+  renderer.render(scene, camera);
+}
+
+/* ── Effect mode toggles ── */
+const CYCLE_SEQ = ['circle', 'torus', 'chrome'];   /* rotates every 4s in cycle mode */
+
+function applyFxClasses() {
+  VS.camFrame.classList.toggle('fx-torus', VS.fx.torus);
+  VS.camFrame.classList.toggle('fx-chrome', VS.fx.chrome);
+}
+
+function setFx(key, on) {
+  VS.fx[key] = on;
+  const btn = document.querySelector(`.vs-fx-btn[data-fx="${key}"]`);
+  if (btn) btn.classList.toggle('active', on);
+  applyFxClasses();
+  /* Lazy-init three scene the first time torus is enabled */
+  if (key === 'torus' && on) initThreeScene();
+  /* Clear 3D canvas when torus turns off */
+  if (key === 'torus' && !on && VS.three) {
+    VS.three.renderer.clear();
+  }
+}
+
+function toggleFx(key) {
+  if (key === 'cycle') {
+    VS.fx.cycle = !VS.fx.cycle;
+    const btn = document.querySelector('.vs-fx-btn[data-fx="cycle"]');
+    if (btn) btn.classList.toggle('active', VS.fx.cycle);
+    if (VS.fx.cycle) {
+      initThreeScene();
+      VS.cyclePhase = 0;
+      /* Turn everything off, then start rotation */
+      ['circle','torus','chrome'].forEach(k => setFx(k, false));
+      const step = () => {
+        ['circle','torus','chrome'].forEach(k => setFx(k, false));
+        setFx(CYCLE_SEQ[VS.cyclePhase], true);
+        VS.cyclePhase = (VS.cyclePhase + 1) % CYCLE_SEQ.length;
+      };
+      step();
+      VS.cycleTimer = setInterval(step, 4000);
+    } else {
+      clearInterval(VS.cycleTimer);
+      VS.cycleTimer = null;
+      ['circle','torus','chrome'].forEach(k => setFx(k, false));
+    }
+    return;
+  }
+  /* Manual toggle — disables cycle first */
+  if (VS.fx.cycle) toggleFx('cycle');
+  setFx(key, !VS.fx[key]);
+}
+
+/* Wire up toggle buttons after DOM ready */
+document.querySelectorAll('.vs-fx-btn').forEach(btn => {
+  btn.addEventListener('click', () => toggleFx(btn.dataset.fx));
+});
 
 /* ── Gesture Classification ── */
 function classifyGesture(landmarks) {
@@ -1008,6 +1349,10 @@ function onResults(results) {
   const ctx = VS.ctx;
   ctx.clearRect(0, 0, VS.canvas.width, VS.canvas.height);
 
+  /* ── Creative effects: run BEFORE skeletons so hand lines layer on top ── */
+  drawFaceCircle();         /* face aura (only draws if VS.fx.circle + face detected) */
+  renderTorus();            /* 3D ring on separate WebGL canvas (independent of 2D ctx) */
+
   const handCount = results.multiHandLandmarks ? results.multiHandLandmarks.length : 0;
   VS.handCountEl.textContent = handCount + ' HAND' + (handCount !== 1 ? 'S' : '');
 
@@ -1132,6 +1477,16 @@ async function initVisionShield() {
 
     VS.hands.onResults(onResults);
 
+    /* Face Detection — light model, used for circle/chrome/torus anchoring */
+    if (typeof FaceDetection !== 'undefined') {
+      VS.loadingText.textContent = 'Loading Face Detection...';
+      VS.faceDetection = new FaceDetection({
+        locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`
+      });
+      VS.faceDetection.setOptions({ model: 'short', minDetectionConfidence: 0.55 });
+      VS.faceDetection.onResults(onFaceResults);
+    }
+
     VS.loadingText.textContent = 'Accessing Camera...';
 
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -1144,10 +1499,16 @@ async function initVisionShield() {
 
     VS.loadingText.textContent = 'Starting hand tracking...';
 
-    /* Use MediaPipe Camera utility for frame processing */
+    /* Use MediaPipe Camera utility for frame processing.
+       Hands runs every frame; face detection throttled to every 3rd frame
+       (saves ~10% CPU; face position rarely moves > 10px between frames) */
     VS.camera = new Camera(VS.video, {
       onFrame: async () => {
+        VS.frameIdx++;
         await VS.hands.send({ image: VS.video });
+        if (VS.faceDetection && VS.frameIdx % 3 === 0) {
+          try { await VS.faceDetection.send({ image: VS.video }); } catch (e) { /* non-fatal */ }
+        }
       },
       width: 640,
       height: 480
@@ -1158,6 +1519,7 @@ async function initVisionShield() {
     /* All good — hide loading */
     VS.loadingEl.style.display = 'none';
     VS.running = true;
+    VS.camFrame.classList.add('streaming');       /* reveals effect toggle bar */
 
     VS.camDot.classList.add('active');
     VS.camLabel.textContent = 'LIVE · TRACKING';
