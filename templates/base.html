@@ -58,23 +58,25 @@
   <div id="particles-js" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; opacity:0.3; pointer-events:none;"></div>
   
   <script>
-    particlesJS('particles-js', {
-      particles: {
-        number: { value: 30, density: { enable: true, value_area: 800 } },
-        color: { value: '#7c3aed' },
-        shape: { type: 'circle' },
-        opacity: { value: 0.3, random: true },
-        size: { value: 2, random: true },
-        line_linked: { enable: true, distance: 150, color: '#8b5cf6', opacity: 0.2, width: 1 },
-        move: { enable: true, speed: 1.5, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
-      },
-      interactivity: {
-        detect_on: 'window',
-        events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
-        modes: { grab: { distance: 140, line_linked: { opacity: 0.8 } }, push: { particles_nb: 3 } }
-      },
-      retina_detect: true
-    });
+    if (window.particlesJS && document.getElementById('particles-js')) {
+      particlesJS('particles-js', {
+        particles: {
+          number: { value: 30, density: { enable: true, value_area: 800 } },
+          color: { value: '#7c3aed' },
+          shape: { type: 'circle' },
+          opacity: { value: 0.3, random: true },
+          size: { value: 2, random: true },
+          line_linked: { enable: true, distance: 150, color: '#8b5cf6', opacity: 0.2, width: 1 },
+          move: { enable: true, speed: 1.5, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+        },
+        interactivity: {
+          detect_on: 'window',
+          events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
+          modes: { grab: { distance: 140, line_linked: { opacity: 0.8 } }, push: { particles_nb: 3 } }
+        },
+        retina_detect: true
+      });
+    }
   </script>
 
   <!-- ── GLOBAL PANIC SOS LOGIC ─────────────────────────────────────────────── -->
