@@ -222,7 +222,75 @@ body, html {
   transition: filter 0.25s ease;
 }
 
-/* ══ Live puzzle overlay (replaces the old FX button bar) ══ */
+/* ══ Top control bar ══ */
+.vs-toolbar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  background: rgba(14, 18, 34, 0.82);
+  border: 1px solid rgba(99,102,241,0.25);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.36);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 12;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.vs-cam-frame.streaming .vs-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+}
+.vs-fx-btn,
+.vs-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 11px;
+  background: rgba(255,255,255,0.04);
+  color: rgba(226,232,240,0.8);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.vs-fx-btn i,
+.vs-mode-btn i {
+  font-size: 0.7rem;
+}
+.vs-fx-btn:hover,
+.vs-mode-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(99,102,241,0.12);
+  color: #e0e7ff;
+}
+.vs-fx-btn.active,
+.vs-mode-btn.active {
+  background: rgba(99,102,241,0.2);
+  color: #eef2ff;
+  box-shadow: inset 0 0 0 1px rgba(129,140,248,0.26);
+}
+.vs-mode-btn.active {
+  background: rgba(216,255,79,0.16);
+  color: #f5ffbe;
+  box-shadow: inset 0 0 0 1px rgba(216,255,79,0.22);
+}
+.vs-mode-btn.locked {
+  opacity: 0.46;
+}
+
+/* ══ Live puzzle overlay ══ */
 .vs-puzzle-shell {
   position: absolute;
   inset: 0;
@@ -231,13 +299,13 @@ body, html {
   pointer-events: none;
   transition: opacity 0.32s ease;
 }
-.vs-cam-frame.streaming .vs-puzzle-shell {
+.vs-cam-frame.streaming .vs-puzzle-shell.is-visible {
   opacity: 1;
   pointer-events: auto;
 }
 .vs-puzzle-title {
   position: absolute;
-  top: 12px;
+  top: 66px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -262,7 +330,7 @@ body, html {
 }
 .vs-puzzle-timer {
   position: absolute;
-  top: 42px;
+  top: 94px;
   left: 50%;
   transform: translateX(-50%);
   min-width: 54px;
@@ -282,7 +350,7 @@ body, html {
 }
 .vs-puzzle-chip {
   position: absolute;
-  top: 14px;
+  top: 66px;
   left: 14px;
   display: inline-flex;
   align-items: center;
@@ -307,7 +375,7 @@ body, html {
 }
 .vs-puzzle-objective {
   position: absolute;
-  top: 16px;
+  top: 66px;
   right: 16px;
   width: 148px;
   padding: 9px 11px;
@@ -964,13 +1032,27 @@ body, html {
   .vs-panel { width: 100%; flex-direction: row; flex-wrap: wrap; }
   .vs-gesture-card { flex: 1; min-width: 140px; }
   .vs-legend { display: none; }
-  .vs-puzzle-title { top: 10px; }
+  .vs-toolbar {
+    top: 10px;
+    gap: 4px;
+    padding: 6px 8px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .vs-fx-btn,
+  .vs-mode-btn {
+    padding: 7px 9px;
+    font-size: 0.48rem;
+  }
+  .vs-puzzle-title { top: 66px; }
   .vs-puzzle-kicker { font-size: 0.58rem; }
   .vs-puzzle-sub { font-size: 0.38rem; }
-  .vs-puzzle-timer { top: 34px; font-size: 0.48rem; padding: 4px 8px; }
-  .vs-puzzle-chip { top: auto; bottom: 42px; left: 12px; }
+  .vs-puzzle-timer { top: 90px; font-size: 0.48rem; padding: 4px 8px; }
+  .vs-puzzle-chip { top: 66px; left: 12px; bottom: auto; }
   .vs-puzzle-objective {
-    top: 12px;
+    top: 66px;
     right: 12px;
     width: 136px;
     padding: 8px 10px;
@@ -1035,6 +1117,24 @@ body, html {
       <div class="vs-corner tr"></div>
       <div class="vs-corner bl"></div>
       <div class="vs-corner br"></div>
+
+      <div class="vs-toolbar" id="vs-toolbar">
+        <button class="vs-fx-btn" data-fx="circle" type="button">
+          <i class="bi bi-circle"></i><span>Circle</span>
+        </button>
+        <button class="vs-fx-btn" data-fx="torus" type="button">
+          <i class="bi bi-record-circle"></i><span>Torus</span>
+        </button>
+        <button class="vs-fx-btn" data-fx="chrome" type="button">
+          <i class="bi bi-droplet-half"></i><span>Chrome</span>
+        </button>
+        <button class="vs-fx-btn" data-fx="cycle" type="button">
+          <i class="bi bi-arrow-repeat"></i><span>Cycle</span>
+        </button>
+        <button class="vs-mode-btn" id="vs-puzzle-toggle" type="button" aria-pressed="false">
+          <i class="bi bi-grid-3x3-gap-fill"></i><span>Puzzle</span>
+        </button>
+      </div>
 
       <!-- Live puzzle overlay -->
       <div class="vs-puzzle-shell is-capture" id="vs-puzzle-shell">
@@ -1247,6 +1347,7 @@ const VS = {
   camLabel: document.getElementById('vs-cam-label'),
   fpsEl: document.getElementById('vs-fps-display'),
   handCountEl: document.getElementById('vs-hand-count'),
+  puzzleToggleEl: document.getElementById('vs-puzzle-toggle'),
   puzzleShell: document.getElementById('vs-puzzle-shell'),
   puzzleSubEl: document.getElementById('vs-puzzle-sub'),
   puzzleTimerEl: document.getElementById('vs-puzzle-timer'),
@@ -1288,6 +1389,7 @@ const VS = {
   puzzle: {
     rows: 3,
     cols: 3,
+    modeActive: false,
     state: 'capture',
     captureHold: 0,
     captureHoldFrames: 8,
@@ -1585,6 +1687,61 @@ function toggleFx(key) {
 document.querySelectorAll('.vs-fx-btn').forEach(btn => {
   btn.addEventListener('click', () => toggleFx(btn.dataset.fx));
 });
+
+function clearPuzzleInteraction() {
+  VS.puzzle.captureHold = 0;
+  VS.puzzle.pinching = false;
+  VS.puzzle.hoverSlot = null;
+  VS.puzzle.dragSourceSlot = null;
+  VS.puzzle.dragPieceIndex = null;
+  VS.puzzle.pointer = null;
+  VS.puzzle.mouseDrag = false;
+  updatePuzzleCursor(null);
+  updatePuzzleDragTile(null);
+}
+
+function syncPuzzleModeUi() {
+  const visible = VS.running && VS.puzzle.modeActive && !VS.armed;
+  if (VS.puzzleShell) {
+    VS.puzzleShell.classList.toggle('is-visible', visible);
+    VS.puzzleShell.setAttribute('aria-hidden', String(!visible));
+  }
+  if (VS.puzzleToggleEl) {
+    VS.puzzleToggleEl.classList.toggle('active', visible);
+    VS.puzzleToggleEl.classList.toggle('locked', VS.armed);
+    VS.puzzleToggleEl.setAttribute('aria-pressed', String(visible));
+  }
+}
+
+function setPuzzleMode(on, { quiet = false } = {}) {
+  const next = !!on;
+  if (VS.puzzle.modeActive === next) {
+    syncPuzzleModeUi();
+    return;
+  }
+
+  VS.puzzle.modeActive = next;
+  clearPuzzleInteraction();
+  syncPuzzleModeUi();
+  updatePuzzleHud();
+  renderPuzzleBoard();
+
+  if (!quiet && typeof showToast === 'function') {
+    showToast(next ? 'Puzzle mode enabled' : 'Puzzle mode hidden', next ? 'info' : 'success');
+  }
+}
+
+function togglePuzzleMode() {
+  if (!VS.running) {
+    if (typeof showToast === 'function') showToast('Start Vision Shield first — enable camera.', 'error');
+    return;
+  }
+  if (VS.armed) {
+    if (typeof showToast === 'function') showToast('Disarm Vision Shield to use Puzzle mode.', 'info');
+    return;
+  }
+  setPuzzleMode(!VS.puzzle.modeActive);
+}
 
 /* ── Live Puzzle Engine ── */
 const VS_PUZZLE_BEST_KEY = 'rakshak_vs_live_puzzle_best_ms';
@@ -1900,6 +2057,7 @@ function updatePuzzleHud() {
     ? (p.completedAt - p.startedAt)
     : (p.state === 'playing' ? performance.now() - p.startedAt : 0);
 
+  syncPuzzleModeUi();
   VS.puzzleShell.classList.toggle('is-capture', p.state === 'capture');
   VS.puzzleShell.classList.toggle('is-capturing', p.state === 'capture' && p.captureHold > 0);
   VS.puzzleShell.classList.toggle('is-playing', p.state === 'playing');
@@ -1944,6 +2102,15 @@ function updatePuzzleHud() {
 }
 
 function updatePuzzleFromHand(landmarks) {
+  if (!VS.puzzle.modeActive) {
+    if (VS.puzzle.pinching || VS.puzzle.captureHold > 0 || VS.puzzle.hoverSlot != null || VS.puzzle.dragSourceSlot != null || VS.puzzle.pointer || VS.puzzle.mouseDrag) {
+      clearPuzzleInteraction();
+      updatePuzzleHud();
+      renderPuzzleBoard();
+    }
+    return;
+  }
+
   syncPuzzleLayout();
 
   if (VS.puzzle.mouseDrag) {
@@ -1999,12 +2166,12 @@ function puzzlePointFromEvent(event) {
 }
 
 function onPuzzleCaptureClick() {
-  if (VS.armed || !VS.running || VS.puzzle.state !== 'capture') return;
+  if (VS.armed || !VS.running || !VS.puzzle.modeActive || VS.puzzle.state !== 'capture') return;
   capturePuzzleFrame();
 }
 
 function onPuzzlePointerDown(event) {
-  if (VS.armed || VS.puzzle.state !== 'playing') return;
+  if (VS.armed || !VS.puzzle.modeActive || VS.puzzle.state !== 'playing') return;
   const point = puzzlePointFromEvent(event);
   const slot = getPuzzleSlotFromPoint(point.x, point.y);
   if (slot == null) return;
@@ -2017,7 +2184,7 @@ function onPuzzlePointerDown(event) {
 }
 
 function onPuzzlePointerMove(event) {
-  if (!VS.puzzle.mouseDrag) return;
+  if (!VS.puzzle.modeActive || !VS.puzzle.mouseDrag) return;
   const point = puzzlePointFromEvent(event);
   VS.puzzle.pointer = { x: point.x, y: point.y, pinching: true };
   VS.puzzle.hoverSlot = getPuzzleSlotFromPoint(point.x, point.y);
@@ -2027,7 +2194,7 @@ function onPuzzlePointerMove(event) {
 }
 
 function onPuzzlePointerUp(event) {
-  if (!VS.puzzle.mouseDrag) return;
+  if (!VS.puzzle.modeActive || !VS.puzzle.mouseDrag) return;
   const point = puzzlePointFromEvent(event);
   const slot = getPuzzleSlotFromPoint(point.x, point.y);
   VS.puzzle.mouseDrag = false;
@@ -2041,6 +2208,7 @@ function onPuzzlePointerUp(event) {
 function initPuzzleUi() {
   if (VS.puzzleResetEl) VS.puzzleResetEl.addEventListener('click', () => resetPuzzle());
   if (VS.puzzleRestartEl) VS.puzzleRestartEl.addEventListener('click', () => resetPuzzle());
+  if (VS.puzzleToggleEl) VS.puzzleToggleEl.addEventListener('click', togglePuzzleMode);
   if (VS.puzzleCaptureEl) VS.puzzleCaptureEl.addEventListener('click', onPuzzleCaptureClick);
   if (VS.puzzleBoardEl) VS.puzzleBoardEl.addEventListener('pointerdown', onPuzzlePointerDown);
   window.addEventListener('pointermove', onPuzzlePointerMove);
@@ -2293,6 +2461,7 @@ function toggleArmed() {
     icon.className = 'bi bi-shield-fill-exclamation vs-btn-icon';
     text.textContent = 'DISARM SHIELD';
     VS.camFrame.classList.add('armed');
+    setPuzzleMode(false, { quiet: true });
     if (window.tacticalAnnounce) tacticalAnnounce('Vision Shield armed. Gesture monitoring active.');
     if (typeof showToast === 'function') showToast('🛡️ Vision Shield Armed — Monitoring Gestures', 'success');
   } else {
@@ -2366,13 +2535,14 @@ async function initVisionShield() {
 
     await VS.camera.start();
 
-    /* All good — hide loading */
-    VS.loadingEl.style.display = 'none';
-    VS.running = true;
-    VS.camFrame.classList.add('streaming');       /* reveals effect toggle bar */
+  /* All good — hide loading */
+  VS.loadingEl.style.display = 'none';
+  VS.running = true;
+  VS.camFrame.classList.add('streaming');       /* reveals effect toggle bar */
+  syncPuzzleModeUi();
 
-    VS.camDot.classList.add('active');
-    VS.camLabel.textContent = 'LIVE · TRACKING';
+  VS.camDot.classList.add('active');
+  VS.camLabel.textContent = 'LIVE · TRACKING';
 
     if (typeof showToast === 'function') showToast('✅ Vision Shield camera online', 'success');
 
