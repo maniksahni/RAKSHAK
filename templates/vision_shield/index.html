@@ -816,14 +816,20 @@ function drawHand(landmarks, isRightHand) {
     [0,17]
   ];
 
-  const color = isRightHand ? 'rgba(99,102,241,0.8)' : 'rgba(99,102,241,0.8)';
-  const jointColor = isRightHand ? '#818cf8' : '#818cf8';
+  /* Classic MediaPipe look: bright green bones + red joints.
+     High contrast = max visibility in low-light / for elderly users.
+     Matches the standard CV demo aesthetic shown in reference video. */
+  const lineColor = '#00FF88';      // bright green (slight cyan tilt for brand cohesion)
+  const jointColor = '#FF2D3A';     // bright red
+  const jointOutline = '#FFFFFF';   // white ring for pop against skin tones
 
-  // Draw connections
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1.5;
-  ctx.shadowColor = '#6366f1';
-  ctx.shadowBlur = 5;
+  // Draw connections (bones)
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.shadowColor = '#00FF88';
+  ctx.shadowBlur = 6;
   for (const [a, b] of CONNECTIONS) {
     if (!landmarks[a] || !landmarks[b]) continue;
     ctx.beginPath();
@@ -832,19 +838,31 @@ function drawHand(landmarks, isRightHand) {
     ctx.stroke();
   }
 
-  // Draw joints
+  // Draw joints (red dots with white outline + subtle glow)
+  ctx.shadowColor = '#FF2D3A';
   ctx.shadowBlur = 8;
-  for (const lm of landmarks) {
+  for (let i = 0; i < landmarks.length; i++) {
+    const lm = landmarks[i];
+    const isFingertip = (i === 4 || i === 8 || i === 12 || i === 16 || i === 20);
+    const r = isFingertip ? 5 : 4;
+
+    // White outline ring for contrast on any background
     ctx.beginPath();
-    ctx.arc(lm.x * w, lm.y * h, 3, 0, Math.PI * 2);
+    ctx.arc(lm.x * w, lm.y * h, r + 1.2, 0, Math.PI * 2);
+    ctx.fillStyle = jointOutline;
+    ctx.fill();
+
+    // Red core dot
+    ctx.beginPath();
+    ctx.arc(lm.x * w, lm.y * h, r, 0, Math.PI * 2);
     ctx.fillStyle = jointColor;
     ctx.fill();
 
-    /* Key joints: fingertips glow */
-    if ([4,8,12,16,20].includes(landmarks.indexOf(lm))) {
+    // Fingertip halo for emphasis
+    if (isFingertip) {
       ctx.beginPath();
-      ctx.arc(lm.x * w, lm.y * h, 5, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(196,181,253,0.4)';
+      ctx.arc(lm.x * w, lm.y * h, 9, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,45,58,0.22)';
       ctx.fill();
     }
   }
