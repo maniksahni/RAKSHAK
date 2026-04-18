@@ -1106,7 +1106,9 @@ a, button { cursor: inherit; }
       </div>
       <div class="xv-meter"><i id="xv-energy-bar"></i></div>
     </div>
-    <div class="xv-shortcuts">
+  <div class="xv-shortcuts">
+      <div class="xv-shortcut"><span class="xv-kbd">A</span><span>Aura</span></div>
+      <div class="xv-shortcut"><span class="xv-kbd">X</span><span>X-Ray</span></div>
       <div class="xv-shortcut"><span class="xv-kbd">1</span><span>Cyan</span></div>
       <div class="xv-shortcut"><span class="xv-kbd">2</span><span>Rose</span></div>
       <div class="xv-shortcut"><span class="xv-kbd">3</span><span>Amber</span></div>
@@ -1132,7 +1134,7 @@ a, button { cursor: inherit; }
   <!-- Idle instructions -->
   <div class="xv-instructions" id="xv-instructions">
     <span class="xv-ins-dot"></span>
-    <span>Show both hands · Pinch fingers together to open portal</span>
+    <span id="xv-instructions-text">Show one hand · rotate wrist through the field</span>
   </div>
 
   <!-- Center loader -->
@@ -1163,6 +1165,11 @@ a, button { cursor: inherit; }
 
   <!-- Bottom-right controls -->
   <div class="xv-controls" id="xv-controls">
+    <div class="xv-ctrl-group" title="Render mode">
+      <button class="xv-ctrl-btn active" data-vision-mode="aura"><span>AURA</span></button>
+      <button class="xv-ctrl-btn" data-vision-mode="xray"><span>XRAY</span></button>
+    </div>
+
     <!-- Theme toggle group -->
     <div class="xv-ctrl-group" title="Color theme">
       <button class="xv-ctrl-btn active" data-theme="cyan"><span>CYAN</span></button>
@@ -1171,7 +1178,7 @@ a, button { cursor: inherit; }
     </div>
 
     <!-- Density toggle group -->
-    <div class="xv-ctrl-group" title="Particle density">
+    <div class="xv-ctrl-group" id="xv-density-group" title="Particle density">
       <button class="xv-ctrl-btn" data-density="5000"><span>5K</span></button>
       <button class="xv-ctrl-btn active" data-density="10000"><span>10K</span></button>
       <button class="xv-ctrl-btn" data-density="15000"><span>15K</span></button>
@@ -1191,8 +1198,8 @@ a, button { cursor: inherit; }
 {% endblock %}
 
 {% block extra_js %}
-<!-- MediaPipe Holistic — hand + pose + segmentation in one model -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" crossorigin="anonymous"></script>
 
 <script>
@@ -1220,12 +1227,14 @@ a, button { cursor: inherit; }
   const loaderSub = document.getElementById('xv-loader-sub');
   const fpsEl = document.getElementById('xv-fps');
   const instructionsEl = document.getElementById('xv-instructions');
+  const instructionsTextEl = document.getElementById('xv-instructions-text');
   const permModal = document.getElementById('xv-perm-modal');
   const wrapEl = document.getElementById('xv-wrap');
   const sosCountdownEl = document.getElementById('xv-sos-countdown');
   const allowBtn = document.getElementById('xv-perm-allow-btn');
   const screenshotBtn = document.getElementById('xv-screenshot-btn');
   const fullscreenBtn = document.getElementById('xv-fullscreen-btn');
+  const densityGroupEl = document.getElementById('xv-density-group');
   const flashEl = document.getElementById('xv-flash');
   const heroStateEl = document.getElementById('xv-hero-state');
   const statePillEl = document.getElementById('xv-state-pill');
@@ -1249,7 +1258,8 @@ a, button { cursor: inherit; }
   const bottomSosEl = document.getElementById('xv-bottom-sos');
   const STORAGE_KEYS = {
     theme: 'rakshak_xray_theme',
-    density: 'rakshak_xray_density'
+    density: 'rakshak_xray_density',
+    mode: 'rakshak_xray_mode'
   };
   const sessionStartedAt = performance.now();
 
@@ -1261,6 +1271,7 @@ a, button { cursor: inherit; }
   let streamParticles = [];
   let dataPackets = [];
   let currentThemeKey = 'cyan';
+  let renderMode = readStored(STORAGE_KEYS.mode) || 'aura';
 
   /* Math LUTs for hot-loop optimization */
   const RAND_LUT = new Float32Array(5000);
@@ -1453,10 +1464,11 @@ a, button { cursor: inherit; }
   let sparkCooldown = 0;
   let cameraStream = null;
   let cameraController = null;
+  let handsEngine = null;
   let holisticEngine = null;
   let hasStarted = false;
-  let holisticBusy = false;
-  let lastHolisticRunAt = 0;
+  let trackingBusy = false;
+  let lastTrackingRunAt = 0;
 
   const maskCv = document.createElement('canvas');
   const mctx = maskCv.getContext('2d', { willReadFrequently: true });
@@ -1473,46 +1485,112 @@ a, button { cursor: inherit; }
     return vid.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && vid.videoWidth > 0 && vid.videoHeight > 0;
   }
 
+  function isAuraMode() {
+    return renderMode === 'aura';
+  }
+
+  function applyModeUI() {
+    const auraMode = isAuraMode();
+    wrapEl.dataset.mode = renderMode;
+    document.querySelectorAll('.xv-ctrl-btn[data-vision-mode]').forEach(btn =>
+      btn.classList.toggle('active', btn.dataset.visionMode === renderMode)
+    );
+    if (densityGroupEl) densityGroupEl.hidden = auraMode;
+    if (instructionsTextEl) {
+      instructionsTextEl.textContent = auraMode
+        ? 'Show one hand · rotate wrist through the field'
+        : 'Show both hands · Pinch fingers together to open portal';
+    }
+    if (allowBtn) {
+      allowBtn.innerHTML = auraMode
+        ? '<i class="bi bi-stars me-2"></i>Initiate Aura Link'
+        : '<i class="bi bi-camera-video-fill me-2"></i>Initiate Neural Link';
+    }
+    if (loaderSub && !hasStarted) {
+      loaderSub.textContent = auraMode
+        ? 'Hands · Aura Vector Field'
+        : 'Hands · Pose · Segmentation';
+    }
+  }
+
+  async function setRenderMode(mode, { restart = true } = {}) {
+    if (!['aura', 'xray'].includes(mode)) return;
+    const changed = renderMode !== mode;
+    renderMode = mode;
+    writeStored(STORAGE_KEYS.mode, mode);
+    applyModeUI();
+    updateTelemetry();
+
+    if (changed && restart && hasStarted) {
+      loaderEl.style.display = '';
+      loaderSub.textContent = isAuraMode()
+        ? 'Switching to hand aura engine…'
+        : 'Switching to dual neural engine…';
+      await cleanupEngines();
+      await startEngines();
+    }
+  }
+
   function updateTelemetry(now = performance.now()) {
     const hands = currentHands ? currentHands.length : 0;
+    const auraMode = isAuraMode();
+    const trackedHands = auraMode ? Math.min(hands, 1) : hands;
     const portalPct = Math.round(portalAlpha * 100);
     const holdRemaining = portalHoldStartedAt
       ? Math.max(0, Math.ceil((SOS_HOLD_MS - (now - portalHoldStartedAt)) / 1000))
       : SOS_HOLD_MS / 1000;
     const energyPct = Math.min(100, Math.round(28 + portalPct * 0.72));
-    const modeText = sosFired
-      ? 'SOS ACTIVE'
-      : isActive
-        ? 'PORTAL OPEN'
-        : videoReady()
-          ? 'SCANNING'
-          : hasStarted
-            ? 'CALIBRATING'
-            : 'STANDBY';
-    const readinessText = sosFired
-      ? 'LIVE'
-      : wrapEl.classList.contains('xv-sos-charging')
-        ? 'CHARGING'
-        : isActive
-          ? 'ARMED'
-          : 'SAFE';
+    const modeText = auraMode
+      ? (isActive
+          ? 'AURA LIVE'
+          : videoReady()
+            ? 'AURA READY'
+            : hasStarted
+              ? 'AURA BOOT'
+              : 'AURA STANDBY')
+      : (sosFired
+          ? 'SOS ACTIVE'
+          : isActive
+            ? 'PORTAL OPEN'
+            : videoReady()
+              ? 'SCANNING'
+              : hasStarted
+                ? 'CALIBRATING'
+                : 'STANDBY');
+    const readinessText = auraMode
+      ? (isActive ? 'TRACKED' : (videoReady() ? 'READY' : 'SAFE'))
+      : (sosFired
+          ? 'LIVE'
+          : wrapEl.classList.contains('xv-sos-charging')
+            ? 'CHARGING'
+            : isActive
+              ? 'ARMED'
+              : 'SAFE');
 
     wrapEl.classList.toggle('xv-live', videoReady());
     wrapEl.classList.toggle('xv-portal-open', portalPct > 12);
     wrapEl.classList.toggle('xv-alerting', sosFired);
 
     if (heroStateEl) {
-      heroStateEl.textContent = sosFired
-        ? 'SOS BROADCAST LIVE'
-        : wrapEl.classList.contains('xv-sos-charging')
-          ? `SOS ARMING / HOLD ${holdRemaining}s`
-        : isActive
-          ? 'PORTAL SYNCHRONIZED'
-          : hands >= 2
-            ? 'HANDS LOCKED / ALIGN FINGERS'
-            : hasStarted
-              ? 'NEURAL LINK LIVE'
-              : 'NEURAL BIOSCAN STANDBY';
+      heroStateEl.textContent = auraMode
+        ? (isActive
+            ? 'HAND AURA LOCKED'
+            : trackedHands >= 1
+              ? 'AURA FIELD ACQUIRED'
+              : hasStarted
+                ? 'SHOW ONE HAND TO BEGIN'
+                : 'AURA FIELD STANDBY')
+        : (sosFired
+            ? 'SOS BROADCAST LIVE'
+            : wrapEl.classList.contains('xv-sos-charging')
+              ? `SOS ARMING / HOLD ${holdRemaining}s`
+            : isActive
+              ? 'PORTAL SYNCHRONIZED'
+              : hands >= 2
+                ? 'HANDS LOCKED / ALIGN FINGERS'
+                : hasStarted
+                  ? 'NEURAL LINK LIVE'
+                  : 'NEURAL BIOSCAN STANDBY');
     }
     if (statePillEl) {
       statePillEl.textContent = sosFired
@@ -1524,40 +1602,46 @@ a, button { cursor: inherit; }
             : (hasStarted ? 'BOOTING' : 'IDLE');
     }
     if (themeLabelEl) themeLabelEl.textContent = currentThemeKey.toUpperCase();
-    if (densityLabelEl) densityLabelEl.textContent = `${Math.round(PARTICLE_COUNT / 1000)}K`;
-    if (handsCountEl) handsCountEl.textContent = `${hands}/2`;
+    if (densityLabelEl) densityLabelEl.textContent = auraMode ? 'AURA' : `${Math.round(PARTICLE_COUNT / 1000)}K`;
+    if (handsCountEl) handsCountEl.textContent = `${trackedHands}/${auraMode ? 1 : 2}`;
     if (portalLabelEl) {
-      portalLabelEl.textContent = wrapEl.classList.contains('xv-sos-charging')
-        ? `HOLD ${holdRemaining}s`
-        : isActive
-          ? 'OPEN'
-          : (hands >= 2 ? 'ALIGN' : 'SEARCH');
+      portalLabelEl.textContent = auraMode
+        ? (isActive ? 'LOCKED' : 'SEARCH')
+        : (wrapEl.classList.contains('xv-sos-charging')
+            ? `HOLD ${holdRemaining}s`
+            : isActive
+              ? 'OPEN'
+              : (hands >= 2 ? 'ALIGN' : 'SEARCH'));
     }
     if (portalBarEl) portalBarEl.style.width = `${Math.max(6, portalPct)}%`;
     if (uptimeEl) uptimeEl.textContent = formatUptime(now - sessionStartedAt);
     if (sosArmedEl) {
-      sosArmedEl.textContent = sosFired
-        ? 'TRIGGERED'
-        : wrapEl.classList.contains('xv-sos-charging')
-          ? `T-${holdRemaining}s`
-          : (hasStarted ? 'ARMED' : 'OFFLINE');
+      sosArmedEl.textContent = auraMode
+        ? (hasStarted ? 'VISUAL' : 'OFFLINE')
+        : (sosFired
+            ? 'TRIGGERED'
+            : wrapEl.classList.contains('xv-sos-charging')
+              ? `T-${holdRemaining}s`
+              : (hasStarted ? 'ARMED' : 'OFFLINE'));
     }
-    if (poseLockEl) poseLockEl.textContent = currentPose ? 'LOCKED' : 'SEARCH';
+    if (poseLockEl) poseLockEl.textContent = auraMode ? (trackedHands ? 'HAND' : 'SEARCH') : (currentPose ? 'LOCKED' : 'SEARCH');
     if (syncLabelEl) syncLabelEl.textContent = videoReady() ? 'SYNCED' : 'WAIT';
     if (modeLabelEl) modeLabelEl.textContent = modeText;
     if (energyLabelEl) energyLabelEl.textContent = `${energyPct}%`;
     if (readinessLabelEl) readinessLabelEl.textContent = readinessText;
     if (energyModeEl) {
-      energyModeEl.textContent = wrapEl.classList.contains('xv-sos-charging')
-        ? 'OVERDRIVE'
-        : portalPct > 55
-          ? 'SURGING'
-          : (videoReady() ? 'NOMINAL' : 'OFFLINE');
+      energyModeEl.textContent = auraMode
+        ? (isActive ? 'AURORA' : (videoReady() ? 'FLOW' : 'OFFLINE'))
+        : (wrapEl.classList.contains('xv-sos-charging')
+            ? 'OVERDRIVE'
+            : portalPct > 55
+              ? 'SURGING'
+              : (videoReady() ? 'NOMINAL' : 'OFFLINE'));
     }
     if (energyBarEl) energyBarEl.style.width = `${Math.max(8, energyPct)}%`;
     if (bottomModeEl) bottomModeEl.textContent = modeText;
     if (bottomDepthEl) bottomDepthEl.textContent = `${portalPct}%`;
-    if (bottomLockEl) bottomLockEl.textContent = currentPose ? 'Pose Lock' : 'No Pose';
+    if (bottomLockEl) bottomLockEl.textContent = auraMode ? (trackedHands ? 'Hand Lock' : 'No Hand') : (currentPose ? 'Pose Lock' : 'No Pose');
     if (bottomSosEl) bottomSosEl.textContent = readinessText;
   }
 
@@ -1924,6 +2008,11 @@ a, button { cursor: inherit; }
   }
 
   function getInferenceInterval() {
+    if (isAuraMode()) {
+      if (perfTier === 'low') return 60;
+      if (perfTier === 'medium') return 44;
+      return 32;
+    }
     if (perfTier === 'low') return 96;
     if (perfTier === 'medium') return 78;
     return 58;
@@ -2017,10 +2106,16 @@ a, button { cursor: inherit; }
   /* ── HUD nodes bar (bottom of canvas) ── */
   function drawHudNodes() {
     const bY = H - 52;
-    const nodes = [
-      { x: 55, label: 'INPUT' }, { x: 145, label: 'DETECT' }, { x: 245, label: 'POSE' },
-      { x: 345, label: 'PORTAL' }, { x: 445, label: 'COMP' }, { x: 540, label: 'OUTPUT' },
-    ];
+    const auraMode = isAuraMode();
+    const nodes = auraMode
+      ? [
+          { x: 55, label: 'INPUT' }, { x: 145, label: 'HAND' }, { x: 245, label: 'FIELD' },
+          { x: 345, label: 'ORBIT' }, { x: 445, label: 'GLOW' }, { x: 540, label: 'OUTPUT' },
+        ]
+      : [
+          { x: 55, label: 'INPUT' }, { x: 145, label: 'DETECT' }, { x: 245, label: 'POSE' },
+          { x: 345, label: 'PORTAL' }, { x: 445, label: 'COMP' }, { x: 540, label: 'OUTPUT' },
+        ];
     ctx.save();
     nodes.forEach((n, i) => {
       ctx.fillStyle = 'rgba(0,10,20,0.9)';
@@ -2036,11 +2131,17 @@ a, button { cursor: inherit; }
         ctx.beginPath(); ctx.moveTo(nodes[i - 1].x + 35, bY - 3);
         ctx.lineTo(n.x - 35, bY - 3); ctx.stroke();
       }
-      const on = portalAlpha > 0.1 && i <= Math.floor((frame * 0.1) % 6);
+      const on = auraMode
+        ? (currentHands && currentHands.length >= 1 && i <= Math.floor((frame * 0.12) % 6))
+        : (portalAlpha > 0.1 && i <= Math.floor((frame * 0.1) % 6));
       if (on) { ctx.fillStyle = `rgba(0,255,255,0.2)`; ctx.fillRect(n.x - 35, bY - 14, 70, 22); }
     });
 
-    if (portalAlpha > 0.05 && currentHands && currentHands.length >= 2) {
+    if (auraMode && currentHands && currentHands.length >= 1) {
+      ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
+      ctx.fillText('AURA.FIELD // MEDIAPIPE_HANDS', W - 20, H - 35);
+      ctx.fillText(`LOCK: 1/1 // FLOW: ${Math.round(portalAlpha * 100)}%`, W - 20, H - 20);
+    } else if (!auraMode && portalAlpha > 0.05 && currentHands && currentHands.length >= 2) {
       ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
       ctx.fillText(`SYS.ONLINE // NEURAL_XRAY_V5`, W - 20, H - 35);
       ctx.fillText(`PARTICLES: ${(PARTICLE_COUNT / 1000).toFixed(0)}K // CORE: STABLE`, W - 20, H - 20);
@@ -2081,10 +2182,24 @@ a, button { cursor: inherit; }
 
     frameEl.textContent = `FRM: ${String(frame).padStart(4, '0')}${isGlitching ? ' [ERR]' : ''}`;
 
+    const auraMode = isAuraMode();
     let lThumb, lIndex, rThumb, rIndex;
+    let primaryHand = null;
+    let handSide = 'left';
     let portalActiveThisFrame = false;
 
-    if (currentHands && currentHands.length >= 2) {
+    if (currentHands && currentHands.length >= 1) {
+      primaryHand = [...currentHands].reduce((best, hand) =>
+        getPalmSpan(hand) > getPalmSpan(best) ? hand : best
+      );
+      handSide = lmScale(primaryHand[9]).x < W * 0.5 ? 'left' : 'right';
+    }
+
+    if (auraMode) {
+      portalHold = false;
+      portalActiveThisFrame = Boolean(primaryHand);
+      sparkCooldown = 0;
+    } else if (currentHands && currentHands.length >= 2) {
       const h0 = currentHands[0], h1 = currentHands[1];
       const h0_idx = lmScale(h0[8]), h1_idx = lmScale(h1[8]);
       let leftSideHand, rightSideHand;
@@ -2107,11 +2222,11 @@ a, button { cursor: inherit; }
     }
 
     isActive = portalActiveThisFrame;
-    portalAlpha += isActive ? 0.08 : -0.06;
+    portalAlpha += isActive ? 0.08 : (auraMode ? -0.08 : -0.06);
     portalAlpha = Math.max(0, Math.min(1, portalAlpha));
 
     /* ── Sustained portal hook → SOS charging ── */
-    if (isActive) {
+    if (!auraMode && isActive) {
       if (!portalHoldStartedAt) portalHoldStartedAt = now;
       const heldMs = now - portalHoldStartedAt;
       if (heldMs > 2500 && !sosFired) {
@@ -2126,15 +2241,29 @@ a, button { cursor: inherit; }
     }
 
     /* Instructions visibility */
-    instructionsEl.style.opacity = (!currentHands || currentHands.length < 2) ? '1' : '0';
+    instructionsEl.style.opacity = auraMode
+      ? (primaryHand ? '0' : '1')
+      : ((!currentHands || currentHands.length < 2) ? '1' : '0');
 
     /* Status text */
-    if (!currentHands || currentHands.length < 2) {
+    if (auraMode) {
+      if (!primaryHand) {
+        statusEl.textContent = 'AURA MODE: SHOW ONE HAND';
+        statusEl.style.color = '#0055aa';
+        statusEl.style.textShadow = '0 0 10px #0055aa';
+      } else {
+        statusEl.textContent = '[ AURA FIELD LOCKED - FOLLOW YOUR HAND ]';
+        statusEl.style.color = theme.accent;
+        statusEl.style.textShadow = `0 0 15px ${theme.accent}`;
+      }
+    } else if (!currentHands || currentHands.length < 2) {
       statusEl.textContent = 'STANDBY: AWAITING BOTH HANDS';
       statusEl.style.color = '#0055aa';
+      statusEl.style.textShadow = '0 0 10px #0055aa';
     } else if (!isActive) {
       statusEl.textContent = 'DETECTED: BRING FINGERS CLOSER (~150px)';
       statusEl.style.color = theme.accent2;
+      statusEl.style.textShadow = `0 0 12px ${theme.accent2}`;
     } else {
       statusEl.textContent = sosFired ? '◈ SOS BROADCAST ACTIVE ◈'
         : '[ PORTAL FULLY ACTIVE - STRETCH HANDS ]';
@@ -2145,15 +2274,11 @@ a, button { cursor: inherit; }
     sparkBurst = sparkBurst.filter(s => s.life > 0);
     sparkBurst.forEach(s => { s.update(); s.draw(); });
 
-    if (currentHands && currentHands.length >= 1) {
-      const primaryHand = [...currentHands].reduce((best, hand) =>
-        getPalmSpan(hand) > getPalmSpan(best) ? hand : best
-      );
-      const handSide = lmScale(primaryHand[9]).x < W * 0.5 ? 'left' : 'right';
+    if (primaryHand) {
       drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
     }
 
-    if (portalAlpha > 0.01 && lThumb && rThumb) {
+    if (!auraMode && portalAlpha > 0.01 && lThumb && rThumb) {
       const rawPx = Math.min(lThumb.x, lIndex.x, rThumb.x, rIndex.x);
       const rawPy = Math.min(lThumb.y, lIndex.y, rThumb.y, rIndex.y);
       const rawPw = Math.max(lThumb.x, lIndex.x, rThumb.x, rIndex.x) - rawPx;
@@ -2554,7 +2679,8 @@ a, button { cursor: inherit; }
     hasStarted = true;
     updateTelemetry();
     try {
-      loaderSub.textContent = 'Loading MediaPipe Holistic…';
+      const auraMode = isAuraMode();
+      loaderSub.textContent = auraMode ? 'Loading MediaPipe Hands…' : 'Loading MediaPipe Holistic…';
       if (!navigator.mediaDevices?.getUserMedia) {
         loaderEl.innerHTML = 'CAMERA API UNAVAILABLE';
         hasStarted = false;
@@ -2562,25 +2688,47 @@ a, button { cursor: inherit; }
         return;
       }
 
-      holisticEngine = new Holistic({
-        locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`
-      });
-      const preferredVideoWidth = window.innerWidth <= 900 ? 640 : 960;
-      const preferredVideoHeight = window.innerWidth <= 900 ? 480 : 540;
-      holisticEngine.setOptions({
-        modelComplexity: 0,
-        smoothLandmarks: true,
-        minDetectionConfidence: 0.7,
-        minTrackingConfidence: 0.7,
-        enableSegmentation: true
-      });
-      holisticEngine.onResults(res => {
-        currentHands = [];
-        if (res.leftHandLandmarks) currentHands.push(res.leftHandLandmarks);
-        if (res.rightHandLandmarks) currentHands.push(res.rightHandLandmarks);
-        currentPose = res.poseLandmarks;
-        currentMask = res.segmentationMask;
-      });
+      const preferredVideoWidth = auraMode
+        ? (window.innerWidth <= 900 ? 720 : 960)
+        : (window.innerWidth <= 900 ? 640 : 960);
+      const preferredVideoHeight = auraMode
+        ? (window.innerWidth <= 900 ? 540 : 540)
+        : (window.innerWidth <= 900 ? 480 : 540);
+
+      if (auraMode) {
+        handsEngine = new Hands({
+          locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+        });
+        handsEngine.setOptions({
+          maxNumHands: 1,
+          modelComplexity: 0,
+          minDetectionConfidence: 0.72,
+          minTrackingConfidence: 0.72
+        });
+        handsEngine.onResults(res => {
+          currentHands = res.multiHandLandmarks?.length ? [res.multiHandLandmarks[0]] : [];
+          currentPose = null;
+          currentMask = null;
+        });
+      } else {
+        holisticEngine = new Holistic({
+          locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`
+        });
+        holisticEngine.setOptions({
+          modelComplexity: 0,
+          smoothLandmarks: true,
+          minDetectionConfidence: 0.7,
+          minTrackingConfidence: 0.7,
+          enableSegmentation: true
+        });
+        holisticEngine.onResults(res => {
+          currentHands = [];
+          if (res.leftHandLandmarks) currentHands.push(res.leftHandLandmarks);
+          if (res.rightHandLandmarks) currentHands.push(res.rightHandLandmarks);
+          currentPose = res.poseLandmarks;
+          currentMask = res.segmentationMask;
+        });
+      }
 
       loaderSub.textContent = 'Accessing camera…';
       let stream;
@@ -2605,21 +2753,24 @@ a, button { cursor: inherit; }
       vid.srcObject = stream;
       await vid.play();
       loaderEl.style.display = 'none';
-      loaderSub.textContent = 'Camera linked · synchronizing telemetry';
+      loaderSub.textContent = auraMode
+        ? 'Camera linked · stabilizing aura field'
+        : 'Camera linked · synchronizing telemetry';
       statusEl.textContent = 'SYSTEM READY';
 
       cameraController = new Camera(vid, {
         onFrame: async () => {
-          if (!holisticEngine || holisticBusy) return;
+          const activeEngine = isAuraMode() ? handsEngine : holisticEngine;
+          if (!activeEngine || trackingBusy) return;
           const now = performance.now();
-          if (now - lastHolisticRunAt < getInferenceInterval()) return;
+          if (now - lastTrackingRunAt < getInferenceInterval()) return;
 
-          holisticBusy = true;
-          lastHolisticRunAt = now;
+          trackingBusy = true;
+          lastTrackingRunAt = now;
           try {
-            await holisticEngine.send({ image: vid });
+            await activeEngine.send({ image: vid });
           } finally {
-            holisticBusy = false;
+            trackingBusy = false;
           }
         },
         width: preferredVideoWidth,
@@ -2646,6 +2797,8 @@ a, button { cursor: inherit; }
 
     if (vid.srcObject) vid.srcObject = null;
 
+    try { await handsEngine?.close?.(); } catch (e) {}
+    handsEngine = null;
     try { await holisticEngine?.close?.(); } catch (e) {}
     holisticEngine = null;
     currentHands = [];
@@ -2653,8 +2806,8 @@ a, button { cursor: inherit; }
     currentMask = null;
     cachedMaskCoords = [];
     lastMaskRefreshFrame = -1;
-    holisticBusy = false;
-    lastHolisticRunAt = 0;
+    trackingBusy = false;
+    lastTrackingRunAt = 0;
     portalAlpha = 0;
     portalHoldStartedAt = 0;
     portalHold = false;
@@ -2666,6 +2819,7 @@ a, button { cursor: inherit; }
 
   /* Start the draw loop immediately (even during init, it'll draw black) */
   requestAnimationFrame(drawFrame);
+  applyModeUI();
   setTheme(readStored(STORAGE_KEYS.theme) || 'cyan');
   updateTelemetry();
 
@@ -2673,6 +2827,10 @@ a, button { cursor: inherit; }
   allowBtn.addEventListener('click', () => {
     permModal.style.display = 'none';
     startEngines();
+  });
+
+  document.querySelectorAll('.xv-ctrl-btn[data-vision-mode]').forEach(btn => {
+    btn.addEventListener('click', () => { void setRenderMode(btn.dataset.visionMode); });
   });
 
   /* ══ Theme buttons ══ */
@@ -2745,6 +2903,8 @@ a, button { cursor: inherit; }
   document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     const k = e.key.toLowerCase();
+    if (k === 'a') void setRenderMode('aura');
+    if (k === 'x') void setRenderMode('xray');
     if (k === 's') screenshotBtn.click();
     if (k === 'f') fullscreenBtn.click();
     if (k === '1') setTheme('cyan');
