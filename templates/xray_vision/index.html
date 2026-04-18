@@ -1559,6 +1559,10 @@ a, button { cursor: inherit; }
       loaderSub.textContent = isAuraMode()
         ? 'Switching to hand aura engine…'
         : 'Switching to dual neural engine…';
+      // Reset perf tier so a sluggish prior session doesn't throttle the new one
+      perfTier = 'medium';
+      fpsFrameCount = 0;
+      fpsLastTime = performance.now();
       await cleanupEngines();
       await startEngines();
     }
@@ -2054,9 +2058,10 @@ a, button { cursor: inherit; }
 
   function getInferenceInterval() {
     if (isAuraMode()) {
-      if (perfTier === 'low') return 80;
-      if (perfTier === 'medium') return 55;
-      return 40;
+      // Hands is light — keep tracking snappy so the aura glues to the hand
+      if (perfTier === 'low') return 60;
+      if (perfTier === 'medium') return 42;
+      return 32;
     }
     // XRAY mode = Holistic + segmentation — much heavier, needs longer gaps
     if (perfTier === 'low') return 140;
@@ -2789,8 +2794,8 @@ a, button { cursor: inherit; }
         handsEngine.setOptions({
           maxNumHands: 1,
           modelComplexity: 0,
-          minDetectionConfidence: 0.72,
-          minTrackingConfidence: 0.72
+          minDetectionConfidence: 0.55,
+          minTrackingConfidence: 0.55
         });
         handsEngine.onResults(res => {
           currentHands = res.multiHandLandmarks?.length ? [res.multiHandLandmarks[0]] : [];
