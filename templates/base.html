@@ -1368,7 +1368,7 @@ window.addEventListener('appinstalled', () => {
 </div>
 {% endif %}
 
-{% if current_user.is_authenticated %}
+{% if current_user.is_authenticated and request.endpoint not in ['vision_shield.index', 'xray_vision.index'] %}
 <div
   class="rak-tactical-dock-shell{% if request.endpoint in ['vision_shield.index', 'xray_vision.index'] %} is-immersive{% endif %}"
   id="rak-tactical-dock"
