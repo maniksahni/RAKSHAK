@@ -2022,6 +2022,10 @@ a, button { cursor: inherit; }
     return from + (to - from) * t;
   }
 
+  function quantizeDimension(value, step, min, max) {
+    return clampValue(Math.round(value / step) * step, min, max);
+  }
+
   function ensureCanvasSize(canvas, width, height) {
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
@@ -2218,9 +2222,9 @@ a, button { cursor: inherit; }
   }
 
   function getXrayRenderInterval() {
-    if (perfTier === 'low') return 6;
-    if (perfTier === 'medium') return 4;
-    return 3;
+    if (perfTier === 'low') return 10;
+    if (perfTier === 'medium') return 7;
+    return 5;
   }
 
   function drawXrayViewport(leftHand, rightHand, intensity, perf, now) {
@@ -2249,13 +2253,13 @@ a, button { cursor: inherit; }
 
     const rect = { x: lerpPortal.x, y: lerpPortal.y, w: lerpPortal.w, h: lerpPortal.h };
 
-    const sampleScale = perfTier === 'low' ? 0.24 : (perfTier === 'medium' ? 0.34 : 0.46);
-    const sampleW = clampValue(Math.round(rect.w * sampleScale), 140, 360);
-    const sampleH = clampValue(Math.round(rect.h * sampleScale), 96, 260);
+    const sampleScale = perfTier === 'low' ? 0.18 : (perfTier === 'medium' ? 0.24 : 0.31);
+    const sampleW = quantizeDimension(rect.w * sampleScale, 20, 120, 260);
+    const sampleH = quantizeDimension(rect.h * sampleScale, 12, 84, 190);
     if (
       effect.key !== lastXrayEffectKey ||
       frame - lastXrayEffectFrame >= getXrayRenderInterval() ||
-      Math.abs(sampleW - lastXrayEffectWidth) > 18 ||
+      Math.abs(sampleW - lastXrayEffectWidth) > 20 ||
       Math.abs(sampleH - lastXrayEffectHeight) > 12
     ) {
       renderXrayEffect(effect, sampleW, sampleH);
@@ -3097,9 +3101,9 @@ a, button { cursor: inherit; }
       return 34;
     }
     // XRAY mode also uses Hands, but tracks two hands and drives the viewport.
-    if (perfTier === 'low') return 76;
-    if (perfTier === 'medium') return 56;
-    return 40;
+    if (perfTier === 'low') return 96;
+    if (perfTier === 'medium') return 72;
+    return 52;
   }
 
   function updatePerfTier(fps) {
@@ -3457,12 +3461,16 @@ a, button { cursor: inherit; }
         return;
       }
 
-      const preferredVideoWidth = lightMode
+      const preferredVideoWidth = auraMode
         ? (window.innerWidth <= 900 ? 720 : 960)
-        : (window.innerWidth <= 900 ? 720 : 1024);
-      const preferredVideoHeight = lightMode
+        : (studioMode
+            ? (window.innerWidth <= 900 ? 720 : 960)
+            : (window.innerWidth <= 900 ? 640 : 848));
+      const preferredVideoHeight = auraMode
         ? (window.innerWidth <= 900 ? 540 : 540)
-        : (window.innerWidth <= 900 ? 540 : 640);
+        : (studioMode
+            ? (window.innerWidth <= 900 ? 540 : 540)
+            : (window.innerWidth <= 900 ? 480 : 540));
 
       handsEngine = new Hands({
         locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
@@ -3501,7 +3509,7 @@ a, button { cursor: inherit; }
       const constraints = {
         video: {
           facingMode: 'user',
-          frameRate: { ideal: 24, max: 30 },
+          frameRate: lightMode ? { ideal: 24, max: 30 } : { ideal: 20, max: 24 },
           width: { ideal: preferredVideoWidth, max: lightMode ? 1280 : preferredVideoWidth },
           height: { ideal: preferredVideoHeight, max: lightMode ? 720 : preferredVideoHeight }
         }
