@@ -1854,6 +1854,12 @@ body.command-palette-open { overflow: hidden; }
   z-index: 3900;
   width: min(360px, calc(100vw - 28px));
 }
+.rak-tactical-dock-shell.is-immersive {
+  left: 18px;
+  right: auto;
+  bottom: 18px;
+  width: min(300px, calc(100vw - 36px));
+}
 .rak-tactical-dock-card {
   position: relative;
   border-radius: 22px;
@@ -1929,6 +1935,93 @@ body.command-palette-open { overflow: hidden; }
 }
 .rak-tactical-dock-shell.is-collapsed .rak-tactical-dock-toggle i {
   transform: rotate(180deg);
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-card {
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(20,184,166,.14), transparent 34%),
+    linear-gradient(145deg, rgba(8,14,18,.92), rgba(3,6,9,.96));
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-card::before {
+  background: linear-gradient(90deg, transparent, rgba(94,234,212,.74), rgba(56,189,248,.46), transparent);
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-head {
+  align-items: center;
+  padding: 12px;
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-kicker {
+  color: rgba(153,246,228,.62);
+  font-size: .52rem;
+  letter-spacing: .16em;
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-title {
+  margin-top: 2px;
+  font-size: .82rem;
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-body {
+  padding: 0 12px 12px;
+  max-height: 340px;
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-grid {
+  grid-template-columns: 1fr;
+}
+.rak-tactical-dock-shell.is-immersive .rak-dock-tile {
+  min-height: 56px;
+  padding: 10px 11px;
+  gap: 10px;
+}
+.rak-tactical-dock-shell.is-immersive .rak-dock-tile-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  font-size: .88rem;
+}
+.rak-tactical-dock-shell.is-immersive .rak-dock-tile-copy strong {
+  font-size: .76rem;
+}
+.rak-tactical-dock-shell.is-immersive .rak-dock-tile-copy span {
+  font-size: .62rem;
+}
+.rak-tactical-dock-shell.is-immersive .rak-tactical-dock-foot {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.rak-tactical-dock-shell.is-immersive.is-collapsed {
+  width: auto;
+}
+.rak-tactical-dock-shell.is-immersive.is-collapsed .rak-tactical-dock-head {
+  justify-content: center;
+  padding: 8px;
+}
+.rak-tactical-dock-shell.is-immersive.is-collapsed .rak-tactical-dock-head > div {
+  display: none;
+}
+.rak-tactical-dock-shell.is-immersive.is-collapsed .rak-tactical-dock-toggle {
+  position: relative;
+  width: auto;
+  min-width: 74px;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(20,184,166,.16), rgba(12,22,34,.92));
+  border-color: rgba(94,234,212,.22);
+  color: #99f6e4;
+  box-shadow: 0 10px 24px rgba(0,0,0,.26);
+}
+.rak-tactical-dock-shell.is-immersive.is-collapsed .rak-tactical-dock-toggle::before {
+  content: 'DOCK';
+  font-family: 'Courier New', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+.rak-tactical-dock-shell.is-immersive.is-collapsed .rak-tactical-dock-toggle:hover {
+  border-color: rgba(153,246,228,.34);
+  background: linear-gradient(135deg, rgba(20,184,166,.22), rgba(17,24,39,.96));
 }
 .rak-tactical-dock-grid {
   display: grid;
@@ -2031,12 +2124,27 @@ body.command-palette-open { overflow: hidden; }
     bottom: 14px;
     width: auto;
   }
+  .rak-tactical-dock-shell.is-immersive {
+    left: 14px;
+    right: auto;
+    width: min(260px, calc(100vw - 28px));
+  }
 }
 @media (max-width: 640px) {
   .rak-tactical-dock-grid { grid-template-columns: 1fr 1fr; }
   .rak-dock-tile { min-height: 62px; padding: 10px; gap: 10px; }
   .rak-dock-tile-copy strong { font-size: .76rem; }
   .rak-dock-tile-copy span { font-size: .64rem; }
+  .rak-tactical-dock-shell.is-immersive {
+    width: auto;
+    right: 14px;
+  }
+  .rak-tactical-dock-shell.is-immersive .rak-tactical-dock-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .rak-tactical-dock-shell.is-immersive.is-collapsed {
+    right: auto;
+  }
 }
 @media (max-width: 992px) {
   .rak-command-launch-btn span:not(.rak-command-shortcut-pill) { display: none; }
@@ -2606,6 +2714,22 @@ document.addEventListener('click', e => {
     window.localStorage.setItem(collapseKey, String(nextState));
   });
 
+  if (immersive) {
+    document.addEventListener('click', (event) => {
+      if (dockEl.classList.contains('is-collapsed')) return;
+      if (dockEl.contains(event.target)) return;
+      applyDockState(true);
+      window.localStorage.setItem(collapseKey, 'true');
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !dockEl.classList.contains('is-collapsed')) {
+        applyDockState(true);
+        window.localStorage.setItem(collapseKey, 'true');
+      }
+    });
+  }
+
   dockEl.querySelectorAll('[data-rak-dock-action]').forEach((button) => {
     button.addEventListener('click', () => {
       const action = button.dataset.rakDockAction;
@@ -2617,6 +2741,11 @@ document.addEventListener('click', e => {
         window.startHardwareLink();
       } else if (action === 'install' && typeof window.triggerPWAInstall === 'function') {
         window.triggerPWAInstall();
+      }
+
+      if (immersive) {
+        applyDockState(true);
+        window.localStorage.setItem(collapseKey, 'true');
       }
     });
   });
