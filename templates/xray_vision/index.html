@@ -875,6 +875,90 @@ a, button { cursor: inherit; }
   border-color: rgba(255, 255, 255, 0.12);
 }
 
+.xv-wrap[data-mode="studio"] .xv-brand-hud,
+.xv-wrap[data-mode="studio"] .xv-left-panel,
+.xv-wrap[data-mode="studio"] .xv-right-panel,
+.xv-wrap[data-mode="studio"] .xv-bottom-rail,
+.xv-wrap[data-mode="studio"] .xv-status,
+.xv-wrap[data-mode="studio"] .xv-frame-counter,
+.xv-wrap[data-mode="studio"] .xv-orb,
+.xv-wrap[data-mode="studio"] .xv-scan-sweep,
+.xv-wrap[data-mode="studio"] .xv-center-reticle,
+.xv-wrap[data-mode="studio"] .xv-vignette {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.xv-wrap[data-mode="studio"] .xv-grid-overlay {
+  opacity: 0.06;
+  mask-image: none;
+  -webkit-mask-image: none;
+  background-size: 92px 58px;
+}
+
+.xv-wrap[data-mode="studio"] .xv-instructions {
+  top: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.54rem;
+  letter-spacing: 0.12em;
+}
+
+.xv-wrap[data-mode="studio"] .xv-ins-dot {
+  background: rgba(255,255,255,0.45);
+  box-shadow: 0 0 6px rgba(255,255,255,0.25);
+}
+
+.xv-wrap[data-mode="studio"] .xv-back-btn,
+.xv-wrap[data-mode="studio"] .xv-fps {
+  top: 18px;
+  background: rgba(14, 14, 18, 0.28);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: none;
+  color: rgba(255,255,255,0.52);
+}
+
+.xv-wrap[data-mode="studio"] .xv-back-btn {
+  left: 18px;
+  opacity: 0.46;
+}
+
+.xv-wrap[data-mode="studio"] .xv-fps {
+  right: 18px;
+  opacity: 0.58;
+}
+
+.xv-wrap[data-mode="studio"] .xv-controls {
+  bottom: 18px;
+  right: 18px;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(14, 14, 18, 0.42);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.26);
+}
+
+.xv-wrap[data-mode="studio"] .xv-ctrl-group {
+  background: rgba(0,0,0,0.22);
+  border-color: rgba(255,255,255,0.06);
+}
+
+.xv-wrap[data-mode="studio"] .xv-ctrl-btn {
+  color: rgba(255,255,255,0.76);
+}
+
+.xv-wrap[data-mode="studio"] .xv-ctrl-btn:hover,
+.xv-wrap[data-mode="studio"] .xv-ctrl-btn.active {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.16);
+  box-shadow: none;
+}
+
 .xv-wrap[data-mode="xray"]::before,
 .xv-wrap[data-mode="xray"] .xv-orb,
 .xv-wrap[data-mode="xray"] .xv-vignette,
@@ -1273,6 +1357,7 @@ a, button { cursor: inherit; }
   <div class="xv-controls" id="xv-controls">
     <div class="xv-ctrl-group" title="Render mode">
       <button class="xv-ctrl-btn active" data-vision-mode="aura"><span>AURA</span></button>
+      <button class="xv-ctrl-btn" data-vision-mode="studio"><span>STUDIO</span></button>
       <button class="xv-ctrl-btn" data-vision-mode="xray"><span>XRAY</span></button>
     </div>
 
@@ -1375,8 +1460,12 @@ a, button { cursor: inherit; }
   let sparkBurst = [];
   let streamParticles = [];
   let dataPackets = [];
+  function normalizeRenderMode(mode) {
+    return ['aura', 'studio', 'xray'].includes(mode) ? mode : 'aura';
+  }
+
   let currentThemeKey = 'cyan';
-  let renderMode = readStored(STORAGE_KEYS.mode) || 'aura';
+  let renderMode = normalizeRenderMode(readStored(STORAGE_KEYS.mode) || 'aura');
 
   /* Math LUTs for hot-loop optimization */
   const RAND_LUT = new Float32Array(5000);
@@ -1579,11 +1668,13 @@ a, button { cursor: inherit; }
   let trackingBusy = false;
   let lastTrackingRunAt = 0;
   let currentXrayEffectLabel = 'STANDBY';
+  let currentStudioEffectLabel = 'STUDIO';
   let lastXrayEffectKey = '';
   let lastXrayEffectFrame = -1;
   let lastXrayEffectWidth = 0;
   let lastXrayEffectHeight = 0;
   let xraySequenceStartedAt = 0;
+  let studioSequenceStartedAt = 0;
 
   const maskCv = document.createElement('canvas');
   const mctx = maskCv.getContext('2d', { willReadFrequently: true });
@@ -1592,6 +1683,10 @@ a, button { cursor: inherit; }
   const xrayFxCtx = xrayFxCv.getContext('2d', { willReadFrequently: true });
   const xrayMiniCv = document.createElement('canvas');
   const xrayMiniCtx = xrayMiniCv.getContext('2d', { willReadFrequently: true });
+  const studioFxCv = document.createElement('canvas');
+  const studioFxCtx = studioFxCv.getContext('2d', { willReadFrequently: true });
+  const studioEchoCv = document.createElement('canvas');
+  const studioEchoCtx = studioEchoCv.getContext('2d', { willReadFrequently: true });
 
   function clearStartupRecoveryTimer() {
     if (startupRecoveryTimer) {
@@ -1608,6 +1703,16 @@ a, button { cursor: inherit; }
   window.addEventListener('resize', resize);
 
   function getVideoDisplayRect() {
+    if (isStudioMode()) {
+      const stageW = Math.min(W * 0.82, H * 1.22);
+      const stageH = Math.min(stageW * 0.64, H * 0.60);
+      return {
+        x: (W - stageW) / 2,
+        y: H * 0.24,
+        w: stageW,
+        h: stageH
+      };
+    }
     if (!isAuraMode()) return { x: 0, y: 0, w: W, h: H };
 
     const stageW = Math.min(W * 0.86, H * 1.05);
@@ -1628,8 +1733,13 @@ a, button { cursor: inherit; }
     return renderMode === 'aura';
   }
 
+  function isStudioMode() {
+    return renderMode === 'studio';
+  }
+
   function applyModeUI() {
     const auraMode = isAuraMode();
+    const studioMode = isStudioMode();
     wrapEl.dataset.mode = renderMode;
     document.querySelectorAll('.xv-ctrl-btn[data-vision-mode]').forEach(btn =>
       btn.classList.toggle('active', btn.dataset.visionMode === renderMode)
@@ -1638,22 +1748,28 @@ a, button { cursor: inherit; }
     if (instructionsTextEl) {
       instructionsTextEl.textContent = auraMode
         ? 'Show one hand · rotate wrist through the field'
-        : 'Show both hands · hold the frame to cycle effects';
+        : (studioMode
+            ? 'Show one or two hands · hold the scene to cycle studio objects'
+            : 'Show both hands · hold the frame to cycle effects');
     }
     if (allowBtn) {
       allowBtn.innerHTML = auraMode
         ? '<i class="bi bi-stars me-2"></i>Initiate Aura Link'
-        : '<i class="bi bi-bounding-box-circles me-2"></i>Initiate X-Ray Link';
+        : (studioMode
+            ? '<i class="bi bi-gem me-2"></i>Initiate Studio Link'
+            : '<i class="bi bi-bounding-box-circles me-2"></i>Initiate X-Ray Link');
     }
     if (loaderSub && !hasStarted) {
       loaderSub.textContent = auraMode
         ? 'Hands · Aura Vector Field'
-        : 'Dual Hands · Reactive Filters';
+        : (studioMode
+            ? 'Hands · Studio Skeleton + Objects'
+            : 'Dual Hands · Reactive Filters');
     }
   }
 
   async function setRenderMode(mode, { restart = true } = {}) {
-    if (!['aura', 'xray'].includes(mode)) return;
+    if (!['aura', 'studio', 'xray'].includes(mode)) return;
     const changed = renderMode !== mode;
     renderMode = mode;
     writeStored(STORAGE_KEYS.mode, mode);
@@ -1664,7 +1780,9 @@ a, button { cursor: inherit; }
       loaderEl.style.display = '';
       loaderSub.textContent = isAuraMode()
         ? 'Switching to hand aura engine…'
-        : 'Switching to dual-hand viewport engine…';
+        : (isStudioMode()
+            ? 'Switching to studio object engine…'
+            : 'Switching to dual-hand viewport engine…');
       // Reset perf tier so a sluggish prior session doesn't throttle the new one
       perfTier = 'medium';
       fpsFrameCount = 0;
@@ -1677,7 +1795,8 @@ a, button { cursor: inherit; }
   function updateTelemetry(now = performance.now()) {
     const hands = currentHands ? currentHands.length : 0;
     const auraMode = isAuraMode();
-    const trackedHands = auraMode ? Math.min(hands, 1) : hands;
+    const studioMode = isStudioMode();
+    const trackedHands = auraMode ? Math.min(hands, 1) : Math.min(hands, 2);
     const portalPct = Math.round(portalAlpha * 100);
     const holdRemaining = portalHoldStartedAt
       ? Math.max(0, Math.ceil((SOS_HOLD_MS - (now - portalHoldStartedAt)) / 1000))
@@ -1691,20 +1810,30 @@ a, button { cursor: inherit; }
             : hasStarted
               ? 'AURA BOOT'
               : 'AURA STANDBY')
-      : (isActive
-          ? `XRAY ${currentXrayEffectLabel}`
-          : videoReady()
-            ? 'XRAY READY'
-            : hasStarted
-              ? 'XRAY BOOT'
-              : 'XRAY STANDBY');
+      : (studioMode
+          ? (isActive
+              ? `STUDIO ${currentStudioEffectLabel}`
+              : videoReady()
+                ? 'STUDIO READY'
+                : hasStarted
+                  ? 'STUDIO BOOT'
+                  : 'STUDIO STANDBY')
+          : (isActive
+              ? `XRAY ${currentXrayEffectLabel}`
+              : videoReady()
+                ? 'XRAY READY'
+                : hasStarted
+                  ? 'XRAY BOOT'
+                  : 'XRAY STANDBY'));
     const readinessText = auraMode
       ? (isActive ? 'TRACKED' : (videoReady() ? 'READY' : 'SAFE'))
-      : (isActive
-          ? 'LOCKED'
-          : hands >= 2
-            ? 'TRACKING'
-            : 'SEARCH');
+      : (studioMode
+          ? (isActive ? 'LIVE' : (trackedHands ? 'TRACKING' : 'SEARCH'))
+          : (isActive
+              ? 'LOCKED'
+              : hands >= 2
+                ? 'TRACKING'
+                : 'SEARCH'));
 
     wrapEl.classList.toggle('xv-live', videoReady());
     wrapEl.classList.toggle('xv-portal-open', portalPct > 12);
@@ -1719,13 +1848,21 @@ a, button { cursor: inherit; }
               : hasStarted
                 ? 'SHOW ONE HAND TO BEGIN'
                 : 'AURA FIELD STANDBY')
-        : (isActive
-            ? `${currentXrayEffectLabel} VIEW LOCKED`
-            : hands >= 2
-              ? 'DUAL HAND FRAME ACQUIRED'
-              : hasStarted
-                ? 'SHOW BOTH HANDS TO BEGIN'
-                : 'XRAY VIEWPORT STANDBY');
+        : (studioMode
+            ? (isActive
+                ? `${currentStudioEffectLabel} OBJECT LIVE`
+                : trackedHands >= 1
+                  ? 'STUDIO HAND TRACKED'
+                  : hasStarted
+                    ? 'SHOW A HAND TO BEGIN'
+                    : 'STUDIO SCENE STANDBY')
+            : (isActive
+                ? `${currentXrayEffectLabel} VIEW LOCKED`
+                : hands >= 2
+                  ? 'DUAL HAND FRAME ACQUIRED'
+                  : hasStarted
+                    ? 'SHOW BOTH HANDS TO BEGIN'
+                    : 'XRAY VIEWPORT STANDBY'));
     }
     if (statePillEl) {
       statePillEl.textContent = sosFired
@@ -1737,21 +1874,29 @@ a, button { cursor: inherit; }
             : (hasStarted ? 'BOOTING' : 'IDLE');
     }
     if (themeLabelEl) themeLabelEl.textContent = currentThemeKey.toUpperCase();
-    if (densityLabelEl) densityLabelEl.textContent = auraMode ? 'AURA' : 'FX';
+    if (densityLabelEl) densityLabelEl.textContent = auraMode ? 'AURA' : (studioMode ? 'LAB' : 'FX');
     if (handsCountEl) handsCountEl.textContent = `${trackedHands}/${auraMode ? 1 : 2}`;
     if (portalLabelEl) {
       portalLabelEl.textContent = auraMode
         ? (isActive ? 'LOCKED' : 'SEARCH')
-        : (isActive ? 'LOCKED' : (hands >= 2 ? 'FRAME' : 'SEARCH'));
+        : (studioMode
+            ? (isActive ? 'SCENE' : (trackedHands ? 'FOUND' : 'SEARCH'))
+            : (isActive ? 'LOCKED' : (hands >= 2 ? 'FRAME' : 'SEARCH')));
     }
     if (portalBarEl) portalBarEl.style.width = `${Math.max(6, portalPct)}%`;
     if (uptimeEl) uptimeEl.textContent = formatUptime(now - sessionStartedAt);
     if (sosArmedEl) {
       sosArmedEl.textContent = auraMode
         ? (hasStarted ? 'VISUAL' : 'OFFLINE')
-        : (hasStarted ? 'DUAL' : 'OFFLINE');
+        : (studioMode
+            ? (hasStarted ? 'LAB' : 'OFFLINE')
+            : (hasStarted ? 'DUAL' : 'OFFLINE'));
     }
-    if (poseLockEl) poseLockEl.textContent = auraMode ? (trackedHands ? 'HAND' : 'SEARCH') : (trackedHands >= 2 ? 'FRAME' : 'SEARCH');
+    if (poseLockEl) poseLockEl.textContent = auraMode
+      ? (trackedHands ? 'HAND' : 'SEARCH')
+      : (studioMode
+          ? (trackedHands >= 2 ? 'DUAL' : (trackedHands ? 'HAND' : 'SEARCH'))
+          : (trackedHands >= 2 ? 'FRAME' : 'SEARCH'));
     if (syncLabelEl) syncLabelEl.textContent = videoReady() ? 'SYNCED' : 'WAIT';
     if (modeLabelEl) modeLabelEl.textContent = modeText;
     if (energyLabelEl) energyLabelEl.textContent = `${energyPct}%`;
@@ -1759,12 +1904,18 @@ a, button { cursor: inherit; }
     if (energyModeEl) {
       energyModeEl.textContent = auraMode
         ? (isActive ? 'AURORA' : (videoReady() ? 'FLOW' : 'OFFLINE'))
-        : (isActive ? currentXrayEffectLabel : (videoReady() ? 'VIEWPORT' : 'OFFLINE'));
+        : (studioMode
+            ? (isActive ? currentStudioEffectLabel : (videoReady() ? 'OBJECT' : 'OFFLINE'))
+            : (isActive ? currentXrayEffectLabel : (videoReady() ? 'VIEWPORT' : 'OFFLINE')));
     }
     if (energyBarEl) energyBarEl.style.width = `${Math.max(8, energyPct)}%`;
     if (bottomModeEl) bottomModeEl.textContent = modeText;
     if (bottomDepthEl) bottomDepthEl.textContent = `${portalPct}%`;
-    if (bottomLockEl) bottomLockEl.textContent = auraMode ? (trackedHands ? 'Hand Lock' : 'No Hand') : (trackedHands >= 2 ? 'Two-Hand Lock' : 'No Frame');
+    if (bottomLockEl) bottomLockEl.textContent = auraMode
+      ? (trackedHands ? 'Hand Lock' : 'No Hand')
+      : (studioMode
+          ? (trackedHands >= 2 ? 'Dual Lock' : (trackedHands ? 'Solo Lock' : 'No Hand'))
+          : (trackedHands >= 2 ? 'Two-Hand Lock' : 'No Frame'));
     if (bottomSosEl) bottomSosEl.textContent = readinessText;
   }
 
@@ -2137,6 +2288,496 @@ a, button { cursor: inherit; }
     ctx.restore();
   }
 
+  const HAND_CONNECTIONS = [
+    [0, 1], [1, 2], [2, 3], [3, 4],
+    [0, 5], [5, 6], [6, 7], [7, 8],
+    [5, 9], [9, 10], [10, 11], [11, 12],
+    [9, 13], [13, 14], [14, 15], [15, 16],
+    [13, 17], [17, 18], [18, 19], [19, 20],
+    [0, 17]
+  ];
+
+  const STUDIO_DUAL_SEQUENCE = [
+    { key: 'ribbon', hudLabel: 'RIBBON', duration: 1600 },
+    { key: 'frames', hudLabel: 'FRAMES', duration: 1680 },
+    { key: 'torus', hudLabel: 'TORUS', duration: 1600 },
+    { key: 'hud', hudLabel: 'MESH', duration: 1480 },
+    { key: 'prism', hudLabel: 'PRISM', duration: 1680 }
+  ];
+
+  const STUDIO_SOLO_SEQUENCE = [
+    { key: 'prism', hudLabel: 'PRISM', duration: 1760 },
+    { key: 'torus', hudLabel: 'TORUS', duration: 1680 },
+    { key: 'hud', hudLabel: 'MESH', duration: 1520 }
+  ];
+
+  const PRISM_VERTS = [
+    [0, 1, 0],
+    [0, -1, 0],
+    [1, 0, 0],
+    [-1, 0, 0],
+    [0, 0, 1],
+    [0, 0, -1]
+  ];
+
+  const PRISM_EDGES = [
+    [0, 2], [0, 3], [0, 4], [0, 5],
+    [1, 2], [1, 3], [1, 4], [1, 5],
+    [2, 4], [4, 3], [3, 5], [5, 2]
+  ];
+
+  const PRISM_FACES = [
+    [0, 2, 4], [0, 4, 3], [0, 3, 5], [0, 5, 2],
+    [1, 4, 2], [1, 3, 4], [1, 5, 3], [1, 2, 5]
+  ];
+
+  function getStudioSequenceEffect(activeMs, handsCount) {
+    const list = handsCount >= 2 ? STUDIO_DUAL_SEQUENCE : STUDIO_SOLO_SEQUENCE;
+    const total = list.reduce((sum, effect) => sum + effect.duration, 0);
+    let remaining = total > 0 ? (activeMs % total) : 0;
+    for (const effect of list) {
+      if (remaining < effect.duration) return effect;
+      remaining -= effect.duration;
+    }
+    return list[list.length - 1];
+  }
+
+  function drawHandSkeleton(handLm, opts = {}) {
+    if (!handLm || handLm.length < 21) return;
+    const {
+      lineColor = '#31ff63',
+      dotColor = '#ff4444',
+      lineWidth = 3.1,
+      dotRadius = 5,
+      glow = 12,
+      drawWristBox = true
+    } = opts;
+    const pts = handLm.map(lm => lmScale(lm));
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    ctx.strokeStyle = lineColor;
+    ctx.shadowColor = lineColor;
+    ctx.shadowBlur = glow * 1.8;
+    ctx.lineWidth = lineWidth + 2.2;
+    ctx.lineCap = 'round';
+    ctx.globalAlpha = 0.32;
+    for (const [a, b] of HAND_CONNECTIONS) {
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = lineColor;
+    ctx.shadowColor = lineColor;
+    ctx.shadowBlur = glow * 0.65;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (const [a, b] of HAND_CONNECTIONS) {
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.save();
+    for (const p of pts) {
+      ctx.beginPath();
+      ctx.fillStyle = dotColor;
+      ctx.shadowColor = dotColor;
+      ctx.shadowBlur = glow;
+      ctx.globalAlpha = 0.3;
+      ctx.arc(p.x, p.y, dotRadius * 1.4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.shadowBlur = 0;
+      ctx.arc(p.x - dotRadius * 0.22, p.y - dotRadius * 0.22, dotRadius * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    if (drawWristBox) {
+      const wrist = pts[0];
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(wrist.x - 14, wrist.y + 8, 28, 12);
+      ctx.restore();
+    }
+  }
+
+  function drawPalmConnector(handA, handB, alpha = 0.48) {
+    if (!handA || !handB) return;
+    const a = getHandCenter(handA);
+    const b = getHandCenter(handB);
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+    ctx.shadowColor = 'rgba(255,255,255,0.75)';
+    ctx.shadowBlur = 7;
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function drawStudioBackdrop() {
+    const rect = getVideoDisplayRect();
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, W, H);
+
+    const glow = ctx.createRadialGradient(
+      rect.x + rect.w * 0.5, rect.y + rect.h * 0.48, rect.w * 0.12,
+      rect.x + rect.w * 0.5, rect.y + rect.h * 0.48, rect.w * 0.85
+    );
+    glow.addColorStop(0, 'rgba(255,255,255,0.05)');
+    glow.addColorStop(0.45, 'rgba(68,82,120,0.08)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 8);
+      ctx.stroke();
+    } else {
+      ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+    }
+    ctx.restore();
+  }
+
+  function drawPrismCrystal(cx, cy, size, now, intensity = 1) {
+    if (intensity <= 0.02) return;
+    const ax = now * 0.00065;
+    const ay = now * 0.00092;
+    const az = now * 0.00044;
+    const sinX = Math.sin(ax), cosX = Math.cos(ax);
+    const sinY = Math.sin(ay), cosY = Math.cos(ay);
+    const sinZ = Math.sin(az), cosZ = Math.cos(az);
+
+    const project = ([x, y, z]) => {
+      let x1 = x * cosY + z * sinY;
+      let z1 = -x * sinY + z * cosY;
+      let y2 = y * cosX - z1 * sinX;
+      let z2 = y * sinX + z1 * cosX;
+      let x3 = x1 * cosZ - y2 * sinZ;
+      let y3 = x1 * sinZ + y2 * cosZ;
+      const persp = 1 / (1 + z2 * 0.26);
+      return { x: cx + x3 * size * persp, y: cy + y3 * size * persp, z: z2 };
+    };
+
+    const pts = PRISM_VERTS.map(project);
+    const faces = PRISM_FACES.map(f => ({
+      idx: f,
+      z: (pts[f[0]].z + pts[f[1]].z + pts[f[2]].z) / 3
+    })).sort((a, b) => a.z - b.z);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+
+    const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 1.85);
+    halo.addColorStop(0, `rgba(230,240,255,${0.18 * intensity})`);
+    halo.addColorStop(0.42, `rgba(122,180,255,${0.1 * intensity})`);
+    halo.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(cx, cy, size * 1.85, 0, Math.PI * 2);
+    ctx.fill();
+
+    const faceColors = [
+      'rgba(140,220,255,', 'rgba(255,150,210,', 'rgba(255,224,154,', 'rgba(182,255,218,',
+      'rgba(196,186,255,', 'rgba(255,255,255,', 'rgba(144,204,255,', 'rgba(255,198,216,'
+    ];
+    faces.forEach((face, idx) => {
+      const [a, b, c] = face.idx;
+      const alpha = (0.17 + Math.max(0, -face.z) * 0.13) * intensity;
+      ctx.fillStyle = `${faceColors[idx % faceColors.length]}${alpha.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.lineTo(pts[c].x, pts[c].y);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    const channels = [
+      { color: `rgba(255,72,92,${0.84 * intensity})`, dx: 1.4, dy: 0.2 },
+      { color: `rgba(76,255,154,${0.84 * intensity})`, dx: -1.2, dy: 0.8 },
+      { color: `rgba(90,160,255,${0.84 * intensity})`, dx: 0.2, dy: -1.1 }
+    ];
+    for (const channel of channels) {
+      ctx.strokeStyle = channel.color;
+      ctx.lineWidth = 1.6 * intensity;
+      ctx.shadowColor = channel.color;
+      ctx.shadowBlur = 8 * intensity;
+      for (const [a, b] of PRISM_EDGES) {
+        ctx.beginPath();
+        ctx.moveTo(pts[a].x + channel.dx, pts[a].y + channel.dy);
+        ctx.lineTo(pts[b].x + channel.dx, pts[b].y + channel.dy);
+        ctx.stroke();
+      }
+    }
+
+    ctx.shadowColor = 'rgba(255,255,255,0.9)';
+    ctx.shadowBlur = 4 * intensity;
+    ctx.strokeStyle = `rgba(255,255,255,${0.92 * intensity})`;
+    ctx.lineWidth = 1.1 * intensity;
+    for (const [a, b] of PRISM_EDGES) {
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowBlur = 9 * intensity;
+    for (const pt of pts) {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 2.1 * intensity, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawChromeTorus(cx, cy, size, now, intensity = 1) {
+    if (intensity <= 0.02) return;
+    const ringTilt = Math.sin(now * 0.001) * 0.32;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(now * 0.00038);
+
+    const ringGradient = ctx.createLinearGradient(-size, -size * 0.18, size, size * 0.18);
+    ringGradient.addColorStop(0, '#382d24');
+    ringGradient.addColorStop(0.12, '#9d8977');
+    ringGradient.addColorStop(0.22, '#f6f0dd');
+    ringGradient.addColorStop(0.42, '#6d6159');
+    ringGradient.addColorStop(0.56, '#fcf8ef');
+    ringGradient.addColorStop(0.78, '#7f7066');
+    ringGradient.addColorStop(1, '#2b2622');
+
+    ctx.strokeStyle = ringGradient;
+    ctx.shadowColor = 'rgba(255,235,200,0.36)';
+    ctx.shadowBlur = 24 * intensity;
+    ctx.lineWidth = size * 0.34;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size, size * 0.43, ringTilt, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,0.72)';
+    ctx.lineWidth = size * 0.05;
+    ctx.beginPath();
+    ctx.ellipse(-size * 0.06, -size * 0.02, size * 0.9, size * 0.34, ringTilt, Math.PI * 0.9, Math.PI * 1.86);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(30,26,22,0.95)';
+    ctx.lineWidth = size * 0.19;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.56, size * 0.21, ringTilt, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(255,216,128,0.86)';
+    ctx.lineWidth = Math.max(2, size * 0.025);
+    ctx.beginPath();
+    ctx.moveTo(-size * 0.12, size * 0.02);
+    ctx.lineTo(size * 0.38, -size * 0.28);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,244,220,0.95)';
+    ctx.beginPath();
+    ctx.arc(size * 0.4, -size * 0.29, size * 0.05, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawStudioHudPanels(primaryHand, secondaryHand, now) {
+    const anchor = primaryHand ? getHandCenter(primaryHand) : { x: W * 0.28, y: H * 0.56 };
+    const dir = anchor.x < W * 0.5 ? 1 : -1;
+    const baseX = anchor.x + dir * 84;
+    const baseY = anchor.y - 54;
+    const boxes = [
+      { title: 'capture', value: `${String(Math.round(now / 67) % 512).padStart(3, '0')}`, w: 78 },
+      { title: 'depth', value: `${secondaryHand ? 'dual' : 'solo'}`, w: 66 },
+      { title: 'flux', value: `${String(Math.round((Math.sin(now * 0.004) * 0.5 + 0.5) * 99)).padStart(2, '0')}%`, w: 70 }
+    ];
+    ctx.save();
+    ctx.font = '9px Courier New';
+    ctx.textAlign = 'left';
+    boxes.forEach((box, idx) => {
+      const x = baseX;
+      const y = baseY + idx * 26;
+      ctx.fillStyle = 'rgba(14,16,20,0.72)';
+      ctx.fillRect(x, y, box.w, 20);
+      ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, box.w, 20);
+      ctx.fillStyle = 'rgba(255,255,255,0.46)';
+      ctx.fillText(box.title, x + 6, y + 8);
+      ctx.fillStyle = '#f0f0f0';
+      ctx.fillText(box.value, x + 6, y + 16);
+    });
+    ctx.restore();
+  }
+
+  function drawStudioRibbonDistortion(leftHand, rightHand, now) {
+    const leftCenter = getHandCenter(leftHand);
+    const rightCenter = getHandCenter(rightHand);
+    const midX = (leftCenter.x + rightCenter.x) * 0.5;
+    const midY = (leftCenter.y + rightCenter.y) * 0.5;
+    const handDistance = dist(leftCenter, rightCenter);
+    const avgPalm = (getPalmSpan(leftHand) + getPalmSpan(rightHand)) * 0.5;
+    const angle = Math.atan2(rightCenter.y - leftCenter.y, rightCenter.x - leftCenter.x);
+    const width = clampValue(handDistance * 1.02, 220, 480);
+    const height = clampValue(avgPalm * 1.18, 90, 170);
+    const sampleW = clampValue(Math.round(width * 0.68), 180, 300);
+    const sampleH = clampValue(Math.round(height * 1.1), 96, 180);
+    ensureCanvasSize(studioFxCv, sampleW, sampleH);
+    drawMirroredVideoToCanvas(studioFxCtx, sampleW, sampleH, 'contrast(1.08) saturate(1.12)');
+
+    const strips = 12;
+    const destStripH = height / strips;
+    ctx.save();
+    ctx.translate(midX, midY);
+    ctx.rotate(angle);
+    ctx.globalCompositeOperation = 'screen';
+    for (let i = 0; i < strips; i++) {
+      const sy = Math.floor((i / strips) * sampleH);
+      const sh = Math.max(2, Math.ceil(sampleH / strips));
+      const drift = Math.sin(now * 0.004 + i * 0.72) * (14 + avgPalm * 0.08);
+      const sway = Math.cos(now * 0.0032 + i * 0.65) * 4.2;
+      const y = -height * 0.5 + i * destStripH + sway;
+
+      ctx.globalAlpha = 0.26;
+      ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift - 4, y, width, destStripH + 1);
+      ctx.globalAlpha = 0.34;
+      ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift, y, width, destStripH + 1);
+      ctx.globalAlpha = 0.22;
+      ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift + 4, y, width, destStripH + 1);
+
+      if (i % 2 === 0) {
+        ctx.strokeStyle = i % 4 === 0 ? 'rgba(255,255,255,0.22)' : 'rgba(80,255,160,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-width * 0.48, y + destStripH * 0.5);
+        ctx.lineTo(width * 0.48, y + destStripH * 0.5);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawStudioRecursiveFrames(leftHand, rightHand, now) {
+    const leftCenter = getHandCenter(leftHand);
+    const rightCenter = getHandCenter(rightHand);
+    const midX = (leftCenter.x + rightCenter.x) * 0.5;
+    const midY = (leftCenter.y + rightCenter.y) * 0.5;
+    const handDistance = dist(leftCenter, rightCenter);
+    const angle = Math.atan2(rightCenter.y - leftCenter.y, rightCenter.x - leftCenter.x);
+    const sampleW = 280;
+    const sampleH = 176;
+    ensureCanvasSize(studioEchoCv, sampleW, sampleH);
+    drawMirroredVideoToCanvas(studioEchoCtx, sampleW, sampleH, 'contrast(1.04) saturate(1.06)');
+
+    const colors = ['#ffffff', '#69ff8f', '#4ed8ff', '#ffea58', '#b794ff', '#ff8ad8'];
+    ctx.save();
+    ctx.translate(midX, midY);
+    ctx.rotate(angle * 0.14);
+    ctx.globalCompositeOperation = 'screen';
+    for (let i = 0; i < 8; i++) {
+      const t = i / 7;
+      const w = lerpValue(handDistance * 1.06, handDistance * 0.28, t);
+      const h = w * 0.64;
+      const x = lerpValue(handDistance * 0.38, -handDistance * 0.12, t) + Math.sin(now * 0.002 + i * 0.4) * 6;
+      const y = lerpValue(-8, 6, t) + Math.cos(now * 0.0022 + i * 0.45) * 4;
+      ctx.globalAlpha = 0.76 - t * 0.58;
+      ctx.drawImage(studioEchoCv, -w * 0.5 + x, -h * 0.5 + y, w, h);
+
+      ctx.strokeStyle = colors[i % colors.length];
+      ctx.lineWidth = i % 2 === 0 ? 2.2 : 1.4;
+      ctx.strokeRect(-w * 0.5 + x, -h * 0.5 + y, w, h);
+    }
+    ctx.restore();
+  }
+
+  function drawStudioScene(primaryHand, leftHand, rightHand, now) {
+    if (!primaryHand) return;
+    const handsCount = currentHands ? currentHands.length : 0;
+    const activeMs = studioSequenceStartedAt ? Math.max(0, now - studioSequenceStartedAt) : 0;
+    const effect = getStudioSequenceEffect(activeMs, handsCount);
+    currentStudioEffectLabel = effect.hudLabel;
+
+    const stageRect = getVideoDisplayRect();
+    const anchor = getHandCenter(primaryHand);
+    const palmSpan = Math.max(52, getPalmSpan(primaryHand));
+    const dualHands = Boolean(leftHand && rightHand);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(stageRect.x, stageRect.y, stageRect.w, stageRect.h);
+    ctx.clip();
+
+    if (effect.key === 'ribbon' && dualHands) {
+      drawStudioRibbonDistortion(leftHand, rightHand, now);
+      drawStudioHudPanels(leftHand, rightHand, now);
+    } else if (effect.key === 'frames' && dualHands) {
+      drawStudioRecursiveFrames(leftHand, rightHand, now);
+    } else if (effect.key === 'torus') {
+      const cx = dualHands ? (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5 : anchor.x;
+      const cy = dualHands
+        ? (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5 - palmSpan * 0.86
+        : anchor.y - palmSpan * 0.96;
+      drawChromeTorus(cx, cy, palmSpan * (dualHands ? 0.98 : 1.12), now, 0.92);
+    } else if (effect.key === 'hud') {
+      drawStudioHudPanels(primaryHand, dualHands ? rightHand : null, now);
+      if (dualHands) {
+        const cx = (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5;
+        const cy = (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(cx - 32, cy - 18, 64, 36);
+        ctx.restore();
+      }
+    } else {
+      const cx = dualHands ? (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5 : anchor.x;
+      const cy = dualHands
+        ? (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5 - palmSpan * 0.7
+        : anchor.y - palmSpan * 1.02;
+      drawPrismCrystal(cx, cy, palmSpan * (dualHands ? 0.88 : 0.94), now, 0.92);
+    }
+
+    if (dualHands) drawPalmConnector(leftHand, rightHand, 0.42);
+    if (currentHands && currentHands.length) {
+      currentHands.forEach(hand => {
+        drawHandSkeleton(hand, {
+          lineWidth: 3.0,
+          dotRadius: 4.9,
+          glow: 12,
+          drawWristBox: true
+        });
+      });
+    }
+    ctx.restore();
+  }
+
   function drawTouchAura(handLm, side = 'solo', intensity = 0.65, detail = 1) {
     if (!handLm) return;
     detail = Math.max(0.48, Math.min(1, detail));
@@ -2450,6 +3091,11 @@ a, button { cursor: inherit; }
       if (perfTier === 'medium') return 42;
       return 32;
     }
+    if (isStudioMode()) {
+      if (perfTier === 'low') return 62;
+      if (perfTier === 'medium') return 44;
+      return 34;
+    }
     // XRAY mode also uses Hands, but tracks two hands and drives the viewport.
     if (perfTier === 'low') return 76;
     if (perfTier === 'medium') return 56;
@@ -2615,11 +3261,13 @@ a, button { cursor: inherit; }
   function drawFrame() {
     ctx.clearRect(0, 0, W, H);
     const auraMode = isAuraMode();
+    const studioMode = isStudioMode();
 
     /* Mirrored webcam draw */
     if (videoReady()) {
       const videoRect = getVideoDisplayRect();
       if (auraMode) drawAuraBackdrop();
+      else if (studioMode) drawStudioBackdrop();
       ctx.save();
       ctx.translate(videoRect.x + videoRect.w, 0);
       ctx.scale(-1, 1);
@@ -2632,8 +3280,9 @@ a, button { cursor: inherit; }
         ctx.fillRect(videoRect.x, videoRect.y, videoRect.w, videoRect.h);
         ctx.restore();
       }
-    } else if (auraMode) {
-      drawAuraBackdrop();
+    } else if (auraMode || studioMode) {
+      if (auraMode) drawAuraBackdrop();
+      else drawStudioBackdrop();
     }
 
     frame++; scanY += 0.008;
@@ -2668,7 +3317,7 @@ a, button { cursor: inherit; }
       handSide = lmScale(primaryHand[9]).x < W * 0.5 ? 'left' : 'right';
     }
 
-    if (auraMode) {
+    if (auraMode || studioMode) {
       portalHold = false;
       portalActiveThisFrame = Boolean(primaryHand);
       sparkCooldown = 0;
@@ -2699,21 +3348,24 @@ a, button { cursor: inherit; }
 
     const wasActive = isActive;
     isActive = portalActiveThisFrame;
-    if (!auraMode) {
+    if (!auraMode && !studioMode) {
       if (portalActiveThisFrame && !wasActive) xraySequenceStartedAt = now;
       if (!portalActiveThisFrame) xraySequenceStartedAt = 0;
+    } else if (studioMode) {
+      if (portalActiveThisFrame && !wasActive) studioSequenceStartedAt = now;
+      if (!portalActiveThisFrame) studioSequenceStartedAt = 0;
     }
-    portalAlpha += isActive ? 0.08 : (auraMode ? -0.08 : -0.06);
+    portalAlpha += isActive ? 0.08 : ((auraMode || studioMode) ? -0.08 : -0.06);
     portalAlpha = Math.max(0, Math.min(1, portalAlpha));
 
-    if (!auraMode) {
+    if (!auraMode && !studioMode) {
       portalHoldStartedAt = 0;
       wrapEl.classList.remove('xv-sos-charging');
       sosFired = false;
     }
 
     /* Instructions visibility */
-    instructionsEl.style.opacity = auraMode
+    instructionsEl.style.opacity = (auraMode || studioMode)
       ? (primaryHand ? '0' : '1')
       : ((!currentHands || currentHands.length < 2) ? '1' : '0');
 
@@ -2727,6 +3379,16 @@ a, button { cursor: inherit; }
         statusEl.textContent = '[ AURA FIELD LOCKED - FOLLOW YOUR HAND ]';
         statusEl.style.color = theme.accent;
         statusEl.style.textShadow = `0 0 15px ${theme.accent}`;
+      }
+    } else if (studioMode) {
+      if (!primaryHand) {
+        statusEl.textContent = 'STUDIO MODE: SHOW ONE OR TWO HANDS';
+        statusEl.style.color = '#0055aa';
+        statusEl.style.textShadow = '0 0 10px #0055aa';
+      } else {
+        statusEl.textContent = '[ STUDIO OBJECT FIELD LIVE ]';
+        statusEl.style.color = '#ffffff';
+        statusEl.style.textShadow = '0 0 15px rgba(255,255,255,0.75)';
       }
     } else if (!currentHands || currentHands.length < 2) {
       statusEl.textContent = 'XRAY MODE: SHOW BOTH HANDS';
@@ -2749,7 +3411,14 @@ a, button { cursor: inherit; }
       drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
     }
 
-    if (!auraMode && leftSideHand && rightSideHand) {
+    if (studioMode && primaryHand) {
+      const sortedHands = currentHands && currentHands.length >= 2
+        ? [...currentHands].sort((a, b) => lmScale(a[9]).x - lmScale(b[9]).x)
+        : [];
+      drawStudioScene(primaryHand, sortedHands[0] || null, sortedHands[1] || null, now);
+    }
+
+    if (!auraMode && !studioMode && leftSideHand && rightSideHand) {
       drawXrayViewport(leftSideHand, rightSideHand, Math.max(0.16, portalAlpha), perf, now);
       if (isGlitching && portalAlpha > 0.28) {
         ctx.save();
@@ -2777,6 +3446,8 @@ a, button { cursor: inherit; }
     updateTelemetry();
     try {
       const auraMode = isAuraMode();
+      const studioMode = isStudioMode();
+      const lightMode = auraMode || studioMode;
       loaderEl.style.display = '';
       loaderSub.textContent = 'Loading MediaPipe Hands…';
       if (!navigator.mediaDevices?.getUserMedia) {
@@ -2786,10 +3457,10 @@ a, button { cursor: inherit; }
         return;
       }
 
-      const preferredVideoWidth = auraMode
+      const preferredVideoWidth = lightMode
         ? (window.innerWidth <= 900 ? 720 : 960)
         : (window.innerWidth <= 900 ? 720 : 1024);
-      const preferredVideoHeight = auraMode
+      const preferredVideoHeight = lightMode
         ? (window.innerWidth <= 900 ? 540 : 540)
         : (window.innerWidth <= 900 ? 540 : 640);
 
@@ -2799,8 +3470,8 @@ a, button { cursor: inherit; }
       handsEngine.setOptions({
         maxNumHands: auraMode ? 1 : 2,
         modelComplexity: 0,
-        minDetectionConfidence: auraMode ? 0.55 : 0.6,
-        minTrackingConfidence: auraMode ? 0.55 : 0.6
+        minDetectionConfidence: auraMode ? 0.55 : (studioMode ? 0.58 : 0.6),
+        minTrackingConfidence: auraMode ? 0.55 : (studioMode ? 0.58 : 0.6)
       });
       handsEngine.onResults(res => {
         if (bootId !== engineBootId) return;
@@ -2817,7 +3488,9 @@ a, button { cursor: inherit; }
           loaderEl.style.display = 'none';
           loaderSub.textContent = auraMode
             ? 'Camera linked · stabilizing aura field'
-            : 'Camera linked · framing reactive viewport';
+            : (studioMode
+                ? 'Camera linked · staging studio objects'
+                : 'Camera linked · framing reactive viewport');
           statusEl.textContent = 'SYSTEM READY';
           updateTelemetry();
         }
@@ -2829,8 +3502,8 @@ a, button { cursor: inherit; }
         video: {
           facingMode: 'user',
           frameRate: { ideal: 24, max: 30 },
-          width: { ideal: preferredVideoWidth, max: auraMode ? 1280 : preferredVideoWidth },
-          height: { ideal: preferredVideoHeight, max: auraMode ? 720 : preferredVideoHeight }
+          width: { ideal: preferredVideoWidth, max: lightMode ? 1280 : preferredVideoWidth },
+          height: { ideal: preferredVideoHeight, max: lightMode ? 720 : preferredVideoHeight }
         }
       };
       try {
@@ -2847,7 +3520,9 @@ a, button { cursor: inherit; }
       await vid.play();
       loaderSub.textContent = auraMode
         ? 'Camera linked · waiting for aura tracking'
-        : 'Camera linked · waiting for viewport tracking';
+        : (studioMode
+            ? 'Camera linked · waiting for studio tracking'
+            : 'Camera linked · waiting for viewport tracking');
 
       cameraController = new Camera(vid, {
         onFrame: async () => {
@@ -2919,10 +3594,13 @@ a, button { cursor: inherit; }
     lastXrayEffectFrame = -1;
     lastXrayEffectWidth = 0;
     lastXrayEffectHeight = 0;
+    currentStudioEffectLabel = 'STUDIO';
     portalAlpha = 0;
     portalHoldStartedAt = 0;
     portalHold = false;
     sosFired = false;
+    studioSequenceStartedAt = 0;
+    xraySequenceStartedAt = 0;
     wrapEl.classList.remove('xv-sos-charging');
     hasStarted = false;
     if (!preserveRetryCount) startupRetryCount = 0;
@@ -3016,6 +3694,7 @@ a, button { cursor: inherit; }
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     const k = e.key.toLowerCase();
     if (k === 'a') void setRenderMode('aura');
+    if (k === 'c') void setRenderMode('studio');
     if (k === 'x') void setRenderMode('xray');
     if (k === 's') screenshotBtn.click();
     if (k === 'f') fullscreenBtn.click();
