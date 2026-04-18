@@ -222,65 +222,355 @@ body, html {
   transition: filter 0.25s ease;
 }
 
-/* ══ Effect toggle bar (top-right of camera) ══ */
-.vs-fx-bar {
+/* ══ Live puzzle overlay (replaces the old FX button bar) ══ */
+.vs-puzzle-shell {
   position: absolute;
-  top: 10px;
-  right: 50px;                         /* leaves room for corner bracket */
-  display: flex;
-  gap: 4px;
+  inset: 0;
   z-index: 9;
-  padding: 3px;
-  background: rgba(10, 10, 22, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
   opacity: 0;
-  transform: translateY(-4px);
   pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.22,1,.36,1);
+  transition: opacity 0.32s ease;
 }
-/* Reveal bar once camera is streaming (running state added via JS) */
-.vs-cam-frame.streaming .vs-fx-bar { opacity: 1; transform: translateY(0); pointer-events: auto; }
-
-.vs-fx-btn {
+.vs-cam-frame.streaming .vs-puzzle-shell {
+  opacity: 1;
+  pointer-events: auto;
+}
+.vs-puzzle-title {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+.vs-puzzle-kicker {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #d8ff4f;
+  text-shadow: 0 0 16px rgba(216,255,79,0.22);
+}
+.vs-puzzle-sub {
+  margin-top: 2px;
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.52);
+}
+.vs-puzzle-timer {
+  position: absolute;
+  top: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 54px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(16,16,16,0.82);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.54rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.86);
+  text-align: center;
+  pointer-events: none;
+}
+.vs-puzzle-chip {
+  position: absolute;
+  top: 14px;
+  left: 14px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 8px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  color: rgba(226,232,240,0.72);
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(16,16,16,0.76);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.72);
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   font-weight: 800;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  cursor: inherit;
-  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
 }
-.vs-fx-btn i { font-size: 0.62rem; }
-.vs-fx-btn:hover {
-  background: rgba(99,102,241,0.12);
-  color: #c4b5fd;
+.vs-puzzle-chip i {
+  color: #d8ff4f;
+  font-size: 0.6rem;
 }
-.vs-fx-btn.active {
-  background: rgba(0,255,0,0.14);
-  border-color: rgba(0,255,0,0.35);
-  color: #86efac;
-  box-shadow: 0 0 10px rgba(0,255,0,0.2);
+.vs-puzzle-objective {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 148px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: rgba(24,24,24,0.78);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+  color: rgba(255,255,255,0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
-.vs-fx-btn.vs-fx-cycle.active {
-  background: rgba(255,45,58,0.14);
-  border-color: rgba(255,45,58,0.4);
-  color: #fca5a5;
-  box-shadow: 0 0 10px rgba(255,45,58,0.22);
-  animation: fxCyclePulse 1.6s ease infinite alternate;
+.vs-puzzle-phase {
+  font-size: 0.44rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #d8ff4f;
+  margin-bottom: 5px;
 }
-@keyframes fxCyclePulse {
-  to { box-shadow: 0 0 16px rgba(255,45,58,0.35); }
+.vs-puzzle-copy {
+  font-size: 0.48rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.64);
+}
+.vs-puzzle-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.44rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.56);
+}
+.vs-puzzle-reset {
+  margin-top: 8px;
+  width: 100%;
+  border: 0;
+  border-radius: 9px;
+  padding: 7px 10px;
+  background: rgba(216,255,79,0.14);
+  color: #eef9b4;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.vs-puzzle-reset:hover {
+  transform: translateY(-1px);
+  background: rgba(216,255,79,0.22);
+}
+.vs-puzzle-capture {
+  position: absolute;
+  border: 2px solid rgba(216,255,79,0.92);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(216,255,79,0.08), 0 0 24px rgba(216,255,79,0.18);
+  background:
+    linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+}
+.vs-puzzle-capture::before,
+.vs-puzzle-capture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.vs-puzzle-capture::before {
+  background: radial-gradient(circle at center, rgba(216,255,79,0.12), transparent 72%);
+}
+.vs-puzzle-capture::after {
+  opacity: var(--vs-capture-glow, 0.28);
+  box-shadow: inset 0 0 0 2px rgba(216,255,79,0.12);
+}
+.vs-puzzle-shell.is-capturing .vs-puzzle-capture {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 1px rgba(216,255,79,0.18), 0 0 38px rgba(216,255,79,0.28);
+}
+.vs-puzzle-capture-label {
+  position: absolute;
+  top: -16px;
+  left: -2px;
+  padding: 2px 6px;
+  background: rgba(216,255,79,0.96);
+  color: #182000;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.43rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.vs-puzzle-board {
+  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background: rgba(255,255,255,0.03);
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.28);
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.26s ease, transform 0.26s ease;
+  overflow: hidden;
+  pointer-events: auto;
+}
+.vs-puzzle-shell.is-playing .vs-puzzle-board,
+.vs-puzzle-shell.is-complete .vs-puzzle-board {
+  opacity: 1;
+  transform: scale(1);
+}
+.vs-puzzle-slot {
+  position: relative;
+  border-right: 1px solid rgba(255,255,255,0.18);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+  overflow: hidden;
+}
+.vs-puzzle-slot:nth-child(3n) { border-right: 0; }
+.vs-puzzle-slot:nth-last-child(-n+3) { border-bottom: 0; }
+.vs-puzzle-slot.hovered {
+  box-shadow: inset 0 0 0 2px rgba(216,255,79,0.82);
+}
+.vs-puzzle-tile {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-color: rgba(255,255,255,0.02);
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+.vs-puzzle-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+}
+.vs-puzzle-slot.drag-source .vs-puzzle-tile {
+  opacity: 0.14;
+  transform: scale(0.96);
+}
+.vs-puzzle-drag-tile {
+  position: absolute;
+  display: none;
+  z-index: 12;
+  border: 1px solid rgba(255,255,255,0.8);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.34), 0 0 0 1px rgba(216,255,79,0.18);
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+.vs-puzzle-drag-tile.active { display: block; }
+.vs-puzzle-cursor {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  margin-top: -9px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.95);
+  background: #d8ff4f;
+  box-shadow: 0 0 0 6px rgba(216,255,79,0.12), 0 0 16px rgba(216,255,79,0.42);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.12s ease, transform 0.12s ease, background 0.12s ease;
+  pointer-events: none;
+  z-index: 13;
+}
+.vs-puzzle-cursor.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.vs-puzzle-cursor.pinching {
+  background: #f6ff9e;
+  box-shadow: 0 0 0 7px rgba(216,255,79,0.18), 0 0 24px rgba(216,255,79,0.6);
+}
+.vs-puzzle-complete {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.56);
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.26s ease;
+}
+.vs-puzzle-shell.is-complete .vs-puzzle-complete {
+  opacity: 1;
+  pointer-events: auto;
+}
+.vs-puzzle-complete-icon {
+  font-size: 2rem;
+  color: #d8ff4f;
+  filter: drop-shadow(0 0 16px rgba(216,255,79,0.3));
+}
+.vs-puzzle-complete-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.vs-puzzle-complete-copy {
+  max-width: 220px;
+  font-size: 0.52rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.62);
+}
+.vs-puzzle-complete-stats {
+  display: flex;
+  gap: 18px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.8);
+}
+.vs-puzzle-complete-stats strong {
+  display: block;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: #d8ff4f;
+}
+.vs-puzzle-shell.is-paused .vs-puzzle-capture,
+.vs-puzzle-shell.is-paused .vs-puzzle-board,
+.vs-puzzle-shell.is-paused .vs-puzzle-objective,
+.vs-puzzle-shell.is-paused .vs-puzzle-chip,
+.vs-puzzle-shell.is-paused .vs-puzzle-title,
+.vs-puzzle-shell.is-paused .vs-puzzle-timer {
+  opacity: 0.34;
+}
+.vs-puzzle-pause {
+  position: absolute;
+  left: 50%;
+  bottom: 54px;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(16,16,16,0.86);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.74);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+.vs-puzzle-shell.is-paused .vs-puzzle-pause {
+  opacity: 1;
 }
 
 /* ── CONTROL PANEL ── */
@@ -674,6 +964,25 @@ body, html {
   .vs-panel { width: 100%; flex-direction: row; flex-wrap: wrap; }
   .vs-gesture-card { flex: 1; min-width: 140px; }
   .vs-legend { display: none; }
+  .vs-puzzle-title { top: 10px; }
+  .vs-puzzle-kicker { font-size: 0.58rem; }
+  .vs-puzzle-sub { font-size: 0.38rem; }
+  .vs-puzzle-timer { top: 34px; font-size: 0.48rem; padding: 4px 8px; }
+  .vs-puzzle-chip { top: auto; bottom: 42px; left: 12px; }
+  .vs-puzzle-objective {
+    top: 12px;
+    right: 12px;
+    width: 136px;
+    padding: 8px 10px;
+  }
+  .vs-puzzle-copy,
+  .vs-puzzle-reset,
+  .vs-puzzle-stats { font-size: 0.44rem; }
+  .vs-puzzle-pause {
+    bottom: 46px;
+    max-width: calc(100% - 32px);
+    text-align: center;
+  }
 }
 </style>
 {% endblock %}
@@ -727,20 +1036,47 @@ body, html {
       <div class="vs-corner bl"></div>
       <div class="vs-corner br"></div>
 
-      <!-- Creative effect toggle bar -->
-      <div class="vs-fx-bar" id="vs-fx-bar">
-        <button class="vs-fx-btn" data-fx="circle" title="Face aura circle">
-          <i class="bi bi-circle"></i><span>CIRCLE</span>
-        </button>
-        <button class="vs-fx-btn" data-fx="torus" title="3D torus ring above head">
-          <i class="bi bi-record-circle"></i><span>TORUS</span>
-        </button>
-        <button class="vs-fx-btn" data-fx="chrome" title="Chrome mirror distortion">
-          <i class="bi bi-droplet-half"></i><span>CHROME</span>
-        </button>
-        <button class="vs-fx-btn vs-fx-cycle" data-fx="cycle" title="Auto-cycle all effects every 4s">
-          <i class="bi bi-arrow-repeat"></i><span>CYCLE</span>
-        </button>
+      <!-- Live puzzle overlay -->
+      <div class="vs-puzzle-shell is-capture" id="vs-puzzle-shell">
+        <div class="vs-puzzle-title">
+          <div class="vs-puzzle-kicker">Live Puzzle</div>
+          <div class="vs-puzzle-sub" id="vs-puzzle-sub">Frame it up. Pinch or click to capture.</div>
+        </div>
+        <div class="vs-puzzle-timer" id="vs-puzzle-timer">0:00</div>
+        <div class="vs-puzzle-chip" id="vs-puzzle-chip">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+          <span>3x3 Scramble</span>
+        </div>
+        <div class="vs-puzzle-objective" id="vs-puzzle-objective">
+          <div class="vs-puzzle-phase" id="vs-puzzle-phase">Phase 1 / 3</div>
+          <div class="vs-puzzle-copy" id="vs-puzzle-copy">
+            Frame your subject inside the green box, then pinch to grab the live snapshot.
+          </div>
+          <div class="vs-puzzle-stats">
+            <span>Moves <strong id="vs-puzzle-moves">0</strong></span>
+            <span>Best <strong id="vs-puzzle-best">--</strong></span>
+          </div>
+          <button class="vs-puzzle-reset" id="vs-puzzle-reset" type="button">Reset Puzzle</button>
+        </div>
+        <div class="vs-puzzle-capture" id="vs-puzzle-capture">
+          <div class="vs-puzzle-capture-label" id="vs-puzzle-capture-label">Pinch to Capture</div>
+        </div>
+        <div class="vs-puzzle-board" id="vs-puzzle-board" aria-live="polite"></div>
+        <div class="vs-puzzle-drag-tile" id="vs-puzzle-drag-tile"></div>
+        <div class="vs-puzzle-cursor" id="vs-puzzle-cursor"></div>
+        <div class="vs-puzzle-complete" id="vs-puzzle-complete">
+          <div class="vs-puzzle-complete-icon"><i class="bi bi-trophy-fill"></i></div>
+          <div class="vs-puzzle-complete-title">Complete!</div>
+          <div class="vs-puzzle-complete-copy" id="vs-puzzle-complete-copy">
+            Live snap restored. Capture another frame and run it back.
+          </div>
+          <div class="vs-puzzle-complete-stats">
+            <span>Time <strong id="vs-puzzle-final-time">0:00</strong></span>
+            <span>Moves <strong id="vs-puzzle-final-moves">0</strong></span>
+          </div>
+          <button class="vs-puzzle-reset" id="vs-puzzle-restart" type="button">Play Again</button>
+        </div>
+        <div class="vs-puzzle-pause" id="vs-puzzle-pause">Puzzle paused while shield is armed</div>
       </div>
 
       <!-- Loading state -->
@@ -911,6 +1247,23 @@ const VS = {
   camLabel: document.getElementById('vs-cam-label'),
   fpsEl: document.getElementById('vs-fps-display'),
   handCountEl: document.getElementById('vs-hand-count'),
+  puzzleShell: document.getElementById('vs-puzzle-shell'),
+  puzzleSubEl: document.getElementById('vs-puzzle-sub'),
+  puzzleTimerEl: document.getElementById('vs-puzzle-timer'),
+  puzzlePhaseEl: document.getElementById('vs-puzzle-phase'),
+  puzzleCopyEl: document.getElementById('vs-puzzle-copy'),
+  puzzleMovesEl: document.getElementById('vs-puzzle-moves'),
+  puzzleBestEl: document.getElementById('vs-puzzle-best'),
+  puzzleResetEl: document.getElementById('vs-puzzle-reset'),
+  puzzleCaptureEl: document.getElementById('vs-puzzle-capture'),
+  puzzleCaptureLabelEl: document.getElementById('vs-puzzle-capture-label'),
+  puzzleBoardEl: document.getElementById('vs-puzzle-board'),
+  puzzleDragEl: document.getElementById('vs-puzzle-drag-tile'),
+  puzzleCursorEl: document.getElementById('vs-puzzle-cursor'),
+  puzzleCompleteEl: document.getElementById('vs-puzzle-complete'),
+  puzzleRestartEl: document.getElementById('vs-puzzle-restart'),
+  puzzleFinalTimeEl: document.getElementById('vs-puzzle-final-time'),
+  puzzleFinalMovesEl: document.getElementById('vs-puzzle-final-moves'),
 
   /* Gesture hold state */
   holdState: {
@@ -930,6 +1283,29 @@ const VS = {
   cycleTimer: null,
   cyclePhase: 0,                       /* index into CYCLE_SEQ */
   three: null,                          /* { scene, camera, renderer, torus } once initialized */
+
+  /* ══ Live puzzle state ══ */
+  puzzle: {
+    rows: 3,
+    cols: 3,
+    state: 'capture',
+    captureHold: 0,
+    captureHoldFrames: 8,
+    pinching: false,
+    hoverSlot: null,
+    dragSourceSlot: null,
+    dragPieceIndex: null,
+    pointer: null,
+    tiles: [],
+    moves: 0,
+    startedAt: 0,
+    completedAt: 0,
+    bestTimeMs: null,
+    imageUrl: '',
+    boardRect: { x: 0, y: 0, size: 0 },
+    captureRect: { x: 0, y: 0, w: 0, h: 0 },
+    mouseDrag: false,
+  }
 };
 
 VS.ctx = VS.canvas.getContext('2d');
@@ -1210,6 +1586,477 @@ document.querySelectorAll('.vs-fx-btn').forEach(btn => {
   btn.addEventListener('click', () => toggleFx(btn.dataset.fx));
 });
 
+/* ── Live Puzzle Engine ── */
+const VS_PUZZLE_BEST_KEY = 'rakshak_vs_live_puzzle_best_ms';
+
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+function loadPuzzleBest() {
+  try {
+    const raw = window.localStorage.getItem(VS_PUZZLE_BEST_KEY);
+    const parsed = parseInt(raw, 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function savePuzzleBest(ms) {
+  try { window.localStorage.setItem(VS_PUZZLE_BEST_KEY, String(ms)); } catch (e) {}
+}
+
+VS.puzzle.bestTimeMs = loadPuzzleBest();
+
+function formatPuzzleTime(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = totalSeconds % 60;
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
+function getPuzzleLayout() {
+  const frameW = VS.camFrame.clientWidth || VS.canvas.width || 480;
+  const frameH = VS.camFrame.clientHeight || VS.canvas.height || 360;
+  const boardSize = Math.min(frameW * 0.56, frameH * 0.72);
+  const boardX = (frameW - boardSize) / 2;
+  const boardY = Math.max(54, (frameH - boardSize) / 2 + 12);
+  const captureSize = boardSize * 0.74;
+  const captureX = boardX + (boardSize - captureSize) / 2;
+  const captureY = boardY + (boardSize - captureSize) / 2 - boardSize * 0.14;
+
+  return {
+    frameW,
+    frameH,
+    board: { x: boardX, y: boardY, size: boardSize },
+    capture: { x: captureX, y: captureY, w: captureSize, h: captureSize }
+  };
+}
+
+function syncPuzzleLayout() {
+  const layout = getPuzzleLayout();
+  VS.puzzle.boardRect = layout.board;
+  VS.puzzle.captureRect = layout.capture;
+
+  if (VS.puzzleBoardEl) {
+    VS.puzzleBoardEl.style.left = `${layout.board.x}px`;
+    VS.puzzleBoardEl.style.top = `${layout.board.y}px`;
+    VS.puzzleBoardEl.style.width = `${layout.board.size}px`;
+    VS.puzzleBoardEl.style.height = `${layout.board.size}px`;
+  }
+  if (VS.puzzleCaptureEl) {
+    VS.puzzleCaptureEl.style.left = `${layout.capture.x}px`;
+    VS.puzzleCaptureEl.style.top = `${layout.capture.y}px`;
+    VS.puzzleCaptureEl.style.width = `${layout.capture.w}px`;
+    VS.puzzleCaptureEl.style.height = `${layout.capture.h}px`;
+  }
+}
+
+function pointInRect(point, rect) {
+  if (!point || !rect) return false;
+  return point.x >= rect.x && point.x <= rect.x + rect.w &&
+         point.y >= rect.y && point.y <= rect.y + rect.h;
+}
+
+function getPuzzleSlotFromPoint(x, y) {
+  const rect = VS.puzzle.boardRect;
+  const { rows, cols } = VS.puzzle;
+  if (!rect || rect.size <= 0) return null;
+  if (x < rect.x || x > rect.x + rect.size || y < rect.y || y > rect.y + rect.size) return null;
+
+  const cell = rect.size / cols;
+  const col = clamp(Math.floor((x - rect.x) / cell), 0, cols - 1);
+  const row = clamp(Math.floor((y - rect.y) / cell), 0, rows - 1);
+  return row * cols + col;
+}
+
+function getPuzzlePointer(landmarks) {
+  if (!landmarks || landmarks.length < 9) return null;
+
+  const frameW = VS.camFrame.clientWidth || VS.canvas.width || 480;
+  const frameH = VS.camFrame.clientHeight || VS.canvas.height || 360;
+  const thumb = landmarks[4];
+  const index = landmarks[8];
+  const baseA = landmarks[5];
+  const baseB = landmarks[17];
+
+  const palmSpan = Math.max(0.0001, Math.hypot(baseA.x - baseB.x, baseA.y - baseB.y));
+  const pinchDistance = Math.hypot(index.x - thumb.x, index.y - thumb.y);
+  const pinchRatio = pinchDistance / palmSpan;
+  const pinching = VS.puzzle.pinching ? pinchRatio < 0.55 : pinchRatio < 0.42;
+
+  return {
+    x: (1 - ((index.x + thumb.x) / 2)) * frameW,
+    y: ((index.y + thumb.y) / 2) * frameH,
+    pinching,
+    pinchRatio
+  };
+}
+
+function puzzleTileBackground(pieceIndex) {
+  const col = pieceIndex % VS.puzzle.cols;
+  const row = Math.floor(pieceIndex / VS.puzzle.cols);
+  const xPct = VS.puzzle.cols === 1 ? 50 : (col / (VS.puzzle.cols - 1)) * 100;
+  const yPct = VS.puzzle.rows === 1 ? 50 : (row / (VS.puzzle.rows - 1)) * 100;
+  return {
+    backgroundImage: `url(${VS.puzzle.imageUrl})`,
+    backgroundSize: `${VS.puzzle.cols * 100}% ${VS.puzzle.rows * 100}%`,
+    backgroundPosition: `${xPct}% ${yPct}%`
+  };
+}
+
+function renderPuzzleBoard() {
+  syncPuzzleLayout();
+  const boardEl = VS.puzzleBoardEl;
+  const p = VS.puzzle;
+  if (!boardEl) return;
+
+  boardEl.innerHTML = '';
+
+  if (!p.tiles.length || !p.imageUrl) {
+    updatePuzzleDragTile(null);
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  for (let slot = 0; slot < p.tiles.length; slot++) {
+    const slotEl = document.createElement('div');
+    slotEl.className = 'vs-puzzle-slot';
+    if (slot === p.hoverSlot) slotEl.classList.add('hovered');
+    if (slot === p.dragSourceSlot) slotEl.classList.add('drag-source');
+
+    const tileEl = document.createElement('div');
+    tileEl.className = 'vs-puzzle-tile';
+    Object.assign(tileEl.style, puzzleTileBackground(p.tiles[slot]));
+    slotEl.appendChild(tileEl);
+    frag.appendChild(slotEl);
+  }
+
+  boardEl.appendChild(frag);
+  updatePuzzleDragTile(p.pointer);
+}
+
+function updatePuzzleCursor(pointer) {
+  const cursor = VS.puzzleCursorEl;
+  if (!cursor) return;
+  if (!pointer) {
+    cursor.classList.remove('visible', 'pinching');
+    return;
+  }
+
+  cursor.style.left = `${pointer.x}px`;
+  cursor.style.top = `${pointer.y}px`;
+  cursor.classList.add('visible');
+  cursor.classList.toggle('pinching', !!pointer.pinching);
+}
+
+function updatePuzzleDragTile(pointer) {
+  const dragEl = VS.puzzleDragEl;
+  const p = VS.puzzle;
+  if (!dragEl) return;
+
+  if (p.dragPieceIndex == null || !pointer || !p.imageUrl) {
+    dragEl.classList.remove('active');
+    dragEl.removeAttribute('style');
+    return;
+  }
+
+  const tileSize = p.boardRect.size / p.cols;
+  Object.assign(dragEl.style, puzzleTileBackground(p.dragPieceIndex));
+  dragEl.style.width = `${tileSize}px`;
+  dragEl.style.height = `${tileSize}px`;
+  dragEl.style.left = `${pointer.x - tileSize / 2}px`;
+  dragEl.style.top = `${pointer.y - tileSize / 2}px`;
+  dragEl.classList.add('active');
+}
+
+function isPuzzleSolved() {
+  return VS.puzzle.tiles.every((piece, index) => piece === index);
+}
+
+function shufflePuzzleTiles() {
+  const tiles = Array.from({ length: VS.puzzle.rows * VS.puzzle.cols }, (_, index) => index);
+  do {
+    for (let i = tiles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    }
+  } while (tiles.every((piece, index) => piece === index));
+  return tiles;
+}
+
+function resetPuzzle({ preserveBest = true } = {}) {
+  const best = preserveBest ? VS.puzzle.bestTimeMs : null;
+  VS.puzzle.state = 'capture';
+  VS.puzzle.captureHold = 0;
+  VS.puzzle.pinching = false;
+  VS.puzzle.hoverSlot = null;
+  VS.puzzle.dragSourceSlot = null;
+  VS.puzzle.dragPieceIndex = null;
+  VS.puzzle.pointer = null;
+  VS.puzzle.tiles = [];
+  VS.puzzle.moves = 0;
+  VS.puzzle.startedAt = 0;
+  VS.puzzle.completedAt = 0;
+  VS.puzzle.imageUrl = '';
+  VS.puzzle.mouseDrag = false;
+  VS.puzzle.bestTimeMs = best;
+  updatePuzzleCursor(null);
+  updatePuzzleHud();
+  renderPuzzleBoard();
+}
+
+function completePuzzle() {
+  VS.puzzle.state = 'complete';
+  VS.puzzle.completedAt = performance.now();
+  const elapsed = VS.puzzle.completedAt - VS.puzzle.startedAt;
+  if (!VS.puzzle.bestTimeMs || elapsed < VS.puzzle.bestTimeMs) {
+    VS.puzzle.bestTimeMs = elapsed;
+    savePuzzleBest(elapsed);
+  }
+  if (typeof showToast === 'function') showToast('Live puzzle complete', 'success');
+  updatePuzzleHud();
+  renderPuzzleBoard();
+}
+
+function swapPuzzleTiles(fromSlot, toSlot) {
+  if (fromSlot == null || toSlot == null || fromSlot === toSlot) return;
+  [VS.puzzle.tiles[fromSlot], VS.puzzle.tiles[toSlot]] = [VS.puzzle.tiles[toSlot], VS.puzzle.tiles[fromSlot]];
+  VS.puzzle.moves += 1;
+  if (isPuzzleSolved()) completePuzzle();
+  updatePuzzleHud();
+  renderPuzzleBoard();
+}
+
+function startPuzzleDrag(slot) {
+  if (slot == null || VS.puzzle.state !== 'playing' || !VS.puzzle.tiles.length) return;
+  VS.puzzle.dragSourceSlot = slot;
+  VS.puzzle.dragPieceIndex = VS.puzzle.tiles[slot];
+  VS.puzzle.hoverSlot = slot;
+  renderPuzzleBoard();
+}
+
+function endPuzzleDrag(slot) {
+  if (VS.puzzle.dragSourceSlot == null) return;
+  const source = VS.puzzle.dragSourceSlot;
+  VS.puzzle.dragSourceSlot = null;
+  VS.puzzle.dragPieceIndex = null;
+  VS.puzzle.hoverSlot = slot;
+  if (slot != null && slot !== source) swapPuzzleTiles(source, slot);
+  else renderPuzzleBoard();
+}
+
+function capturePuzzleFrame() {
+  if (!VS.video.videoWidth || !VS.video.videoHeight) {
+    if (typeof showToast === 'function') showToast('Camera not ready yet', 'error');
+    return;
+  }
+
+  syncPuzzleLayout();
+
+  const mirrored = document.createElement('canvas');
+  mirrored.width = VS.video.videoWidth;
+  mirrored.height = VS.video.videoHeight;
+  const mctx = mirrored.getContext('2d');
+  mctx.translate(mirrored.width, 0);
+  mctx.scale(-1, 1);
+  mctx.drawImage(VS.video, 0, 0, mirrored.width, mirrored.height);
+
+  const frameW = VS.camFrame.clientWidth || mirrored.width;
+  const frameH = VS.camFrame.clientHeight || mirrored.height;
+  const rect = VS.puzzle.captureRect;
+  const sx = clamp((rect.x / frameW) * mirrored.width, 0, mirrored.width - 1);
+  const sy = clamp((rect.y / frameH) * mirrored.height, 0, mirrored.height - 1);
+  const sw = clamp((rect.w / frameW) * mirrored.width, 1, mirrored.width - sx);
+  const sh = clamp((rect.h / frameH) * mirrored.height, 1, mirrored.height - sy);
+
+  const boardCanvas = document.createElement('canvas');
+  boardCanvas.width = 720;
+  boardCanvas.height = 720;
+  const bctx = boardCanvas.getContext('2d');
+  bctx.drawImage(mirrored, sx, sy, sw, sh, 0, 0, boardCanvas.width, boardCanvas.height);
+
+  VS.puzzle.imageUrl = boardCanvas.toDataURL('image/jpeg', 0.92);
+  VS.puzzle.tiles = shufflePuzzleTiles();
+  VS.puzzle.state = 'playing';
+  VS.puzzle.captureHold = 0;
+  VS.puzzle.moves = 0;
+  VS.puzzle.startedAt = performance.now();
+  VS.puzzle.completedAt = 0;
+  VS.puzzle.hoverSlot = null;
+  VS.puzzle.dragSourceSlot = null;
+  VS.puzzle.dragPieceIndex = null;
+
+  if (typeof showToast === 'function') showToast('Live puzzle captured', 'success');
+  updatePuzzleHud();
+  renderPuzzleBoard();
+}
+
+function updatePuzzleHud() {
+  const p = VS.puzzle;
+  const paused = VS.armed;
+  const elapsed = p.state === 'complete'
+    ? (p.completedAt - p.startedAt)
+    : (p.state === 'playing' ? performance.now() - p.startedAt : 0);
+
+  VS.puzzleShell.classList.toggle('is-capture', p.state === 'capture');
+  VS.puzzleShell.classList.toggle('is-capturing', p.state === 'capture' && p.captureHold > 0);
+  VS.puzzleShell.classList.toggle('is-playing', p.state === 'playing');
+  VS.puzzleShell.classList.toggle('is-complete', p.state === 'complete');
+  VS.puzzleShell.classList.toggle('is-paused', paused);
+
+  if (VS.puzzleTimerEl) VS.puzzleTimerEl.textContent = formatPuzzleTime(elapsed);
+  if (VS.puzzleMovesEl) VS.puzzleMovesEl.textContent = String(p.moves);
+  if (VS.puzzleBestEl) VS.puzzleBestEl.textContent = p.bestTimeMs ? formatPuzzleTime(p.bestTimeMs) : '--';
+  if (VS.puzzleFinalTimeEl) VS.puzzleFinalTimeEl.textContent = formatPuzzleTime(elapsed);
+  if (VS.puzzleFinalMovesEl) VS.puzzleFinalMovesEl.textContent = String(p.moves);
+
+  if (VS.puzzleCaptureEl) VS.puzzleCaptureEl.style.display = p.state === 'capture' ? 'block' : 'none';
+  if (VS.puzzleResetEl) VS.puzzleResetEl.textContent = p.state === 'capture' ? 'Reset Frame' : 'New Capture';
+
+  if (p.state === 'capture') {
+    if (VS.puzzleSubEl) VS.puzzleSubEl.textContent = paused ? 'Shield is armed. Disarm to play.' : 'Frame it up. Pinch or click to capture.';
+    if (VS.puzzlePhaseEl) VS.puzzlePhaseEl.textContent = 'Phase 1 / 3';
+    if (VS.puzzleCopyEl) VS.puzzleCopyEl.textContent = paused
+      ? 'Puzzle controls are paused while Vision Shield is armed to avoid accidental SOS triggers.'
+      : 'Center the shot inside the green box, then pinch to grab the live snapshot and build the board.';
+    if (VS.puzzleCaptureLabelEl) {
+      const pct = Math.round((p.captureHold / p.captureHoldFrames) * 100);
+      VS.puzzleCaptureLabelEl.textContent = paused
+        ? 'Shield Armed'
+        : (pct > 0 ? `Capturing ${pct}%` : 'Pinch to Capture');
+    }
+    if (VS.puzzleCaptureEl) {
+      VS.puzzleCaptureEl.style.setProperty('--vs-capture-glow', paused ? '0.08' : String(0.28 + (p.captureHold / p.captureHoldFrames) * 0.4));
+    }
+  } else if (p.state === 'playing') {
+    if (VS.puzzleSubEl) VS.puzzleSubEl.textContent = paused ? 'Shield is armed. Puzzle paused.' : 'Pinch & drag to solve.';
+    if (VS.puzzlePhaseEl) VS.puzzlePhaseEl.textContent = 'Phase 2 / 3';
+    if (VS.puzzleCopyEl) VS.puzzleCopyEl.textContent = paused
+      ? 'Disarm the shield to keep dragging tiles. The board will stay frozen exactly where you left it.'
+      : 'Pinch a tile, drag it over another slot, and release to swap. Click + drag works too on desktop.';
+  } else {
+    if (VS.puzzleSubEl) VS.puzzleSubEl.textContent = 'Solved. Grab a new frame and run it back.';
+    if (VS.puzzlePhaseEl) VS.puzzlePhaseEl.textContent = 'Phase 3 / 3';
+    if (VS.puzzleCopyEl) VS.puzzleCopyEl.textContent = 'Puzzle complete. Capture another live frame for a fresh shuffle whenever you want.';
+  }
+}
+
+function updatePuzzleFromHand(landmarks) {
+  syncPuzzleLayout();
+
+  if (VS.puzzle.mouseDrag) {
+    updatePuzzleHud();
+    return;
+  }
+
+  const pointer = getPuzzlePointer(landmarks);
+  const wasPinching = VS.puzzle.pinching;
+  const nowPinching = !!pointer?.pinching && !VS.armed;
+
+  VS.puzzle.pointer = pointer;
+  updatePuzzleCursor(pointer);
+  updatePuzzleDragTile(pointer);
+
+  if (VS.armed) {
+    VS.puzzle.captureHold = 0;
+    VS.puzzle.pinching = false;
+    updatePuzzleHud();
+    return;
+  }
+
+  if (VS.puzzle.state === 'capture') {
+    if (pointInRect(pointer, VS.puzzle.captureRect) && nowPinching) {
+      VS.puzzle.captureHold = clamp(VS.puzzle.captureHold + 1, 0, VS.puzzle.captureHoldFrames);
+      if (VS.puzzle.captureHold >= VS.puzzle.captureHoldFrames) capturePuzzleFrame();
+    } else {
+      VS.puzzle.captureHold = clamp(VS.puzzle.captureHold - 1, 0, VS.puzzle.captureHoldFrames);
+    }
+  } else if (VS.puzzle.state === 'playing' && !VS.puzzle.mouseDrag) {
+    const slot = pointer ? getPuzzleSlotFromPoint(pointer.x, pointer.y) : null;
+    if (slot !== VS.puzzle.hoverSlot) {
+      VS.puzzle.hoverSlot = slot;
+      renderPuzzleBoard();
+    }
+    if (nowPinching && !wasPinching) {
+      startPuzzleDrag(slot);
+    } else if (!nowPinching && wasPinching) {
+      endPuzzleDrag(slot);
+    }
+  }
+
+  VS.puzzle.pinching = nowPinching;
+  updatePuzzleHud();
+}
+
+function puzzlePointFromEvent(event) {
+  const rect = VS.camFrame.getBoundingClientRect();
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  };
+}
+
+function onPuzzleCaptureClick() {
+  if (VS.armed || !VS.running || VS.puzzle.state !== 'capture') return;
+  capturePuzzleFrame();
+}
+
+function onPuzzlePointerDown(event) {
+  if (VS.armed || VS.puzzle.state !== 'playing') return;
+  const point = puzzlePointFromEvent(event);
+  const slot = getPuzzleSlotFromPoint(point.x, point.y);
+  if (slot == null) return;
+  VS.puzzle.mouseDrag = true;
+  VS.puzzle.pointer = { x: point.x, y: point.y, pinching: true };
+  VS.puzzle.pinching = true;
+  updatePuzzleCursor(VS.puzzle.pointer);
+  startPuzzleDrag(slot);
+  event.preventDefault();
+}
+
+function onPuzzlePointerMove(event) {
+  if (!VS.puzzle.mouseDrag) return;
+  const point = puzzlePointFromEvent(event);
+  VS.puzzle.pointer = { x: point.x, y: point.y, pinching: true };
+  VS.puzzle.hoverSlot = getPuzzleSlotFromPoint(point.x, point.y);
+  updatePuzzleCursor(VS.puzzle.pointer);
+  updatePuzzleDragTile(VS.puzzle.pointer);
+  renderPuzzleBoard();
+}
+
+function onPuzzlePointerUp(event) {
+  if (!VS.puzzle.mouseDrag) return;
+  const point = puzzlePointFromEvent(event);
+  const slot = getPuzzleSlotFromPoint(point.x, point.y);
+  VS.puzzle.mouseDrag = false;
+  VS.puzzle.pinching = false;
+  endPuzzleDrag(slot);
+  VS.puzzle.pointer = { x: point.x, y: point.y, pinching: false };
+  updatePuzzleCursor(VS.puzzle.pointer);
+  updatePuzzleDragTile(null);
+}
+
+function initPuzzleUi() {
+  if (VS.puzzleResetEl) VS.puzzleResetEl.addEventListener('click', () => resetPuzzle());
+  if (VS.puzzleRestartEl) VS.puzzleRestartEl.addEventListener('click', () => resetPuzzle());
+  if (VS.puzzleCaptureEl) VS.puzzleCaptureEl.addEventListener('click', onPuzzleCaptureClick);
+  if (VS.puzzleBoardEl) VS.puzzleBoardEl.addEventListener('pointerdown', onPuzzlePointerDown);
+  window.addEventListener('pointermove', onPuzzlePointerMove);
+  window.addEventListener('pointerup', onPuzzlePointerUp);
+  window.addEventListener('pointercancel', onPuzzlePointerUp);
+  window.addEventListener('resize', () => {
+    syncPuzzleLayout();
+    renderPuzzleBoard();
+    updatePuzzleHud();
+  });
+
+  resetPuzzle();
+}
+
+initPuzzleUi();
+
 /* ── Gesture Classification ── */
 function classifyGesture(landmarks) {
   /* Landmark indices:
@@ -1355,6 +2202,7 @@ function onResults(results) {
 
   const handCount = results.multiHandLandmarks ? results.multiHandLandmarks.length : 0;
   VS.handCountEl.textContent = handCount + ' HAND' + (handCount !== 1 ? 'S' : '');
+  updatePuzzleFromHand(handCount ? results.multiHandLandmarks[0] : null);
 
   if (!VS.armed) {
     updateCard(null, null, 0, 0);
@@ -1457,6 +2305,8 @@ function toggleArmed() {
     updateCard(null, null, 0, 0);
     if (typeof showToast === 'function') showToast('Vision Shield Disarmed', 'info');
   }
+
+  updatePuzzleHud();
 }
 
 /* ── Initialize MediaPipe ── */
