@@ -2302,17 +2302,21 @@ a, button { cursor: inherit; }
   ];
 
   const STUDIO_DUAL_SEQUENCE = [
-    { key: 'ribbon', hudLabel: 'RIBBON', duration: 1600 },
-    { key: 'frames', hudLabel: 'FRAMES', duration: 1680 },
-    { key: 'torus', hudLabel: 'TORUS', duration: 1600 },
-    { key: 'hud', hudLabel: 'MESH', duration: 1480 },
-    { key: 'prism', hudLabel: 'PRISM', duration: 1680 }
+    { key: 'ribbon', hudLabel: 'RIBBON', duration: 1540 },
+    { key: 'torus', hudLabel: 'TORUS', duration: 1500 },
+    { key: 'scan', hudLabel: 'SCAN', duration: 1360 },
+    { key: 'hud', hudLabel: 'MESH', duration: 1380 },
+    { key: 'prism', hudLabel: 'PRISM', duration: 1560 },
+    { key: 'kaleido', hudLabel: 'KALEIDO', duration: 1540 },
+    { key: 'wire', hudLabel: 'WIRE', duration: 1500 }
   ];
 
   const STUDIO_SOLO_SEQUENCE = [
-    { key: 'prism', hudLabel: 'PRISM', duration: 1760 },
-    { key: 'torus', hudLabel: 'TORUS', duration: 1680 },
-    { key: 'hud', hudLabel: 'MESH', duration: 1520 }
+    { key: 'torus', hudLabel: 'TORUS', duration: 1600 },
+    { key: 'scan', hudLabel: 'SCAN', duration: 1360 },
+    { key: 'prism', hudLabel: 'PRISM', duration: 1640 },
+    { key: 'kaleido', hudLabel: 'KALEIDO', duration: 1500 },
+    { key: 'wire', hudLabel: 'WIRE', duration: 1480 }
   ];
 
   const PRISM_VERTS = [
@@ -2721,6 +2725,191 @@ a, button { cursor: inherit; }
     ctx.restore();
   }
 
+  function drawStudioScanBar(primaryHand, leftHand, rightHand, now) {
+    const anchorA = leftHand ? getHandCenter(leftHand) : getHandCenter(primaryHand);
+    const anchorB = rightHand
+      ? getHandCenter(rightHand)
+      : {
+          x: anchorA.x + getPalmSpan(primaryHand) * 2.1,
+          y: anchorA.y - getPalmSpan(primaryHand) * 0.24
+        };
+    const midX = (anchorA.x + anchorB.x) * 0.5;
+    const midY = (anchorA.y + anchorB.y) * 0.5;
+    const angle = Math.atan2(anchorB.y - anchorA.y, anchorB.x - anchorA.x);
+    const width = Math.max(160, dist(anchorA, anchorB) * 0.96);
+    const pulse = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(now * 0.008));
+
+    ctx.save();
+    ctx.translate(midX, midY);
+    ctx.rotate(angle);
+    ctx.globalCompositeOperation = 'screen';
+
+    ctx.strokeStyle = `rgba(255,255,255,${0.9 * pulse})`;
+    ctx.shadowColor = 'rgba(255,255,255,0.9)';
+    ctx.shadowBlur = 12;
+    ctx.lineWidth = 2.6;
+    ctx.beginPath();
+    ctx.moveTo(-width * 0.5, 0);
+    ctx.lineTo(width * 0.5, 0);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(140,255,190,0.32)';
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(-width * 0.1, 0);
+    ctx.lineTo(width * 0.12, 0);
+    ctx.stroke();
+
+    const ticks = 8;
+    for (let i = 0; i < ticks; i++) {
+      const t = i / (ticks - 1);
+      const x = lerpValue(-width * 0.44, width * 0.44, t);
+      const len = i % 2 === 0 ? 8 : 5;
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, -len);
+      ctx.lineTo(x, len);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    drawStudioHudPanels(primaryHand, rightHand || leftHand || null, now);
+  }
+
+  function drawStudioKaleidoPrism(primaryHand, leftHand, rightHand, now) {
+    const dualHands = Boolean(leftHand && rightHand);
+    const anchor = dualHands
+      ? {
+          x: (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5,
+          y: (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5
+        }
+      : getHandCenter(primaryHand);
+    const palmSpan = Math.max(54, getPalmSpan(primaryHand));
+    const size = palmSpan * (dualHands ? 1.42 : 1.26);
+    const angle = now * 0.00072;
+    const points = [
+      { x: 0, y: -size * 0.82 },
+      { x: size * 0.82, y: 0 },
+      { x: 0, y: size * 0.82 },
+      { x: -size * 0.82, y: 0 }
+    ];
+
+    ctx.save();
+    ctx.translate(anchor.x, anchor.y - palmSpan * 0.36);
+    ctx.rotate(angle);
+    ctx.globalCompositeOperation = 'screen';
+
+    const grad = ctx.createLinearGradient(-size, -size, size, size);
+    grad.addColorStop(0, 'rgba(255,70,120,0.92)');
+    grad.addColorStop(0.22, 'rgba(255,170,70,0.92)');
+    grad.addColorStop(0.48, 'rgba(255,235,120,0.9)');
+    grad.addColorStop(0.68, 'rgba(90,245,255,0.88)');
+    grad.addColorStop(1, 'rgba(140,90,255,0.92)');
+    ctx.fillStyle = grad;
+    ctx.shadowColor = 'rgba(255,255,255,0.4)';
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    points.slice(1).forEach(pt => ctx.lineTo(pt.x, pt.y));
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 0;
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    ctx.lineTo(points[2].x, points[2].y);
+    ctx.moveTo(points[1].x, points[1].y);
+    ctx.lineTo(points[3].x, points[3].y);
+    ctx.stroke();
+
+    const offset = 4.2;
+    ctx.strokeStyle = 'rgba(255,60,120,0.36)';
+    ctx.strokeRect(-size * 0.28 - offset, -size * 0.28, size * 0.56, size * 0.56);
+    ctx.strokeStyle = 'rgba(80,180,255,0.36)';
+    ctx.strokeRect(-size * 0.28 + offset, -size * 0.28, size * 0.56, size * 0.56);
+
+    ctx.restore();
+  }
+
+  function drawStudioWireCrystal(primaryHand, leftHand, rightHand, now) {
+    const dualHands = Boolean(leftHand && rightHand);
+    const anchor = dualHands
+      ? {
+          x: (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5,
+          y: (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5
+        }
+      : getHandCenter(primaryHand);
+    const palmSpan = Math.max(52, getPalmSpan(primaryHand));
+    const radius = palmSpan * (dualHands ? 1.18 : 1.02);
+    const rotA = now * 0.0012;
+    const rotB = -now * 0.00095;
+    const top = { x: anchor.x, y: anchor.y - radius * 0.94 };
+    const bottom = { x: anchor.x, y: anchor.y + radius * 0.94 };
+    const ring = Array.from({ length: 4 }, (_, i) => {
+      const angle = rotA + (Math.PI * 2 * i) / 4;
+      return {
+        x: anchor.x + Math.cos(angle) * radius,
+        y: anchor.y + Math.sin(angle) * radius * 0.46
+      };
+    });
+    const inner = Array.from({ length: 4 }, (_, i) => {
+      const angle = rotB + (Math.PI * 2 * i) / 4 + Math.PI / 4;
+      return {
+        x: anchor.x + Math.cos(angle) * radius * 0.52,
+        y: anchor.y + Math.sin(angle) * radius * 0.28
+      };
+    });
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    ctx.strokeStyle = 'rgba(255,255,255,0.62)';
+    ctx.shadowColor = 'rgba(255,255,255,0.8)';
+    ctx.shadowBlur = 8;
+    ctx.lineWidth = 1.25;
+    for (let i = 0; i < ring.length; i++) {
+      const a = ring[i];
+      const b = ring[(i + 1) % ring.length];
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(top.x, top.y);
+      ctx.lineTo(a.x, a.y);
+      ctx.lineTo(bottom.x, bottom.y);
+      ctx.stroke();
+    }
+    for (let i = 0; i < inner.length; i++) {
+      const a = inner[i];
+      const b = inner[(i + 1) % inner.length];
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(ring[i].x, ring[i].y);
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255,255,255,0.96)';
+    [top, bottom, ...ring, ...inner].forEach(pt => {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
   function drawStudioScene(primaryHand, leftHand, rightHand, now) {
     if (!primaryHand) return;
     const handsCount = currentHands ? currentHands.length : 0;
@@ -2741,6 +2930,8 @@ a, button { cursor: inherit; }
     if (effect.key === 'ribbon' && dualHands) {
       drawStudioRibbonDistortion(leftHand, rightHand, now);
       drawStudioHudPanels(leftHand, rightHand, now);
+    } else if (effect.key === 'scan') {
+      drawStudioScanBar(primaryHand, leftHand, rightHand, now);
     } else if (effect.key === 'frames' && dualHands) {
       drawStudioRecursiveFrames(leftHand, rightHand, now);
     } else if (effect.key === 'torus') {
@@ -2760,6 +2951,10 @@ a, button { cursor: inherit; }
         ctx.strokeRect(cx - 32, cy - 18, 64, 36);
         ctx.restore();
       }
+    } else if (effect.key === 'kaleido') {
+      drawStudioKaleidoPrism(primaryHand, leftHand, rightHand, now);
+    } else if (effect.key === 'wire') {
+      drawStudioWireCrystal(primaryHand, leftHand, rightHand, now);
     } else {
       const cx = dualHands ? (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5 : anchor.x;
       const cy = dualHands
