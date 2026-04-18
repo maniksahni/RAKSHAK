@@ -855,107 +855,24 @@ a, button { cursor: inherit; }
   animation: xvInsBlink 1.4s ease infinite;
 }
 
-.xv-wrap[data-mode="aura"] .xv-brand-hud,
-.xv-wrap[data-mode="aura"] .xv-left-panel,
 .xv-wrap[data-mode="aura"] .xv-right-panel,
-.xv-wrap[data-mode="aura"] .xv-bottom-rail,
-.xv-wrap[data-mode="aura"] .xv-status,
-.xv-wrap[data-mode="aura"] .xv-frame-counter,
-.xv-wrap[data-mode="aura"] .xv-orb,
-.xv-wrap[data-mode="aura"] .xv-scan-sweep,
-.xv-wrap[data-mode="aura"] .xv-center-reticle {
+.xv-wrap[data-mode="aura"] .xv-bottom-rail {
   opacity: 0;
   pointer-events: none;
 }
 
-.xv-wrap[data-mode="aura"] .xv-grid-overlay {
-  opacity: 0.04;
-  background-size: 92px 92px;
+.xv-wrap[data-mode="aura"] .xv-left-panel {
+  background: linear-gradient(180deg, rgba(6, 8, 18, 0.88), rgba(6, 8, 18, 0.14));
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
-.xv-wrap[data-mode="aura"] .xv-instructions {
-  top: 20px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-transform: none;
-  font-family: 'Courier New', monospace;
-}
-
-.xv-wrap[data-mode="aura"] .xv-ins-dot {
-  display: none;
+.xv-wrap[data-mode="aura"] .xv-status {
+  letter-spacing: 4px;
 }
 
 .xv-wrap[data-mode="aura"] .xv-controls {
-  background: rgba(10, 10, 14, 0.42);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
-}
-
-.xv-wrap[data-mode="aura"] .xv-back-btn,
-.xv-wrap[data-mode="aura"] .xv-fps {
-  background: rgba(10, 10, 14, 0.3);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: none;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-/* ── STUDIO MODE ── cinematic minimal: hide all HUD chrome so the
-   webcam + skeleton + floating crystal are the only things on screen
-   (matches the TouchDesigner reference video 1:1) */
-.xv-wrap[data-mode="studio"] .xv-brand-hud,
-.xv-wrap[data-mode="studio"] .xv-left-panel,
-.xv-wrap[data-mode="studio"] .xv-right-panel,
-.xv-wrap[data-mode="studio"] .xv-bottom-rail,
-.xv-wrap[data-mode="studio"] .xv-status,
-.xv-wrap[data-mode="studio"] .xv-frame-counter,
-.xv-wrap[data-mode="studio"] .xv-orb,
-.xv-wrap[data-mode="studio"] .xv-scan-sweep,
-.xv-wrap[data-mode="studio"] .xv-center-reticle,
-.xv-wrap[data-mode="studio"] .xv-vignette {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.xv-wrap[data-mode="studio"] .xv-grid-overlay {
-  opacity: 0;
-}
-
-.xv-wrap[data-mode="studio"] .xv-instructions {
-  top: 20px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-family: 'Courier New', monospace;
-}
-
-.xv-wrap[data-mode="studio"] .xv-ins-dot {
-  display: none;
-}
-
-.xv-wrap[data-mode="studio"] .xv-controls {
-  background: rgba(10, 10, 14, 0.42);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
-}
-
-.xv-wrap[data-mode="studio"] .xv-back-btn,
-.xv-wrap[data-mode="studio"] .xv-fps {
-  background: rgba(10, 10, 14, 0.3);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: none;
-  color: rgba(255, 255, 255, 0.5);
+  background: rgba(5, 8, 18, 0.72);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .xv-wrap[data-mode="xray"]::before,
@@ -1357,7 +1274,6 @@ a, button { cursor: inherit; }
     <div class="xv-ctrl-group" title="Render mode">
       <button class="xv-ctrl-btn active" data-vision-mode="aura"><span>AURA</span></button>
       <button class="xv-ctrl-btn" data-vision-mode="xray"><span>XRAY</span></button>
-      <button class="xv-ctrl-btn" data-vision-mode="studio"><span>STUDIO</span></button>
     </div>
 
     <!-- Theme toggle group -->
@@ -1712,13 +1628,8 @@ a, button { cursor: inherit; }
     return renderMode === 'aura';
   }
 
-  function isStudioMode() {
-    return renderMode === 'studio';
-  }
-
   function applyModeUI() {
     const auraMode = isAuraMode();
-    const studioMode = isStudioMode();
     wrapEl.dataset.mode = renderMode;
     document.querySelectorAll('.xv-ctrl-btn[data-vision-mode]').forEach(btn =>
       btn.classList.toggle('active', btn.dataset.visionMode === renderMode)
@@ -1726,29 +1637,23 @@ a, button { cursor: inherit; }
     if (densityGroupEl) densityGroupEl.hidden = true;
     if (instructionsTextEl) {
       instructionsTextEl.textContent = auraMode
-        ? 'making aura'
-        : (studioMode
-            ? 'Show hand · crystal follows the palm (reference preset)'
-            : 'Show both hands · hold the frame to cycle effects');
+        ? 'Show one hand · rotate wrist through the field'
+        : 'Show both hands · hold the frame to cycle effects';
     }
     if (allowBtn) {
       allowBtn.innerHTML = auraMode
         ? '<i class="bi bi-stars me-2"></i>Initiate Aura Link'
-        : (studioMode
-            ? '<i class="bi bi-gem me-2"></i>Initiate Studio Link'
-            : '<i class="bi bi-bounding-box-circles me-2"></i>Initiate X-Ray Link');
+        : '<i class="bi bi-bounding-box-circles me-2"></i>Initiate X-Ray Link';
     }
     if (loaderSub && !hasStarted) {
       loaderSub.textContent = auraMode
         ? 'Hands · Aura Vector Field'
-        : (studioMode
-            ? 'Hands · Studio Crystal'
-            : 'Dual Hands · Reactive Filters');
+        : 'Dual Hands · Reactive Filters';
     }
   }
 
   async function setRenderMode(mode, { restart = true } = {}) {
-    if (!['aura', 'xray', 'studio'].includes(mode)) return;
+    if (!['aura', 'xray'].includes(mode)) return;
     const changed = renderMode !== mode;
     renderMode = mode;
     writeStored(STORAGE_KEYS.mode, mode);
@@ -1759,9 +1664,7 @@ a, button { cursor: inherit; }
       loaderEl.style.display = '';
       loaderSub.textContent = isAuraMode()
         ? 'Switching to hand aura engine…'
-        : (isStudioMode()
-            ? 'Switching to studio crystal engine…'
-            : 'Switching to dual-hand viewport engine…');
+        : 'Switching to dual-hand viewport engine…';
       // Reset perf tier so a sluggish prior session doesn't throttle the new one
       perfTier = 'medium';
       fpsFrameCount = 0;
@@ -1774,72 +1677,55 @@ a, button { cursor: inherit; }
   function updateTelemetry(now = performance.now()) {
     const hands = currentHands ? currentHands.length : 0;
     const auraMode = isAuraMode();
-    const studioMode = isStudioMode();
     const trackedHands = auraMode ? Math.min(hands, 1) : hands;
     const portalPct = Math.round(portalAlpha * 100);
     const holdRemaining = portalHoldStartedAt
       ? Math.max(0, Math.ceil((SOS_HOLD_MS - (now - portalHoldStartedAt)) / 1000))
       : SOS_HOLD_MS / 1000;
     const energyPct = Math.min(100, Math.round(28 + portalPct * 0.72));
-    const modeText = studioMode
-      ? (hands >= 1
-          ? 'STUDIO LIVE'
+    const modeText = auraMode
+      ? (isActive
+          ? 'AURA LIVE'
           : videoReady()
-            ? 'STUDIO READY'
+            ? 'AURA READY'
             : hasStarted
-              ? 'STUDIO BOOT'
-              : 'STUDIO STANDBY')
-      : (auraMode
-          ? (isActive
-              ? 'AURA LIVE'
-              : videoReady()
-                ? 'AURA READY'
-                : hasStarted
-                  ? 'AURA BOOT'
-                  : 'AURA STANDBY')
-          : (isActive
-              ? `XRAY ${currentXrayEffectLabel}`
-              : videoReady()
-                ? 'XRAY READY'
-                : hasStarted
-                  ? 'XRAY BOOT'
-                  : 'XRAY STANDBY'));
-    const readinessText = studioMode
-      ? (hands >= 1 ? 'TRACKED' : (videoReady() ? 'READY' : 'SAFE'))
-      : (auraMode
-          ? (isActive ? 'TRACKED' : (videoReady() ? 'READY' : 'SAFE'))
-          : (isActive
-              ? 'LOCKED'
-              : hands >= 2
-                ? 'TRACKING'
-                : 'SEARCH'));
+              ? 'AURA BOOT'
+              : 'AURA STANDBY')
+      : (isActive
+          ? `XRAY ${currentXrayEffectLabel}`
+          : videoReady()
+            ? 'XRAY READY'
+            : hasStarted
+              ? 'XRAY BOOT'
+              : 'XRAY STANDBY');
+    const readinessText = auraMode
+      ? (isActive ? 'TRACKED' : (videoReady() ? 'READY' : 'SAFE'))
+      : (isActive
+          ? 'LOCKED'
+          : hands >= 2
+            ? 'TRACKING'
+            : 'SEARCH');
 
     wrapEl.classList.toggle('xv-live', videoReady());
     wrapEl.classList.toggle('xv-portal-open', portalPct > 12);
     wrapEl.classList.toggle('xv-alerting', sosFired);
 
     if (heroStateEl) {
-      heroStateEl.textContent = studioMode
-        ? (hands >= 1
-            ? 'STUDIO CRYSTAL LOCKED'
-            : hasStarted
-              ? 'SHOW ONE HAND TO BEGIN'
-              : 'STUDIO STANDBY')
-        : (auraMode
-            ? (isActive
-                ? 'HAND AURA LOCKED'
-                : trackedHands >= 1
-                  ? 'AURA FIELD ACQUIRED'
-                  : hasStarted
-                    ? 'SHOW ONE HAND TO BEGIN'
-                    : 'AURA FIELD STANDBY')
-            : (isActive
-                ? `${currentXrayEffectLabel} VIEW LOCKED`
-                : hands >= 2
-                  ? 'DUAL HAND FRAME ACQUIRED'
-                  : hasStarted
-                    ? 'SHOW BOTH HANDS TO BEGIN'
-                    : 'XRAY VIEWPORT STANDBY'));
+      heroStateEl.textContent = auraMode
+        ? (isActive
+            ? 'HAND AURA LOCKED'
+            : trackedHands >= 1
+              ? 'AURA FIELD ACQUIRED'
+              : hasStarted
+                ? 'SHOW ONE HAND TO BEGIN'
+                : 'AURA FIELD STANDBY')
+        : (isActive
+            ? `${currentXrayEffectLabel} VIEW LOCKED`
+            : hands >= 2
+              ? 'DUAL HAND FRAME ACQUIRED'
+              : hasStarted
+                ? 'SHOW BOTH HANDS TO BEGIN'
+                : 'XRAY VIEWPORT STANDBY');
     }
     if (statePillEl) {
       statePillEl.textContent = sosFired
@@ -2253,272 +2139,256 @@ a, button { cursor: inherit; }
 
   function drawTouchAura(handLm, side = 'solo', intensity = 0.65, detail = 1) {
     if (!handLm) return;
-    detail = Math.max(0.5, Math.min(1, detail));
+    detail = Math.max(0.48, Math.min(1, detail));
+    const auraMode = isAuraMode();
 
     const wrist = lmScale(handLm[0]);
     const palmLeft = lmScale(handLm[5]);
     const palmRight = lmScale(handLm[17]);
-    const palmMid = lmScale(handLm[9]);
-    const ringBase = lmScale(handLm[13]);
+    const indexTip = lmScale(handLm[8]);
     const middleTip = lmScale(handLm[12]);
-    const palmCenter = averagePoints([wrist, palmLeft, palmMid, ringBase, palmRight]);
-    const palmAngle = Math.atan2(palmRight.y - palmLeft.y, palmRight.x - palmLeft.x);
-    const sideDir = side === 'right' ? -1 : 1;
-
+    const ringTip = lmScale(handLm[16]);
+    const pinkyTip = lmScale(handLm[20]);
+    const thumbTip = lmScale(handLm[4]);
+    const palmCenter = averagePoints([wrist, palmLeft, lmScale(handLm[9]), lmScale(handLm[13]), palmRight]);
+    const centerPull = auraMode ? 0.14 : 0.24;
     const center = {
-      x: palmCenter.x + (middleTip.x - palmCenter.x) * 0.1,
-      y: palmCenter.y + (middleTip.y - palmCenter.y) * 0.1
+      x: palmCenter.x + (middleTip.x - palmCenter.x) * centerPull,
+      y: palmCenter.y + (middleTip.y - palmCenter.y) * centerPull
     };
-
-    const palmSpan = Math.max(44, getPalmSpan(handLm));
-    const coreRadius = palmSpan * 0.2;
-    const innerRadius = palmSpan * (0.42 + intensity * 0.05);
-    const wheelRadius = palmSpan * (0.84 + intensity * 0.08);
-    const orbitRadius = wheelRadius * 1.16;
-    const petalRadius = wheelRadius * 1.42;
-    const spinA = frame * 0.017 * sideDir + palmAngle * 0.18;
-    const spinB = -frame * 0.010 * sideDir + palmAngle * 0.08;
-    const pulse = 0.5 + 0.5 * Math.sin(frame * 0.07);
-    const segmentColors = ['#fffef3', '#f5efc5', '#93ddff', '#5aa6ff', '#ffe95d', '#ffbd42', '#ff9560'];
-    const digitColors = ['#81ff59', '#a8ff62', '#d8ff75'];
-    const markerAngles = [];
+    const fingertips = [thumbTip, indexTip, middleTip, ringTip, pinkyTip];
+    const palmSpan = Math.max(42, getPalmSpan(handLm));
+    const wheelRadius = palmSpan * (auraMode ? (0.84 + intensity * 0.12) : (1.08 + intensity * 0.22));
+    const orbitRadius = wheelRadius * (auraMode ? (1.48 + intensity * 0.08) : (1.72 + intensity * 0.12));
+    const sideDir = side === 'right' ? -1 : 1;
+    const spinA = frame * 0.018 * sideDir;
+    const spinB = -frame * 0.012 * sideDir;
+    const palette = auraMode
+      /* Vivid TouchDesigner-style rainbow so the aura reads strong on bright webcam frames */
+      ? ['#ffffff', '#22d3ee', '#a3e635', '#facc15', '#f97316', '#f472b6', '#38bdf8']
+      : ['#ffffff', '#fef08a', '#38bdf8', '#60a5fa', '#f59e0b', '#f472b6', '#4ade80'];
+    const digitPalette = auraMode
+      ? ['#a3e635', '#facc15', '#22d3ee', '#f472b6', '#f97316', '#ffffff']
+      : ['#84cc16', '#a3e635', '#d9f99d'];
+    const sectorStart = auraMode
+      ? (side === 'right' ? Math.PI * 0.30 + spinB : Math.PI * 0.76 + spinB)
+      : (side === 'right' ? Math.PI * 0.18 + spinB : Math.PI * 0.82 + spinB);
+    const sectorSweep = auraMode ? Math.PI * 1.06 : Math.PI * 1.26;
+    const nodes = [];
 
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
 
-    const halo = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, petalRadius * 1.15);
-    halo.addColorStop(0, 'rgba(255,255,255,0.08)');
-    halo.addColorStop(0.25, 'rgba(255,204,102,0.08)');
-    halo.addColorStop(0.58, 'rgba(72,160,255,0.05)');
-    halo.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, petalRadius * 1.15, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.save();
-    ctx.translate(center.x, center.y);
-    ctx.rotate(palmAngle * 0.12);
-    ctx.setLineDash([1.5, 5.2]);
-    for (const dir of [-1, 1]) {
-      for (let i = -2; i <= 2; i++) {
-        const offsetY = i * wheelRadius * 0.18;
-        const radiusX = petalRadius * (0.37 + (2 - Math.abs(i)) * 0.025);
-        const radiusY = wheelRadius * (0.17 + (Math.abs(i) % 2) * 0.035);
-        ctx.strokeStyle = `rgba(255,255,255,${0.18 + (2 - Math.abs(i)) * 0.05})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.ellipse(
-          dir * wheelRadius * (0.98 + Math.abs(i) * 0.03),
-          offsetY,
-          radiusX,
-          radiusY,
-          spinB * 0.08 + dir * 0.24,
-          0,
-          Math.PI * 2
-        );
-        ctx.stroke();
-      }
-    }
-    ctx.restore();
-
-    ctx.save();
-    ctx.setLineDash([1.5, 6]);
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, orbitRadius * 0.96, spinB, spinB + Math.PI * 1.95);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.restore();
-
-    const spokeCount = Math.max(24, Math.round(38 * detail));
-    for (let i = 0; i < spokeCount; i++) {
-      const angle = spinA + (Math.PI * 2 * i) / spokeCount;
-      const inner = coreRadius * 0.95;
-      const outer = wheelRadius * (0.5 + 0.18 * Math.sin(frame * 0.05 + i * 0.58) + (i % 5) * 0.015);
-      ctx.strokeStyle = `rgba(255,255,255,${i % 4 === 0 ? 0.28 : 0.15})`;
-      ctx.lineWidth = i % 6 === 0 ? 1.35 : 0.8;
-      ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
-      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
-      ctx.stroke();
-    }
-
-    const segmentCount = Math.max(26, Math.round(42 * detail));
-    for (let i = 0; i < segmentCount; i++) {
-      const angle = spinA * 0.92 + (Math.PI * 2 * i) / segmentCount;
-      const inner = innerRadius * (0.62 + (i % 3) * 0.045);
-      let outer = wheelRadius * (0.72 + 0.06 * Math.sin(frame * 0.06 + i * 0.72));
-      let color = 'rgba(255,255,255,0.26)';
-      let lineWidth = 1.5;
-
-      if (i % 11 === 0) {
-        color = segmentColors[4];
-        outer = wheelRadius * 0.93;
-        lineWidth = 5.4;
-      } else if (i % 9 === 4) {
-        color = segmentColors[2];
-        outer = wheelRadius * 0.88;
-        lineWidth = 4.6;
-      } else if (i % 7 === 2) {
-        color = segmentColors[0];
-        outer = wheelRadius * 0.82;
-        lineWidth = 3.8;
-      } else if (i % 8 === 5) {
-        color = segmentColors[5];
-        outer = wheelRadius * 0.79;
-        lineWidth = 3.2;
-      }
-
-      ctx.strokeStyle = color;
-      ctx.shadowBlur = lineWidth >= 3 ? 12 : 0;
-      ctx.shadowColor = color;
-      ctx.lineWidth = lineWidth;
-      ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
-      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
-      ctx.stroke();
-    }
-    ctx.shadowBlur = 0;
-
-    const ringSegmentCount = Math.max(14, Math.round(20 * detail));
-    for (let i = 0; i < ringSegmentCount; i++) {
-      const a0 = spinB + (Math.PI * 2 * i) / ringSegmentCount;
-      const a1 = a0 + Math.PI / 14;
-      ctx.strokeStyle = i % 5 === 0
-        ? segmentColors[3]
-        : (i % 3 === 0 ? segmentColors[4] : 'rgba(255,255,255,0.28)');
-      ctx.lineWidth = i % 5 === 0 ? 4 : 2.2;
-      ctx.beginPath();
-      ctx.arc(center.x, center.y, innerRadius * (0.92 + (i % 2) * 0.06), a0, a1);
-      ctx.stroke();
-    }
-
-    const orbitNodeCount = Math.max(8, Math.round(11 * detail));
-    for (let i = 0; i < orbitNodeCount; i++) {
-      const angle = spinA * 0.48 - Math.PI * 0.88 + (Math.PI * 1.8 * i) / Math.max(1, orbitNodeCount - 1);
-      const radius = orbitRadius * (1 + (i % 2) * 0.06);
-      const nx = center.x + Math.cos(angle) * radius;
-      const ny = center.y + Math.sin(angle) * radius;
-      markerAngles.push(angle);
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * wheelRadius * 0.94, center.y + Math.sin(angle) * wheelRadius * 0.94);
-      ctx.lineTo(nx, ny);
-      ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-      ctx.beginPath();
-      ctx.arc(nx, ny, i % 3 === 0 ? 5.7 : 4.6, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = i % 4 === 0 ? segmentColors[4] : '#ffffff';
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = ctx.fillStyle;
-      ctx.beginPath();
-      ctx.arc(nx, ny, i % 4 === 0 ? 1.9 : 1.45, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    const stalkCount = 5;
-    for (let i = 0; i < stalkCount; i++) {
-      const angle = -Math.PI * 0.62 + i * 0.22 + spinB * 0.1;
-      const sx = center.x + Math.cos(angle) * orbitRadius * 0.92;
-      const sy = center.y + Math.sin(angle) * orbitRadius * 0.92;
-      const ex = center.x + Math.cos(angle) * petalRadius * (1.02 + (i % 2) * 0.04);
-      const ey = center.y + Math.sin(angle) * petalRadius * (1.08 + (i % 2) * 0.05);
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.26)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(ex, ey);
-      ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-      ctx.beginPath();
-      ctx.arc(ex, ey, 5.5, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = i % 2 === 0 ? segmentColors[4] : '#ffffff';
-      ctx.beginPath();
-      ctx.arc(ex, ey, 1.7, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    const digits = ['3', '4', '5', '7', '7', '9', '9', '6', '8', '0', '1', '2'];
-    ctx.font = `bold ${detail < 0.72 ? 10 : 12}px Courier New`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    const outerDigitCount = Math.max(16, Math.round(28 * detail));
-    for (let i = 0; i < outerDigitCount; i++) {
-      const t = i / Math.max(1, outerDigitCount - 1);
-      const angle = spinA * 0.42 - Math.PI * 0.9 + t * Math.PI * 1.82;
-      const radius = orbitRadius * (0.86 + 0.12 * Math.sin(frame * 0.04 + i * 0.65));
-      ctx.fillStyle = digitColors[i % digitColors.length];
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = ctx.fillStyle;
-      ctx.fillText(
-        digits[(i + Math.floor(frame * 0.03)) % digits.length],
-        center.x + Math.cos(angle) * radius,
-        center.y + Math.sin(angle) * radius
-      );
-    }
-
-    const innerDigitCount = Math.max(10, Math.round(18 * detail));
-    for (let i = 0; i < innerDigitCount; i++) {
-      const t = i / Math.max(1, innerDigitCount - 1);
-      const angle = spinB * 0.55 + Math.PI * 0.42 + t * Math.PI * 0.84;
-      const radius = wheelRadius * (1.02 + 0.05 * Math.sin(frame * 0.06 + i));
-      ctx.fillStyle = digitColors[(i + 1) % digitColors.length];
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = ctx.fillStyle;
-      ctx.fillText(
-        digits[(i + 4 + Math.floor(frame * 0.02)) % digits.length],
-        center.x + Math.cos(angle) * radius,
-        center.y + Math.sin(angle) * radius
-      );
-    }
-    ctx.shadowBlur = 0;
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < markerAngles.length; i++) {
-      const a = markerAngles[i];
-      const b = markerAngles[(i + 2) % markerAngles.length];
-      if (i % 2 === 0) {
-        ctx.beginPath();
-        ctx.moveTo(center.x + Math.cos(a) * orbitRadius, center.y + Math.sin(a) * orbitRadius);
-        ctx.lineTo(center.x + Math.cos(b) * orbitRadius, center.y + Math.sin(b) * orbitRadius);
-        ctx.stroke();
-      }
-    }
-
-    const coreGlow = ctx.createRadialGradient(center.x, center.y, coreRadius * 0.08, center.x, center.y, innerRadius * 0.9);
-    coreGlow.addColorStop(0, 'rgba(255,255,255,0.95)');
-    coreGlow.addColorStop(0.18, 'rgba(255,204,122,0.92)');
-    coreGlow.addColorStop(0.46, 'rgba(255,110,80,0.35)');
+    const coreGlow = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, orbitRadius * 0.95);
+    coreGlow.addColorStop(0, auraMode ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.18)');
+    coreGlow.addColorStop(0.28, `${theme.rippleColor((auraMode ? 0.10 : 0.18) + intensity * 0.08)}`);
     coreGlow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = coreGlow;
     ctx.beginPath();
-    ctx.arc(center.x, center.y, innerRadius * 0.9, 0, Math.PI * 2);
+    ctx.arc(center.x, center.y, orbitRadius * 0.95, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#fff9ef';
+    ctx.strokeStyle = `rgba(255,255,255,${0.22 + intensity * 0.14})`;
+    ctx.lineWidth = 1.1;
     ctx.beginPath();
-    ctx.arc(center.x, center.y, coreRadius * (0.64 + pulse * 0.14), 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, coreRadius * 1.28, 0, Math.PI * 2);
+    ctx.arc(center.x, center.y, wheelRadius * 0.88, spinA, spinA + Math.PI * 1.92);
     ctx.stroke();
+
+    ctx.setLineDash([2, 7]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, orbitRadius * 0.74, spinB, spinB + Math.PI * 1.82);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const spokeCount = Math.max(auraMode ? 12 : 16, Math.round((auraMode ? 26 : 34) * detail));
+    for (let i = 0; i < spokeCount; i++) {
+      const angle = spinA + (Math.PI * 2 * i) / spokeCount;
+      const inner = wheelRadius * 0.12;
+      const outer = wheelRadius * (0.72 + 0.14 * Math.sin(frame * 0.05 + i * 0.62));
+      const alpha = 0.16 + (i % 5 === 0 ? 0.12 : 0.04);
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      ctx.lineWidth = i % 6 === 0 ? 1.6 : 0.9;
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
+      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
+      ctx.stroke();
+    }
+
+    const barCount = Math.max(auraMode ? 8 : 9, Math.round((auraMode ? 14 : 18) * detail));
+    for (let i = 0; i < barCount; i++) {
+      const angle = sectorStart + (sectorSweep * i) / (barCount - 1);
+      const inner = wheelRadius * (0.24 + (i % 3) * 0.025);
+      const outer = wheelRadius * (0.66 + 0.18 * Math.sin(frame * 0.06 + i * 0.7) + (i % 4) * 0.015);
+      const col = palette[i % palette.length];
+      ctx.strokeStyle = col;
+      ctx.lineWidth = i % 5 === 0 ? 7 : (i % 2 === 0 ? 5 : 3.2);
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = col;
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
+      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
+      ctx.stroke();
+    }
+
+    ctx.shadowBlur = 0;
+    const innerBandCount = Math.max(6, Math.round((auraMode ? 10 : 12) * detail));
+    for (let i = 0; i < innerBandCount; i++) {
+      const a0 = spinB + (Math.PI * 2 * i) / innerBandCount;
+      const a1 = a0 + Math.PI / 10;
+      ctx.strokeStyle = palette[(i + 2) % palette.length];
+      ctx.lineWidth = i % 3 === 0 ? 5 : 3;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, wheelRadius * (0.24 + (i % 2) * 0.03), a0, a1);
+      ctx.stroke();
+    }
+
+    const orbitCount = Math.max(auraMode ? 6 : 7, Math.round((auraMode ? 10 : 13) * detail));
+    for (let i = 0; i < orbitCount; i++) {
+      const angle = spinA * 0.8 + (Math.PI * 2 * i) / orbitCount;
+      const orbit = orbitRadius * (0.82 + 0.14 * Math.sin(frame * 0.04 + i * 0.9));
+      const ox = center.x + Math.cos(angle) * orbit;
+      const oy = center.y + Math.sin(angle) * orbit;
+      nodes.push({ x: ox, y: oy, angle });
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * wheelRadius * 0.92, center.y + Math.sin(angle) * wheelRadius * 0.92);
+      ctx.lineTo(ox, oy);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.62)';
+      ctx.beginPath();
+      ctx.arc(ox, oy, 5.8 + (i % 3 === 0 ? 1.8 : 0), 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = i % 4 === 0 ? palette[(i + 1) % palette.length] : '#ffffff';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.beginPath();
+      ctx.arc(ox, oy, i % 4 === 0 ? 2.4 : 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.shadowBlur = 0;
+    ctx.setLineDash([2, 5]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      const b = nodes[(i + 3) % nodes.length];
+      if ((i + sideDir + frame) % 2 === 0) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+    ctx.setLineDash([]);
+
+    ctx.font = `bold ${detail < 0.7 ? 9 : 11}px Courier New`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const digits = ['4', '5', '5', '5', '6', '6', '6', '7', '7', '9', '9', '3']
+      .slice(0, Math.max(6, Math.round(12 * detail)));
+    digits.forEach((digit, i) => {
+      const angle = sectorStart - Math.PI * 0.18 + (Math.PI * 1.42 * i) / (digits.length - 1);
+      const ring = orbitRadius * (0.9 + 0.05 * Math.sin(frame * 0.04 + i));
+      ctx.fillStyle = digitPalette[i % digitPalette.length];
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.fillText(digit, center.x + Math.cos(angle) * ring, center.y + Math.sin(angle) * ring);
+    });
+
+    /* Aura mode only: extra scattered digit stream that sweeps outward (matches reference) */
+    if (auraMode) {
+      const scatterCount = Math.max(14, Math.round(32 * detail));
+      const streamDigits = ['9', '5', '6', '7', '8', '3', '0', '1', '2', '4'];
+      ctx.font = `bold ${detail < 0.7 ? 10 : 13}px Courier New`;
+      for (let i = 0; i < scatterCount; i++) {
+        const t = i / scatterCount;
+        const swirl = spinA * 1.6 + t * Math.PI * 3.6;
+        const radius = orbitRadius * (1.05 + t * 1.15 + 0.08 * Math.sin(frame * 0.04 + i));
+        const jitter = (Math.sin(frame * 0.05 + i * 1.37) + Math.cos(frame * 0.07 + i * 0.9)) * 6;
+        const digit = streamDigits[(i + frame) % streamDigits.length];
+        const col = digitPalette[i % digitPalette.length];
+        ctx.fillStyle = col;
+        ctx.globalAlpha = 0.55 + 0.35 * Math.sin(frame * 0.06 + i);
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = col;
+        const sx = center.x + Math.cos(swirl) * radius + jitter * sideDir;
+        const sy = center.y + Math.sin(swirl) * radius + jitter * 0.6;
+        ctx.fillText(digit, sx, sy);
+      }
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+    }
+
+    ctx.shadowBlur = 0;
+    for (let i = 0; i < Math.max(1, Math.round(3 * detail)); i++) {
+      const bend = sideDir * (18 + i * 10);
+      const yLift = 12 + i * 16;
+      ctx.strokeStyle = `rgba(255,255,255,${0.18 + i * 0.04})`;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([1, 6]);
+      ctx.beginPath();
+      ctx.moveTo(center.x - bend, center.y + wheelRadius * 0.54 + yLift);
+      ctx.bezierCurveTo(
+        center.x - bend - sideDir * 24, center.y + wheelRadius * 0.72 + yLift,
+        center.x - bend - sideDir * 58, center.y + wheelRadius * 0.46 + yLift,
+        center.x - bend - sideDir * 70, center.y + wheelRadius * 0.88 + yLift
+      );
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    fingertips.forEach((tip, idx) => {
+      const col = palette[(idx + 1) % palette.length];
+      const tether = {
+        x: center.x + (tip.x - center.x) * 0.78,
+        y: center.y + (tip.y - center.y) * 0.78
+      };
+
+      ctx.strokeStyle = `rgba(255,255,255,${0.16 + intensity * 0.08})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(center.x, center.y);
+      ctx.lineTo(tether.x, tether.y);
+      ctx.stroke();
+
+      ctx.fillStyle = col;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = col;
+      ctx.beginPath();
+      ctx.arc(tether.x, tether.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = idx % 2 === 0 ? '#ffffff' : col;
+      ctx.lineWidth = 1.25;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, 7 + idx * 1.2 + Math.sin(frame * 0.08 + idx) * 1.4, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, 6.2 + intensity * 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = palette[4];
+    for (let i = 0; i < Math.max(1, Math.round(3 * detail)); i++) {
+      const angle = spinA + i * ((Math.PI * 2) / 3);
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * 10, center.y + Math.sin(angle) * 10);
+      ctx.lineTo(center.x + Math.cos(angle + 0.28) * 22, center.y + Math.sin(angle + 0.28) * 22);
+      ctx.lineTo(center.x + Math.cos(angle - 0.28) * 22, center.y + Math.sin(angle - 0.28) * 22);
+      ctx.closePath();
+      ctx.globalAlpha = 0.32;
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
 
     ctx.restore();
   }
@@ -2574,8 +2444,8 @@ a, button { cursor: inherit; }
   }
 
   function getInferenceInterval() {
-    if (isAuraMode() || isStudioMode()) {
-      // Hands is light — keep tracking snappy so the crystal/aura glues to the hand
+    if (isAuraMode()) {
+      // Hands is light — keep tracking snappy so the aura glues to the hand
       if (perfTier === 'low') return 60;
       if (perfTier === 'medium') return 42;
       return 32;
@@ -2673,7 +2543,40 @@ a, button { cursor: inherit; }
   }
 
   /* ── HUD nodes bar (bottom of canvas) ── */
-  function drawHudNodes() {}
+  function drawHudNodes() {
+    if (!isAuraMode()) return;
+    const bY = H - 52;
+    const auraMode = isAuraMode();
+    const nodes = [
+      { x: 55, label: 'INPUT' }, { x: 145, label: 'HAND' }, { x: 245, label: 'FIELD' },
+      { x: 345, label: 'ORBIT' }, { x: 445, label: 'GLOW' }, { x: 540, label: 'OUTPUT' },
+    ];
+    ctx.save();
+    nodes.forEach((n, i) => {
+      ctx.fillStyle = 'rgba(0,10,20,0.9)';
+      ctx.strokeStyle = `rgba(0, ${180 + i * 10}, 255, 0.6)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.rect(n.x - 35, bY - 14, 70, 22); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = theme.accent; ctx.font = '10px Courier New'; ctx.textAlign = 'center';
+      ctx.fillText(n.label, n.x, bY + 2);
+
+      if (i > 0) {
+        ctx.strokeStyle = 'rgba(0,180,255,0.4)';
+        ctx.beginPath(); ctx.moveTo(nodes[i - 1].x + 35, bY - 3);
+        ctx.lineTo(n.x - 35, bY - 3); ctx.stroke();
+      }
+      const on = currentHands && currentHands.length >= 1 && i <= Math.floor((frame * 0.12) % 6);
+      if (on) { ctx.fillStyle = `rgba(0,255,255,0.2)`; ctx.fillRect(n.x - 35, bY - 14, 70, 22); }
+    });
+
+    if (currentHands && currentHands.length >= 1) {
+      ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
+      ctx.fillText('AURA.FIELD // MEDIAPIPE_HANDS', W - 20, H - 35);
+      ctx.fillText(`LOCK: 1/1 // FLOW: ${Math.round(portalAlpha * 100)}%`, W - 20, H - 20);
+    }
+    ctx.restore();
+  }
 
   function drawAuraBackdrop() {
     const rect = getVideoDisplayRect();
@@ -2690,305 +2593,18 @@ a, button { cursor: inherit; }
     haze.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = haze;
     ctx.fillRect(0, 0, W, H);
-  }
 
-  /* ══════════════════════════════════════════════════════════════════
-     MEDIAPIPE-CLASSIC HAND SKELETON
-     (matches TouchDesigner / MediaPipe reference: bright green lines,
-      red landmark dots — this is THE signature vision-shield look)
-     ══════════════════════════════════════════════════════════════════ */
-  const HAND_CONNECTIONS = [
-    [0,1],[1,2],[2,3],[3,4],           // thumb
-    [0,5],[5,6],[6,7],[7,8],           // index
-    [5,9],[9,10],[10,11],[11,12],      // middle
-    [9,13],[13,14],[14,15],[15,16],    // ring
-    [13,17],[17,18],[18,19],[19,20],   // pinky
-    [0,17]                             // wrist → pinky base
-  ];
-
-  const SKELETON_LINE_COLOR = '#00ff41';   // neon MediaPipe green
-  const SKELETON_DOT_COLOR  = '#ff2a2a';   // MediaPipe red
-
-  function drawHandSkeleton(handLm, opts = {}) {
-    if (!handLm || handLm.length < 21) return;
-    const {
-      lineWidth = 3.2,
-      dotRadius = 5.5,
-      glow = 12,
-      lineColor = SKELETON_LINE_COLOR,
-      dotColor  = SKELETON_DOT_COLOR,
-      drawWristBox = true
-    } = opts;
-
-    const pts = handLm.map(lm => lmScale(lm));
-
-    // Pass 1: soft outer glow on the connection lines (low alpha, wide blur)
     ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
-    ctx.shadowBlur  = glow * 1.8;
-    ctx.lineWidth   = lineWidth + 2.5;
-    ctx.lineCap     = 'round';
-    ctx.globalAlpha = 0.35;
-    for (const [a, b] of HAND_CONNECTIONS) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.shadowBlur = 24;
+    ctx.shadowColor = 'rgba(255,255,255,0.08)';
+    if (ctx.roundRect) {
       ctx.beginPath();
-      ctx.moveTo(pts[a].x, pts[a].y);
-      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 10);
       ctx.stroke();
-    }
-    ctx.restore();
-
-    // Pass 2: solid bright green connection lines
-    ctx.save();
-    ctx.strokeStyle = lineColor;
-    ctx.shadowColor = lineColor;
-    ctx.shadowBlur  = glow * 0.6;
-    ctx.lineWidth   = lineWidth;
-    ctx.lineCap     = 'round';
-    ctx.lineJoin    = 'round';
-    for (const [a, b] of HAND_CONNECTIONS) {
-      ctx.beginPath();
-      ctx.moveTo(pts[a].x, pts[a].y);
-      ctx.lineTo(pts[b].x, pts[b].y);
-      ctx.stroke();
-    }
-    ctx.restore();
-
-    // Pass 3: red filled landmark dots with subtle glow halo
-    ctx.save();
-    for (const p of pts) {
-      // halo
-      ctx.beginPath();
-      ctx.fillStyle   = dotColor;
-      ctx.shadowColor = dotColor;
-      ctx.shadowBlur  = glow * 0.9;
-      ctx.arc(p.x, p.y, dotRadius * 1.45, 0, Math.PI * 2);
-      ctx.globalAlpha = 0.30;
-      ctx.fill();
-      // solid dot
-      ctx.globalAlpha = 1;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, dotRadius, 0, Math.PI * 2);
-      ctx.fill();
-      // bright inner highlight
-      ctx.beginPath();
-      ctx.fillStyle = '#ffffff';
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 0.55;
-      ctx.arc(p.x - dotRadius * 0.25, p.y - dotRadius * 0.25, dotRadius * 0.35, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.restore();
-
-    // Pass 4: optional tiny "node label" square on wrist (like the TD reference screenshot)
-    if (drawWristBox) {
-      const w = pts[0];
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(w.x - 14, w.y + 8, 28, 12);
-      ctx.restore();
-    }
-  }
-
-  /* Orbital crown — two elliptical rings rotating on different axes.
-     Reproduces the halo/crown look from frame 10 of the reference video.
-     Drawn around (cx, cy) with radius ~r, intensity 0..1. */
-  function drawOrbitalCrown(cx, cy, r, intensity, now) {
-    if (intensity <= 0.02) return;
-    const t = now * 0.001;
-    const rings = [
-      { tilt: t * 0.85,            yStretch: 0.32, color: '#ffffff' },
-      { tilt: -t * 1.1 + 1.2,      yStretch: 0.48, color: '#c7f0ff' },
-      { tilt: t * 0.55 + 0.6,      yStretch: 0.22, color: '#9ae8ff' }
-    ];
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-    for (const ring of rings) {
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(ring.tilt);
-      ctx.strokeStyle = ring.color;
-      ctx.shadowColor = ring.color;
-      ctx.shadowBlur  = 22 * intensity;
-      ctx.lineWidth   = 3.4 * intensity;
-      ctx.globalAlpha = 0.75 * intensity;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r, r * ring.yStretch, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      // inner thinner ring
-      ctx.globalAlpha = 0.45 * intensity;
-      ctx.lineWidth   = 1.2 * intensity;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r * 0.82, r * ring.yStretch * 0.82, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    }
-    // central glowing core
-    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.55);
-    core.addColorStop(0,    `rgba(255,255,255,${0.55 * intensity})`);
-    core.addColorStop(0.35, `rgba(180,230,255,${0.25 * intensity})`);
-    core.addColorStop(1,    'rgba(0,0,0,0)');
-    ctx.fillStyle = core;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  /* Thin white connector line between two hand centers (frame 7 / 12 of ref) */
-  function drawPalmConnector(handA, handB) {
-    if (!handA || !handB) return;
-    const a = getHandCenter(handA);
-    const b = getHandCenter(handB);
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-    ctx.shadowColor = 'rgba(255,255,255,0.8)';
-    ctx.shadowBlur  = 8;
-    ctx.lineWidth   = 1.2;
-    ctx.setLineDash([6, 5]);
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.restore();
-  }
-
-  /* ══════════════════════════════════════════════════════════════════
-     STUDIO MODE · rotating 3D prism crystal with chromatic aberration
-     (matches the floating diamond/crystal effect in the reference video)
-     ══════════════════════════════════════════════════════════════════ */
-
-  /* Octahedron: 6 vertices, 12 edges — clean gem silhouette */
-  const PRISM_VERTS = [
-    [ 0,  1,  0],  // 0 top
-    [ 0, -1,  0],  // 1 bottom
-    [ 1,  0,  0],  // 2 right
-    [-1,  0,  0],  // 3 left
-    [ 0,  0,  1],  // 4 front
-    [ 0,  0, -1],  // 5 back
-  ];
-  const PRISM_EDGES = [
-    [0,2],[0,3],[0,4],[0,5],
-    [1,2],[1,3],[1,4],[1,5],
-    [2,4],[4,3],[3,5],[5,2]
-  ];
-  const PRISM_FACES = [
-    [0,2,4],[0,4,3],[0,3,5],[0,5,2],
-    [1,4,2],[1,3,4],[1,5,3],[1,2,5]
-  ];
-
-  function drawPrismCrystal(cx, cy, size, now, intensity = 1) {
-    if (intensity <= 0.02) return;
-    const ax = now * 0.00065;
-    const ay = now * 0.00095;
-    const az = now * 0.00045;
-    const sinX = Math.sin(ax), cosX = Math.cos(ax);
-    const sinY = Math.sin(ay), cosY = Math.cos(ay);
-    const sinZ = Math.sin(az), cosZ = Math.cos(az);
-
-    const project = ([x, y, z]) => {
-      // rotate Y
-      let x1 = x * cosY + z * sinY;
-      let z1 = -x * sinY + z * cosY;
-      // rotate X
-      let y2 = y * cosX - z1 * sinX;
-      let z2 = y * sinX + z1 * cosX;
-      // rotate Z
-      let x3 = x1 * cosZ - y2 * sinZ;
-      let y3 = x1 * sinZ + y2 * cosZ;
-      // perspective
-      const persp = 1 / (1 + z2 * 0.25);
-      return { x: cx + x3 * size * persp, y: cy + y3 * size * persp, z: z2 };
-    };
-
-    const pts = PRISM_VERTS.map(project);
-
-    // Translucent fill faces, back-to-front sorted by avg z
-    const faces = PRISM_FACES.map(f => ({
-      idx: f,
-      z: (pts[f[0]].z + pts[f[1]].z + pts[f[2]].z) / 3
-    })).sort((a, b) => a.z - b.z);
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-
-    // Subtle gradient glow behind the crystal
-    const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 1.9);
-    bg.addColorStop(0,    `rgba(220,240,255,${0.18 * intensity})`);
-    bg.addColorStop(0.45, `rgba(120,180,255,${0.09 * intensity})`);
-    bg.addColorStop(1,    'rgba(0,0,0,0)');
-    ctx.fillStyle = bg;
-    ctx.beginPath();
-    ctx.arc(cx, cy, size * 1.9, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Filled faces (prism-tinted)
-    const faceColors = [
-      'rgba(140, 220, 255,', // cyan
-      'rgba(255, 140, 220,', // magenta
-      'rgba(255, 220, 140,', // amber
-      'rgba(180, 255, 200,', // mint
-      'rgba(200, 180, 255,', // lavender
-      'rgba(255, 255, 255,', // white
-      'rgba(140, 200, 255,', // pale blue
-      'rgba(255, 180, 200,', // rose
-    ];
-    faces.forEach((f, i) => {
-      const [a, b, c] = f.idx;
-      const facing = f.z; // back faces darker
-      const alpha = (0.18 + Math.max(0, -facing) * 0.12) * intensity;
-      ctx.fillStyle = `${faceColors[i % faceColors.length]}${alpha.toFixed(3)})`;
-      ctx.beginPath();
-      ctx.moveTo(pts[a].x, pts[a].y);
-      ctx.lineTo(pts[b].x, pts[b].y);
-      ctx.lineTo(pts[c].x, pts[c].y);
-      ctx.closePath();
-      ctx.fill();
-    });
-
-    // Chromatic-aberration wireframe: draw edges 3× offset in RGB
-    const edgeLW = 1.6 * intensity;
-    const channels = [
-      { color: `rgba(255,60,80,${0.85 * intensity})`,  dx:  1.4, dy:  0   },
-      { color: `rgba(60,255,140,${0.85 * intensity})`, dx: -1.4, dy:  0.6 },
-      { color: `rgba(80,160,255,${0.85 * intensity})`, dx:  0,   dy: -1.2 },
-    ];
-    for (const ch of channels) {
-      ctx.strokeStyle = ch.color;
-      ctx.lineWidth = edgeLW;
-      ctx.shadowColor = ch.color;
-      ctx.shadowBlur = 8 * intensity;
-      for (const [a, b] of PRISM_EDGES) {
-        ctx.beginPath();
-        ctx.moveTo(pts[a].x + ch.dx, pts[a].y + ch.dy);
-        ctx.lineTo(pts[b].x + ch.dx, pts[b].y + ch.dy);
-        ctx.stroke();
-      }
-    }
-
-    // Clean white outline on top
-    ctx.shadowBlur = 4 * intensity;
-    ctx.shadowColor = 'rgba(255,255,255,0.9)';
-    ctx.strokeStyle = `rgba(255,255,255,${0.9 * intensity})`;
-    ctx.lineWidth = 1.1 * intensity;
-    for (const [a, b] of PRISM_EDGES) {
-      ctx.beginPath();
-      ctx.moveTo(pts[a].x, pts[a].y);
-      ctx.lineTo(pts[b].x, pts[b].y);
-      ctx.stroke();
-    }
-
-    // Vertex dots
-    ctx.shadowBlur = 10 * intensity;
-    ctx.shadowColor = 'rgba(255,255,255,0.9)';
-    ctx.fillStyle = '#ffffff';
-    for (const p of pts) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 2.2 * intensity, 0, Math.PI * 2);
-      ctx.fill();
+    } else {
+      ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
     }
     ctx.restore();
   }
@@ -2999,7 +2615,6 @@ a, button { cursor: inherit; }
   function drawFrame() {
     ctx.clearRect(0, 0, W, H);
     const auraMode = isAuraMode();
-    const studioMode = isStudioMode();
 
     /* Mirrored webcam draw */
     if (videoReady()) {
@@ -3010,7 +2625,13 @@ a, button { cursor: inherit; }
       ctx.scale(-1, 1);
       ctx.drawImage(vid, 0, videoRect.y, videoRect.w, videoRect.h);
       ctx.restore();
-      /* Reference shows normal-brightness video with skeleton overlay (no dim) */
+      /* Dim the webcam feed in aura mode so the glow can pop (matches reference) */
+      if (auraMode) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.fillRect(videoRect.x, videoRect.y, videoRect.w, videoRect.h);
+        ctx.restore();
+      }
     } else if (auraMode) {
       drawAuraBackdrop();
     }
@@ -3047,7 +2668,7 @@ a, button { cursor: inherit; }
       handSide = lmScale(primaryHand[9]).x < W * 0.5 ? 'left' : 'right';
     }
 
-    if (auraMode || studioMode) {
+    if (auraMode) {
       portalHold = false;
       portalActiveThisFrame = Boolean(primaryHand);
       sparkCooldown = 0;
@@ -3078,36 +2699,26 @@ a, button { cursor: inherit; }
 
     const wasActive = isActive;
     isActive = portalActiveThisFrame;
-    if (!auraMode && !studioMode) {
+    if (!auraMode) {
       if (portalActiveThisFrame && !wasActive) xraySequenceStartedAt = now;
       if (!portalActiveThisFrame) xraySequenceStartedAt = 0;
     }
-    portalAlpha += isActive ? 0.08 : ((auraMode || studioMode) ? -0.08 : -0.06);
+    portalAlpha += isActive ? 0.08 : (auraMode ? -0.08 : -0.06);
     portalAlpha = Math.max(0, Math.min(1, portalAlpha));
 
-    if (!auraMode && !studioMode) {
+    if (!auraMode) {
       portalHoldStartedAt = 0;
       wrapEl.classList.remove('xv-sos-charging');
       sosFired = false;
     }
 
     /* Instructions visibility */
-    instructionsEl.style.opacity = (auraMode || studioMode)
-      ? '1'
+    instructionsEl.style.opacity = auraMode
+      ? (primaryHand ? '0' : '1')
       : ((!currentHands || currentHands.length < 2) ? '1' : '0');
 
     /* Status text */
-    if (studioMode) {
-      if (!primaryHand) {
-        statusEl.textContent = 'STUDIO MODE: SHOW ONE HAND';
-        statusEl.style.color = '#0055aa';
-        statusEl.style.textShadow = '0 0 10px #0055aa';
-      } else {
-        statusEl.textContent = '[ STUDIO CRYSTAL LOCKED ]';
-        statusEl.style.color = '#ffffff';
-        statusEl.style.textShadow = '0 0 15px rgba(255,255,255,0.9)';
-      }
-    } else if (auraMode) {
+    if (auraMode) {
       if (!primaryHand) {
         statusEl.textContent = 'AURA MODE: SHOW ONE HAND';
         statusEl.style.color = '#0055aa';
@@ -3134,77 +2745,11 @@ a, button { cursor: inherit; }
     sparkBurst = sparkBurst.filter(s => s.life > 0);
     sparkBurst.forEach(s => { s.update(); s.draw(); });
 
-    /* ── STUDIO MODE (reference-video preset) ──
-       Clean webcam + MediaPipe-classic skeleton + floating 3D prism crystal.
-       No aura wheel, no portal viewport — just the minimal TouchDesigner look. */
-    if (studioMode) {
-      if (primaryHand) {
-        const palmCenter = getHandCenter(primaryHand);
-        const palmSpan = Math.max(50, getPalmSpan(primaryHand));
-        // Crystal floats near the palm, offset upward & slightly off-center so
-        // the skeleton stays readable underneath.
-        const crystalX = palmCenter.x;
-        const crystalY = palmCenter.y - palmSpan * 1.1;
-        const crystalSize = palmSpan * 0.85;
-        drawPrismCrystal(crystalX, crystalY, crystalSize, now, 0.85);
-
-        // Also render skeleton on every tracked hand (studio can handle 1 or 2)
-        if (currentHands && currentHands.length) {
-          for (const h of currentHands) {
-            drawHandSkeleton(h, {
-              lineWidth: 3.2,
-              dotRadius: 5.4,
-              glow: 13,
-              drawWristBox: true
-            });
-          }
-        }
-
-        // If two hands are visible, thread a subtle dashed connector behind the crystal
-        if (currentHands && currentHands.length >= 2) {
-          const sorted = [...currentHands].sort((a, b) => lmScale(a[9]).x - lmScale(b[9]).x);
-          drawPalmConnector(sorted[0], sorted[1]);
-        }
-      }
-      drawHudNodes();
-      updateTelemetry(now);
-      requestAnimationFrame(drawFrame);
-      return;
-    }
-
-    /* ── TOUCHDESIGNER AURA + MEDIAPIPE-CLASSIC SKELETON ──
-       drawTouchAura = rich rainbow wheel / digit stream / orbital nodes
-         (what the reference video actually shows — busy, colorful, alive)
-       drawHandSkeleton = MediaPipe green lines + red dots
-         (the signature skeleton that sits on top of the aura)
-       Order matters: aura first (background), skeleton on top (hero). */
     if (auraMode && primaryHand) {
-      // full TouchDesigner aura wheel follows the hand
-      drawTouchAura(primaryHand, handSide, 0.75 + portalAlpha * 0.25, perf.auraDetail);
-
-      // small orbital crown hovers above the palm as a signature flourish
-      const palmCenter = getHandCenter(primaryHand);
-      const palmSpan = Math.max(40, getPalmSpan(primaryHand));
-      drawOrbitalCrown(
-        palmCenter.x,
-        palmCenter.y - palmSpan * 1.15,
-        palmSpan * 0.95,
-        0.55 + portalAlpha * 0.45,
-        now
-      );
-      // skeleton on top
-      drawHandSkeleton(primaryHand, {
-        lineWidth: 3.4,
-        dotRadius: 5.8,
-        glow: 14,
-        drawWristBox: true
-      });
+      drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
     }
 
     if (!auraMode && leftSideHand && rightSideHand) {
-      // XRAY mode = two hands → portal effect between them, then skeletons on top
-      // NO aura wheels here — that's an aura-mode-only signature so the two
-      // modes read distinctly different. Xray is all about the portal viewport.
       drawXrayViewport(leftSideHand, rightSideHand, Math.max(0.16, portalAlpha), perf, now);
       if (isGlitching && portalAlpha > 0.28) {
         ctx.save();
@@ -3212,47 +2757,6 @@ a, button { cursor: inherit; }
         ctx.fillRect(lerpPortal.x, lerpPortal.y, lerpPortal.w, lerpPortal.h);
         ctx.restore();
       }
-      /* Orbital crown hovers above the midpoint between hands once hands are stable.
-         Fades in with portalAlpha so it only appears when the gesture holds. */
-      if (portalAlpha > 0.35) {
-        const lc = getHandCenter(leftSideHand);
-        const rc = getHandCenter(rightSideHand);
-        const midX = (lc.x + rc.x) * 0.5;
-        const midY = (lc.y + rc.y) * 0.5;
-        const avgPalm = (getPalmSpan(leftSideHand) + getPalmSpan(rightSideHand)) * 0.5;
-        drawOrbitalCrown(
-          midX,
-          midY - avgPalm * 1.3,
-          avgPalm * 1.25,
-          (portalAlpha - 0.35) / 0.65,
-          now
-        );
-      }
-      /* Thin dashed connector line between palms (ref frames 7 & 12) */
-      drawPalmConnector(leftSideHand, rightSideHand);
-      /* Both hand skeletons rendered on top of the viewport */
-      drawHandSkeleton(leftSideHand, {
-        lineWidth: 3.0,
-        dotRadius: 5.0,
-        glow: 12,
-        drawWristBox: true
-      });
-      drawHandSkeleton(rightSideHand, {
-        lineWidth: 3.0,
-        dotRadius: 5.0,
-        glow: 12,
-        drawWristBox: true
-      });
-    } else if (!auraMode && (leftSideHand || rightSideHand)) {
-      // single hand visible in xray mode while searching for the second —
-      // skeleton only, no aura wheel (aura is aura-mode exclusive)
-      const onlyHand = leftSideHand || rightSideHand;
-      drawHandSkeleton(onlyHand, {
-        lineWidth: 3.0,
-        dotRadius: 5.0,
-        glow: 10,
-        drawWristBox: true
-      });
     }
 
     drawHudNodes();
@@ -3273,8 +2777,6 @@ a, button { cursor: inherit; }
     updateTelemetry();
     try {
       const auraMode = isAuraMode();
-      const studioMode = isStudioMode();
-      const lightMode = auraMode || studioMode;   // single-hand-ish modes
       loaderEl.style.display = '';
       loaderSub.textContent = 'Loading MediaPipe Hands…';
       if (!navigator.mediaDevices?.getUserMedia) {
@@ -3284,10 +2786,10 @@ a, button { cursor: inherit; }
         return;
       }
 
-      const preferredVideoWidth = lightMode
+      const preferredVideoWidth = auraMode
         ? (window.innerWidth <= 900 ? 720 : 960)
         : (window.innerWidth <= 900 ? 720 : 1024);
-      const preferredVideoHeight = lightMode
+      const preferredVideoHeight = auraMode
         ? (window.innerWidth <= 900 ? 540 : 540)
         : (window.innerWidth <= 900 ? 540 : 640);
 
@@ -3295,11 +2797,10 @@ a, button { cursor: inherit; }
         locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
       });
       handsEngine.setOptions({
-        // studio allows 2 hands so both skeletons render, but uses aura-ish thresholds
         maxNumHands: auraMode ? 1 : 2,
         modelComplexity: 0,
-        minDetectionConfidence: lightMode ? 0.55 : 0.6,
-        minTrackingConfidence:  lightMode ? 0.55 : 0.6
+        minDetectionConfidence: auraMode ? 0.55 : 0.6,
+        minTrackingConfidence: auraMode ? 0.55 : 0.6
       });
       handsEngine.onResults(res => {
         if (bootId !== engineBootId) return;
@@ -3314,11 +2815,9 @@ a, button { cursor: inherit; }
           startupRetryCount = 0;
           clearStartupRecoveryTimer();
           loaderEl.style.display = 'none';
-          loaderSub.textContent = studioMode
-            ? 'Camera linked · studio crystal armed'
-            : (auraMode
-                ? 'Camera linked · stabilizing aura field'
-                : 'Camera linked · framing reactive viewport');
+          loaderSub.textContent = auraMode
+            ? 'Camera linked · stabilizing aura field'
+            : 'Camera linked · framing reactive viewport';
           statusEl.textContent = 'SYSTEM READY';
           updateTelemetry();
         }
@@ -3518,7 +3017,6 @@ a, button { cursor: inherit; }
     const k = e.key.toLowerCase();
     if (k === 'a') void setRenderMode('aura');
     if (k === 'x') void setRenderMode('xray');
-    if (k === 'c') void setRenderMode('studio');  // C = Crystal / Studio
     if (k === 's') screenshotBtn.click();
     if (k === 'f') fullscreenBtn.click();
     if (k === '1') setTheme('cyan');
