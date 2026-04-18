@@ -1673,6 +1673,12 @@ a, button { cursor: inherit; }
   let lastXrayEffectFrame = -1;
   let lastXrayEffectWidth = 0;
   let lastXrayEffectHeight = 0;
+  let lastStudioRibbonFrame = -1;
+  let lastStudioRibbonWidth = 0;
+  let lastStudioRibbonHeight = 0;
+  let lastStudioFramesFrame = -1;
+  let lastStudioFramesWidth = 0;
+  let lastStudioFramesHeight = 0;
   let xraySequenceStartedAt = 0;
   let studioSequenceStartedAt = 0;
 
@@ -2227,6 +2233,12 @@ a, button { cursor: inherit; }
     return 5;
   }
 
+  function getStudioRenderInterval() {
+    if (perfTier === 'low') return 6;
+    if (perfTier === 'medium') return 4;
+    return 3;
+  }
+
   function drawXrayViewport(leftHand, rightHand, intensity, perf, now) {
     const leftCenter = getHandCenter(leftHand);
     const rightCenter = getHandCenter(rightHand);
@@ -2358,18 +2370,23 @@ a, button { cursor: inherit; }
       lineWidth = 3.1,
       dotRadius = 5,
       glow = 12,
+      glowScale = 1,
+      outerAlpha = 0.32,
       drawWristBox = true
     } = opts;
     const pts = handLm.map(lm => lmScale(lm));
+    const outerGlow = glow * 1.8 * glowScale;
+    const innerGlow = glow * 0.65 * glowScale;
+    const dotGlow = glow * glowScale;
 
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
     ctx.strokeStyle = lineColor;
     ctx.shadowColor = lineColor;
-    ctx.shadowBlur = glow * 1.8;
+    ctx.shadowBlur = outerGlow;
     ctx.lineWidth = lineWidth + 2.2;
     ctx.lineCap = 'round';
-    ctx.globalAlpha = 0.32;
+    ctx.globalAlpha = outerAlpha;
     for (const [a, b] of HAND_CONNECTIONS) {
       ctx.beginPath();
       ctx.moveTo(pts[a].x, pts[a].y);
@@ -2381,7 +2398,7 @@ a, button { cursor: inherit; }
     ctx.save();
     ctx.strokeStyle = lineColor;
     ctx.shadowColor = lineColor;
-    ctx.shadowBlur = glow * 0.65;
+    ctx.shadowBlur = innerGlow;
     ctx.lineWidth = lineWidth;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -2398,7 +2415,7 @@ a, button { cursor: inherit; }
       ctx.beginPath();
       ctx.fillStyle = dotColor;
       ctx.shadowColor = dotColor;
-      ctx.shadowBlur = glow;
+      ctx.shadowBlur = dotGlow;
       ctx.globalAlpha = 0.3;
       ctx.arc(p.x, p.y, dotRadius * 1.4, 0, Math.PI * 2);
       ctx.fill();
@@ -2655,12 +2672,22 @@ a, button { cursor: inherit; }
     const angle = Math.atan2(rightCenter.y - leftCenter.y, rightCenter.x - leftCenter.x);
     const width = clampValue(handDistance * 1.02, 220, 480);
     const height = clampValue(avgPalm * 1.18, 90, 170);
-    const sampleW = clampValue(Math.round(width * 0.68), 180, 300);
-    const sampleH = clampValue(Math.round(height * 1.1), 96, 180);
-    ensureCanvasSize(studioFxCv, sampleW, sampleH);
-    drawMirroredVideoToCanvas(studioFxCtx, sampleW, sampleH, 'contrast(1.08) saturate(1.12)');
+    const sampleScale = perfTier === 'low' ? 0.42 : (perfTier === 'medium' ? 0.56 : 0.68);
+    const sampleW = quantizeDimension(width * sampleScale, 16, 120, 260);
+    const sampleH = quantizeDimension(height * (sampleScale + 0.18), 12, 72, 170);
+    if (
+      frame - lastStudioRibbonFrame >= getStudioRenderInterval() ||
+      sampleW !== lastStudioRibbonWidth ||
+      sampleH !== lastStudioRibbonHeight
+    ) {
+      ensureCanvasSize(studioFxCv, sampleW, sampleH);
+      drawMirroredVideoToCanvas(studioFxCtx, sampleW, sampleH, 'contrast(1.08) saturate(1.12)');
+      lastStudioRibbonFrame = frame;
+      lastStudioRibbonWidth = sampleW;
+      lastStudioRibbonHeight = sampleH;
+    }
 
-    const strips = 12;
+    const strips = perfTier === 'low' ? 7 : (perfTier === 'medium' ? 9 : 12);
     const destStripH = height / strips;
     ctx.save();
     ctx.translate(midX, midY);
@@ -2673,12 +2700,16 @@ a, button { cursor: inherit; }
       const sway = Math.cos(now * 0.0032 + i * 0.65) * 4.2;
       const y = -height * 0.5 + i * destStripH + sway;
 
-      ctx.globalAlpha = 0.26;
-      ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift - 4, y, width, destStripH + 1);
       ctx.globalAlpha = 0.34;
       ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift, y, width, destStripH + 1);
-      ctx.globalAlpha = 0.22;
-      ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift + 4, y, width, destStripH + 1);
+      if (perfTier !== 'low') {
+        ctx.globalAlpha = 0.22;
+        ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift + 4, y, width, destStripH + 1);
+      }
+      if (perfTier === 'high') {
+        ctx.globalAlpha = 0.26;
+        ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift - 4, y, width, destStripH + 1);
+      }
 
       if (i % 2 === 0) {
         ctx.strokeStyle = i % 4 === 0 ? 'rgba(255,255,255,0.22)' : 'rgba(80,255,160,0.2)';
@@ -2699,18 +2730,28 @@ a, button { cursor: inherit; }
     const midY = (leftCenter.y + rightCenter.y) * 0.5;
     const handDistance = dist(leftCenter, rightCenter);
     const angle = Math.atan2(rightCenter.y - leftCenter.y, rightCenter.x - leftCenter.x);
-    const sampleW = 280;
-    const sampleH = 176;
-    ensureCanvasSize(studioEchoCv, sampleW, sampleH);
-    drawMirroredVideoToCanvas(studioEchoCtx, sampleW, sampleH, 'contrast(1.04) saturate(1.06)');
+    const sampleW = perfTier === 'low' ? 180 : (perfTier === 'medium' ? 220 : 280);
+    const sampleH = perfTier === 'low' ? 112 : (perfTier === 'medium' ? 138 : 176);
+    if (
+      frame - lastStudioFramesFrame >= getStudioRenderInterval() ||
+      sampleW !== lastStudioFramesWidth ||
+      sampleH !== lastStudioFramesHeight
+    ) {
+      ensureCanvasSize(studioEchoCv, sampleW, sampleH);
+      drawMirroredVideoToCanvas(studioEchoCtx, sampleW, sampleH, 'contrast(1.04) saturate(1.06)');
+      lastStudioFramesFrame = frame;
+      lastStudioFramesWidth = sampleW;
+      lastStudioFramesHeight = sampleH;
+    }
 
     const colors = ['#ffffff', '#69ff8f', '#4ed8ff', '#ffea58', '#b794ff', '#ff8ad8'];
+    const frameCount = perfTier === 'low' ? 5 : (perfTier === 'medium' ? 6 : 8);
     ctx.save();
     ctx.translate(midX, midY);
     ctx.rotate(angle * 0.14);
     ctx.globalCompositeOperation = 'screen';
-    for (let i = 0; i < 8; i++) {
-      const t = i / 7;
+    for (let i = 0; i < frameCount; i++) {
+      const t = frameCount === 1 ? 0 : i / (frameCount - 1);
       const w = lerpValue(handDistance * 1.06, handDistance * 0.28, t);
       const h = w * 0.64;
       const x = lerpValue(handDistance * 0.38, -handDistance * 0.12, t) + Math.sin(now * 0.002 + i * 0.4) * 6;
@@ -2910,7 +2951,7 @@ a, button { cursor: inherit; }
     ctx.restore();
   }
 
-  function drawStudioScene(primaryHand, leftHand, rightHand, now) {
+  function drawStudioScene(primaryHand, leftHand, rightHand, now, perf) {
     if (!primaryHand) return;
     const handsCount = currentHands ? currentHands.length : 0;
     const activeMs = studioSequenceStartedAt ? Math.max(0, now - studioSequenceStartedAt) : 0;
@@ -2921,6 +2962,11 @@ a, button { cursor: inherit; }
     const anchor = getHandCenter(primaryHand);
     const palmSpan = Math.max(52, getPalmSpan(primaryHand));
     const dualHands = Boolean(leftHand && rightHand);
+    const skeletonProfile = perf === 'low'
+      ? { lineWidth: 2.35, dotRadius: 3.9, glow: 7, glowScale: 0.72, outerAlpha: 0.22 }
+      : (perf === 'medium'
+          ? { lineWidth: 2.7, dotRadius: 4.4, glow: 9, glowScale: 0.84, outerAlpha: 0.26 }
+          : { lineWidth: 3.0, dotRadius: 4.9, glow: 12, glowScale: 1, outerAlpha: 0.32 });
 
     ctx.save();
     ctx.beginPath();
@@ -2967,9 +3013,11 @@ a, button { cursor: inherit; }
     if (currentHands && currentHands.length) {
       currentHands.forEach(hand => {
         drawHandSkeleton(hand, {
-          lineWidth: 3.0,
-          dotRadius: 4.9,
-          glow: 12,
+          lineWidth: skeletonProfile.lineWidth,
+          dotRadius: skeletonProfile.dotRadius,
+          glow: skeletonProfile.glow,
+          glowScale: skeletonProfile.glowScale,
+          outerAlpha: skeletonProfile.outerAlpha,
           drawWristBox: true
         });
       });
@@ -3291,9 +3339,9 @@ a, button { cursor: inherit; }
       return 32;
     }
     if (isStudioMode()) {
-      if (perfTier === 'low') return 62;
-      if (perfTier === 'medium') return 44;
-      return 34;
+      if (perfTier === 'low') return 76;
+      if (perfTier === 'medium') return 56;
+      return 42;
     }
     // XRAY mode also uses Hands, but tracks two hands and drives the viewport.
     if (perfTier === 'low') return 96;
@@ -3614,7 +3662,7 @@ a, button { cursor: inherit; }
       const sortedHands = currentHands && currentHands.length >= 2
         ? [...currentHands].sort((a, b) => lmScale(a[9]).x - lmScale(b[9]).x)
         : [];
-      drawStudioScene(primaryHand, sortedHands[0] || null, sortedHands[1] || null, now);
+      drawStudioScene(primaryHand, sortedHands[0] || null, sortedHands[1] || null, now, perf);
     }
 
     if (!auraMode && !studioMode && leftSideHand && rightSideHand) {
@@ -3659,12 +3707,12 @@ a, button { cursor: inherit; }
       const preferredVideoWidth = auraMode
         ? (window.innerWidth <= 900 ? 720 : 960)
         : (studioMode
-            ? (window.innerWidth <= 900 ? 720 : 960)
+            ? (window.innerWidth <= 900 ? 640 : 848)
             : (window.innerWidth <= 900 ? 640 : 848));
       const preferredVideoHeight = auraMode
         ? (window.innerWidth <= 900 ? 540 : 540)
         : (studioMode
-            ? (window.innerWidth <= 900 ? 540 : 540)
+            ? (window.innerWidth <= 900 ? 480 : 480)
             : (window.innerWidth <= 900 ? 480 : 540));
 
       handsEngine = new Hands({
@@ -3704,9 +3752,17 @@ a, button { cursor: inherit; }
       const constraints = {
         video: {
           facingMode: 'user',
-          frameRate: lightMode ? { ideal: 24, max: 30 } : { ideal: 20, max: 24 },
-          width: { ideal: preferredVideoWidth, max: lightMode ? 1280 : preferredVideoWidth },
-          height: { ideal: preferredVideoHeight, max: lightMode ? 720 : preferredVideoHeight }
+          frameRate: auraMode
+            ? { ideal: 24, max: 30 }
+            : (studioMode ? { ideal: 22, max: 24 } : { ideal: 20, max: 24 }),
+          width: {
+            ideal: preferredVideoWidth,
+            max: auraMode ? 1280 : preferredVideoWidth
+          },
+          height: {
+            ideal: preferredVideoHeight,
+            max: auraMode ? 720 : preferredVideoHeight
+          }
         }
       };
       try {
@@ -3797,6 +3853,12 @@ a, button { cursor: inherit; }
     lastXrayEffectFrame = -1;
     lastXrayEffectWidth = 0;
     lastXrayEffectHeight = 0;
+    lastStudioRibbonFrame = -1;
+    lastStudioRibbonWidth = 0;
+    lastStudioRibbonHeight = 0;
+    lastStudioFramesFrame = -1;
+    lastStudioFramesWidth = 0;
+    lastStudioFramesHeight = 0;
     currentStudioEffectLabel = 'STUDIO';
     portalAlpha = 0;
     portalHoldStartedAt = 0;
