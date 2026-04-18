@@ -1,0 +1,1581 @@
+{% extends "base.html" %}
+
+{% block title %}X-Ray Vision — Neural Body Scanner · RAKSHAK{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   X-RAY VISION · Neural Body Scanner
+   Ported from axshatt/XRayVision demo, integrated into RAKSHAK
+   Adds: theme toggle, density slider, screenshot, fullscreen, SOS hook
+   ══════════════════════════════════════════════════════════════════ */
+
+body, html {
+  overflow: hidden;
+  height: 100vh;
+  background: #000;
+  font-family: 'Courier New', monospace;
+}
+a, button { cursor: inherit; }
+
+.xv-wrap {
+  position: fixed;
+  top: 70px;
+  left: 240px;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* Fullscreen (desktop-only override when fullscreen active) */
+.xv-wrap.xv-fullscreen {
+  top: 0;
+  left: 0;
+}
+
+#xv-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;                     /* The canvas mirrors it — raw video hidden */
+}
+
+#xv-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── Top-left status ── */
+.xv-status {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  color: var(--xv-accent, #00ffcc);
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px var(--xv-accent, #00ffcc);
+  z-index: 30;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* ── Top-right frame counter ── */
+.xv-frame-counter {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  color: var(--xv-accent2, #0088ff);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px var(--xv-accent2, #0088ff);
+  z-index: 30;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* ── Center loader ── */
+.xv-loader {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--xv-accent, #00ffcc);
+  font-size: 16px;
+  letter-spacing: 3px;
+  z-index: 40;
+  text-align: center;
+  line-height: 2;
+  pointer-events: none;
+}
+.xv-loader-sub {
+  font-size: 12px;
+  color: var(--xv-accent2, #0088ff);
+  margin-top: 6px;
+  display: block;
+}
+.xv-loader-bar {
+  margin-top: 14px;
+  width: 240px;
+  height: 3px;
+  background: rgba(0, 255, 204, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.xv-loader-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--xv-accent, #00ffcc), transparent);
+  animation: xvLoadSweep 1.4s linear infinite;
+}
+@keyframes xvLoadSweep {
+  to { left: 100%; }
+}
+
+/* ══ Permission modal ══ */
+.xv-perm-modal {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,30,60,0.85), rgba(0,0,0,0.98));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.xv-perm-card {
+  background: rgba(5, 15, 30, 0.9);
+  border: 1px solid rgba(0, 255, 204, 0.25);
+  border-radius: 18px;
+  padding: 36px 38px;
+  max-width: 460px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(0, 255, 204, 0.18), 0 40px 80px rgba(0, 0, 0, 0.8);
+}
+.xv-perm-icon {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, #00ffcc, #0088ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  letter-spacing: 0.18em;
+  font-weight: 900;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.xv-perm-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  background: linear-gradient(135deg, #00ffcc, #0088ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.xv-perm-desc {
+  font-size: 0.72rem;
+  line-height: 1.7;
+  color: rgba(200, 240, 255, 0.7);
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+.xv-perm-list {
+  text-align: left;
+  list-style: none;
+  margin: 0 0 22px 0;
+  padding: 0;
+}
+.xv-perm-list li {
+  font-size: 0.65rem;
+  color: rgba(200, 240, 255, 0.6);
+  padding: 5px 0;
+  border-bottom: 1px dashed rgba(0, 255, 204, 0.08);
+  letter-spacing: 0.04em;
+}
+.xv-perm-list li::before {
+  content: '►';
+  color: #00ffcc;
+  margin-right: 8px;
+  font-size: 0.55rem;
+}
+.xv-perm-btn {
+  background: linear-gradient(135deg, #00ffcc, #0088ff);
+  color: #001020;
+  border: 0;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 8px 24px rgba(0, 255, 204, 0.35);
+}
+.xv-perm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 255, 204, 0.5);
+}
+.xv-perm-note {
+  font-size: 0.58rem;
+  color: rgba(100, 180, 200, 0.4);
+  margin-top: 14px;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+}
+
+/* ══ Control bar (bottom-right) ══ */
+.xv-controls {
+  position: absolute;
+  bottom: 22px;
+  right: 22px;
+  display: flex;
+  gap: 8px;
+  z-index: 30;
+  padding: 8px;
+  background: rgba(0, 10, 20, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 255, 204, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.xv-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  background: rgba(0, 255, 204, 0.04);
+  border: 1px solid rgba(0, 255, 204, 0.18);
+  border-radius: 8px;
+  color: rgba(200, 240, 255, 0.85);
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.xv-ctrl-btn i { font-size: 0.75rem; }
+.xv-ctrl-btn:hover {
+  background: rgba(0, 255, 204, 0.15);
+  border-color: rgba(0, 255, 204, 0.45);
+  color: #00ffcc;
+  box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
+  transform: translateY(-1px);
+}
+.xv-ctrl-btn.active {
+  background: rgba(0, 255, 204, 0.2);
+  border-color: rgba(0, 255, 204, 0.6);
+  color: #00ffcc;
+  box-shadow: 0 0 14px rgba(0, 255, 204, 0.4);
+}
+
+.xv-ctrl-group {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 7px;
+  border: 1px solid rgba(0, 255, 204, 0.08);
+}
+.xv-ctrl-group .xv-ctrl-btn {
+  padding: 5px 9px;
+  background: transparent;
+  border: 0;
+  font-size: 0.55rem;
+}
+.xv-ctrl-group .xv-ctrl-btn.active {
+  background: rgba(0, 255, 204, 0.2);
+  color: #00ffcc;
+}
+
+/* ══ Back button (top-left of the frame) ══ */
+.xv-back-btn {
+  position: absolute;
+  top: 56px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(0, 10, 20, 0.7);
+  border: 1px solid rgba(0, 255, 204, 0.25);
+  border-radius: 10px;
+  color: rgba(200, 240, 255, 0.85);
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s;
+  z-index: 30;
+  backdrop-filter: blur(10px);
+}
+.xv-back-btn:hover {
+  background: rgba(0, 255, 204, 0.15);
+  color: #00ffcc;
+  border-color: rgba(0, 255, 204, 0.5);
+}
+
+/* ══ FPS counter ══ */
+.xv-fps {
+  position: absolute;
+  top: 56px;
+  right: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  color: var(--xv-accent, #00ffcc);
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-shadow: 0 0 8px var(--xv-accent, #00ffcc);
+  z-index: 30;
+  padding: 4px 10px;
+  background: rgba(0, 10, 20, 0.6);
+  border: 1px solid rgba(0, 255, 204, 0.2);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* ══ SOS ring overlay ══ */
+.xv-sos-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 45, 58, 0);
+  box-shadow: 0 0 0 rgba(255, 45, 58, 0);
+  pointer-events: none;
+  z-index: 35;
+  transition: all 0.3s;
+}
+.xv-wrap.xv-sos-charging .xv-sos-ring {
+  border-color: rgba(255, 45, 58, 0.6);
+  box-shadow: 0 0 60px rgba(255, 45, 58, 0.4), inset 0 0 40px rgba(255, 45, 58, 0.2);
+  animation: xvSosPulse 0.8s ease infinite alternate;
+}
+@keyframes xvSosPulse {
+  to { box-shadow: 0 0 90px rgba(255, 45, 58, 0.7), inset 0 0 60px rgba(255, 45, 58, 0.35); }
+}
+.xv-sos-msg {
+  position: absolute;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  background: rgba(20, 0, 0, 0.9);
+  border: 1px solid rgba(255, 45, 58, 0.5);
+  border-radius: 10px;
+  color: #fca5a5;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  z-index: 35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  box-shadow: 0 0 20px rgba(255, 45, 58, 0.4);
+}
+.xv-wrap.xv-sos-charging .xv-sos-msg { opacity: 1; }
+
+/* ══ Instruction card (top-center during idle) ══ */
+.xv-instructions {
+  position: absolute;
+  top: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(0, 10, 20, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 255, 204, 0.18);
+  border-radius: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: rgba(200, 240, 255, 0.75);
+  text-transform: uppercase;
+  z-index: 30;
+  pointer-events: none;
+}
+.xv-instructions .xv-ins-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--xv-accent, #00ffcc);
+  box-shadow: 0 0 8px var(--xv-accent, #00ffcc);
+  animation: xvInsBlink 1.4s ease infinite;
+}
+@keyframes xvInsBlink {
+  50% { opacity: 0.3; }
+}
+
+/* ══ Mobile tweaks ══ */
+@media (max-width: 900px) {
+  .xv-wrap { left: 0; top: 56px; }
+  .xv-controls {
+    bottom: 14px;
+    right: 50%;
+    transform: translateX(50%);
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: calc(100% - 28px);
+  }
+  .xv-ctrl-btn span { display: none; }            /* icons only on mobile */
+  .xv-ctrl-group .xv-ctrl-btn span { display: inline; }  /* keep density labels */
+  .xv-instructions { font-size: 0.52rem; padding: 6px 12px; top: 46px; }
+  .xv-back-btn { top: 46px; left: 12px; font-size: 0.55rem; padding: 6px 10px; }
+  .xv-fps { top: 46px; right: 12px; font-size: 0.55rem; padding: 3px 8px; }
+  .xv-status { font-size: 10px; letter-spacing: 2px; top: 12px; left: 12px; }
+  .xv-frame-counter { font-size: 9px; letter-spacing: 1px; top: 12px; right: 12px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ══ Permission modal (auto-dismisses on click) ══ -->
+<div class="xv-perm-modal" id="xv-perm-modal">
+  <div class="xv-perm-card">
+    <div class="xv-perm-icon">◈ X-RAY ◈</div>
+    <div class="xv-perm-title">Neural Bioscan</div>
+    <p class="xv-perm-desc">
+      Activate the dual-neural engine to initiate real-time body particle visualization.
+      Wave your hands · form a portal · watch the anatomical matrix respond.
+    </p>
+    <ul class="xv-perm-list">
+      <li>10,000 real-time body particles</li>
+      <li>Hand + pose + segmentation mask (MediaPipe Holistic)</li>
+      <li>Portal effect — bring both index fingers close</li>
+      <li>100% local processing · zero cloud uploads</li>
+      <li>Hold portal 10s → emergency SOS broadcast</li>
+    </ul>
+    <button class="xv-perm-btn" id="xv-perm-allow-btn">
+      <i class="bi bi-camera-video-fill me-2"></i>Initiate Neural Link
+    </button>
+    <div class="xv-perm-note">
+      🔒 AES-256 encrypted session · Camera stream never leaves your device
+    </div>
+  </div>
+</div>
+
+<!-- ══ Main Wrapper ══ -->
+<div class="xv-wrap" id="xv-wrap">
+  <video id="xv-video" autoplay playsinline muted></video>
+  <canvas id="xv-canvas"></canvas>
+
+  <!-- Overlay: status / frame / back / fps -->
+  <div class="xv-status" id="xv-status">INITIALIZING...</div>
+  <div class="xv-frame-counter" id="xv-frame-counter">FRM: 0000</div>
+
+  <a href="{{ url_for('dashboard.index') if url_for else '/' }}" class="xv-back-btn">
+    <i class="bi bi-arrow-left"></i> Back
+  </a>
+  <div class="xv-fps" id="xv-fps">0 FPS</div>
+
+  <!-- SOS charging overlay -->
+  <div class="xv-sos-ring"></div>
+  <div class="xv-sos-msg">Hold portal — SOS in <span id="xv-sos-countdown">10</span>s</div>
+
+  <!-- Idle instructions -->
+  <div class="xv-instructions" id="xv-instructions">
+    <span class="xv-ins-dot"></span>
+    <span>Show both hands · Pinch fingers together to open portal</span>
+  </div>
+
+  <!-- Center loader -->
+  <div class="xv-loader" id="xv-loader">
+    LOADING DUAL NEURAL ENGINE...<br>
+    <span class="xv-loader-sub" id="xv-loader-sub">Hands · Pose · Segmentation</span>
+    <div class="xv-loader-bar"></div>
+  </div>
+
+  <!-- Bottom-right controls -->
+  <div class="xv-controls" id="xv-controls">
+    <!-- Theme toggle group -->
+    <div class="xv-ctrl-group" title="Color theme">
+      <button class="xv-ctrl-btn active" data-theme="cyan"><span>CYAN</span></button>
+      <button class="xv-ctrl-btn" data-theme="rose"><span>ROSE</span></button>
+      <button class="xv-ctrl-btn" data-theme="amber"><span>AMBER</span></button>
+    </div>
+
+    <!-- Density toggle group -->
+    <div class="xv-ctrl-group" title="Particle density">
+      <button class="xv-ctrl-btn" data-density="5000"><span>5K</span></button>
+      <button class="xv-ctrl-btn active" data-density="10000"><span>10K</span></button>
+      <button class="xv-ctrl-btn" data-density="15000"><span>15K</span></button>
+    </div>
+
+    <!-- Action buttons -->
+    <button class="xv-ctrl-btn" id="xv-screenshot-btn" title="Screenshot (S)">
+      <i class="bi bi-camera"></i><span>SNAP</span>
+    </button>
+    <button class="xv-ctrl-btn" id="xv-fullscreen-btn" title="Fullscreen (F)">
+      <i class="bi bi-arrows-fullscreen"></i><span>FULL</span>
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- MediaPipe Holistic — hand + pose + segmentation in one model -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" crossorigin="anonymous"></script>
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════════════════════════════
+   X-RAY VISION Engine
+   Core algorithm adapted from axshatt/XRayVision with RAKSHAK additions:
+   · Permission modal + login-gated init
+   · Color theme toggle (cyan / rose / amber)
+   · Particle density toggle (5k / 10k / 15k)
+   · Screenshot (Canvas → PNG download)
+   · Fullscreen toggle (fallback if Fullscreen API unavailable)
+   · Sustained-portal → SOS broadcast hook
+   · Mobile-responsive layout
+   ════════════════════════════════════════════════════════════════════ */
+
+(() => {
+  const vid = document.getElementById('xv-video');
+  const cv = document.getElementById('xv-canvas');
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  const statusEl = document.getElementById('xv-status');
+  const frameEl = document.getElementById('xv-frame-counter');
+  const loaderEl = document.getElementById('xv-loader');
+  const loaderSub = document.getElementById('xv-loader-sub');
+  const fpsEl = document.getElementById('xv-fps');
+  const instructionsEl = document.getElementById('xv-instructions');
+  const permModal = document.getElementById('xv-perm-modal');
+  const wrapEl = document.getElementById('xv-wrap');
+  const sosCountdownEl = document.getElementById('xv-sos-countdown');
+  const allowBtn = document.getElementById('xv-perm-allow-btn');
+  const screenshotBtn = document.getElementById('xv-screenshot-btn');
+  const fullscreenBtn = document.getElementById('xv-fullscreen-btn');
+
+  let W = 0, H = 0;
+  let frame = 0;
+  let portalAlpha = 0;
+  let scanY = 0;
+  let sparkBurst = [];
+  let streamParticles = [];
+  let dataPackets = [];
+
+  /* Math LUTs for hot-loop optimization */
+  const RAND_LUT = new Float32Array(5000);
+  for (let i = 0; i < 5000; i++) RAND_LUT[i] = Math.random();
+  const SIN_LUT = new Float32Array(1024);
+  for (let i = 0; i < 1024; i++) SIN_LUT[i] = Math.sin((i / 1024) * Math.PI * 2);
+
+  let glitchUntil = 0;
+  let lastChestPos = { x: 0, y: 0 };
+  let bodyDelta = { x: 0, y: 0 };
+  let hudPos = { x: 0, y: 0 };
+  let lerpPortal = { x: 0, y: 0, w: 0, h: 0 };
+
+  for (let i = 0; i < 3; i++) {
+    dataPackets.push({
+      yOff: 0.1 + Math.random() * 0.8,
+      xBase: Math.random(),
+      w: 30 + Math.random() * 50,
+      spd: 0.005 + Math.random() * 0.015
+    });
+  }
+
+  /* ── Color theme system ── */
+  const THEMES = {
+    cyan: {
+      accent:  '#00ffcc', accent2: '#0088ff',
+      /* Anatomical zone palettes — 7 zones (head/torso/arms/hands/core/legs/feet) */
+      palettes: [
+        ['#ffffff', '#ccffff', '#88ffff'],
+        ['#ff4488', '#ff0055', '#ff88bb'],
+        ['#00ffcc', '#00ff88', '#44ffaa'],
+        ['#ffffff', '#ffff88', '#ffcc00'],
+        ['#8844ff', '#aa66ff', '#cc99ff'],
+        ['#0088ff', '#0044ff', '#44aaff'],
+        ['#ff8800', '#ffaa00', '#ffcc44'],
+      ],
+      portalHue: 180,
+      gridColor: 'rgba(0, 200, 255, 0.08)',
+      rippleColor: (alpha) => `rgba(50, 150, 255, ${alpha})`,
+      scanColor: 'rgba(0,255,255,0.8)',
+      scanCore: '#00ffff',
+      hudAccent: '#00ffff',
+    },
+    rose: {
+      accent:  '#ff4488', accent2: '#ff0066',
+      palettes: [
+        ['#ffffff', '#ffccdd', '#ff88aa'],
+        ['#ff2266', '#ff0044', '#ff5588'],
+        ['#ff8866', '#ff6644', '#ffaa88'],
+        ['#ffffff', '#ffddaa', '#ffaa66'],
+        ['#cc44ff', '#aa66ff', '#ff99dd'],
+        ['#ff4499', '#ff2277', '#ff77bb'],
+        ['#ffaa44', '#ffcc66', '#ffdd99'],
+      ],
+      portalHue: 340,
+      gridColor: 'rgba(255, 100, 150, 0.1)',
+      rippleColor: (alpha) => `rgba(255, 80, 130, ${alpha})`,
+      scanColor: 'rgba(255,100,150,0.8)',
+      scanCore: '#ff66aa',
+      hudAccent: '#ff66aa',
+    },
+    amber: {
+      accent:  '#ffaa00', accent2: '#ff8800',
+      palettes: [
+        ['#ffffff', '#ffeecc', '#ffddaa'],
+        ['#ff8833', '#ff6600', '#ffaa66'],
+        ['#ffcc44', '#ffaa22', '#ffdd77'],
+        ['#ffffff', '#ffff88', '#ffee66'],
+        ['#ff6644', '#ff4422', '#ff8866'],
+        ['#ffaa00', '#ff8800', '#ffcc44'],
+        ['#ffdd33', '#ffbb11', '#ffee66'],
+      ],
+      portalHue: 38,
+      gridColor: 'rgba(255, 180, 50, 0.1)',
+      rippleColor: (alpha) => `rgba(255, 160, 40, ${alpha})`,
+      scanColor: 'rgba(255,200,50,0.8)',
+      scanCore: '#ffcc44',
+      hudAccent: '#ffcc66',
+    },
+  };
+
+  let theme = THEMES.cyan;
+  function setTheme(key) {
+    if (!THEMES[key]) return;
+    theme = THEMES[key];
+    document.documentElement.style.setProperty('--xv-accent', theme.accent);
+    document.documentElement.style.setProperty('--xv-accent2', theme.accent2);
+    document.querySelectorAll('.xv-ctrl-btn[data-theme]').forEach(b =>
+      b.classList.toggle('active', b.dataset.theme === key)
+    );
+  }
+
+  function getParticleColor(zone, age) {
+    const p = theme.palettes[zone % theme.palettes.length];
+    return p[Math.floor(age * 0.05) % p.length];
+  }
+
+  /* ── Particle density — can be swapped at runtime ── */
+  let PARTICLE_COUNT = 10000;
+  let BODY_PARTICLES = [];
+
+  class BodyParticle {
+    constructor() { this.reset(); this.life = Math.random(); this.age = Math.random() * 100; }
+    reset() {
+      this.x = Math.random() * W; this.y = Math.random() * H;
+      this.targetX = this.x; this.targetY = this.y;
+      this.type = Math.floor(Math.random() * 5);
+      this.baseSize = Math.random() * 3 + 0.5;
+      this.size = this.baseSize;
+      this.life = Math.random();
+      this.maxLife = 0.6 + Math.random() * 0.4;
+      this.speed = Math.random() * 0.8 + 0.1;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.colorTier = 0;
+      this.age = 0;
+    }
+    update(dx = 0, dy = 0, isGlitching = false) {
+      this.x += dx; this.y += dy;
+      this.targetX += dx; this.targetY += dy;
+      this.x += (this.targetX - this.x) * 0.15;
+      this.y += (this.targetY - this.y) * 0.15;
+      if (isGlitching) {
+        if (Math.random() < 0.2) this.x += (Math.random() - 0.5) * 15;
+        if (Math.random() < 0.05) this.y += (Math.random() - 0.5) * 5;
+      }
+      this.age++;
+      this.life = Math.abs(SIN_LUT[(Math.floor(this.age * this.speed * 20)) % 1024]);
+      this.size = this.baseSize * (0.6 + this.life * 0.4);
+    }
+    draw(ctx, layer) {
+      if (this.life < 0.1) return;
+      let opacity = this.life * 0.9;
+      let sizeMult = 1.0;
+      let blur = 0;
+      if (layer === 'BACK') { sizeMult = 0.4; opacity *= 0.3; }
+      else if (layer === 'MID') { sizeMult = 0.7; opacity *= 0.6; }
+      else if (layer === 'FRONT') {
+        sizeMult = 1.2; opacity *= 1.0;
+        if (this.age % 10 === 0) blur = 4;
+      }
+      ctx.globalAlpha = opacity;
+      const col = getParticleColor(this.colorTier, this.age);
+      ctx.fillStyle = col; ctx.strokeStyle = col;
+      if (blur > 0) { ctx.shadowBlur = blur; ctx.shadowColor = col; }
+      else { ctx.shadowBlur = 0; }
+      const s = this.size * sizeMult;
+      ctx.fillRect(this.x - s / 2, this.y - s / 2, s, s);
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function rebuildParticles(count) {
+    PARTICLE_COUNT = count;
+    BODY_PARTICLES = Array.from({ length: count }, () => new BodyParticle());
+    document.querySelectorAll('.xv-ctrl-btn[data-density]').forEach(b =>
+      b.classList.toggle('active', parseInt(b.dataset.density, 10) === count)
+    );
+  }
+  rebuildParticles(10000);
+
+  let currentHands = [];
+  let currentPose = null;
+  let currentMask = null;
+  let isActive = false;
+  let portalHold = false;
+  let sparkCooldown = 0;
+  let cameraStream = null;
+  let cameraController = null;
+  let holisticEngine = null;
+  let hasStarted = false;
+
+  const maskCv = document.createElement('canvas');
+  const mctx = maskCv.getContext('2d', { willReadFrequently: true });
+  maskCv.width = 100; maskCv.height = 100;
+
+  function resize() {
+    W = cv.width = wrapEl.clientWidth;
+    H = cv.height = wrapEl.clientHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function videoReady() {
+    return vid.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && vid.videoWidth > 0 && vid.videoHeight > 0;
+  }
+
+  /* ── Utility classes (from original) ── */
+  class EnergyParticle {
+    constructor(x, y, vx, vy, col) {
+      this.history = [{ x, y }];
+      this.x = x; this.y = y;
+      this.vx = vx * 0.6; this.vy = vy * 0.6;
+      this.col = col; this.life = 1.0;
+      this.maxHistory = 12;
+      this.size = Math.random() * 2.5 + 1;
+    }
+    update() {
+      this.x += this.vx + (Math.random() - 0.5) * 1.5;
+      this.y += this.vy + (Math.random() - 0.5) * 1.5;
+      this.history.unshift({ x: this.x, y: this.y });
+      if (this.history.length > this.maxHistory) this.history.pop();
+      this.life -= 0.025;
+    }
+    draw(ctx) {
+      this.history.forEach((pt, i) => {
+        const t = 1 - i / this.maxHistory;
+        ctx.globalAlpha = Math.max(0, t * this.life * 0.8);
+        ctx.fillStyle = this.col;
+        ctx.shadowBlur = 6 * t;
+        ctx.shadowColor = this.col;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, this.size * t, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  class Spark {
+    constructor(x, y) {
+      this.x = x; this.y = y;
+      const ang = Math.random() * Math.PI * 2;
+      const spd = Math.random() * 6 + 3;
+      this.vx = Math.cos(ang) * spd;
+      this.vy = Math.sin(ang) * spd;
+      this.life = 1;
+      this.col = ['#ffffff', theme.accent, theme.accent2][Math.floor(Math.random() * 3)];
+      this.r = Math.random() * 3 + 1;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      this.vx *= 0.85; this.vy *= 0.85;
+      this.life -= 0.04;
+    }
+    draw() {
+      if (this.life <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = this.life;
+      ctx.fillStyle = this.col;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = this.col;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function triggerSparks(x, y) { for (let i = 0; i < 25; i++) sparkBurst.push(new Spark(x, y)); }
+
+  function lmScale(handLm) { return { x: (1 - handLm.x) * W, y: handLm.y * H }; }
+  function mapToPortal(nx, ny, px, py, pw, ph) { return { x: px + ((1 - nx) * pw), y: py + (ny * ph) }; }
+  function dist(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
+  function expandOutward(pt, cx, amt) {
+    const dx = pt.x - cx;
+    return { x: pt.x + (dx === 0 ? 0 : Math.sign(dx)) * amt, y: pt.y };
+  }
+
+  function getAnatomicalZone(y, pose, px, py, ph) {
+    if (!pose) return 1;
+    const getPy = (idx) => py + (pose[idx].y * ph);
+    if (y < getPy(11) - 20) return 0;
+    if (y > getPy(23) + 40) return 5;
+    if (y > getPy(23) - 20) return 4;
+    return 1;
+  }
+
+  let surgeT = 0;
+
+  /* ── FPS tracking ── */
+  let fpsLastTime = performance.now();
+  let fpsFrameCount = 0;
+
+  /* ── Sustained-portal → SOS hook ── */
+  let portalHoldStartedAt = 0;
+  const SOS_HOLD_MS = 10000;      /* 10 seconds sustained portal → trigger */
+  let sosFired = false;
+
+  function triggerXRaySOS() {
+    if (sosFired) return;
+    sosFired = true;
+    wrapEl.classList.remove('xv-sos-charging');
+
+    /* Reuse the same SOS endpoint pattern as VISION SHIELD */
+    const fallback = { lat: 0, lng: 0 };
+    const send = (coords) => {
+      fetch('/sos/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gesture: 'xray-portal',
+          confidence: 99,
+          latitude: coords.lat,
+          longitude: coords.lng,
+          source: 'xray_vision_portal'
+        })
+      }).then(r => r.json()).then(d => {
+        if (window.showToast) {
+          window.showToast(d.success ? '◈ X-RAY PORTAL SOS BROADCAST SENT' : (d.error || 'SOS failed'),
+                           d.success ? 'sos' : 'error');
+        }
+      }).catch(() => {
+        if (window.showToast) window.showToast('SOS queue failed — retry', 'error');
+      });
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        pos => send({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => send(fallback)
+      );
+    } else {
+      send(fallback);
+    }
+  }
+
+  /* ── HUD nodes bar (bottom of canvas) ── */
+  function drawHudNodes() {
+    const bY = H - 52;
+    const nodes = [
+      { x: 55, label: 'INPUT' }, { x: 145, label: 'DETECT' }, { x: 245, label: 'POSE' },
+      { x: 345, label: 'PORTAL' }, { x: 445, label: 'COMP' }, { x: 540, label: 'OUTPUT' },
+    ];
+    ctx.save();
+    nodes.forEach((n, i) => {
+      ctx.fillStyle = 'rgba(0,10,20,0.9)';
+      ctx.strokeStyle = `rgba(0, ${180 + i * 10}, 255, 0.6)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.rect(n.x - 35, bY - 14, 70, 22); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = theme.accent; ctx.font = '10px Courier New'; ctx.textAlign = 'center';
+      ctx.fillText(n.label, n.x, bY + 2);
+
+      if (i > 0) {
+        ctx.strokeStyle = 'rgba(0,180,255,0.4)';
+        ctx.beginPath(); ctx.moveTo(nodes[i - 1].x + 35, bY - 3);
+        ctx.lineTo(n.x - 35, bY - 3); ctx.stroke();
+      }
+      const on = portalAlpha > 0.1 && i <= Math.floor((frame * 0.1) % 6);
+      if (on) { ctx.fillStyle = `rgba(0,255,255,0.2)`; ctx.fillRect(n.x - 35, bY - 14, 70, 22); }
+    });
+
+    if (portalAlpha > 0.05 && currentHands && currentHands.length >= 2) {
+      ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
+      ctx.fillText(`SYS.ONLINE // NEURAL_XRAY_V5`, W - 20, H - 35);
+      ctx.fillText(`PARTICLES: ${(PARTICLE_COUNT / 1000).toFixed(0)}K // CORE: STABLE`, W - 20, H - 20);
+    }
+    ctx.restore();
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     MAIN DRAW LOOP
+     ══════════════════════════════════════════════════════════════════ */
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+
+    /* Mirrored webcam draw */
+    if (videoReady()) {
+      ctx.save();
+      ctx.translate(W, 0); ctx.scale(-1, 1);
+      ctx.drawImage(vid, 0, 0, W, H);
+      ctx.restore();
+    }
+
+    frame++; scanY += 0.008;
+    fpsFrameCount++;
+    const now = performance.now();
+    if (now - fpsLastTime >= 1000) {
+      fpsEl.textContent = Math.round(fpsFrameCount * 1000 / (now - fpsLastTime)) + ' FPS';
+      fpsFrameCount = 0;
+      fpsLastTime = now;
+    }
+
+    if (frame % 75 === 0 && Math.random() < 0.6) {
+      glitchUntil = frame + Math.floor(4 + Math.random() * 4);
+    }
+    const isGlitching = frame < glitchUntil;
+
+    frameEl.textContent = `FRM: ${String(frame).padStart(4, '0')}${isGlitching ? ' [ERR]' : ''}`;
+
+    let lThumb, lIndex, rThumb, rIndex;
+    let portalActiveThisFrame = false;
+
+    if (currentHands && currentHands.length >= 2) {
+      const h0 = currentHands[0], h1 = currentHands[1];
+      const h0_idx = lmScale(h0[8]), h1_idx = lmScale(h1[8]);
+      let leftSideHand, rightSideHand;
+      if (h0_idx.x < h1_idx.x) { leftSideHand = h0; rightSideHand = h1; }
+      else { leftSideHand = h1; rightSideHand = h0; }
+
+      lThumb = lmScale(leftSideHand[4]); lIndex = lmScale(leftSideHand[8]);
+      rThumb = lmScale(rightSideHand[4]); rIndex = lmScale(rightSideHand[8]);
+
+      if (dist(lIndex, rIndex) < 160) {
+        portalActiveThisFrame = true; portalHold = true; sparkCooldown--;
+        if (sparkCooldown <= 0) {
+          triggerSparks((lIndex.x + rIndex.x) / 2, (lIndex.y + rIndex.y) / 2);
+          sparkCooldown = 15;
+        }
+      } else if (portalHold) { portalActiveThisFrame = true; }
+      else { portalHold = false; }
+    } else {
+      portalHold = false;
+    }
+
+    isActive = portalActiveThisFrame;
+    portalAlpha += isActive ? 0.08 : -0.06;
+    portalAlpha = Math.max(0, Math.min(1, portalAlpha));
+
+    /* ── Sustained portal hook → SOS charging ── */
+    if (isActive) {
+      if (!portalHoldStartedAt) portalHoldStartedAt = now;
+      const heldMs = now - portalHoldStartedAt;
+      if (heldMs > 2500 && !sosFired) {
+        wrapEl.classList.add('xv-sos-charging');
+        const remaining = Math.max(0, Math.ceil((SOS_HOLD_MS - heldMs) / 1000));
+        sosCountdownEl.textContent = remaining;
+        if (heldMs >= SOS_HOLD_MS) triggerXRaySOS();
+      }
+    } else {
+      portalHoldStartedAt = 0;
+      wrapEl.classList.remove('xv-sos-charging');
+    }
+
+    /* Instructions visibility */
+    instructionsEl.style.opacity = (!currentHands || currentHands.length < 2) ? '1' : '0';
+
+    /* Status text */
+    if (!currentHands || currentHands.length < 2) {
+      statusEl.textContent = 'STANDBY: AWAITING BOTH HANDS';
+      statusEl.style.color = '#0055aa';
+    } else if (!isActive) {
+      statusEl.textContent = 'DETECTED: BRING FINGERS CLOSER (~150px)';
+      statusEl.style.color = theme.accent2;
+    } else {
+      statusEl.textContent = sosFired ? '◈ SOS BROADCAST ACTIVE ◈'
+        : '[ PORTAL FULLY ACTIVE - STRETCH HANDS ]';
+      statusEl.style.color = sosFired ? '#ff4444' : (isGlitching ? '#ff4444' : theme.accent);
+      statusEl.style.textShadow = `0 0 15px ${isGlitching ? '#ff0000' : theme.accent}`;
+    }
+
+    sparkBurst = sparkBurst.filter(s => s.life > 0);
+    sparkBurst.forEach(s => { s.update(); s.draw(); });
+
+    if (portalAlpha > 0.01 && lThumb && rThumb) {
+      const rawPx = Math.min(lThumb.x, lIndex.x, rThumb.x, rIndex.x);
+      const rawPy = Math.min(lThumb.y, lIndex.y, rThumb.y, rIndex.y);
+      const rawPw = Math.max(lThumb.x, lIndex.x, rThumb.x, rIndex.x) - rawPx;
+      const rawPh = Math.max(lThumb.y, lIndex.y, rThumb.y, rIndex.y) - rawPy;
+
+      const scale = 0.85;
+      const cx = rawPx + rawPw / 2;
+      const cy = rawPy + rawPh / 2;
+      const px_raw = cx - (rawPw * scale) / 2;
+      const py_raw = cy - (rawPh * scale) / 2;
+      const pw_raw = rawPw * scale;
+      const ph_raw = rawPh * scale;
+
+      if (lerpPortal.w === 0) { lerpPortal = { x: px_raw, y: py_raw, w: pw_raw, h: ph_raw }; }
+      lerpPortal.x += (px_raw - lerpPortal.x) * 0.3;
+      lerpPortal.y += (py_raw - lerpPortal.y) * 0.3;
+      lerpPortal.w += (pw_raw - lerpPortal.w) * 0.3;
+      lerpPortal.h += (ph_raw - lerpPortal.h) * 0.3;
+
+      const px = lerpPortal.x, py = lerpPortal.y, pw = lerpPortal.w, ph = lerpPortal.h;
+
+      const pushOutward = (pt, oX, oY, amt) => ({ x: oX + (pt.x - oX) * amt, y: oY + (pt.y - oY) * amt });
+      const lThumbS = pushOutward(lThumb, cx, cy, scale);
+      const lIndexS = pushOutward(lIndex, cx, cy, scale);
+      const rThumbS = pushOutward(rThumb, cx, cy, scale);
+      const rIndexS = pushOutward(rIndex, cx, cy, scale);
+
+      if (pw > 15 && ph > 15) {
+        ctx.save();
+        ctx.globalAlpha = 1.0;
+
+        ctx.beginPath();
+        ctx.moveTo(lThumbS.x, lThumbS.y);
+        ctx.lineTo(rThumbS.x, rThumbS.y);
+        ctx.lineTo(rIndexS.x, rIndexS.y);
+        ctx.lineTo(lIndexS.x, lIndexS.y);
+        ctx.closePath();
+        ctx.clip();
+
+        /* Carbon void (fully opaque black) */
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(px, py, pw, ph);
+
+        /* Depth fog vignette */
+        const vig = ctx.createRadialGradient(px + pw / 2, py + ph / 2, pw * 0.1, px + pw / 2, py + ph / 2, pw * 0.9);
+        vig.addColorStop(0, 'rgba(0, 20, 80, 0)');
+        vig.addColorStop(0.6, 'rgba(0, 15, 50, 0.8)');
+        vig.addColorStop(1, 'rgba(0, 5, 20, 1)');
+        ctx.fillStyle = vig; ctx.fillRect(px, py, pw, ph);
+
+        /* Dual-layer grid */
+        ctx.lineWidth = 1; ctx.beginPath();
+        for (let gx = px; gx < px + pw; gx += 8) { ctx.moveTo(gx, py); ctx.lineTo(gx, py + ph); }
+        for (let gy = py; gy < py + ph; gy += 8) { ctx.moveTo(px, gy); ctx.lineTo(px + pw, gy); }
+        ctx.strokeStyle = theme.gridColor; ctx.stroke();
+
+        ctx.beginPath();
+        for (let gx = px; gx < px + pw; gx += 40) { ctx.moveTo(gx, py); ctx.lineTo(gx, py + ph); }
+        for (let gy = py; gy < py + ph; gy += 40) { ctx.moveTo(px, gy); ctx.lineTo(px + pw, gy); }
+        ctx.strokeStyle = theme.gridColor; ctx.stroke();
+
+        dataPackets.forEach(p => {
+          p.xBase += p.spd;
+          if (p.xBase > 1.2) p.xBase = -0.2;
+          ctx.fillStyle = 'rgba(0,255,180,0.5)';
+          ctx.fillRect(px + p.xBase * pw, py + p.yOff * ph, p.w, 1);
+        });
+
+        if (currentPose) {
+          const pose = currentPose;
+          const getPtOld = (idx) => mapToPortal(pose[idx].x, pose[idx].y, px, py, pw, ph);
+
+          /* Background sparks */
+          for (let i = 0; i < 40; i++) {
+            ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,200,100,0.8)' : 'rgba(255,255,255,0.7)';
+            const bgS = Math.random() > 0.8 ? 3 : 1.5;
+            ctx.fillRect(px + Math.random() * pw, py + Math.random() * ph, bgS, bgS);
+          }
+
+          /* Topographic ripple echoes */
+          const validBody = [11, 13, 15, 23, 25, 27, 28, 26, 24, 16, 14, 12].filter(i => pose[i] && pose[i].visibility > 0.4);
+          if (validBody.length > 2) {
+            const pts = validBody.map(i => getPtOld(i));
+
+            if (pose[12] && pose[11] && pose[8] && pose[7] && pose[0] && pose[8].visibility > 0.4 && pose[7].visibility > 0.4) {
+              const rSh = getPtOld(12), lSh = getPtOld(11);
+              const rEar = getPtOld(8), lEar = getPtOld(7), nose = getPtOld(0);
+              const cX2 = (rEar.x + lEar.x) / 2;
+              const earY = (rEar.y + lEar.y) / 2;
+              const headW = Math.max(Math.abs(rEar.x - lEar.x), Math.hypot(nose.x - cX2, nose.y - earY) * 2.0, 40);
+
+              pts.push({ x: rSh.x * 0.7 + cX2 * 0.3, y: rSh.y * 0.7 + earY * 0.3 });
+              pts.push({ x: rEar.x - headW * 0.1, y: earY + headW * 0.5 });
+              pts.push({ x: rEar.x + headW * 0.1, y: rEar.y });
+              pts.push({ x: rEar.x + headW * 0.05, y: rEar.y - headW * 0.6 });
+              pts.push({ x: cX2 + headW * 0.35, y: earY - headW * 0.95 });
+              pts.push({ x: cX2, y: earY - headW * 1.1 });
+              pts.push({ x: cX2 - headW * 0.35, y: earY - headW * 0.95 });
+              pts.push({ x: lEar.x - headW * 0.05, y: lEar.y - headW * 0.6 });
+              pts.push({ x: lEar.x - headW * 0.1, y: lEar.y });
+              pts.push({ x: lEar.x + headW * 0.1, y: earY + headW * 0.5 });
+              pts.push({ x: lSh.x * 0.7 + cX2 * 0.3, y: lSh.y * 0.7 + earY * 0.3 });
+            }
+
+            pts.push(pts[0]);
+            const cxR = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+            const cyR = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+
+            const numEchoes = 8;
+            for (let e = 1; e <= numEchoes; e++) {
+              ctx.beginPath();
+              pts.forEach((p, index) => {
+                const dx = p.x - cxR; const dy = p.y - cyR;
+                const distVal = Math.hypot(dx, dy) || 1;
+                const amt = e * 20 + Math.sin(frame * 0.05 + e) * 8;
+                const extX = p.x + (dx / distVal) * amt;
+                const extY = p.y + (dy / distVal) * amt;
+                index === 0 ? ctx.moveTo(extX, extY) : ctx.lineTo(extX, extY);
+              });
+              ctx.closePath();
+              ctx.strokeStyle = theme.rippleColor(0.4 - (e / numEchoes) * 0.35);
+              ctx.lineWidth = e === 1 ? 2 : 1;
+              ctx.stroke();
+            }
+          }
+
+          /* Neural energy body system */
+          const getPt = (idx) => mapToPortal(currentPose[idx].x, currentPose[idx].y, px, py, pw, ph);
+          const cXc = (getPt(11).x + getPt(12).x) / 2;
+          const cYc = (getPt(11).y + getPt(12).y) / 2;
+
+          if (lastChestPos.x === 0 || isNaN(lastChestPos.x)) { lastChestPos.x = cXc; lastChestPos.y = cYc; }
+          bodyDelta.x = cXc - lastChestPos.x;
+          bodyDelta.y = cYc - lastChestPos.y;
+          lastChestPos.x = cXc; lastChestPos.y = cYc;
+
+          const hTargetX = getPt(11).x - 160;
+          const hTargetY = getPt(11).y - 40;
+          if (hudPos.x === 0 || isNaN(hudPos.x)) { hudPos.x = hTargetX; hudPos.y = hTargetY; }
+          hudPos.x += (hTargetX - hudPos.x) * 0.1;
+          hudPos.y += (hTargetY - hudPos.y) * 0.1;
+
+          /* Drift compensation */
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const p = BODY_PARTICLES[i];
+            p.x += bodyDelta.x; p.y += bodyDelta.y;
+            p.targetX += bodyDelta.x; p.targetY += bodyDelta.y;
+          }
+
+          /* Body polygon + head arc */
+          const hEarR = getPt(8), hEarL = getPt(7);
+          const hWidth = dist(hEarL, hEarR) * 1.4;
+          const hCX = (hEarL.x + hEarR.x) / 2;
+          const hCY = (hEarL.y + hEarR.y) / 2 - hWidth * 0.6;
+
+          const bodyPath = new Path2D();
+          const headPoints = [];
+          for (let i = 0; i <= 8; i++) {
+            const ang = Math.PI + (i / 8) * Math.PI;
+            headPoints.push({ x: hCX + Math.cos(ang) * hWidth / 2, y: hCY + Math.sin(ang) * hWidth / 1.8 });
+          }
+
+          const rawPoints = [
+            hEarR, getPt(10), getPt(12), getPt(14), getPt(16),
+            getPt(20), getPt(18), getPt(22),
+            getPt(24), getPt(26), getPt(28), getPt(32),
+            getPt(31), getPt(27), getPt(25), getPt(23),
+            getPt(21), getPt(17), getPt(19),
+            getPt(15), getPt(13), getPt(11), hEarL, getPt(9)
+          ];
+
+          const thickPoints = rawPoints.map((p, i) => {
+            let amt = 25;
+            if (p === hEarR || p === hEarL) amt = 8;
+            if (i >= 2 && i <= 7) amt = 12;
+            if (i >= 8 && i <= 10) amt = 18;
+            if (i >= 12 && i <= 14) amt = 18;
+            if (i >= 16 && i <= 21) amt = 12;
+            return expandOutward(p, cXc, amt);
+          });
+
+          bodyPath.moveTo(headPoints[0].x, headPoints[0].y);
+          headPoints.forEach(p => bodyPath.lineTo(p.x, p.y));
+          thickPoints.forEach(p => bodyPath.lineTo(p.x, p.y));
+          bodyPath.closePath();
+
+          /* Mask-based particle redistribution */
+          let validCoords = [];
+          if (currentMask) {
+            mctx.clearRect(0, 0, maskCv.width, maskCv.height);
+            mctx.drawImage(currentMask, 0, 0, maskCv.width, maskCv.height);
+            const imgData = mctx.getImageData(0, 0, maskCv.width, maskCv.height).data;
+            for (let i = 0; i < imgData.length; i += 4) {
+              if (imgData[i] > 128) {
+                const idx = i / 4;
+                validCoords.push({
+                  x: (idx % maskCv.width) / maskCv.width,
+                  y: Math.floor(idx / maskCv.width) / maskCv.height
+                });
+              }
+            }
+          }
+
+          const hTarget = getPt(0);
+          const headDensity = Math.floor(PARTICLE_COUNT * 0.15);
+
+          for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const p = BODY_PARTICLES[i];
+            if (i < headDensity) {
+              if (frame % 8 === 0 || dist(p, { x: p.targetX, y: p.targetY }) < 5) {
+                const ang = Math.random() * Math.PI * 2;
+                const rad = Math.random() * (hWidth * 0.45);
+                p.targetX = hCX + Math.cos(ang) * rad;
+                p.targetY = hCY + Math.sin(ang) * rad * 1.25;
+                p.colorTier = 0;
+              }
+            } else if (validCoords.length > 0) {
+              if (frame % 5 === 0 || dist(p, { x: p.targetX, y: p.targetY }) < 5) {
+                const coord = validCoords[Math.floor(Math.random() * validCoords.length)];
+                const target = mapToPortal(coord.x, coord.y, px, py, pw, ph);
+                p.targetX = target.x; p.targetY = target.y;
+                p.colorTier = getAnatomicalZone(target.y, currentPose, px, py, ph);
+              }
+            } else {
+              if (frame % 20 === 0) {
+                p.targetX = cXc + (Math.random() - 0.5) * 50;
+                p.targetY = cYc + (Math.random() - 0.5) * 80;
+              }
+            }
+          }
+
+          /* Render layers */
+          surgeT = (frame % 180) / 180;
+          const surgeRadius = surgeT * H * 0.8;
+
+          ctx.save();
+          ctx.clip(bodyPath);
+
+          const splitA = Math.floor(PARTICLE_COUNT * 0.3);
+          const splitB = Math.floor(PARTICLE_COUNT * 0.7);
+          ['BACK', 'MID', 'FRONT'].forEach(layer => {
+            let start = 0, end = splitA;
+            if (layer === 'MID') { start = splitA; end = splitB; }
+            if (layer === 'FRONT') { start = splitB; end = PARTICLE_COUNT; }
+            for (let i = start; i < end; i++) {
+              const p = BODY_PARTICLES[i];
+              p.update(0, 0, isGlitching);
+              const dToC = dist(p, { x: cXc, y: cYc });
+              if (Math.abs(dToC - surgeRadius) < 20) {
+                p.size *= 1.8; p.life = 1.0;
+                p.x += (p.x - cXc) * 0.1; p.y += (p.y - cYc) * 0.1;
+              }
+              p.draw(ctx, layer);
+            }
+          });
+          ctx.restore();
+
+          /* Joint ring FX + orbiting nodes */
+          const joints = [11, 12, 13, 14, 23, 24, 25, 26, 27, 28];
+          joints.forEach(jIdx => {
+            if (currentPose[jIdx] && currentPose[jIdx].visibility > 0.5) {
+              const pt = getPt(jIdx);
+              const orbitAngle = frame * 0.08 + jIdx * 0.7;
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+              for (let i = 0; i < 4; i++) {
+                const ox = pt.x + Math.cos(orbitAngle + i * Math.PI / 2) * 5;
+                const oy = pt.y + Math.sin(orbitAngle + i * Math.PI / 2) * 5;
+                ctx.fillRect(ox - 1, oy - 1, 2, 2);
+              }
+            }
+          });
+
+          /* Data stream columns */
+          ctx.fillStyle = 'rgba(0, 255, 204, 0.3)';
+          for (let col = 0; col < 5; col++) {
+            const colX = px + (pw / 6) * (col + 1);
+            const riseY = py + ph - ((frame * 2 + col * 40) % ph);
+            if (ctx.isPointInPath(bodyPath, colX, riseY)) {
+              ctx.fillRect(colX, riseY, 1, 15);
+            }
+          }
+
+          /* Joints count for HUD */
+          let vizJoints = 0;
+          for (let i = 0; i <= 32; i++) { if (pose[i] && pose[i].visibility > 0.4) vizJoints++; }
+
+          /* Live data HUD */
+          ctx.save();
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = isGlitching ? 'rgba(255,0,0,0.4)' : 'rgba(0,0,0,0.85)';
+          ctx.strokeStyle = theme.hudAccent;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(hudPos.x, hudPos.y, 140, 90, 4);
+          else ctx.rect(hudPos.x, hudPos.y, 140, 90);
+          ctx.fill(); ctx.stroke();
+
+          ctx.fillStyle = isGlitching ? '#ff0000' : theme.accent;
+          ctx.fillRect(hudPos.x, hudPos.y, 4, 90);
+
+          ctx.save();
+          ctx.translate(hudPos.x + 125, hudPos.y + 20);
+          ctx.rotate(frame * 0.05);
+          ctx.strokeStyle = theme.hudAccent; ctx.lineWidth = 0.5;
+          ctx.beginPath(); ctx.moveTo(-8, 0); ctx.lineTo(8, 0); ctx.moveTo(0, -8); ctx.lineTo(0, 8); ctx.stroke();
+          ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+
+          ctx.fillStyle = theme.hudAccent; ctx.font = 'bold 9px Courier New'; ctx.textAlign = "left";
+          ctx.fillText('► NEURAL_CORE BIOSCAN', hudPos.x + 10, hudPos.y + 15);
+          ctx.fillText(`► NODES: ${vizJoints}/33`, hudPos.x + 10, hudPos.y + 28);
+          ctx.fillText(`► HEX: 0x${Math.floor(Math.random() * 0xFFFF).toString(16).toUpperCase()}`, hudPos.x + 10, hudPos.y + 41);
+          ctx.fillText(`► STABILITY: ${(98 + Math.random() * 2).toFixed(1)}%`, hudPos.x + 10, hudPos.y + 54);
+          ctx.fillText(`► FLUX:   ${(Math.random() * 1000).toFixed(0)} GHz`, hudPos.x + 10, hudPos.y + 67);
+          ctx.fillText(`► STATUS: [SYNCHRONIZED]`, hudPos.x + 10, hudPos.y + 80);
+
+          [13, 14, 25, 26].forEach(idx => {
+            const pt = getPt(idx);
+            if (currentPose[idx].visibility > 0.5) {
+              ctx.fillStyle = 'rgba(0, 255, 255, 0.4)';
+              ctx.font = '7px Courier New';
+              ctx.fillText(`[${idx}:${(Math.random() * 100).toFixed(0)}%]`, pt.x + 10, pt.y);
+            }
+          });
+
+          ctx.restore();
+
+          for (let i = streamParticles.length - 1; i >= 0; i--) {
+            const p = streamParticles[i];
+            p.update(); p.draw(ctx);
+            if (p.life <= 0) streamParticles.splice(i, 1);
+          }
+        }
+
+        /* Laser scanline */
+        const sy = py + ((scanY % 1) * ph);
+        const sg = ctx.createLinearGradient(0, sy - 60, 0, sy);
+        sg.addColorStop(0, 'rgba(0,255,255,0)');
+        sg.addColorStop(1, theme.scanColor);
+        ctx.fillStyle = sg; ctx.fillRect(px, Math.max(py, sy - 60), pw, sy - Math.max(py, sy - 60));
+        ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 15; ctx.shadowColor = theme.scanCore;
+        ctx.fillRect(px, sy - 2, pw, 2); ctx.shadowBlur = 0;
+
+        /* Glitch overlay */
+        if (isGlitching) {
+          try {
+            const numSlices = 3 + Math.floor(Math.random() * 4);
+            for (let i = 0; i < numSlices; i++) {
+              const sY = py + Math.random() * (ph - 20);
+              const sH = 8 + Math.random() * 12;
+              const sOff = (Math.random() - 0.5) * 80;
+              ctx.drawImage(cv, px, sY, pw, sH, px + sOff, sY, pw, sH);
+            }
+          } catch (e) { /* tainted canvas, ignore */ }
+
+          if (Math.random() < 0.3) {
+            ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fillRect(px, py, pw, ph);
+            ctx.fillStyle = '#fff';
+            for (let j = 0; j < 200; j++) ctx.fillRect(px + Math.random() * pw, py + Math.random() * ph, 1, 1);
+            ctx.fillStyle = 'rgba(255,50,50,0.9)'; ctx.font = 'bold 16px Courier M';
+            ctx.fillText('SCAN INTERRUPT', px + pw / 2 - 60, py + ph / 2);
+          }
+
+          ctx.fillStyle = 'rgba(255,50,50,0.7)'; ctx.font = '10px Courier New';
+          for (let i = 0; i < 5; i++) {
+            const errs = ['0xFFE3 >> CORRUPT', '4A:2C:FF >> NULL', 'ERR: SEG FAULT', 'BUFFER UNDERRUN'];
+            ctx.fillText(errs[Math.floor(Math.random() * errs.length)],
+                         px + Math.random() * (pw - 100), py + Math.random() * ph);
+          }
+        }
+
+        ctx.restore();
+
+        /* Portal border + corner squares */
+        const bHue = theme.portalHue + Math.sin(frame * 0.02) * 20;
+        [{ lw: 6, col: `hsla(${bHue}, 100%, 60%, 0.2)`, blur: 25 },
+         { lw: 1.5, col: `hsla(${bHue}, 100%, 60%, 0.9)`, blur: 10 }].forEach(pass => {
+          ctx.beginPath();
+          ctx.moveTo(lThumbS.x, lThumbS.y); ctx.lineTo(rThumbS.x, rThumbS.y);
+          ctx.lineTo(rIndexS.x, rIndexS.y); ctx.lineTo(lIndexS.x, lIndexS.y); ctx.closePath();
+          ctx.lineWidth = pass.lw; ctx.strokeStyle = pass.col; ctx.shadowBlur = pass.blur;
+          ctx.shadowColor = `hsl(${bHue}, 100%, 60%)`; ctx.stroke();
+        });
+        ctx.shadowBlur = 0;
+
+        const sq = 24;
+        ctx.fillStyle = 'rgba(0, 255, 180, 0.8)';
+        ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(0, 255, 180, 1)';
+        ctx.fillRect(lThumbS.x - sq / 2, lThumbS.y - sq / 2, sq, sq);
+        ctx.fillRect(rThumbS.x - sq / 2, rThumbS.y - sq / 2, sq, sq);
+        ctx.fillRect(rIndexS.x - sq / 2, rIndexS.y - sq / 2, sq, sq);
+        ctx.fillRect(lIndexS.x - sq / 2, lIndexS.y - sq / 2, sq, sq);
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    drawHudNodes();
+    requestAnimationFrame(drawFrame);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     ENGINE STARTUP + PERMISSION FLOW
+     ══════════════════════════════════════════════════════════════════ */
+  async function startEngines() {
+    if (hasStarted) return;
+    hasStarted = true;
+    try {
+      loaderSub.textContent = 'Loading MediaPipe Holistic…';
+      if (!navigator.mediaDevices?.getUserMedia) {
+        loaderEl.innerHTML = 'CAMERA API UNAVAILABLE';
+        hasStarted = false;
+        return;
+      }
+
+      holisticEngine = new Holistic({
+        locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`
+      });
+      holisticEngine.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        minDetectionConfidence: 0.7,
+        minTrackingConfidence: 0.7,
+        enableSegmentation: true
+      });
+      holisticEngine.onResults(res => {
+        currentHands = [];
+        if (res.leftHandLandmarks) currentHands.push(res.leftHandLandmarks);
+        if (res.rightHandLandmarks) currentHands.push(res.rightHandLandmarks);
+        currentPose = res.poseLandmarks;
+        currentMask = res.segmentationMask;
+      });
+
+      loaderSub.textContent = 'Accessing camera…';
+      let stream;
+      const constraints = {
+        video: {
+          facingMode: 'user',
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 }
+        }
+      };
+      try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (e) {
+        loaderEl.innerHTML = `CAMERA ERROR: ${e.name}`;
+        hasStarted = false;
+        return;
+      }
+
+      cameraStream = stream;
+      vid.srcObject = stream;
+      await vid.play();
+      loaderEl.style.display = 'none';
+      statusEl.textContent = 'SYSTEM READY';
+
+      cameraController = new Camera(vid, {
+        onFrame: async () => { await holisticEngine.send({ image: vid }); },
+        width: 1280,
+        height: 720
+      });
+      cameraController.start();
+    } catch (err) {
+      loaderEl.innerHTML = 'ENGINE INITIALIZATION FAILED';
+      hasStarted = false;
+      console.error('X-Ray engine error:', err);
+    }
+  }
+
+  async function cleanupEngines() {
+    try { cameraController?.stop?.(); } catch (e) {}
+    cameraController = null;
+
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      cameraStream = null;
+    }
+
+    if (vid.srcObject) vid.srcObject = null;
+
+    try { await holisticEngine?.close?.(); } catch (e) {}
+    holisticEngine = null;
+    hasStarted = false;
+  }
+
+  /* Start the draw loop immediately (even during init, it'll draw black) */
+  requestAnimationFrame(drawFrame);
+  setTheme('cyan');
+
+  /* ══ Permission modal flow ══ */
+  allowBtn.addEventListener('click', () => {
+    permModal.style.display = 'none';
+    startEngines();
+  });
+
+  /* ══ Theme buttons ══ */
+  document.querySelectorAll('.xv-ctrl-btn[data-theme]').forEach(btn => {
+    btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+  });
+
+  /* ══ Density buttons ══ */
+  document.querySelectorAll('.xv-ctrl-btn[data-density]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const n = parseInt(btn.dataset.density, 10);
+      if (Number.isFinite(n) && n > 0) rebuildParticles(n);
+    });
+  });
+
+  /* ══ Screenshot ══ */
+  screenshotBtn.addEventListener('click', () => {
+    if (!videoReady()) {
+      if (window.showToast) window.showToast('Camera feed not ready yet', 'error');
+      return;
+    }
+    try {
+      const url = cv.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `xray-vision-${Date.now()}.png`;
+      a.click();
+      if (window.showToast) window.showToast('◈ Snapshot captured', 'success');
+    } catch (e) {
+      if (window.showToast) window.showToast('Screenshot blocked — canvas tainted', 'error');
+    }
+  });
+
+  /* ══ Fullscreen ══ */
+  fullscreenBtn.addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await wrapEl.requestFullscreen?.();
+        wrapEl.classList.add('xv-fullscreen');
+        fullscreenBtn.classList.add('active');
+      } else {
+        await document.exitFullscreen?.();
+        wrapEl.classList.remove('xv-fullscreen');
+        fullscreenBtn.classList.remove('active');
+      }
+      /* Resize after a short delay for transitions */
+      setTimeout(resize, 200);
+    } catch (e) {
+      /* Fallback: toggle CSS class */
+      wrapEl.classList.toggle('xv-fullscreen');
+      setTimeout(resize, 50);
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    const active = document.fullscreenElement === wrapEl;
+    wrapEl.classList.toggle('xv-fullscreen', active);
+    fullscreenBtn.classList.toggle('active', active);
+    setTimeout(resize, 50);
+  });
+
+  /* ══ Keyboard shortcuts ══ */
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const k = e.key.toLowerCase();
+    if (k === 's') screenshotBtn.click();
+    if (k === 'f') fullscreenBtn.click();
+    if (k === '1') setTheme('cyan');
+    if (k === '2') setTheme('rose');
+    if (k === '3') setTheme('amber');
+  });
+
+  window.addEventListener('pagehide', cleanupEngines);
+  window.addEventListener('beforeunload', cleanupEngines);
+
+})();
+</script>
+{% endblock %}

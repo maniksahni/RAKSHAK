@@ -159,6 +159,7 @@ def create_app(config_name=None):
     from modules.guardian_network.routes   import guardian_bp
     from modules.valkyrie.routes           import valkyrie_bp
     from modules.vision_shield.routes     import vision_shield_bp
+    from modules.xray_vision.routes       import xray_vision_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp,          url_prefix='/auth')
@@ -177,11 +178,13 @@ def create_app(config_name=None):
     app.register_blueprint(guardian_bp,      url_prefix='/guardian')
     app.register_blueprint(valkyrie_bp,      url_prefix='/valkyrie')
     app.register_blueprint(vision_shield_bp, url_prefix='/vision-shield')
+    app.register_blueprint(xray_vision_bp,   url_prefix='/xray-vision')
 
     # Exempt internal APIs from CSRF as they are invoked via fetch without tokens
     csrf.exempt(gemini_bp)
     csrf.exempt(guardian_bp)
     csrf.exempt(vision_shield_bp)
+    csrf.exempt(xray_vision_bp)
     # ── Google OAuth ──────────────────────────────────────────────────────
     register_google_oauth(app)
 
