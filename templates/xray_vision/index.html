@@ -1644,6 +1644,10 @@ a, button { cursor: inherit; }
     return { x: sum.x / points.length, y: sum.y / points.length };
   }
 
+  function getPalmSpan(handLm) {
+    return dist(lmScale(handLm[5]), lmScale(handLm[17]));
+  }
+
   function drawTouchAura(handLm, side = 'solo', intensity = 0.65) {
     if (!handLm) return;
 
@@ -1657,154 +1661,210 @@ a, button { cursor: inherit; }
     const thumbTip = lmScale(handLm[4]);
     const palmCenter = averagePoints([wrist, palmLeft, lmScale(handLm[9]), lmScale(handLm[13]), palmRight]);
     const center = {
-      x: palmCenter.x + (middleTip.x - palmCenter.x) * 0.18,
-      y: palmCenter.y + (middleTip.y - palmCenter.y) * 0.18
+      x: palmCenter.x + (middleTip.x - palmCenter.x) * 0.24,
+      y: palmCenter.y + (middleTip.y - palmCenter.y) * 0.24
     };
     const fingertips = [thumbTip, indexTip, middleTip, ringTip, pinkyTip];
-    const palmSpan = Math.max(38, dist(palmLeft, palmRight));
-    const radius = palmSpan * (1.1 + intensity * 0.25);
-    const outerRadius = radius * (1.68 + intensity * 0.24);
+    const palmSpan = Math.max(42, getPalmSpan(handLm));
+    const wheelRadius = palmSpan * (1.08 + intensity * 0.22);
+    const orbitRadius = wheelRadius * (1.72 + intensity * 0.12);
     const sideDir = side === 'right' ? -1 : 1;
-    const rotation = frame * 0.038 * sideDir;
-    const palette = side === 'right'
-      ? theme.palettes[5 % theme.palettes.length]
-      : theme.palettes[2 % theme.palettes.length];
+    const spinA = frame * 0.018 * sideDir;
+    const spinB = -frame * 0.012 * sideDir;
+    const palette = ['#ffffff', '#fef08a', '#38bdf8', '#60a5fa', '#f59e0b', '#f472b6', '#4ade80'];
+    const digitPalette = ['#84cc16', '#a3e635', '#d9f99d'];
+    const sectorStart = side === 'right' ? Math.PI * 0.18 + spinB : Math.PI * 0.82 + spinB;
+    const sectorSweep = Math.PI * 1.26;
+    const nodes = [];
 
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
 
-    const coreGlow = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, outerRadius * 0.95);
-    coreGlow.addColorStop(0, 'rgba(255,255,255,0.16)');
-    coreGlow.addColorStop(0.35, `${theme.rippleColor(0.16 + intensity * 0.06)}`);
+    const coreGlow = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, orbitRadius * 0.95);
+    coreGlow.addColorStop(0, 'rgba(255,255,255,0.18)');
+    coreGlow.addColorStop(0.28, `${theme.rippleColor(0.18 + intensity * 0.08)}`);
     coreGlow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = coreGlow;
     ctx.beginPath();
-    ctx.arc(center.x, center.y, outerRadius * 0.95, 0, Math.PI * 2);
+    ctx.arc(center.x, center.y, orbitRadius * 0.95, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = `rgba(255,255,255,${0.16 + intensity * 0.14})`;
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = `rgba(255,255,255,${0.22 + intensity * 0.14})`;
+    ctx.lineWidth = 1.1;
     ctx.beginPath();
-    ctx.arc(center.x, center.y, radius * 0.82, rotation, rotation + Math.PI * 1.72);
+    ctx.arc(center.x, center.y, wheelRadius * 0.88, spinA, spinA + Math.PI * 1.92);
     ctx.stroke();
 
-    ctx.setLineDash([3, 7]);
-    ctx.strokeStyle = `rgba(155,255,220,${0.24 + intensity * 0.12})`;
+    ctx.setLineDash([2, 7]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
     ctx.beginPath();
-    ctx.arc(center.x, center.y, outerRadius * 0.74, -rotation * 1.2, -rotation * 1.2 + Math.PI * 1.9);
+    ctx.arc(center.x, center.y, orbitRadius * 0.74, spinB, spinB + Math.PI * 1.82);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    const spokes = 18;
-    for (let i = 0; i < spokes; i++) {
-      const angle = rotation + (Math.PI * 2 * i) / spokes;
-      const pulse = 0.78 + 0.24 * Math.sin(frame * 0.07 + i * 0.75);
-      const inner = radius * (0.28 + 0.08 * Math.cos(frame * 0.04 + i));
-      const outer = outerRadius * pulse;
-      const col = palette[i % palette.length];
-      const sx = center.x + Math.cos(angle) * inner;
-      const sy = center.y + Math.sin(angle) * inner;
-      const ex = center.x + Math.cos(angle) * outer;
-      const ey = center.y + Math.sin(angle) * outer;
-
-      ctx.strokeStyle = col;
-      ctx.lineWidth = i % 4 === 0 ? 2.2 : 1.1;
-      ctx.shadowBlur = i % 3 === 0 ? 10 : 0;
-      ctx.shadowColor = col;
+    const spokeCount = 34;
+    for (let i = 0; i < spokeCount; i++) {
+      const angle = spinA + (Math.PI * 2 * i) / spokeCount;
+      const inner = wheelRadius * 0.12;
+      const outer = wheelRadius * (0.72 + 0.14 * Math.sin(frame * 0.05 + i * 0.62));
+      const alpha = 0.16 + (i % 5 === 0 ? 0.12 : 0.04);
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      ctx.lineWidth = i % 6 === 0 ? 1.6 : 0.9;
       ctx.beginPath();
-      ctx.moveTo(sx, sy);
-      ctx.lineTo(ex, ey);
+      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
+      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
       ctx.stroke();
-
-      if (i % 2 === 0) {
-        ctx.fillStyle = i % 6 === 0 ? '#ffffff' : col;
-        ctx.shadowBlur = 12;
-        ctx.beginPath();
-        ctx.arc(ex, ey, i % 6 === 0 ? 3.2 : 2.4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      if (i % 3 === 0) {
-        const mx = center.x + Math.cos(angle) * (outer * 0.66);
-        const my = center.y + Math.sin(angle) * (outer * 0.66);
-        ctx.strokeStyle = `rgba(255,255,255,${0.42 + intensity * 0.18})`;
-        ctx.lineWidth = 1;
-        ctx.shadowBlur = 0;
-        ctx.beginPath();
-        ctx.arc(mx, my, 4 + (i % 2), 0, Math.PI * 2);
-        ctx.stroke();
-      }
     }
 
-    const orbitCount = 11;
+    const barCount = 18;
+    for (let i = 0; i < barCount; i++) {
+      const angle = sectorStart + (sectorSweep * i) / (barCount - 1);
+      const inner = wheelRadius * (0.24 + (i % 3) * 0.025);
+      const outer = wheelRadius * (0.66 + 0.18 * Math.sin(frame * 0.06 + i * 0.7) + (i % 4) * 0.015);
+      const col = palette[i % palette.length];
+      ctx.strokeStyle = col;
+      ctx.lineWidth = i % 5 === 0 ? 7 : (i % 2 === 0 ? 5 : 3.2);
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = col;
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
+      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
+      ctx.stroke();
+    }
+
+    ctx.shadowBlur = 0;
+    const innerBandCount = 12;
+    for (let i = 0; i < innerBandCount; i++) {
+      const a0 = spinB + (Math.PI * 2 * i) / innerBandCount;
+      const a1 = a0 + Math.PI / 10;
+      ctx.strokeStyle = palette[(i + 2) % palette.length];
+      ctx.lineWidth = i % 3 === 0 ? 5 : 3;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, wheelRadius * (0.24 + (i % 2) * 0.03), a0, a1);
+      ctx.stroke();
+    }
+
+    const orbitCount = 13;
     for (let i = 0; i < orbitCount; i++) {
-      const angle = -rotation * 1.4 + (Math.PI * 2 * i) / orbitCount;
-      const orbit = outerRadius * (0.9 + 0.12 * Math.sin(frame * 0.05 + i));
+      const angle = spinA * 0.8 + (Math.PI * 2 * i) / orbitCount;
+      const orbit = orbitRadius * (0.82 + 0.14 * Math.sin(frame * 0.04 + i * 0.9));
       const ox = center.x + Math.cos(angle) * orbit;
       const oy = center.y + Math.sin(angle) * orbit;
-      const col = theme.palettes[(i + 1) % theme.palettes.length][i % 3];
+      nodes.push({ x: ox, y: oy, angle });
 
-      ctx.strokeStyle = `rgba(255,255,255,0.18)`;
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * (orbit - 12), center.y + Math.sin(angle) * (orbit - 12));
+      ctx.moveTo(center.x + Math.cos(angle) * wheelRadius * 0.92, center.y + Math.sin(angle) * wheelRadius * 0.92);
       ctx.lineTo(ox, oy);
       ctx.stroke();
 
-      ctx.shadowBlur = 14;
-      ctx.shadowColor = col;
-      ctx.fillStyle = col;
+      ctx.strokeStyle = 'rgba(255,255,255,0.62)';
       ctx.beginPath();
-      ctx.arc(ox, oy, 2.8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.shadowBlur = 0;
-      ctx.strokeStyle = `rgba(255,255,255,0.42)`;
-      ctx.beginPath();
-      ctx.arc(ox, oy, 5.6, 0, Math.PI * 2);
+      ctx.arc(ox, oy, 5.8 + (i % 3 === 0 ? 1.8 : 0), 0, Math.PI * 2);
       ctx.stroke();
+
+      ctx.fillStyle = i % 4 === 0 ? palette[(i + 1) % palette.length] : '#ffffff';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.beginPath();
+      ctx.arc(ox, oy, i % 4 === 0 ? 2.4 : 1.6, 0, Math.PI * 2);
+      ctx.fill();
     }
 
+    ctx.shadowBlur = 0;
+    ctx.setLineDash([2, 5]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      const b = nodes[(i + 3) % nodes.length];
+      if ((i + sideDir + frame) % 2 === 0) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+    ctx.setLineDash([]);
+
+    ctx.font = 'bold 11px Courier New';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const digits = ['4', '5', '5', '5', '6', '6', '6', '7', '7', '9', '9', '3'];
+    digits.forEach((digit, i) => {
+      const angle = sectorStart - Math.PI * 0.18 + (Math.PI * 1.42 * i) / (digits.length - 1);
+      const ring = orbitRadius * (0.9 + 0.05 * Math.sin(frame * 0.04 + i));
+      ctx.fillStyle = digitPalette[i % digitPalette.length];
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.fillText(digit, center.x + Math.cos(angle) * ring, center.y + Math.sin(angle) * ring);
+    });
+
+    ctx.shadowBlur = 0;
+    for (let i = 0; i < 3; i++) {
+      const bend = sideDir * (18 + i * 10);
+      const yLift = 12 + i * 16;
+      ctx.strokeStyle = `rgba(255,255,255,${0.18 + i * 0.04})`;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([1, 6]);
+      ctx.beginPath();
+      ctx.moveTo(center.x - bend, center.y + wheelRadius * 0.54 + yLift);
+      ctx.bezierCurveTo(
+        center.x - bend - sideDir * 24, center.y + wheelRadius * 0.72 + yLift,
+        center.x - bend - sideDir * 58, center.y + wheelRadius * 0.46 + yLift,
+        center.x - bend - sideDir * 70, center.y + wheelRadius * 0.88 + yLift
+      );
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
     fingertips.forEach((tip, idx) => {
-      const col = palette[idx % palette.length];
+      const col = palette[(idx + 1) % palette.length];
       const tether = {
-        x: center.x + (tip.x - center.x) * 0.8,
-        y: center.y + (tip.y - center.y) * 0.8
+        x: center.x + (tip.x - center.x) * 0.78,
+        y: center.y + (tip.y - center.y) * 0.78
       };
 
-      ctx.strokeStyle = `rgba(255,255,255,${0.16 + intensity * 0.12})`;
+      ctx.strokeStyle = `rgba(255,255,255,${0.16 + intensity * 0.08})`;
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(center.x, center.y);
       ctx.lineTo(tether.x, tether.y);
       ctx.stroke();
 
-      for (let bead = 1; bead <= 3; bead++) {
-        const t = bead / 4;
-        const bx = center.x + (tether.x - center.x) * t;
-        const by = center.y + (tether.y - center.y) * t;
-        ctx.fillStyle = bead % 2 === 0 ? '#ffffff' : col;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = col;
-        ctx.beginPath();
-        ctx.arc(bx, by, 1.6 + bead * 0.2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      ctx.shadowBlur = 14;
+      ctx.fillStyle = col;
+      ctx.shadowBlur = 10;
       ctx.shadowColor = col;
-      ctx.strokeStyle = col;
+      ctx.beginPath();
+      ctx.arc(tether.x, tether.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = idx % 2 === 0 ? '#ffffff' : col;
       ctx.lineWidth = 1.25;
       ctx.beginPath();
-      ctx.arc(tip.x, tip.y, 8 + idx * 1.2 + Math.sin(frame * 0.08 + idx) * 1.5, 0, Math.PI * 2);
+      ctx.arc(tip.x, tip.y, 7 + idx * 1.2 + Math.sin(frame * 0.08 + idx) * 1.4, 0, Math.PI * 2);
       ctx.stroke();
     });
 
     ctx.shadowBlur = 0;
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(center.x, center.y, 5.4 + intensity * 2.2, 0, Math.PI * 2);
+    ctx.arc(center.x, center.y, 6.2 + intensity * 1.8, 0, Math.PI * 2);
     ctx.fill();
+
+    ctx.fillStyle = palette[4];
+    for (let i = 0; i < 3; i++) {
+      const angle = spinA + i * ((Math.PI * 2) / 3);
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * 10, center.y + Math.sin(angle) * 10);
+      ctx.lineTo(center.x + Math.cos(angle + 0.28) * 22, center.y + Math.sin(angle + 0.28) * 22);
+      ctx.lineTo(center.x + Math.cos(angle - 0.28) * 22, center.y + Math.sin(angle - 0.28) * 22);
+      ctx.closePath();
+      ctx.globalAlpha = 0.32;
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
 
     ctx.restore();
   }
@@ -1987,12 +2047,12 @@ a, button { cursor: inherit; }
     sparkBurst = sparkBurst.filter(s => s.life > 0);
     sparkBurst.forEach(s => { s.update(); s.draw(); });
 
-    if (currentHands && currentHands.length === 1) {
-      drawTouchAura(currentHands[0], 'solo', 0.56 + portalAlpha * 0.38);
-    } else if (currentHands && currentHands.length >= 2) {
-      const orderedHands = [...currentHands].sort((a, b) => lmScale(a[9]).x - lmScale(b[9]).x);
-      drawTouchAura(orderedHands[0], 'left', 0.52 + portalAlpha * 0.42);
-      drawTouchAura(orderedHands[1], 'right', 0.52 + portalAlpha * 0.42);
+    if (currentHands && currentHands.length >= 1) {
+      const primaryHand = [...currentHands].reduce((best, hand) =>
+        getPalmSpan(hand) > getPalmSpan(best) ? hand : best
+      );
+      const handSide = lmScale(primaryHand[9]).x < W * 0.5 ? 'left' : 'right';
+      drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36);
     }
 
     if (portalAlpha > 0.01 && lThumb && rThumb) {
