@@ -2008,7 +2008,7 @@ a, button { cursor: inherit; }
   let fpsLastTime = performance.now();
   let fpsFrameCount = 0;
   let currentFpsValue = 0;
-  let perfTier = window.innerWidth <= 900 ? 'medium' : 'high';
+  let perfTier = 'medium';
   let cachedMaskCoords = [];
   let lastMaskRefreshFrame = -1;
 
@@ -2025,24 +2025,24 @@ a, button { cursor: inherit; }
       glitchSliceVariance: 4
     },
     medium: {
-      auraDetail: 0.78,
-      particleFactor: 0.72,
-      maskInterval: 4,
-      maskStep: 1,
-      bgSparkCount: 22,
-      echoCount: 6,
-      dataColumns: 4,
+      auraDetail: 0.72,
+      particleFactor: 0.55,
+      maskInterval: 5,
+      maskStep: 2,
+      bgSparkCount: 16,
+      echoCount: 5,
+      dataColumns: 3,
       glitchMinSlices: 2,
       glitchSliceVariance: 3
     },
     low: {
-      auraDetail: 0.58,
-      particleFactor: 0.48,
-      maskInterval: 6,
-      maskStep: 2,
-      bgSparkCount: 12,
-      echoCount: 4,
-      dataColumns: 3,
+      auraDetail: 0.5,
+      particleFactor: 0.32,
+      maskInterval: 8,
+      maskStep: 3,
+      bgSparkCount: 8,
+      echoCount: 3,
+      dataColumns: 2,
       glitchMinSlices: 1,
       glitchSliceVariance: 2
     }
@@ -2054,19 +2054,21 @@ a, button { cursor: inherit; }
 
   function getInferenceInterval() {
     if (isAuraMode()) {
-      if (perfTier === 'low') return 54;
-      if (perfTier === 'medium') return 38;
-      return 28;
+      if (perfTier === 'low') return 80;
+      if (perfTier === 'medium') return 55;
+      return 40;
     }
-    if (perfTier === 'low') return 84;
-    if (perfTier === 'medium') return 62;
-    return 46;
+    // XRAY mode = Holistic + segmentation — much heavier, needs longer gaps
+    if (perfTier === 'low') return 140;
+    if (perfTier === 'medium') return 100;
+    return 75;
   }
 
   function updatePerfTier(fps) {
     let nextTier = 'medium';
-    if (fps >= 32) nextTier = 'high';
-    if (fps < 20) nextTier = 'low';
+    // Only bump to 'high' if we're really hitting 45+ fps comfortably
+    if (fps >= 45) nextTier = 'high';
+    if (fps < 22) nextTier = 'low';
     if (window.innerWidth <= 900 && nextTier === 'high') nextTier = 'medium';
     if (nextTier !== perfTier) lastMaskRefreshFrame = -1;
     perfTier = nextTier;
@@ -2799,12 +2801,15 @@ a, button { cursor: inherit; }
         holisticEngine = new Holistic({
           locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`
         });
+        // Segmentation mask is the heaviest part of Holistic.
+        // Only enable it on large windows where perf can absorb it.
+        const useSegmentation = window.innerWidth > 1100;
         holisticEngine.setOptions({
           modelComplexity: 0,
           smoothLandmarks: true,
           minDetectionConfidence: 0.7,
           minTrackingConfidence: 0.7,
-          enableSegmentation: true
+          enableSegmentation: useSegmentation
         });
         holisticEngine.onResults(res => {
           currentHands = [];
