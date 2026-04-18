@@ -450,6 +450,275 @@
   font-size: .74rem;
   line-height: 1.55;
 }
+
+/* ═══ ADAPTIVE MISSION PLANNER ═══ */
+.mission-planner-shell,
+.protocol-stack-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px !important;
+  border: 1px solid rgba(139,92,246,.16) !important;
+  background:
+    radial-gradient(circle at top right, rgba(139,92,246,.12), transparent 28%),
+    linear-gradient(145deg, rgba(18,8,14,.92), rgba(7,4,10,.98)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 18px 40px rgba(0,0,0,.34);
+}
+.mission-planner-shell::before,
+.protocol-stack-shell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,.82), rgba(196,181,253,.55), transparent);
+}
+.mission-planner-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.mission-planner-kicker {
+  color: rgba(196,181,253,.68);
+  font-family: 'Courier New', monospace;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  margin-bottom: 8px;
+}
+.mission-planner-title {
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+}
+.mission-planner-copy {
+  margin-top: 8px;
+  max-width: 720px;
+  color: rgba(226,232,240,.72);
+  font-size: .9rem;
+  line-height: 1.75;
+}
+.mission-planner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(139,92,246,.22);
+  background: rgba(139,92,246,.12);
+  color: #c4b5fd;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.mission-planner-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+  gap: 16px;
+}
+.mission-primary-panel,
+.mission-side-panel {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+.mission-scene-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  color: rgba(226,232,240,.82);
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.mission-scene-pill i { color: #c4b5fd; }
+.mission-primary-title {
+  margin-top: 14px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+}
+.mission-primary-copy {
+  margin-top: 8px;
+  color: rgba(226,232,240,.72);
+  font-size: .86rem;
+  line-height: 1.75;
+}
+.mission-step-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+.mission-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+.mission-step-index {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139,92,246,.18);
+  border: 1px solid rgba(196,181,253,.24);
+  color: #e9d5ff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .76rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.mission-step-copy strong {
+  display: block;
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.mission-step-copy span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(226,232,240,.64);
+  font-size: .74rem;
+  line-height: 1.6;
+}
+.mission-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.mission-primary-btn,
+.mission-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  transition: all .25s ease;
+}
+.mission-primary-btn {
+  background: linear-gradient(135deg, rgba(139,92,246,.22), rgba(139,92,246,.1));
+  border: 1px solid rgba(139,92,246,.3);
+  color: #f5f3ff;
+}
+.mission-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(76,29,149,.24);
+}
+.mission-secondary-btn {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  color: rgba(226,232,240,.84);
+}
+.mission-secondary-btn:hover {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(196,181,253,.2);
+}
+.mission-signal-grid {
+  display: grid;
+  gap: 12px;
+}
+.mission-signal-card {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+.mission-signal-label {
+  color: rgba(196,181,253,.62);
+  font-family: 'Courier New', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+.mission-signal-value {
+  margin-top: 8px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .92rem;
+  font-weight: 700;
+}
+.mission-signal-sub {
+  margin-top: 4px;
+  color: rgba(226,232,240,.58);
+  font-size: .72rem;
+  line-height: 1.6;
+}
+.protocol-stack-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+.protocol-stack-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+  text-decoration: none;
+  transition: all .25s ease;
+}
+.protocol-stack-link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(139,92,246,.22);
+  background: rgba(139,92,246,.08);
+}
+.protocol-stack-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: .92rem;
+}
+.protocol-stack-copy strong {
+  display: block;
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 700;
+}
+.protocol-stack-copy span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(226,232,240,.6);
+  font-size: .72rem;
+  line-height: 1.55;
+}
+@media (max-width: 992px) {
+  .mission-planner-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 767px) {
+  .mission-planner-head { flex-direction: column; }
+}
 @media (max-width: 1200px) {
   .cc-mini-metrics { grid-template-columns: 1fr; }
 }
@@ -785,6 +1054,140 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ADAPTIVE MISSION PLANNER ═══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8 animate-in" style="animation-delay:0.1s;">
+      <div class="glass-card mission-planner-shell p-4">
+        <div class="mission-planner-head">
+          <div>
+            <div class="mission-planner-kicker">ADAPTIVE MISSION PLANNER</div>
+            <div class="mission-planner-title">Your next best move should be obvious</div>
+            <div class="mission-planner-copy">
+              This planner reads the current hour, your risk tier, contacts, and browser readiness, then recommends the fastest protection flow for the moment you are in.
+            </div>
+          </div>
+          <div class="mission-planner-badge" id="mission-planner-badge">
+            <i class="bi bi-stars"></i>
+            <span>Calibrating</span>
+          </div>
+        </div>
+
+        <div class="mission-planner-grid">
+          <div class="mission-primary-panel">
+            <div class="mission-scene-pill">
+              <i class="bi bi-compass"></i>
+              <span id="mission-scene-pill">Reading context</span>
+            </div>
+            <div class="mission-primary-title" id="mission-primary-title">Building your mission profile...</div>
+            <div class="mission-primary-copy" id="mission-primary-copy">
+              We are checking the session and tailoring a recommended protocol stack for the current environment.
+            </div>
+
+            <div class="mission-step-list">
+              <div class="mission-step-item">
+                <div class="mission-step-index">1</div>
+                <div class="mission-step-copy">
+                  <strong id="mission-step-1-title">Scanning signals</strong>
+                  <span id="mission-step-1-copy">Collecting route, contact, and device readiness.</span>
+                </div>
+              </div>
+              <div class="mission-step-item">
+                <div class="mission-step-index">2</div>
+                <div class="mission-step-copy">
+                  <strong id="mission-step-2-title">Selecting protocol</strong>
+                  <span id="mission-step-2-copy">Matching the best action to the current moment.</span>
+                </div>
+              </div>
+              <div class="mission-step-item">
+                <div class="mission-step-index">3</div>
+                <div class="mission-step-copy">
+                  <strong id="mission-step-3-title">Preparing launch</strong>
+                  <span id="mission-step-3-copy">Setting your fastest route into the safety stack.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mission-action-row">
+              <a href="{{ url_for('dashboard.index') }}" class="mission-primary-btn" id="mission-primary-btn">
+                <i class="bi bi-arrow-up-right-circle-fill"></i>
+                <span>Open Recommended Flow</span>
+              </a>
+              <button type="button" class="mission-secondary-btn" id="mission-secondary-btn">
+                <i class="bi bi-command"></i>
+                <span>Open Command Palette</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mission-side-panel">
+            <div class="control-center-panel-title" style="margin-bottom:14px;">
+              <i class="bi bi-broadcast-pin"></i>
+              <span>Signal Snapshot</span>
+            </div>
+            <div class="mission-signal-grid">
+              <div class="mission-signal-card">
+                <div class="mission-signal-label">Current Mode</div>
+                <div class="mission-signal-value" id="mission-signal-mode">Analyzing...</div>
+                <div class="mission-signal-sub" id="mission-signal-mode-sub">Matching moment to protocol</div>
+              </div>
+              <div class="mission-signal-card">
+                <div class="mission-signal-label">Contact Reach</div>
+                <div class="mission-signal-value" id="mission-signal-contacts">{{ trusted_contacts|length }} linked</div>
+                <div class="mission-signal-sub" id="mission-signal-contacts-sub">Trusted network availability</div>
+              </div>
+              <div class="mission-signal-card">
+                <div class="mission-signal-label">Escape Bias</div>
+                <div class="mission-signal-value" id="mission-signal-escape">Balancing...</div>
+                <div class="mission-signal-sub" id="mission-signal-escape-sub">Exit-first vs observe-first</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 animate-in" style="animation-delay:0.12s;">
+      <div class="glass-card protocol-stack-shell p-4 h-100">
+        <div class="mission-planner-kicker">PINNED PROTOCOL STACK</div>
+        <div class="mission-planner-title" style="font-size:1.08rem;">Fastest launches for pressure moments</div>
+        <div class="mission-planner-copy" style="margin-top:10px;font-size:.84rem;">
+          These are the tools most likely to matter when the situation turns fast and you do not have time to think through the menu tree.
+        </div>
+
+        <div class="protocol-stack-list">
+          <a class="protocol-stack-link" href="{{ url_for('safe_walk.index') }}">
+            <span class="protocol-stack-icon" style="background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.24);color:#6ee7b7;"><i class="bi bi-geo-alt-fill"></i></span>
+            <span class="protocol-stack-copy">
+              <strong>Protected Transit</strong>
+              <span>Start Safe Walk before a commute or late return route.</span>
+            </span>
+          </a>
+          <a class="protocol-stack-link" href="{{ url_for('vision_shield.index') }}">
+            <span class="protocol-stack-icon" style="background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.24);color:#93c5fd;"><i class="bi bi-camera-video-fill"></i></span>
+            <span class="protocol-stack-copy">
+              <strong>Silent Gesture SOS</strong>
+              <span>Use Vision Shield when touch input is risky or visible.</span>
+            </span>
+          </a>
+          <a class="protocol-stack-link" href="{{ url_for('fake_call.index') }}">
+            <span class="protocol-stack-icon" style="background:rgba(244,114,182,.14);border:1px solid rgba(244,114,182,.24);color:#f9a8d4;"><i class="bi bi-phone-vibrate-fill"></i></span>
+            <span class="protocol-stack-copy">
+              <strong>Social Exit</strong>
+              <span>Fake Call creates immediate cover to disengage from pressure.</span>
+            </span>
+          </a>
+          <a class="protocol-stack-link" href="{{ url_for('xray_vision.index') }}">
+            <span class="protocol-stack-icon" style="background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.24);color:#67e8f9;"><i class="bi bi-badge-3d-fill"></i></span>
+            <span class="protocol-stack-copy">
+              <strong>Visual Scan Layer</strong>
+              <span>X-Ray Vision is now your immersive visual reaction module.</span>
+            </span>
+          </a>
         </div>
       </div>
     </div>
@@ -1981,6 +2384,187 @@ initDashboard(window.RAKSHAK_DATA.dangerZones, window.RAKSHAK_DATA.alerts);
     }
   }
 
+  function initMissionPlanner() {
+    const risk = String(window.RAKSHAK_DATA?.riskLevel || 'medium').toLowerCase();
+    const contacts = Number(window.RAKSHAK_DATA?.contactCount || 0);
+    const zones = Number(window.RAKSHAK_DATA?.dangerZones?.length || 0);
+    const hour = new Date().getHours();
+    const online = navigator.onLine;
+    const hasCamera = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    const hasGeo = 'geolocation' in navigator;
+
+    const scenarios = {
+      recovery: {
+        badge: 'Network Priority',
+        pill: 'Guardian rebuild',
+        title: 'Rebuild your support network before the next pressure moment.',
+        copy: 'You are running without trusted contacts linked. The fastest upgrade to your real protection stack is rebuilding that network first, then layering vision and route tools on top of it.',
+        primaryLabel: 'Open Guardian Network',
+        primaryHref: '{{ url_for("guardian.index") }}',
+        secondaryLabel: 'Search Guardian tools',
+        secondaryAction: 'command',
+        secondarySeed: 'guardian',
+        modeSignal: 'Support recovery',
+        modeSignalSub: 'Contact network should come online first',
+        escapeSignal: 'Recover network',
+        escapeSignalSub: 'Link people before late travel or solo routes',
+        steps: [
+          ['Link 2+ guardians', 'Add reachable contacts who can receive escalations in real time.'],
+          ['Verify direct exits', 'Keep Emergency Dial and Fake Call one tap away in the tactical dock.'],
+          ['Arm silent layers', 'Once contacts are live, preload Vision Shield for silent distress situations.']
+        ]
+      },
+      offline: {
+        badge: 'Offline Resilience',
+        pill: 'Fallback response',
+        title: 'Connection is unstable, so bias toward direct-action escape tools.',
+        copy: 'With the network offline, the smartest move is to favor tools that still help you move, call, or disengage quickly instead of depending on cloud-heavy flows.',
+        primaryLabel: 'Open Emergency Dial',
+        primaryHref: '{{ url_for("emergency.index") }}',
+        secondaryLabel: 'Search emergency tools',
+        secondaryAction: 'command',
+        secondarySeed: 'emergency',
+        modeSignal: 'Offline resilience',
+        modeSignalSub: 'Prefer direct calling and local exits',
+        escapeSignal: 'Exit-first',
+        escapeSignalSub: 'Stay visible, move fast, and use local contact actions',
+        steps: [
+          ['Keep direct call ready', 'Emergency Dial should stay open or one tap away.'],
+          ['Use Fake Call for social exits', 'Create interruption if you need to leave fast without confrontation.'],
+          ['Return to monitored mode', 'Once the network stabilizes, switch back to Safe Walk or visual tools.']
+        ]
+      },
+      night: {
+        badge: 'Night Transit',
+        pill: 'Escort-first',
+        title: 'Night hours detected. Bias toward route protection and silent backup.',
+        copy: 'This is the window where protected transit matters most. Start with Safe Walk, keep Vision Shield ready for silent triggers, and keep Fake Call primed for quick disengagement.',
+        primaryLabel: 'Start Safe Walk',
+        primaryHref: '{{ url_for("safe_walk.index") }}',
+        secondaryLabel: 'Vision quick search',
+        secondaryAction: 'command',
+        secondarySeed: 'vision',
+        modeSignal: 'Night escort',
+        modeSignalSub: 'Protected route + fallback gesture stack',
+        escapeSignal: 'Exit-first',
+        escapeSignalSub: 'Move with route tracking before a threat escalates',
+        steps: [
+          ['Launch Safe Walk', 'Start route protection before you begin a late commute or return trip.'],
+          ['Pre-arm silent response', 'Keep Vision Shield ready if speaking or touching the phone becomes unsafe.'],
+          ['Hold a social escape', 'Keep Fake Call available as a fast disengagement layer.']
+        ]
+      },
+      elevated: {
+        badge: 'Elevated Risk',
+        pill: 'Silent trigger bias',
+        title: 'Risk is elevated. Lead with fast visual detection and low-friction escapes.',
+        copy: 'Your risk tier or local zone load suggests a more defensive posture. The best move is to keep the visual trigger stack close and reduce the time between detection and action.',
+        primaryLabel: 'Open Vision Shield',
+        primaryHref: '{{ url_for("vision_shield.index") }}',
+        secondaryLabel: 'Search visual tools',
+        secondaryAction: 'command',
+        secondarySeed: 'vision',
+        modeSignal: 'Observe + trigger',
+        modeSignalSub: 'Visual monitoring should stay close',
+        escapeSignal: 'Silent escalation',
+        escapeSignalSub: 'Use gesture layers before overt confrontation',
+        steps: [
+          ['Prime Vision Shield', 'Gesture SOS should be ready before entering higher-pressure spaces.'],
+          ['Keep Fake Call hot', 'A social interruption can collapse an uncomfortable interaction quickly.'],
+          ['Track hotspots', 'Use the map and command palette to reroute away from known danger clusters.']
+        ]
+      },
+      daily: {
+        badge: 'Daily Guard',
+        pill: 'Awareness mode',
+        title: 'Conditions look stable. Stay ahead with awareness-first protection.',
+        copy: 'The system is in a calmer state, so this is the right time to scan local hotspots, confirm your support stack, and keep high-pressure tools close without overcommitting.',
+        primaryLabel: 'Open Danger Map',
+        primaryHref: '{{ url_for("danger.map_view") }}',
+        secondaryLabel: 'Search all modules',
+        secondaryAction: 'command',
+        secondarySeed: '',
+        modeSignal: 'Awareness first',
+        modeSignalSub: 'Map visibility and route knowledge are strongest now',
+        escapeSignal: 'Balanced response',
+        escapeSignalSub: 'Observe first, escalate fast if pressure rises',
+        steps: [
+          ['Scan the map', 'Review nearby hotspots before you move into an unfamiliar area.'],
+          ['Keep dock tools close', 'The tactical dock should stay ready for sudden pivots into SOS or Fake Call.'],
+          ['Rehearse a fast switch', 'Use the command palette so the right module is muscle memory, not guesswork.']
+        ]
+      }
+    };
+
+    let activeScenario = scenarios.daily;
+    if (contacts === 0) activeScenario = scenarios.recovery;
+    else if (!online) activeScenario = scenarios.offline;
+    else if (hour >= 20 || hour < 5) activeScenario = scenarios.night;
+    else if (risk === 'high' || zones >= 5 || (risk === 'medium' && !hasGeo) || (risk !== 'low' && hasCamera)) activeScenario = scenarios.elevated;
+
+    const badgeEl = document.getElementById('mission-planner-badge');
+    const pillEl = document.getElementById('mission-scene-pill');
+    const titleEl = document.getElementById('mission-primary-title');
+    const copyEl = document.getElementById('mission-primary-copy');
+    const modeEl = document.getElementById('mission-signal-mode');
+    const modeSubEl = document.getElementById('mission-signal-mode-sub');
+    const contactsEl = document.getElementById('mission-signal-contacts');
+    const contactsSubEl = document.getElementById('mission-signal-contacts-sub');
+    const escapeEl = document.getElementById('mission-signal-escape');
+    const escapeSubEl = document.getElementById('mission-signal-escape-sub');
+    const primaryBtn = document.getElementById('mission-primary-btn');
+    const secondaryBtn = document.getElementById('mission-secondary-btn');
+
+    if (badgeEl) badgeEl.innerHTML = `<i class="bi bi-stars"></i><span>${activeScenario.badge}</span>`;
+    if (pillEl) pillEl.innerHTML = `<i class="bi bi-compass"></i><span>${activeScenario.pill}</span>`;
+    if (titleEl) titleEl.textContent = activeScenario.title;
+    if (copyEl) copyEl.textContent = activeScenario.copy;
+    if (modeEl) modeEl.textContent = activeScenario.modeSignal;
+    if (modeSubEl) modeSubEl.textContent = activeScenario.modeSignalSub;
+    if (contactsEl) contactsEl.textContent = `${contacts} linked`;
+    if (contactsSubEl) {
+      contactsSubEl.textContent = contacts > 0
+        ? `${contacts} trusted contacts can receive escalation`
+        : 'No trusted contacts linked yet';
+    }
+    if (escapeEl) escapeEl.textContent = activeScenario.escapeSignal;
+    if (escapeSubEl) escapeSubEl.textContent = activeScenario.escapeSignalSub;
+
+    activeScenario.steps.forEach((step, index) => {
+      const titleNode = document.getElementById(`mission-step-${index + 1}-title`);
+      const copyNode = document.getElementById(`mission-step-${index + 1}-copy`);
+      if (titleNode) titleNode.textContent = step[0];
+      if (copyNode) copyNode.textContent = step[1];
+    });
+
+    if (primaryBtn) {
+      primaryBtn.href = activeScenario.primaryHref;
+      primaryBtn.querySelector('span').textContent = activeScenario.primaryLabel;
+    }
+
+    if (secondaryBtn) {
+      secondaryBtn.querySelector('span').textContent = activeScenario.secondaryLabel;
+      secondaryBtn.onclick = () => {
+        if (activeScenario.secondaryAction === 'command' && typeof window.openRakshakCommandPalette === 'function') {
+          window.openRakshakCommandPalette(activeScenario.secondarySeed || '');
+        } else if (activeScenario.secondaryAction === 'sos' && typeof window.triggerGlobalSOS === 'function') {
+          window.triggerGlobalSOS();
+        }
+      };
+    }
+
+    if (!hasCamera && activeScenario === scenarios.elevated) {
+      if (copyEl) {
+        copyEl.textContent = 'Camera APIs are unavailable in this session, so keep map and direct-exit tools front and center until visual layers can be armed again.';
+      }
+      if (primaryBtn) {
+        primaryBtn.href = '{{ url_for("danger.map_view") }}';
+        primaryBtn.querySelector('span').textContent = 'Open Danger Map';
+      }
+    }
+  }
+
+  initMissionPlanner();
   updateControlCenterReadiness();
   window.addEventListener('online', updateControlCenterReadiness);
   window.addEventListener('offline', updateControlCenterReadiness);

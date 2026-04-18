@@ -74,40 +74,78 @@
   }
 
   function fireSOS() {
+    function sendPayload(payload, modeLabel) {
+      var headers = { 'Content-Type': 'application/json' };
+      if (typeof CSRF_TOKEN !== 'undefined') {
+        headers['X-CSRFToken'] = CSRF_TOKEN;
+      }
+      fetch('/sos/trigger', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.success) {
+            if (typeof showToast === 'function') {
+              if (modeLabel === 'live') showToast('SOS ALERT SENT', 'sos', 6000);
+              else showToast('SOS ALERT SENT USING LAST KNOWN LOCATION', 'sos', 6500);
+            }
+          } else {
+            if (typeof showToast === 'function') showToast(d.error || 'SOS failed', 'error');
+          }
+        })
+        .catch(function () {
+          if (typeof showToast === 'function') showToast('Network error sending SOS', 'error');
+        });
+    }
+
+    function buildPayload(location) {
+      var payload = {
+        trigger_type: 'auto_shake',
+        message: 'Auto-triggered via shake/volume detection'
+      };
+      if (location && Number.isFinite(Number(location.lat)) && Number.isFinite(Number(location.lng))) {
+        payload.latitude = Number(location.lat);
+        payload.longitude = Number(location.lng);
+        if (location.accuracy != null && Number.isFinite(Number(location.accuracy))) {
+          payload.accuracy = Number(location.accuracy);
+        }
+        if (location.source && location.source !== 'live') {
+          payload.message += ' [USING LAST KNOWN LOCATION]';
+        }
+      } else {
+        payload.message += ' [LIVE GPS UNAVAILABLE]';
+      }
+      return payload;
+    }
+
+    if (!navigator.geolocation) {
+      var noGeoLocation = typeof window.getRakshakCachedLocation === 'function'
+        ? window.getRakshakCachedLocation()
+        : null;
+      sendPayload(buildPayload(noGeoLocation), noGeoLocation ? 'cached' : 'fallback');
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
       function (pos) {
-        var headers = { 'Content-Type': 'application/json' };
-        if (typeof CSRF_TOKEN !== 'undefined') {
-          headers['X-CSRFToken'] = CSRF_TOKEN;
+        var liveLocation = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+          source: 'live'
+        };
+        if (typeof window.cacheRakshakLocation === 'function') {
+          window.cacheRakshakLocation(liveLocation, { source: 'auto-sos' });
         }
-        fetch('/sos/trigger', {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            trigger_type: 'auto_shake',
-            accuracy: pos.coords.accuracy,
-            message: 'Auto-triggered via shake/volume detection'
-          })
-        })
-          .then(function (r) { return r.json(); })
-          .then(function (d) {
-            if (d.success) {
-              if (typeof showToast === 'function') showToast('SOS ALERT SENT', 'sos', 6000);
-            } else {
-              if (typeof showToast === 'function') showToast(d.error || 'SOS failed', 'error');
-            }
-          })
-          .catch(function () {
-            if (typeof showToast === 'function') showToast('Network error sending SOS', 'error');
-          });
+        sendPayload(buildPayload(liveLocation), 'live');
       },
       function () {
-        // Fallback: send without coords — server will reject but at least we tried
-        if (typeof showToast === 'function') {
-          showToast('GPS unavailable — SOS could not be sent', 'error');
-        }
+        var fallbackLocation = typeof window.getRakshakCachedLocation === 'function'
+          ? window.getRakshakCachedLocation()
+          : null;
+        sendPayload(buildPayload(fallbackLocation), fallbackLocation ? 'cached' : 'fallback');
       },
       { enableHighAccuracy: true, timeout: 8000 }
     );

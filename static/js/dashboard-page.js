@@ -45,6 +45,13 @@
   navigator.geolocation.watchPosition(function(pos) {
     window.currentLat = pos.coords.latitude;
     window.currentLng = pos.coords.longitude;
+    if (typeof window.cacheRakshakLocation === 'function') {
+      window.cacheRakshakLocation({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+        accuracy: pos.coords.accuracy
+      }, { source: 'dashboard-watch' });
+    }
     gpsCbs.forEach(function(cb) { cb(pos); });
   }, null, { enableHighAccuracy:true, maximumAge:10000 });
   window._onGPS(function(pos) {
@@ -210,7 +217,17 @@ function fetchNearbyPlaces() {
   const lat=window.currentLat, lng=window.currentLng;
   if (!lat||!lng) {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos=>{ window.currentLat=pos.coords.latitude; window.currentLng=pos.coords.longitude; fetchNearbyPlaces(); }, ()=>{
+      navigator.geolocation.getCurrentPosition(pos=>{
+        window.currentLat=pos.coords.latitude; window.currentLng=pos.coords.longitude;
+        if (typeof window.cacheRakshakLocation === 'function') {
+          window.cacheRakshakLocation({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy: pos.coords.accuracy
+          }, { source: 'dashboard-nearby' });
+        }
+        fetchNearbyPlaces();
+      }, ()=>{
         ['places-police','places-hospital','places-fire'].forEach(id=>{ const el=document.getElementById(id); if(el)el.innerHTML='<div style="text-align:center;padding:20px;"><div style="font-size:0.75rem;color:var(--text-muted);">Location access denied</div></div>'; });
       },{timeout:5000, enableHighAccuracy:true});
     }

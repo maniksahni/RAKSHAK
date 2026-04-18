@@ -81,35 +81,140 @@
 
   <!-- ── GLOBAL PANIC SOS LOGIC ─────────────────────────────────────────────── -->
   <script>
+  window.cacheRakshakLocation = function(coords, meta) {
+    if (!coords) return null;
+    var lat = Number(coords.lat);
+    var lng = Number(coords.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    var cached = {
+      lat: lat,
+      lng: lng,
+      accuracy: coords.accuracy != null && Number.isFinite(Number(coords.accuracy)) ? Number(coords.accuracy) : null,
+      timestamp: meta && meta.timestamp ? meta.timestamp : Date.now(),
+      source: meta && meta.source ? meta.source : 'live'
+    };
+    window._rakshakLastLocation = cached;
+    window.currentLat = lat;
+    window.currentLng = lng;
+    try {
+      localStorage.setItem('rakshak_last_location', JSON.stringify(cached));
+    } catch (e) {}
+    return cached;
+  };
+
+  window.getRakshakCachedLocation = function() {
+    var candidates = [];
+    if (window._rakshakLastLocation) candidates.push(window._rakshakLastLocation);
+    if (typeof window.currentLat !== 'undefined' && typeof window.currentLng !== 'undefined') {
+      candidates.push({ lat: window.currentLat, lng: window.currentLng, accuracy: null, source: 'window-current' });
+    }
+    if (window._hudPos && typeof window._hudPos.lat !== 'undefined' && typeof window._hudPos.lng !== 'undefined') {
+      candidates.push({ lat: window._hudPos.lat, lng: window._hudPos.lng, accuracy: null, source: 'hud' });
+    }
+    try {
+      var stored = localStorage.getItem('rakshak_last_location');
+      if (stored) candidates.push(JSON.parse(stored));
+    } catch (e) {}
+
+    for (var i = 0; i < candidates.length; i++) {
+      var item = candidates[i];
+      var lat = Number(item.lat);
+      var lng = Number(item.lng);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return {
+          lat: lat,
+          lng: lng,
+          accuracy: item.accuracy != null && Number.isFinite(Number(item.accuracy)) ? Number(item.accuracy) : null,
+          timestamp: item.timestamp || null,
+          source: item.source || 'cached'
+        };
+      }
+    }
+    return null;
+  };
+
+  window.describeRakshakGeoError = function(err) {
+    if (!err || typeof err.code === 'undefined') return 'LIVE GPS UNAVAILABLE';
+    if (err.code === 1) return 'LIVE GPS BLOCKED';
+    if (err.code === 2) return 'GPS SIGNAL UNAVAILABLE';
+    if (err.code === 3) return 'GPS REQUEST TIMED OUT';
+    return 'LIVE GPS UNAVAILABLE';
+  };
+
   /* ── Internal: actually fire the SOS network request ──────────────── */
   window._fireGlobalSOS = function() {
     if(typeof showLoading === 'function') showLoading("DEPLOYING EMERGENCY OVERRIDES...", ["VERIFYING CLEARANCE", "ACQUIRING SATELLITE LOCK", "BROADCASTING DISTRESS SIGNAL"]);
     if(window.tacticalAnnounce) tacticalAnnounce("S O S Override Authorized. Broadcast transmitting.");
 
-    navigator.geolocation.getCurrentPosition(pos => {
+    function finishLoading() {
+      if (typeof hideLoading === 'function') hideLoading();
+      else {
+        var overlay = document.getElementById('loading-overlay');
+        if (overlay) overlay.style.display = 'none';
+      }
+    }
+
+    function submitSOS(payload, modeLabel) {
       fetch('/sos/trigger', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          trigger_type: 'navbar_panic',
-          accuracy: pos.coords.accuracy
-        })
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
       }).then(r => r.json()).then(d => {
-        document.getElementById('loading-overlay').style.display = 'none';
-        if(d.success) {
-          if(typeof showToast === 'function') showToast("SOS ALERT BROADCASTED SECURELY", "sos");
+        finishLoading();
+        if (d.success) {
+          if (typeof showToast === 'function') {
+            if (modeLabel === 'live') showToast("SOS ALERT BROADCASTED SECURELY", "sos");
+            else if (modeLabel === 'cached') showToast("SOS ALERT SENT USING LAST KNOWN LOCATION", "sos", 6500);
+            else showToast("SOS ALERT SENT. LIVE GPS WAS UNAVAILABLE", "sos", 6500);
+          }
         } else {
-          if(typeof showToast === 'function') showToast(d.error || "SOS FAILED", "error");
+          if (typeof showToast === 'function') {
+            showToast(d.error || "SOS FAILED", "error");
+          }
         }
-      }).catch(err => {
-        document.getElementById('loading-overlay').style.display = 'none';
+      }).catch(function() {
+        finishLoading();
         if(typeof showToast === 'function') showToast("NETWORK FAILURE - RETRYING...", "error");
       });
-    }, err => {
-      document.getElementById('loading-overlay').style.display = 'none';
-      if(typeof showToast === 'function') showToast("GPS ACCESS DENIED. LOCATION DATA LOST.", "error");
-    }, {enableHighAccuracy: true, timeout: 8000});
+    }
+
+    function buildPayload(location, geoErr) {
+      var payload = { trigger_type: 'navbar_panic' };
+      if (location && Number.isFinite(Number(location.lat)) && Number.isFinite(Number(location.lng))) {
+        payload.latitude = Number(location.lat);
+        payload.longitude = Number(location.lng);
+        if (location.accuracy != null && Number.isFinite(Number(location.accuracy))) {
+          payload.accuracy = Number(location.accuracy);
+        }
+        if (location.source && location.source !== 'live') {
+          payload.message = 'Navbar SOS triggered using last known location.';
+        }
+      } else {
+        payload.message = 'Navbar SOS triggered while live GPS was unavailable.';
+      }
+      if (geoErr && !payload.message) {
+        payload.message = window.describeRakshakGeoError(geoErr) + '.';
+      }
+      return payload;
+    }
+
+    var cachedLocation = window.getRakshakCachedLocation();
+    if (!navigator.geolocation) {
+      submitSOS(buildPayload(cachedLocation, null), cachedLocation ? 'cached' : 'fallback');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      var liveLocation = window.cacheRakshakLocation({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+        accuracy: pos.coords.accuracy
+      }, { source: 'live' });
+      submitSOS(buildPayload(liveLocation, null), 'live');
+    }, function(err) {
+      var fallbackLocation = window.getRakshakCachedLocation();
+      submitSOS(buildPayload(fallbackLocation, err), fallbackLocation ? 'cached' : 'fallback');
+    }, {enableHighAccuracy: true, timeout: 8000, maximumAge: 30000});
   };
 
   /* ── 3-second auto-confirm countdown for navbar SOS button ───────── */
@@ -804,6 +909,13 @@
   function updateGPS() {
     navigator.geolocation.getCurrentPosition(function(pos) {
       _hudPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      if (typeof window.cacheRakshakLocation === 'function') {
+        window.cacheRakshakLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy
+        }, { source: 'hud' });
+      }
       var acc = pos.coords.accuracy;
       var gpsVal = document.getElementById('sb-gps');
       var gpsFill = document.getElementById('sb-gps-fill');
@@ -1121,29 +1233,37 @@ function startHardwareLink() {
 
 // PWA Installation Logic
 let deferredPrompt;
+function setInstallButtonVisibility(visible) {
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) installBtn.style.display = visible ? 'flex' : 'none';
+}
+async function triggerPWAInstall() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isStandalone) {
+    if (typeof showToast === 'function') showToast('RAKSHAK is already installed on this device.', 'info');
+    return;
+  }
+  if (!deferredPrompt) {
+    if (typeof showToast === 'function') showToast('Install prompt is not available yet on this device.', 'info');
+    return;
+  }
+  setInstallButtonVisibility(false);
+  deferredPrompt.prompt();
+  const choiceResult = await deferredPrompt.userChoice;
+  if (choiceResult.outcome === 'accepted') {
+    if (typeof showToast === 'function') showToast('RAKSHAK install flow accepted.', 'success');
+  }
+  deferredPrompt = null;
+}
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  const installBtn = document.getElementById('pwa-install-btn');
-  if (installBtn) {
-    installBtn.style.display = 'flex';
-    installBtn.addEventListener('click', () => {
-      installBtn.style.display = 'none';
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the A2HS prompt');
-        }
-        deferredPrompt = null;
-      });
-    });
-  }
+  setInstallButtonVisibility(true);
 });
 
 window.addEventListener('appinstalled', () => {
   console.log('PWA was installed');
-  const installBtn = document.getElementById('pwa-install-btn');
-  if (installBtn) installBtn.style.display = 'none';
+  setInstallButtonVisibility(false);
 });
 </script>
 {% endif %}
@@ -1243,6 +1363,111 @@ window.addEventListener('appinstalled', () => {
         <i class="bi bi-stars"></i>
         <span>AI Modules</span>
       </button>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if current_user.is_authenticated %}
+<div
+  class="rak-tactical-dock-shell{% if request.endpoint in ['vision_shield.index', 'xray_vision.index'] %} is-immersive{% endif %}"
+  id="rak-tactical-dock"
+  data-immersive="{{ 'true' if request.endpoint in ['vision_shield.index', 'xray_vision.index'] else 'false' }}"
+>
+  <div class="rak-tactical-dock-card">
+    <div class="rak-tactical-dock-head">
+      <div>
+        <div class="rak-tactical-dock-kicker">TACTICAL DOCK</div>
+        <div class="rak-tactical-dock-title">Rapid safety controls</div>
+      </div>
+      <button type="button" class="rak-tactical-dock-toggle" id="rak-dock-toggle" aria-label="Collapse tactical dock">
+        <i class="bi bi-chevron-down"></i>
+      </button>
+    </div>
+
+    <div class="rak-tactical-dock-body" id="rak-dock-body">
+      <div class="rak-tactical-dock-grid">
+        <button type="button" class="rak-dock-tile" data-rak-dock-action="command">
+          <span class="rak-dock-tile-icon"><i class="bi bi-command"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Command</strong>
+            <span>Search everything</span>
+          </span>
+        </button>
+
+        {% if current_user.is_admin %}
+        <a class="rak-dock-tile{% if request.endpoint == 'dashboard.index' %} is-active{% endif %}" href="{{ url_for('dashboard.index') }}">
+          <span class="rak-dock-tile-icon"><i class="bi bi-house-door-fill"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Dashboard</strong>
+            <span>Main command hub</span>
+          </span>
+        </a>
+        <a class="rak-dock-tile{% if request.endpoint == 'danger.map_view' %} is-active{% endif %}" href="{{ url_for('danger.map_view') }}">
+          <span class="rak-dock-tile-icon"><i class="bi bi-map-fill"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Live Map</strong>
+            <span>Threat view</span>
+          </span>
+        </a>
+        {% else %}
+        <button type="button" class="rak-dock-tile rak-dock-tile-sos" data-rak-dock-action="sos">
+          <span class="rak-dock-tile-icon"><i class="bi bi-shield-exclamation"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>SOS</strong>
+            <span>Broadcast help</span>
+          </span>
+        </button>
+        <a class="rak-dock-tile{% if request.endpoint == 'safe_walk.index' %} is-active{% endif %}" href="{{ url_for('safe_walk.index') }}">
+          <span class="rak-dock-tile-icon"><i class="bi bi-geo-alt-fill"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Safe Walk</strong>
+            <span>Protected route</span>
+          </span>
+        </a>
+        <a class="rak-dock-tile{% if request.endpoint == 'fake_call.index' %} is-active{% endif %}" href="{{ url_for('fake_call.index') }}">
+          <span class="rak-dock-tile-icon"><i class="bi bi-phone-vibrate-fill"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Fake Call</strong>
+            <span>Exit pressure</span>
+          </span>
+        </a>
+        <a class="rak-dock-tile{% if request.endpoint == 'vision_shield.index' %} is-active{% endif %}" href="{{ url_for('vision_shield.index') }}">
+          <span class="rak-dock-tile-icon"><i class="bi bi-camera-video-fill"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Vision</strong>
+            <span>Gesture shield</span>
+          </span>
+        </a>
+        <a class="rak-dock-tile{% if request.endpoint == 'xray_vision.index' %} is-active{% endif %}" href="{{ url_for('xray_vision.index') }}">
+          <span class="rak-dock-tile-icon"><i class="bi bi-badge-3d-fill"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>X-Ray</strong>
+            <span>Visual modes</span>
+          </span>
+        </a>
+        <button type="button" class="rak-dock-tile" data-rak-dock-action="ring">
+          <span class="rak-dock-tile-icon"><i class="bi bi-bluetooth"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Ring</strong>
+            <span>Wearable sync</span>
+          </span>
+        </button>
+        {% endif %}
+
+        <button type="button" class="rak-dock-tile" id="pwa-install-btn" style="display:none;" data-rak-dock-action="install">
+          <span class="rak-dock-tile-icon"><i class="bi bi-phone-fill"></i></span>
+          <span class="rak-dock-tile-copy">
+            <strong>Install</strong>
+            <span>App shell</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="rak-tactical-dock-foot">
+        <span class="rak-dock-foot-label">Current route</span>
+        <span class="rak-dock-foot-value">{{ request.endpoint or 'unknown' }}</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1621,6 +1846,197 @@ body.command-palette-open { overflow: hidden; }
   border-color: rgba(196, 181, 253, 0.18);
   background: rgba(139, 92, 246, 0.12);
   color: #fff;
+}
+.rak-tactical-dock-shell {
+  position: fixed;
+  right: 24px;
+  bottom: 22px;
+  z-index: 3900;
+  width: min(360px, calc(100vw - 28px));
+}
+.rak-tactical-dock-card {
+  position: relative;
+  border-radius: 22px;
+  border: 1px solid rgba(196, 181, 253, 0.12);
+  background:
+    radial-gradient(circle at top right, rgba(139,92,246,.16), transparent 34%),
+    linear-gradient(145deg, rgba(18,10,30,.94), rgba(7,4,12,.98));
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.rak-tactical-dock-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(196,181,253,.86), rgba(139,92,246,.6), transparent);
+}
+.rak-tactical-dock-head {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 14px;
+}
+.rak-tactical-dock-kicker {
+  color: rgba(196,181,253,.66);
+  font-family: 'Courier New', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+}
+.rak-tactical-dock-title {
+  margin-top: 6px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .98rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.rak-tactical-dock-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: rgba(226,232,240,.68);
+  transition: all .2s ease;
+}
+.rak-tactical-dock-toggle:hover {
+  color: #fff;
+  border-color: rgba(196,181,253,.24);
+  background: rgba(139,92,246,.12);
+}
+.rak-tactical-dock-body {
+  padding: 0 16px 16px;
+  max-height: 460px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-height .28s ease, opacity .2s ease, padding .2s ease;
+}
+.rak-tactical-dock-shell.is-collapsed .rak-tactical-dock-body {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+.rak-tactical-dock-shell.is-collapsed .rak-tactical-dock-toggle i {
+  transform: rotate(180deg);
+}
+.rak-tactical-dock-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.rak-dock-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.07);
+  background: rgba(255,255,255,.04);
+  color: #fff;
+  text-decoration: none;
+  text-align: left;
+  transition: all .2s ease;
+}
+.rak-dock-tile:hover,
+.rak-dock-tile.is-active {
+  transform: translateY(-1px);
+  border-color: rgba(196,181,253,.24);
+  background: rgba(139,92,246,.14);
+  box-shadow: 0 12px 22px rgba(15,23,42,.24);
+}
+.rak-dock-tile-sos {
+  border-color: rgba(239,68,68,.18);
+  background: linear-gradient(135deg, rgba(127,29,29,.36), rgba(35,8,16,.88));
+}
+.rak-dock-tile-sos:hover {
+  border-color: rgba(252,165,165,.28);
+  background: linear-gradient(135deg, rgba(153,27,27,.48), rgba(53,8,18,.92));
+}
+.rak-dock-tile-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  color: #c4b5fd;
+  font-size: .96rem;
+  flex-shrink: 0;
+}
+.rak-dock-tile-sos .rak-dock-tile-icon {
+  color: #fca5a5;
+  border-color: rgba(252,165,165,.16);
+  background: rgba(252,165,165,.08);
+}
+.rak-dock-tile-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.rak-dock-tile-copy strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
+.rak-dock-tile-copy span {
+  margin-top: 4px;
+  color: rgba(226,232,240,.6);
+  font-size: .68rem;
+  letter-spacing: .06em;
+}
+.rak-tactical-dock-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.rak-dock-foot-label {
+  color: rgba(196,181,253,.58);
+  font-family: 'Courier New', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.rak-dock-foot-value {
+  color: rgba(226,232,240,.78);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-align: right;
+}
+@media (max-width: 992px) {
+  .rak-tactical-dock-shell {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    width: auto;
+  }
+}
+@media (max-width: 640px) {
+  .rak-tactical-dock-grid { grid-template-columns: 1fr 1fr; }
+  .rak-dock-tile { min-height: 62px; padding: 10px; gap: 10px; }
+  .rak-dock-tile-copy strong { font-size: .76rem; }
+  .rak-dock-tile-copy span { font-size: .64rem; }
 }
 @media (max-width: 992px) {
   .rak-command-launch-btn span:not(.rak-command-shortcut-pill) { display: none; }
@@ -2164,6 +2580,46 @@ document.addEventListener('click', e => {
   });
 
   renderCommandResults();
+})();
+{% endif %}
+
+{% if current_user.is_authenticated %}
+(function() {
+  const dockEl = document.getElementById('rak-tactical-dock');
+  const toggleEl = document.getElementById('rak-dock-toggle');
+  if (!dockEl || !toggleEl) return;
+
+  const collapseKey = 'rakshak-tactical-dock-collapsed';
+  const immersive = dockEl.dataset.immersive === 'true';
+
+  function applyDockState(collapsed) {
+    dockEl.classList.toggle('is-collapsed', collapsed);
+    toggleEl.setAttribute('aria-expanded', String(!collapsed));
+  }
+
+  const savedCollapsed = window.localStorage.getItem(collapseKey) === 'true';
+  applyDockState(immersive || savedCollapsed);
+
+  toggleEl.addEventListener('click', () => {
+    const nextState = !dockEl.classList.contains('is-collapsed');
+    applyDockState(nextState);
+    window.localStorage.setItem(collapseKey, String(nextState));
+  });
+
+  dockEl.querySelectorAll('[data-rak-dock-action]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const action = button.dataset.rakDockAction;
+      if (action === 'command' && typeof window.openRakshakCommandPalette === 'function') {
+        window.openRakshakCommandPalette('');
+      } else if (action === 'sos' && typeof window.triggerGlobalSOS === 'function') {
+        window.triggerGlobalSOS();
+      } else if (action === 'ring' && typeof window.startHardwareLink === 'function') {
+        window.startHardwareLink();
+      } else if (action === 'install' && typeof window.triggerPWAInstall === 'function') {
+        window.triggerPWAInstall();
+      }
+    });
+  });
 })();
 {% endif %}
 
