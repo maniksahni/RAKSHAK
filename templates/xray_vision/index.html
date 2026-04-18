@@ -1485,6 +1485,11 @@ a, button { cursor: inherit; }
   let cameraController = null;
   let handsEngine = null;
   let hasStarted = false;
+  let startupRetryCount = 0;
+  let engineBootId = 0;
+  let hasTrackingResults = false;
+  let lastTrackingResultsAt = 0;
+  let startupRecoveryTimer = null;
   let trackingBusy = false;
   let lastTrackingRunAt = 0;
   let currentXrayEffectLabel = 'STANDBY';
@@ -1500,6 +1505,13 @@ a, button { cursor: inherit; }
   const xrayFxCtx = xrayFxCv.getContext('2d', { willReadFrequently: true });
   const xrayMiniCv = document.createElement('canvas');
   const xrayMiniCtx = xrayMiniCv.getContext('2d', { willReadFrequently: true });
+
+  function clearStartupRecoveryTimer() {
+    if (startupRecoveryTimer) {
+      clearTimeout(startupRecoveryTimer);
+      startupRecoveryTimer = null;
+    }
+  }
 
   function resize() {
     W = cv.width = wrapEl.clientWidth;
@@ -2729,9 +2741,14 @@ a, button { cursor: inherit; }
   async function startEngines() {
     if (hasStarted) return;
     hasStarted = true;
+    hasTrackingResults = false;
+    lastTrackingResultsAt = 0;
+    clearStartupRecoveryTimer();
+    const bootId = ++engineBootId;
     updateTelemetry();
     try {
       const auraMode = isAuraMode();
+      loaderEl.style.display = '';
       loaderSub.textContent = 'Loading MediaPipe Hands…';
       if (!navigator.mediaDevices?.getUserMedia) {
         loaderEl.innerHTML = 'CAMERA API UNAVAILABLE';
@@ -2757,11 +2774,24 @@ a, button { cursor: inherit; }
         minTrackingConfidence: auraMode ? 0.55 : 0.6
       });
       handsEngine.onResults(res => {
+        if (bootId !== engineBootId) return;
         currentHands = res.multiHandLandmarks?.length
           ? res.multiHandLandmarks.slice(0, auraMode ? 1 : 2)
           : [];
         currentPose = null;
         currentMask = null;
+        lastTrackingResultsAt = performance.now();
+        if (!hasTrackingResults) {
+          hasTrackingResults = true;
+          startupRetryCount = 0;
+          clearStartupRecoveryTimer();
+          loaderEl.style.display = 'none';
+          loaderSub.textContent = auraMode
+            ? 'Camera linked · stabilizing aura field'
+            : 'Camera linked · framing reactive viewport';
+          statusEl.textContent = 'SYSTEM READY';
+          updateTelemetry();
+        }
       });
 
       loaderSub.textContent = 'Accessing camera…';
@@ -2786,11 +2816,9 @@ a, button { cursor: inherit; }
       cameraStream = stream;
       vid.srcObject = stream;
       await vid.play();
-      loaderEl.style.display = 'none';
       loaderSub.textContent = auraMode
-        ? 'Camera linked · stabilizing aura field'
-        : 'Camera linked · framing reactive viewport';
-      statusEl.textContent = 'SYSTEM READY';
+        ? 'Camera linked · waiting for aura tracking'
+        : 'Camera linked · waiting for viewport tracking';
 
       cameraController = new Camera(vid, {
         onFrame: async () => {
@@ -2811,6 +2839,20 @@ a, button { cursor: inherit; }
         height: preferredVideoHeight
       });
       cameraController.start();
+
+      startupRecoveryTimer = setTimeout(async () => {
+        if (bootId !== engineBootId || !hasStarted || hasTrackingResults) return;
+        if (startupRetryCount < 1) {
+          startupRetryCount += 1;
+          loaderSub.textContent = 'Tracking handshake slow… retrying';
+          await cleanupEngines({ preserveRetryCount: true });
+          await startEngines();
+          return;
+        }
+        loaderEl.innerHTML = 'TRACKING ENGINE UNSTABLE<br><span class="xv-loader-sub">Retry camera permission or refresh the page</span>';
+        hasStarted = false;
+        updateTelemetry();
+      }, 3500);
       updateTelemetry();
     } catch (err) {
       loaderEl.innerHTML = 'ENGINE INITIALIZATION FAILED';
@@ -2820,7 +2862,9 @@ a, button { cursor: inherit; }
     }
   }
 
-  async function cleanupEngines() {
+  async function cleanupEngines({ preserveRetryCount = false } = {}) {
+    clearStartupRecoveryTimer();
+    engineBootId += 1;
     try { cameraController?.stop?.(); } catch (e) {}
     cameraController = null;
 
@@ -2838,6 +2882,8 @@ a, button { cursor: inherit; }
     currentMask = null;
     cachedMaskCoords = [];
     lastMaskRefreshFrame = -1;
+    hasTrackingResults = false;
+    lastTrackingResultsAt = 0;
     trackingBusy = false;
     lastTrackingRunAt = 0;
     lastXrayEffectKey = '';
@@ -2850,6 +2896,7 @@ a, button { cursor: inherit; }
     sosFired = false;
     wrapEl.classList.remove('xv-sos-charging');
     hasStarted = false;
+    if (!preserveRetryCount) startupRetryCount = 0;
     updateTelemetry();
   }
 
