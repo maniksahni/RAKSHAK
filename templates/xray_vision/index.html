@@ -855,24 +855,54 @@ a, button { cursor: inherit; }
   animation: xvInsBlink 1.4s ease infinite;
 }
 
+.xv-wrap[data-mode="aura"] .xv-brand-hud,
+.xv-wrap[data-mode="aura"] .xv-left-panel,
 .xv-wrap[data-mode="aura"] .xv-right-panel,
-.xv-wrap[data-mode="aura"] .xv-bottom-rail {
+.xv-wrap[data-mode="aura"] .xv-bottom-rail,
+.xv-wrap[data-mode="aura"] .xv-status,
+.xv-wrap[data-mode="aura"] .xv-frame-counter,
+.xv-wrap[data-mode="aura"] .xv-orb,
+.xv-wrap[data-mode="aura"] .xv-scan-sweep,
+.xv-wrap[data-mode="aura"] .xv-center-reticle {
   opacity: 0;
   pointer-events: none;
 }
 
-.xv-wrap[data-mode="aura"] .xv-left-panel {
-  background: linear-gradient(180deg, rgba(6, 8, 18, 0.88), rgba(6, 8, 18, 0.14));
-  border-color: rgba(255, 255, 255, 0.08);
+.xv-wrap[data-mode="aura"] .xv-grid-overlay {
+  opacity: 0.04;
+  background-size: 92px 92px;
 }
 
-.xv-wrap[data-mode="aura"] .xv-status {
-  letter-spacing: 4px;
+.xv-wrap[data-mode="aura"] .xv-instructions {
+  top: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  font-family: 'Courier New', monospace;
+}
+
+.xv-wrap[data-mode="aura"] .xv-ins-dot {
+  display: none;
 }
 
 .xv-wrap[data-mode="aura"] .xv-controls {
-  background: rgba(5, 8, 18, 0.72);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(10, 10, 14, 0.42);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+}
+
+.xv-wrap[data-mode="aura"] .xv-back-btn,
+.xv-wrap[data-mode="aura"] .xv-fps {
+  background: rgba(10, 10, 14, 0.3);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .xv-wrap[data-mode="xray"]::before,
@@ -1637,7 +1667,7 @@ a, button { cursor: inherit; }
     if (densityGroupEl) densityGroupEl.hidden = true;
     if (instructionsTextEl) {
       instructionsTextEl.textContent = auraMode
-        ? 'Show one hand · rotate wrist through the field'
+        ? 'making aura'
         : 'Show both hands · hold the frame to cycle effects';
     }
     if (allowBtn) {
@@ -2139,256 +2169,272 @@ a, button { cursor: inherit; }
 
   function drawTouchAura(handLm, side = 'solo', intensity = 0.65, detail = 1) {
     if (!handLm) return;
-    detail = Math.max(0.48, Math.min(1, detail));
-    const auraMode = isAuraMode();
+    detail = Math.max(0.5, Math.min(1, detail));
 
     const wrist = lmScale(handLm[0]);
     const palmLeft = lmScale(handLm[5]);
     const palmRight = lmScale(handLm[17]);
-    const indexTip = lmScale(handLm[8]);
+    const palmMid = lmScale(handLm[9]);
+    const ringBase = lmScale(handLm[13]);
     const middleTip = lmScale(handLm[12]);
-    const ringTip = lmScale(handLm[16]);
-    const pinkyTip = lmScale(handLm[20]);
-    const thumbTip = lmScale(handLm[4]);
-    const palmCenter = averagePoints([wrist, palmLeft, lmScale(handLm[9]), lmScale(handLm[13]), palmRight]);
-    const centerPull = auraMode ? 0.14 : 0.24;
-    const center = {
-      x: palmCenter.x + (middleTip.x - palmCenter.x) * centerPull,
-      y: palmCenter.y + (middleTip.y - palmCenter.y) * centerPull
-    };
-    const fingertips = [thumbTip, indexTip, middleTip, ringTip, pinkyTip];
-    const palmSpan = Math.max(42, getPalmSpan(handLm));
-    const wheelRadius = palmSpan * (auraMode ? (0.84 + intensity * 0.12) : (1.08 + intensity * 0.22));
-    const orbitRadius = wheelRadius * (auraMode ? (1.48 + intensity * 0.08) : (1.72 + intensity * 0.12));
+    const palmCenter = averagePoints([wrist, palmLeft, palmMid, ringBase, palmRight]);
+    const palmAngle = Math.atan2(palmRight.y - palmLeft.y, palmRight.x - palmLeft.x);
     const sideDir = side === 'right' ? -1 : 1;
-    const spinA = frame * 0.018 * sideDir;
-    const spinB = -frame * 0.012 * sideDir;
-    const palette = auraMode
-      /* Vivid TouchDesigner-style rainbow so the aura reads strong on bright webcam frames */
-      ? ['#ffffff', '#22d3ee', '#a3e635', '#facc15', '#f97316', '#f472b6', '#38bdf8']
-      : ['#ffffff', '#fef08a', '#38bdf8', '#60a5fa', '#f59e0b', '#f472b6', '#4ade80'];
-    const digitPalette = auraMode
-      ? ['#a3e635', '#facc15', '#22d3ee', '#f472b6', '#f97316', '#ffffff']
-      : ['#84cc16', '#a3e635', '#d9f99d'];
-    const sectorStart = auraMode
-      ? (side === 'right' ? Math.PI * 0.30 + spinB : Math.PI * 0.76 + spinB)
-      : (side === 'right' ? Math.PI * 0.18 + spinB : Math.PI * 0.82 + spinB);
-    const sectorSweep = auraMode ? Math.PI * 1.06 : Math.PI * 1.26;
-    const nodes = [];
+
+    const center = {
+      x: palmCenter.x + (middleTip.x - palmCenter.x) * 0.1,
+      y: palmCenter.y + (middleTip.y - palmCenter.y) * 0.1
+    };
+
+    const palmSpan = Math.max(44, getPalmSpan(handLm));
+    const coreRadius = palmSpan * 0.2;
+    const innerRadius = palmSpan * (0.42 + intensity * 0.05);
+    const wheelRadius = palmSpan * (0.84 + intensity * 0.08);
+    const orbitRadius = wheelRadius * 1.16;
+    const petalRadius = wheelRadius * 1.42;
+    const spinA = frame * 0.017 * sideDir + palmAngle * 0.18;
+    const spinB = -frame * 0.010 * sideDir + palmAngle * 0.08;
+    const pulse = 0.5 + 0.5 * Math.sin(frame * 0.07);
+    const segmentColors = ['#fffef3', '#f5efc5', '#93ddff', '#5aa6ff', '#ffe95d', '#ffbd42', '#ff9560'];
+    const digitColors = ['#81ff59', '#a8ff62', '#d8ff75'];
+    const markerAngles = [];
 
     ctx.save();
     ctx.globalCompositeOperation = 'screen';
 
-    const coreGlow = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, orbitRadius * 0.95);
-    coreGlow.addColorStop(0, auraMode ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.18)');
-    coreGlow.addColorStop(0.28, `${theme.rippleColor((auraMode ? 0.10 : 0.18) + intensity * 0.08)}`);
-    coreGlow.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = coreGlow;
+    const halo = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, petalRadius * 1.15);
+    halo.addColorStop(0, 'rgba(255,255,255,0.08)');
+    halo.addColorStop(0.25, 'rgba(255,204,102,0.08)');
+    halo.addColorStop(0.58, 'rgba(72,160,255,0.05)');
+    halo.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = halo;
     ctx.beginPath();
-    ctx.arc(center.x, center.y, orbitRadius * 0.95, 0, Math.PI * 2);
+    ctx.arc(center.x, center.y, petalRadius * 1.15, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = `rgba(255,255,255,${0.22 + intensity * 0.14})`;
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, wheelRadius * 0.88, spinA, spinA + Math.PI * 1.92);
-    ctx.stroke();
-
-    ctx.setLineDash([2, 7]);
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, orbitRadius * 0.74, spinB, spinB + Math.PI * 1.82);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    const spokeCount = Math.max(auraMode ? 12 : 16, Math.round((auraMode ? 26 : 34) * detail));
-    for (let i = 0; i < spokeCount; i++) {
-      const angle = spinA + (Math.PI * 2 * i) / spokeCount;
-      const inner = wheelRadius * 0.12;
-      const outer = wheelRadius * (0.72 + 0.14 * Math.sin(frame * 0.05 + i * 0.62));
-      const alpha = 0.16 + (i % 5 === 0 ? 0.12 : 0.04);
-      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-      ctx.lineWidth = i % 6 === 0 ? 1.6 : 0.9;
-      ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
-      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
-      ctx.stroke();
-    }
-
-    const barCount = Math.max(auraMode ? 8 : 9, Math.round((auraMode ? 14 : 18) * detail));
-    for (let i = 0; i < barCount; i++) {
-      const angle = sectorStart + (sectorSweep * i) / (barCount - 1);
-      const inner = wheelRadius * (0.24 + (i % 3) * 0.025);
-      const outer = wheelRadius * (0.66 + 0.18 * Math.sin(frame * 0.06 + i * 0.7) + (i % 4) * 0.015);
-      const col = palette[i % palette.length];
-      ctx.strokeStyle = col;
-      ctx.lineWidth = i % 5 === 0 ? 7 : (i % 2 === 0 ? 5 : 3.2);
-      ctx.shadowBlur = 14;
-      ctx.shadowColor = col;
-      ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
-      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
-      ctx.stroke();
-    }
-
-    ctx.shadowBlur = 0;
-    const innerBandCount = Math.max(6, Math.round((auraMode ? 10 : 12) * detail));
-    for (let i = 0; i < innerBandCount; i++) {
-      const a0 = spinB + (Math.PI * 2 * i) / innerBandCount;
-      const a1 = a0 + Math.PI / 10;
-      ctx.strokeStyle = palette[(i + 2) % palette.length];
-      ctx.lineWidth = i % 3 === 0 ? 5 : 3;
-      ctx.beginPath();
-      ctx.arc(center.x, center.y, wheelRadius * (0.24 + (i % 2) * 0.03), a0, a1);
-      ctx.stroke();
-    }
-
-    const orbitCount = Math.max(auraMode ? 6 : 7, Math.round((auraMode ? 10 : 13) * detail));
-    for (let i = 0; i < orbitCount; i++) {
-      const angle = spinA * 0.8 + (Math.PI * 2 * i) / orbitCount;
-      const orbit = orbitRadius * (0.82 + 0.14 * Math.sin(frame * 0.04 + i * 0.9));
-      const ox = center.x + Math.cos(angle) * orbit;
-      const oy = center.y + Math.sin(angle) * orbit;
-      nodes.push({ x: ox, y: oy, angle });
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * wheelRadius * 0.92, center.y + Math.sin(angle) * wheelRadius * 0.92);
-      ctx.lineTo(ox, oy);
-      ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.62)';
-      ctx.beginPath();
-      ctx.arc(ox, oy, 5.8 + (i % 3 === 0 ? 1.8 : 0), 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = i % 4 === 0 ? palette[(i + 1) % palette.length] : '#ffffff';
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = ctx.fillStyle;
-      ctx.beginPath();
-      ctx.arc(ox, oy, i % 4 === 0 ? 2.4 : 1.6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.shadowBlur = 0;
-    ctx.setLineDash([2, 5]);
-    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
-      const b = nodes[(i + 3) % nodes.length];
-      if ((i + sideDir + frame) % 2 === 0) {
+    ctx.save();
+    ctx.translate(center.x, center.y);
+    ctx.rotate(palmAngle * 0.12);
+    ctx.setLineDash([1.5, 5.2]);
+    for (const dir of [-1, 1]) {
+      for (let i = -2; i <= 2; i++) {
+        const offsetY = i * wheelRadius * 0.18;
+        const radiusX = petalRadius * (0.37 + (2 - Math.abs(i)) * 0.025);
+        const radiusY = wheelRadius * (0.17 + (Math.abs(i) % 2) * 0.035);
+        ctx.strokeStyle = `rgba(255,255,255,${0.18 + (2 - Math.abs(i)) * 0.05})`;
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
+        ctx.ellipse(
+          dir * wheelRadius * (0.98 + Math.abs(i) * 0.03),
+          offsetY,
+          radiusX,
+          radiusY,
+          spinB * 0.08 + dir * 0.24,
+          0,
+          Math.PI * 2
+        );
         ctx.stroke();
       }
     }
-    ctx.setLineDash([]);
+    ctx.restore();
 
-    ctx.font = `bold ${detail < 0.7 ? 9 : 11}px Courier New`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const digits = ['4', '5', '5', '5', '6', '6', '6', '7', '7', '9', '9', '3']
-      .slice(0, Math.max(6, Math.round(12 * detail)));
-    digits.forEach((digit, i) => {
-      const angle = sectorStart - Math.PI * 0.18 + (Math.PI * 1.42 * i) / (digits.length - 1);
-      const ring = orbitRadius * (0.9 + 0.05 * Math.sin(frame * 0.04 + i));
-      ctx.fillStyle = digitPalette[i % digitPalette.length];
+    ctx.save();
+    ctx.setLineDash([1.5, 6]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, orbitRadius * 0.96, spinB, spinB + Math.PI * 1.95);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    const spokeCount = Math.max(24, Math.round(38 * detail));
+    for (let i = 0; i < spokeCount; i++) {
+      const angle = spinA + (Math.PI * 2 * i) / spokeCount;
+      const inner = coreRadius * 0.95;
+      const outer = wheelRadius * (0.5 + 0.18 * Math.sin(frame * 0.05 + i * 0.58) + (i % 5) * 0.015);
+      ctx.strokeStyle = `rgba(255,255,255,${i % 4 === 0 ? 0.28 : 0.15})`;
+      ctx.lineWidth = i % 6 === 0 ? 1.35 : 0.8;
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
+      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
+      ctx.stroke();
+    }
+
+    const segmentCount = Math.max(26, Math.round(42 * detail));
+    for (let i = 0; i < segmentCount; i++) {
+      const angle = spinA * 0.92 + (Math.PI * 2 * i) / segmentCount;
+      const inner = innerRadius * (0.62 + (i % 3) * 0.045);
+      let outer = wheelRadius * (0.72 + 0.06 * Math.sin(frame * 0.06 + i * 0.72));
+      let color = 'rgba(255,255,255,0.26)';
+      let lineWidth = 1.5;
+
+      if (i % 11 === 0) {
+        color = segmentColors[4];
+        outer = wheelRadius * 0.93;
+        lineWidth = 5.4;
+      } else if (i % 9 === 4) {
+        color = segmentColors[2];
+        outer = wheelRadius * 0.88;
+        lineWidth = 4.6;
+      } else if (i % 7 === 2) {
+        color = segmentColors[0];
+        outer = wheelRadius * 0.82;
+        lineWidth = 3.8;
+      } else if (i % 8 === 5) {
+        color = segmentColors[5];
+        outer = wheelRadius * 0.79;
+        lineWidth = 3.2;
+      }
+
+      ctx.strokeStyle = color;
+      ctx.shadowBlur = lineWidth >= 3 ? 12 : 0;
+      ctx.shadowColor = color;
+      ctx.lineWidth = lineWidth;
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * inner, center.y + Math.sin(angle) * inner);
+      ctx.lineTo(center.x + Math.cos(angle) * outer, center.y + Math.sin(angle) * outer);
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+
+    const ringSegmentCount = Math.max(14, Math.round(20 * detail));
+    for (let i = 0; i < ringSegmentCount; i++) {
+      const a0 = spinB + (Math.PI * 2 * i) / ringSegmentCount;
+      const a1 = a0 + Math.PI / 14;
+      ctx.strokeStyle = i % 5 === 0
+        ? segmentColors[3]
+        : (i % 3 === 0 ? segmentColors[4] : 'rgba(255,255,255,0.28)');
+      ctx.lineWidth = i % 5 === 0 ? 4 : 2.2;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, innerRadius * (0.92 + (i % 2) * 0.06), a0, a1);
+      ctx.stroke();
+    }
+
+    const orbitNodeCount = Math.max(8, Math.round(11 * detail));
+    for (let i = 0; i < orbitNodeCount; i++) {
+      const angle = spinA * 0.48 - Math.PI * 0.88 + (Math.PI * 1.8 * i) / Math.max(1, orbitNodeCount - 1);
+      const radius = orbitRadius * (1 + (i % 2) * 0.06);
+      const nx = center.x + Math.cos(angle) * radius;
+      const ny = center.y + Math.sin(angle) * radius;
+      markerAngles.push(angle);
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(center.x + Math.cos(angle) * wheelRadius * 0.94, center.y + Math.sin(angle) * wheelRadius * 0.94);
+      ctx.lineTo(nx, ny);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.beginPath();
+      ctx.arc(nx, ny, i % 3 === 0 ? 5.7 : 4.6, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = i % 4 === 0 ? segmentColors[4] : '#ffffff';
       ctx.shadowBlur = 10;
       ctx.shadowColor = ctx.fillStyle;
-      ctx.fillText(digit, center.x + Math.cos(angle) * ring, center.y + Math.sin(angle) * ring);
-    });
-
-    /* Aura mode only: extra scattered digit stream that sweeps outward (matches reference) */
-    if (auraMode) {
-      const scatterCount = Math.max(14, Math.round(32 * detail));
-      const streamDigits = ['9', '5', '6', '7', '8', '3', '0', '1', '2', '4'];
-      ctx.font = `bold ${detail < 0.7 ? 10 : 13}px Courier New`;
-      for (let i = 0; i < scatterCount; i++) {
-        const t = i / scatterCount;
-        const swirl = spinA * 1.6 + t * Math.PI * 3.6;
-        const radius = orbitRadius * (1.05 + t * 1.15 + 0.08 * Math.sin(frame * 0.04 + i));
-        const jitter = (Math.sin(frame * 0.05 + i * 1.37) + Math.cos(frame * 0.07 + i * 0.9)) * 6;
-        const digit = streamDigits[(i + frame) % streamDigits.length];
-        const col = digitPalette[i % digitPalette.length];
-        ctx.fillStyle = col;
-        ctx.globalAlpha = 0.55 + 0.35 * Math.sin(frame * 0.06 + i);
-        ctx.shadowBlur = 14;
-        ctx.shadowColor = col;
-        const sx = center.x + Math.cos(swirl) * radius + jitter * sideDir;
-        const sy = center.y + Math.sin(swirl) * radius + jitter * 0.6;
-        ctx.fillText(digit, sx, sy);
-      }
-      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(nx, ny, i % 4 === 0 ? 1.9 : 1.45, 0, Math.PI * 2);
+      ctx.fill();
       ctx.shadowBlur = 0;
     }
 
-    ctx.shadowBlur = 0;
-    for (let i = 0; i < Math.max(1, Math.round(3 * detail)); i++) {
-      const bend = sideDir * (18 + i * 10);
-      const yLift = 12 + i * 16;
-      ctx.strokeStyle = `rgba(255,255,255,${0.18 + i * 0.04})`;
-      ctx.lineWidth = 1;
-      ctx.setLineDash([1, 6]);
-      ctx.beginPath();
-      ctx.moveTo(center.x - bend, center.y + wheelRadius * 0.54 + yLift);
-      ctx.bezierCurveTo(
-        center.x - bend - sideDir * 24, center.y + wheelRadius * 0.72 + yLift,
-        center.x - bend - sideDir * 58, center.y + wheelRadius * 0.46 + yLift,
-        center.x - bend - sideDir * 70, center.y + wheelRadius * 0.88 + yLift
-      );
-      ctx.stroke();
-    }
-    ctx.setLineDash([]);
+    const stalkCount = 5;
+    for (let i = 0; i < stalkCount; i++) {
+      const angle = -Math.PI * 0.62 + i * 0.22 + spinB * 0.1;
+      const sx = center.x + Math.cos(angle) * orbitRadius * 0.92;
+      const sy = center.y + Math.sin(angle) * orbitRadius * 0.92;
+      const ex = center.x + Math.cos(angle) * petalRadius * (1.02 + (i % 2) * 0.04);
+      const ey = center.y + Math.sin(angle) * petalRadius * (1.08 + (i % 2) * 0.05);
 
-    fingertips.forEach((tip, idx) => {
-      const col = palette[(idx + 1) % palette.length];
-      const tether = {
-        x: center.x + (tip.x - center.x) * 0.78,
-        y: center.y + (tip.y - center.y) * 0.78
-      };
-
-      ctx.strokeStyle = `rgba(255,255,255,${0.16 + intensity * 0.08})`;
+      ctx.strokeStyle = 'rgba(255,255,255,0.26)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(center.x, center.y);
-      ctx.lineTo(tether.x, tether.y);
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(ex, ey);
       ctx.stroke();
 
-      ctx.fillStyle = col;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = col;
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
       ctx.beginPath();
-      ctx.arc(tether.x, tether.y, 2, 0, Math.PI * 2);
+      ctx.arc(ex, ey, 5.5, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = i % 2 === 0 ? segmentColors[4] : '#ffffff';
+      ctx.beginPath();
+      ctx.arc(ex, ey, 1.7, 0, Math.PI * 2);
       ctx.fill();
+    }
 
-      ctx.strokeStyle = idx % 2 === 0 ? '#ffffff' : col;
-      ctx.lineWidth = 1.25;
-      ctx.beginPath();
-      ctx.arc(tip.x, tip.y, 7 + idx * 1.2 + Math.sin(frame * 0.08 + idx) * 1.4, 0, Math.PI * 2);
-      ctx.stroke();
-    });
+    const digits = ['3', '4', '5', '7', '7', '9', '9', '6', '8', '0', '1', '2'];
+    ctx.font = `bold ${detail < 0.72 ? 10 : 12}px Courier New`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
+    const outerDigitCount = Math.max(16, Math.round(28 * detail));
+    for (let i = 0; i < outerDigitCount; i++) {
+      const t = i / Math.max(1, outerDigitCount - 1);
+      const angle = spinA * 0.42 - Math.PI * 0.9 + t * Math.PI * 1.82;
+      const radius = orbitRadius * (0.86 + 0.12 * Math.sin(frame * 0.04 + i * 0.65));
+      ctx.fillStyle = digitColors[i % digitColors.length];
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.fillText(
+        digits[(i + Math.floor(frame * 0.03)) % digits.length],
+        center.x + Math.cos(angle) * radius,
+        center.y + Math.sin(angle) * radius
+      );
+    }
+
+    const innerDigitCount = Math.max(10, Math.round(18 * detail));
+    for (let i = 0; i < innerDigitCount; i++) {
+      const t = i / Math.max(1, innerDigitCount - 1);
+      const angle = spinB * 0.55 + Math.PI * 0.42 + t * Math.PI * 0.84;
+      const radius = wheelRadius * (1.02 + 0.05 * Math.sin(frame * 0.06 + i));
+      ctx.fillStyle = digitColors[(i + 1) % digitColors.length];
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.fillText(
+        digits[(i + 4 + Math.floor(frame * 0.02)) % digits.length],
+        center.x + Math.cos(angle) * radius,
+        center.y + Math.sin(angle) * radius
+      );
+    }
     ctx.shadowBlur = 0;
-    ctx.fillStyle = '#ffffff';
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < markerAngles.length; i++) {
+      const a = markerAngles[i];
+      const b = markerAngles[(i + 2) % markerAngles.length];
+      if (i % 2 === 0) {
+        ctx.beginPath();
+        ctx.moveTo(center.x + Math.cos(a) * orbitRadius, center.y + Math.sin(a) * orbitRadius);
+        ctx.lineTo(center.x + Math.cos(b) * orbitRadius, center.y + Math.sin(b) * orbitRadius);
+        ctx.stroke();
+      }
+    }
+
+    const coreGlow = ctx.createRadialGradient(center.x, center.y, coreRadius * 0.08, center.x, center.y, innerRadius * 0.9);
+    coreGlow.addColorStop(0, 'rgba(255,255,255,0.95)');
+    coreGlow.addColorStop(0.18, 'rgba(255,204,122,0.92)');
+    coreGlow.addColorStop(0.46, 'rgba(255,110,80,0.35)');
+    coreGlow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = coreGlow;
     ctx.beginPath();
-    ctx.arc(center.x, center.y, 6.2 + intensity * 1.8, 0, Math.PI * 2);
+    ctx.arc(center.x, center.y, innerRadius * 0.9, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = palette[4];
-    for (let i = 0; i < Math.max(1, Math.round(3 * detail)); i++) {
-      const angle = spinA + i * ((Math.PI * 2) / 3);
-      ctx.beginPath();
-      ctx.moveTo(center.x + Math.cos(angle) * 10, center.y + Math.sin(angle) * 10);
-      ctx.lineTo(center.x + Math.cos(angle + 0.28) * 22, center.y + Math.sin(angle + 0.28) * 22);
-      ctx.lineTo(center.x + Math.cos(angle - 0.28) * 22, center.y + Math.sin(angle - 0.28) * 22);
-      ctx.closePath();
-      ctx.globalAlpha = 0.32;
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#fff9ef';
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, coreRadius * (0.64 + pulse * 0.14), 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, coreRadius * 1.28, 0, Math.PI * 2);
+    ctx.stroke();
 
     ctx.restore();
   }
@@ -2543,40 +2589,7 @@ a, button { cursor: inherit; }
   }
 
   /* ── HUD nodes bar (bottom of canvas) ── */
-  function drawHudNodes() {
-    if (!isAuraMode()) return;
-    const bY = H - 52;
-    const auraMode = isAuraMode();
-    const nodes = [
-      { x: 55, label: 'INPUT' }, { x: 145, label: 'HAND' }, { x: 245, label: 'FIELD' },
-      { x: 345, label: 'ORBIT' }, { x: 445, label: 'GLOW' }, { x: 540, label: 'OUTPUT' },
-    ];
-    ctx.save();
-    nodes.forEach((n, i) => {
-      ctx.fillStyle = 'rgba(0,10,20,0.9)';
-      ctx.strokeStyle = `rgba(0, ${180 + i * 10}, 255, 0.6)`;
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.rect(n.x - 35, bY - 14, 70, 22); ctx.fill(); ctx.stroke();
-
-      ctx.fillStyle = theme.accent; ctx.font = '10px Courier New'; ctx.textAlign = 'center';
-      ctx.fillText(n.label, n.x, bY + 2);
-
-      if (i > 0) {
-        ctx.strokeStyle = 'rgba(0,180,255,0.4)';
-        ctx.beginPath(); ctx.moveTo(nodes[i - 1].x + 35, bY - 3);
-        ctx.lineTo(n.x - 35, bY - 3); ctx.stroke();
-      }
-      const on = currentHands && currentHands.length >= 1 && i <= Math.floor((frame * 0.12) % 6);
-      if (on) { ctx.fillStyle = `rgba(0,255,255,0.2)`; ctx.fillRect(n.x - 35, bY - 14, 70, 22); }
-    });
-
-    if (currentHands && currentHands.length >= 1) {
-      ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
-      ctx.fillText('AURA.FIELD // MEDIAPIPE_HANDS', W - 20, H - 35);
-      ctx.fillText(`LOCK: 1/1 // FLOW: ${Math.round(portalAlpha * 100)}%`, W - 20, H - 20);
-    }
-    ctx.restore();
-  }
+  function drawHudNodes() {}
 
   function drawAuraBackdrop() {
     const rect = getVideoDisplayRect();
@@ -2593,20 +2606,6 @@ a, button { cursor: inherit; }
     haze.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = haze;
     ctx.fillRect(0, 0, W, H);
-
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-    ctx.lineWidth = 1;
-    ctx.shadowBlur = 24;
-    ctx.shadowColor = 'rgba(255,255,255,0.08)';
-    if (ctx.roundRect) {
-      ctx.beginPath();
-      ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 10);
-      ctx.stroke();
-    } else {
-      ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
-    }
-    ctx.restore();
   }
 
   /* ══════════════════════════════════════════════════════════════════
@@ -2872,7 +2871,7 @@ a, button { cursor: inherit; }
 
     /* Instructions visibility */
     instructionsEl.style.opacity = auraMode
-      ? (primaryHand ? '0' : '1')
+      ? '1'
       : ((!currentHands || currentHands.length < 2) ? '1' : '0');
 
     /* Status text */
