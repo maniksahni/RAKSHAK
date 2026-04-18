@@ -2610,6 +2610,170 @@ a, button { cursor: inherit; }
   }
 
   /* ══════════════════════════════════════════════════════════════════
+     MEDIAPIPE-CLASSIC HAND SKELETON
+     (matches TouchDesigner / MediaPipe reference: bright green lines,
+      red landmark dots — this is THE signature vision-shield look)
+     ══════════════════════════════════════════════════════════════════ */
+  const HAND_CONNECTIONS = [
+    [0,1],[1,2],[2,3],[3,4],           // thumb
+    [0,5],[5,6],[6,7],[7,8],           // index
+    [5,9],[9,10],[10,11],[11,12],      // middle
+    [9,13],[13,14],[14,15],[15,16],    // ring
+    [13,17],[17,18],[18,19],[19,20],   // pinky
+    [0,17]                             // wrist → pinky base
+  ];
+
+  const SKELETON_LINE_COLOR = '#00ff41';   // neon MediaPipe green
+  const SKELETON_DOT_COLOR  = '#ff2a2a';   // MediaPipe red
+
+  function drawHandSkeleton(handLm, opts = {}) {
+    if (!handLm || handLm.length < 21) return;
+    const {
+      lineWidth = 3.2,
+      dotRadius = 5.5,
+      glow = 12,
+      lineColor = SKELETON_LINE_COLOR,
+      dotColor  = SKELETON_DOT_COLOR,
+      drawWristBox = true
+    } = opts;
+
+    const pts = handLm.map(lm => lmScale(lm));
+
+    // Pass 1: soft outer glow on the connection lines (low alpha, wide blur)
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = lineColor;
+    ctx.shadowColor = lineColor;
+    ctx.shadowBlur  = glow * 1.8;
+    ctx.lineWidth   = lineWidth + 2.5;
+    ctx.lineCap     = 'round';
+    ctx.globalAlpha = 0.35;
+    for (const [a, b] of HAND_CONNECTIONS) {
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Pass 2: solid bright green connection lines
+    ctx.save();
+    ctx.strokeStyle = lineColor;
+    ctx.shadowColor = lineColor;
+    ctx.shadowBlur  = glow * 0.6;
+    ctx.lineWidth   = lineWidth;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+    for (const [a, b] of HAND_CONNECTIONS) {
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Pass 3: red filled landmark dots with subtle glow halo
+    ctx.save();
+    for (const p of pts) {
+      // halo
+      ctx.beginPath();
+      ctx.fillStyle   = dotColor;
+      ctx.shadowColor = dotColor;
+      ctx.shadowBlur  = glow * 0.9;
+      ctx.arc(p.x, p.y, dotRadius * 1.45, 0, Math.PI * 2);
+      ctx.globalAlpha = 0.30;
+      ctx.fill();
+      // solid dot
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
+      // bright inner highlight
+      ctx.beginPath();
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 0.55;
+      ctx.arc(p.x - dotRadius * 0.25, p.y - dotRadius * 0.25, dotRadius * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    // Pass 4: optional tiny "node label" square on wrist (like the TD reference screenshot)
+    if (drawWristBox) {
+      const w = pts[0];
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(w.x - 14, w.y + 8, 28, 12);
+      ctx.restore();
+    }
+  }
+
+  /* Orbital crown — two elliptical rings rotating on different axes.
+     Reproduces the halo/crown look from frame 10 of the reference video.
+     Drawn around (cx, cy) with radius ~r, intensity 0..1. */
+  function drawOrbitalCrown(cx, cy, r, intensity, now) {
+    if (intensity <= 0.02) return;
+    const t = now * 0.001;
+    const rings = [
+      { tilt: t * 0.85,            yStretch: 0.32, color: '#ffffff' },
+      { tilt: -t * 1.1 + 1.2,      yStretch: 0.48, color: '#c7f0ff' },
+      { tilt: t * 0.55 + 0.6,      yStretch: 0.22, color: '#9ae8ff' }
+    ];
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    for (const ring of rings) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(ring.tilt);
+      ctx.strokeStyle = ring.color;
+      ctx.shadowColor = ring.color;
+      ctx.shadowBlur  = 22 * intensity;
+      ctx.lineWidth   = 3.4 * intensity;
+      ctx.globalAlpha = 0.75 * intensity;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r, r * ring.yStretch, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      // inner thinner ring
+      ctx.globalAlpha = 0.45 * intensity;
+      ctx.lineWidth   = 1.2 * intensity;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * 0.82, r * ring.yStretch * 0.82, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    // central glowing core
+    const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.55);
+    core.addColorStop(0,    `rgba(255,255,255,${0.55 * intensity})`);
+    core.addColorStop(0.35, `rgba(180,230,255,${0.25 * intensity})`);
+    core.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* Thin white connector line between two hand centers (frame 7 / 12 of ref) */
+  function drawPalmConnector(handA, handB) {
+    if (!handA || !handB) return;
+    const a = getHandCenter(handA);
+    const b = getHandCenter(handB);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.shadowColor = 'rgba(255,255,255,0.8)';
+    ctx.shadowBlur  = 8;
+    ctx.lineWidth   = 1.2;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
      MAIN DRAW LOOP
      ══════════════════════════════════════════════════════════════════ */
   function drawFrame() {
@@ -2625,13 +2789,7 @@ a, button { cursor: inherit; }
       ctx.scale(-1, 1);
       ctx.drawImage(vid, 0, videoRect.y, videoRect.w, videoRect.h);
       ctx.restore();
-      /* Dim the webcam feed in aura mode so the glow can pop (matches reference) */
-      if (auraMode) {
-        ctx.save();
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-        ctx.fillRect(videoRect.x, videoRect.y, videoRect.w, videoRect.h);
-        ctx.restore();
-      }
+      /* Reference shows normal-brightness video with skeleton overlay (no dim) */
     } else if (auraMode) {
       drawAuraBackdrop();
     }
@@ -2745,11 +2903,29 @@ a, button { cursor: inherit; }
     sparkBurst = sparkBurst.filter(s => s.life > 0);
     sparkBurst.forEach(s => { s.update(); s.draw(); });
 
+    /* ── MEDIAPIPE-CLASSIC SKELETON (matches reference video 101%) ── */
     if (auraMode && primaryHand) {
-      drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
+      // AURA mode = single hand, skeleton is the hero element
+      // small orbital crown hovers above the palm as a signature flourish
+      const palmCenter = getHandCenter(primaryHand);
+      const palmSpan = Math.max(40, getPalmSpan(primaryHand));
+      drawOrbitalCrown(
+        palmCenter.x,
+        palmCenter.y - palmSpan * 1.15,
+        palmSpan * 0.95,
+        0.55 + portalAlpha * 0.45,
+        now
+      );
+      drawHandSkeleton(primaryHand, {
+        lineWidth: 3.4,
+        dotRadius: 5.8,
+        glow: 14,
+        drawWristBox: true
+      });
     }
 
     if (!auraMode && leftSideHand && rightSideHand) {
+      // XRAY mode = two hands → portal effect between them, then skeletons on top
       drawXrayViewport(leftSideHand, rightSideHand, Math.max(0.16, portalAlpha), perf, now);
       if (isGlitching && portalAlpha > 0.28) {
         ctx.save();
@@ -2757,6 +2933,46 @@ a, button { cursor: inherit; }
         ctx.fillRect(lerpPortal.x, lerpPortal.y, lerpPortal.w, lerpPortal.h);
         ctx.restore();
       }
+      /* Orbital crown hovers above the midpoint between hands once hands are stable.
+         Fades in with portalAlpha so it only appears when the gesture holds. */
+      if (portalAlpha > 0.35) {
+        const lc = getHandCenter(leftSideHand);
+        const rc = getHandCenter(rightSideHand);
+        const midX = (lc.x + rc.x) * 0.5;
+        const midY = (lc.y + rc.y) * 0.5;
+        const avgPalm = (getPalmSpan(leftSideHand) + getPalmSpan(rightSideHand)) * 0.5;
+        drawOrbitalCrown(
+          midX,
+          midY - avgPalm * 1.3,
+          avgPalm * 1.25,
+          (portalAlpha - 0.35) / 0.65,
+          now
+        );
+      }
+      /* Thin dashed connector line between palms (ref frames 7 & 12) */
+      drawPalmConnector(leftSideHand, rightSideHand);
+      /* Both hand skeletons rendered on top of the viewport */
+      drawHandSkeleton(leftSideHand, {
+        lineWidth: 3.0,
+        dotRadius: 5.0,
+        glow: 12,
+        drawWristBox: true
+      });
+      drawHandSkeleton(rightSideHand, {
+        lineWidth: 3.0,
+        dotRadius: 5.0,
+        glow: 12,
+        drawWristBox: true
+      });
+    } else if (!auraMode && (leftSideHand || rightSideHand)) {
+      // single hand visible while searching for the second — still show skeleton
+      const onlyHand = leftSideHand || rightSideHand;
+      drawHandSkeleton(onlyHand, {
+        lineWidth: 3.0,
+        dotRadius: 5.0,
+        glow: 10,
+        drawWristBox: true
+      });
     }
 
     drawHudNodes();
