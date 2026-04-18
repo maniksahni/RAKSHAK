@@ -1648,8 +1648,9 @@ a, button { cursor: inherit; }
     return dist(lmScale(handLm[5]), lmScale(handLm[17]));
   }
 
-  function drawTouchAura(handLm, side = 'solo', intensity = 0.65) {
+  function drawTouchAura(handLm, side = 'solo', intensity = 0.65, detail = 1) {
     if (!handLm) return;
+    detail = Math.max(0.48, Math.min(1, detail));
 
     const wrist = lmScale(handLm[0]);
     const palmLeft = lmScale(handLm[5]);
@@ -1702,7 +1703,7 @@ a, button { cursor: inherit; }
     ctx.stroke();
     ctx.setLineDash([]);
 
-    const spokeCount = 34;
+    const spokeCount = Math.max(16, Math.round(34 * detail));
     for (let i = 0; i < spokeCount; i++) {
       const angle = spinA + (Math.PI * 2 * i) / spokeCount;
       const inner = wheelRadius * 0.12;
@@ -1716,7 +1717,7 @@ a, button { cursor: inherit; }
       ctx.stroke();
     }
 
-    const barCount = 18;
+    const barCount = Math.max(9, Math.round(18 * detail));
     for (let i = 0; i < barCount; i++) {
       const angle = sectorStart + (sectorSweep * i) / (barCount - 1);
       const inner = wheelRadius * (0.24 + (i % 3) * 0.025);
@@ -1733,7 +1734,7 @@ a, button { cursor: inherit; }
     }
 
     ctx.shadowBlur = 0;
-    const innerBandCount = 12;
+    const innerBandCount = Math.max(6, Math.round(12 * detail));
     for (let i = 0; i < innerBandCount; i++) {
       const a0 = spinB + (Math.PI * 2 * i) / innerBandCount;
       const a1 = a0 + Math.PI / 10;
@@ -1744,7 +1745,7 @@ a, button { cursor: inherit; }
       ctx.stroke();
     }
 
-    const orbitCount = 13;
+    const orbitCount = Math.max(7, Math.round(13 * detail));
     for (let i = 0; i < orbitCount; i++) {
       const angle = spinA * 0.8 + (Math.PI * 2 * i) / orbitCount;
       const orbit = orbitRadius * (0.82 + 0.14 * Math.sin(frame * 0.04 + i * 0.9));
@@ -1788,10 +1789,11 @@ a, button { cursor: inherit; }
     }
     ctx.setLineDash([]);
 
-    ctx.font = 'bold 11px Courier New';
+    ctx.font = `bold ${detail < 0.7 ? 9 : 11}px Courier New`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const digits = ['4', '5', '5', '5', '6', '6', '6', '7', '7', '9', '9', '3'];
+    const digits = ['4', '5', '5', '5', '6', '6', '6', '7', '7', '9', '9', '3']
+      .slice(0, Math.max(6, Math.round(12 * detail)));
     digits.forEach((digit, i) => {
       const angle = sectorStart - Math.PI * 0.18 + (Math.PI * 1.42 * i) / (digits.length - 1);
       const ring = orbitRadius * (0.9 + 0.05 * Math.sin(frame * 0.04 + i));
@@ -1802,7 +1804,7 @@ a, button { cursor: inherit; }
     });
 
     ctx.shadowBlur = 0;
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < Math.max(1, Math.round(3 * detail)); i++) {
       const bend = sideDir * (18 + i * 10);
       const yLift = 12 + i * 16;
       ctx.strokeStyle = `rgba(255,255,255,${0.18 + i * 0.04})`;
@@ -1854,7 +1856,7 @@ a, button { cursor: inherit; }
     ctx.fill();
 
     ctx.fillStyle = palette[4];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < Math.max(1, Math.round(3 * detail)); i++) {
       const angle = spinA + i * ((Math.PI * 2) / 3);
       ctx.beginPath();
       ctx.moveTo(center.x + Math.cos(angle) * 10, center.y + Math.sin(angle) * 10);
@@ -1874,6 +1876,91 @@ a, button { cursor: inherit; }
   /* ── FPS tracking ── */
   let fpsLastTime = performance.now();
   let fpsFrameCount = 0;
+  let currentFpsValue = 0;
+  let perfTier = window.innerWidth <= 900 ? 'medium' : 'high';
+  let cachedMaskCoords = [];
+  let lastMaskRefreshFrame = -1;
+
+  const PERF_PROFILES = {
+    high: {
+      auraDetail: 1,
+      particleFactor: 1,
+      maskInterval: 2,
+      maskStep: 1,
+      bgSparkCount: 40,
+      echoCount: 8,
+      dataColumns: 5,
+      glitchMinSlices: 3,
+      glitchSliceVariance: 4
+    },
+    medium: {
+      auraDetail: 0.78,
+      particleFactor: 0.72,
+      maskInterval: 4,
+      maskStep: 1,
+      bgSparkCount: 22,
+      echoCount: 6,
+      dataColumns: 4,
+      glitchMinSlices: 2,
+      glitchSliceVariance: 3
+    },
+    low: {
+      auraDetail: 0.58,
+      particleFactor: 0.48,
+      maskInterval: 6,
+      maskStep: 2,
+      bgSparkCount: 12,
+      echoCount: 4,
+      dataColumns: 3,
+      glitchMinSlices: 1,
+      glitchSliceVariance: 2
+    }
+  };
+
+  function getPerfProfile() {
+    return PERF_PROFILES[perfTier] || PERF_PROFILES.medium;
+  }
+
+  function updatePerfTier(fps) {
+    let nextTier = 'medium';
+    if (fps >= 32) nextTier = 'high';
+    if (fps < 20) nextTier = 'low';
+    if (window.innerWidth <= 900 && nextTier === 'high') nextTier = 'medium';
+    if (nextTier !== perfTier) lastMaskRefreshFrame = -1;
+    perfTier = nextTier;
+  }
+
+  function getMaskCoords(perf) {
+    if (!currentMask) {
+      cachedMaskCoords = [];
+      lastMaskRefreshFrame = -1;
+      return cachedMaskCoords;
+    }
+    if (lastMaskRefreshFrame >= 0 && frame - lastMaskRefreshFrame < perf.maskInterval) {
+      return cachedMaskCoords;
+    }
+
+    mctx.clearRect(0, 0, maskCv.width, maskCv.height);
+    mctx.drawImage(currentMask, 0, 0, maskCv.width, maskCv.height);
+    const imgData = mctx.getImageData(0, 0, maskCv.width, maskCv.height).data;
+    const nextCoords = [];
+
+    for (let y = 0; y < maskCv.height; y += perf.maskStep) {
+      for (let x = 0; x < maskCv.width; x += perf.maskStep) {
+        const idx = (y * maskCv.width + x) * 4;
+        if (imgData[idx] > 128) {
+          nextCoords.push({
+            x: x / maskCv.width,
+            y: y / maskCv.height
+          });
+        }
+      }
+    }
+
+    cachedMaskCoords = nextCoords;
+    lastMaskRefreshFrame = frame;
+    return cachedMaskCoords;
+  }
 
   /* ── Sustained-portal → SOS hook ── */
   let portalHoldStartedAt = 0;
@@ -1971,7 +2058,9 @@ a, button { cursor: inherit; }
     fpsFrameCount++;
     const now = performance.now();
     if (now - fpsLastTime >= 1000) {
-      fpsEl.textContent = Math.round(fpsFrameCount * 1000 / (now - fpsLastTime)) + ' FPS';
+      currentFpsValue = Math.round(fpsFrameCount * 1000 / (now - fpsLastTime));
+      updatePerfTier(currentFpsValue);
+      fpsEl.textContent = `${currentFpsValue} FPS · ${perfTier.toUpperCase()}`;
       fpsFrameCount = 0;
       fpsLastTime = now;
     }
@@ -1980,6 +2069,7 @@ a, button { cursor: inherit; }
       glitchUntil = frame + Math.floor(4 + Math.random() * 4);
     }
     const isGlitching = frame < glitchUntil;
+    const perf = getPerfProfile();
 
     frameEl.textContent = `FRM: ${String(frame).padStart(4, '0')}${isGlitching ? ' [ERR]' : ''}`;
 
@@ -2052,7 +2142,7 @@ a, button { cursor: inherit; }
         getPalmSpan(hand) > getPalmSpan(best) ? hand : best
       );
       const handSide = lmScale(primaryHand[9]).x < W * 0.5 ? 'left' : 'right';
-      drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36);
+      drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
     }
 
     if (portalAlpha > 0.01 && lThumb && rThumb) {
@@ -2129,7 +2219,7 @@ a, button { cursor: inherit; }
           const getPtOld = (idx) => mapToPortal(pose[idx].x, pose[idx].y, px, py, pw, ph);
 
           /* Background sparks */
-          for (let i = 0; i < 40; i++) {
+          for (let i = 0; i < perf.bgSparkCount; i++) {
             ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,200,100,0.8)' : 'rgba(255,255,255,0.7)';
             const bgS = Math.random() > 0.8 ? 3 : 1.5;
             ctx.fillRect(px + Math.random() * pw, py + Math.random() * ph, bgS, bgS);
@@ -2164,7 +2254,7 @@ a, button { cursor: inherit; }
             const cxR = pts.reduce((s, p) => s + p.x, 0) / pts.length;
             const cyR = pts.reduce((s, p) => s + p.y, 0) / pts.length;
 
-            const numEchoes = 8;
+            const numEchoes = perf.echoCount;
             for (let e = 1; e <= numEchoes; e++) {
               ctx.beginPath();
               pts.forEach((p, index) => {
@@ -2199,7 +2289,12 @@ a, button { cursor: inherit; }
           hudPos.y += (hTargetY - hudPos.y) * 0.1;
 
           /* Drift compensation */
-          for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const activeParticleCount = Math.min(
+            BODY_PARTICLES.length,
+            Math.max(2200, Math.floor(PARTICLE_COUNT * perf.particleFactor))
+          );
+
+          for (let i = 0; i < activeParticleCount; i++) {
             const p = BODY_PARTICLES[i];
             p.x += bodyDelta.x; p.y += bodyDelta.y;
             p.targetX += bodyDelta.x; p.targetY += bodyDelta.y;
@@ -2243,26 +2338,12 @@ a, button { cursor: inherit; }
           bodyPath.closePath();
 
           /* Mask-based particle redistribution */
-          let validCoords = [];
-          if (currentMask) {
-            mctx.clearRect(0, 0, maskCv.width, maskCv.height);
-            mctx.drawImage(currentMask, 0, 0, maskCv.width, maskCv.height);
-            const imgData = mctx.getImageData(0, 0, maskCv.width, maskCv.height).data;
-            for (let i = 0; i < imgData.length; i += 4) {
-              if (imgData[i] > 128) {
-                const idx = i / 4;
-                validCoords.push({
-                  x: (idx % maskCv.width) / maskCv.width,
-                  y: Math.floor(idx / maskCv.width) / maskCv.height
-                });
-              }
-            }
-          }
+          const validCoords = getMaskCoords(perf);
 
           const hTarget = getPt(0);
-          const headDensity = Math.floor(PARTICLE_COUNT * 0.15);
+          const headDensity = Math.floor(activeParticleCount * 0.15);
 
-          for (let i = 0; i < PARTICLE_COUNT; i++) {
+          for (let i = 0; i < activeParticleCount; i++) {
             const p = BODY_PARTICLES[i];
             if (i < headDensity) {
               if (frame % 8 === 0 || dist(p, { x: p.targetX, y: p.targetY }) < 5) {
@@ -2294,12 +2375,12 @@ a, button { cursor: inherit; }
           ctx.save();
           ctx.clip(bodyPath);
 
-          const splitA = Math.floor(PARTICLE_COUNT * 0.3);
-          const splitB = Math.floor(PARTICLE_COUNT * 0.7);
+          const splitA = Math.floor(activeParticleCount * 0.3);
+          const splitB = Math.floor(activeParticleCount * 0.7);
           ['BACK', 'MID', 'FRONT'].forEach(layer => {
             let start = 0, end = splitA;
             if (layer === 'MID') { start = splitA; end = splitB; }
-            if (layer === 'FRONT') { start = splitB; end = PARTICLE_COUNT; }
+            if (layer === 'FRONT') { start = splitB; end = activeParticleCount; }
             for (let i = start; i < end; i++) {
               const p = BODY_PARTICLES[i];
               p.update(0, 0, isGlitching);
@@ -2330,8 +2411,8 @@ a, button { cursor: inherit; }
 
           /* Data stream columns */
           ctx.fillStyle = 'rgba(0, 255, 204, 0.3)';
-          for (let col = 0; col < 5; col++) {
-            const colX = px + (pw / 6) * (col + 1);
+          for (let col = 0; col < perf.dataColumns; col++) {
+            const colX = px + (pw / (perf.dataColumns + 1)) * (col + 1);
             const riseY = py + ph - ((frame * 2 + col * 40) % ph);
             if (ctx.isPointInPath(bodyPath, colX, riseY)) {
               ctx.fillRect(colX, riseY, 1, 15);
@@ -2402,7 +2483,7 @@ a, button { cursor: inherit; }
         /* Glitch overlay */
         if (isGlitching) {
           try {
-            const numSlices = 3 + Math.floor(Math.random() * 4);
+            const numSlices = perf.glitchMinSlices + Math.floor(Math.random() * perf.glitchSliceVariance);
             for (let i = 0; i < numSlices; i++) {
               const sY = py + Math.random() * (ph - 20);
               const sH = 8 + Math.random() * 12;
@@ -2476,8 +2557,10 @@ a, button { cursor: inherit; }
       holisticEngine = new Holistic({
         locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`
       });
+      const preferredVideoWidth = window.innerWidth <= 900 ? 640 : 960;
+      const preferredVideoHeight = window.innerWidth <= 900 ? 480 : 540;
       holisticEngine.setOptions({
-        modelComplexity: 1,
+        modelComplexity: 0,
         smoothLandmarks: true,
         minDetectionConfidence: 0.7,
         minTrackingConfidence: 0.7,
@@ -2496,8 +2579,9 @@ a, button { cursor: inherit; }
       const constraints = {
         video: {
           facingMode: 'user',
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 }
+          frameRate: { ideal: 24, max: 30 },
+          width: { ideal: preferredVideoWidth, max: 1280 },
+          height: { ideal: preferredVideoHeight, max: 720 }
         }
       };
       try {
@@ -2518,8 +2602,8 @@ a, button { cursor: inherit; }
 
       cameraController = new Camera(vid, {
         onFrame: async () => { await holisticEngine.send({ image: vid }); },
-        width: 1280,
-        height: 720
+        width: preferredVideoWidth,
+        height: preferredVideoHeight
       });
       cameraController.start();
       updateTelemetry();
@@ -2547,6 +2631,8 @@ a, button { cursor: inherit; }
     currentHands = [];
     currentPose = null;
     currentMask = null;
+    cachedMaskCoords = [];
+    lastMaskRefreshFrame = -1;
     portalAlpha = 0;
     portalHoldStartedAt = 0;
     portalHold = false;
