@@ -136,6 +136,328 @@
   background: linear-gradient(90deg,transparent,rgba(139,92,246,.8),transparent);
   
 }
+
+/* ═══ SYSTEM CONTROL CENTER ═══ */
+.control-center-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px !important;
+  border: 1px solid rgba(139,92,246,.18) !important;
+  background:
+    radial-gradient(circle at top right, rgba(139,92,246,.14), transparent 32%),
+    linear-gradient(145deg, rgba(20,8,16,.92), rgba(7,4,12,.98)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 18px 50px rgba(0,0,0,.38),
+    0 0 0 1px rgba(139,92,246,.06);
+}
+.control-center-shell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(139,92,246,.88), rgba(196,181,253,.65), transparent);
+}
+.control-center-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.control-center-kicker {
+  font-family: 'Courier New', monospace;
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .24em;
+  color: rgba(196,181,253,.72);
+  margin-bottom: 8px;
+}
+.control-center-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .03em;
+}
+.control-center-copy {
+  margin-top: 8px;
+  max-width: 760px;
+  color: rgba(226,232,240,.72);
+  font-size: .92rem;
+  line-height: 1.75;
+}
+.control-center-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(139,92,246,.22);
+  background: rgba(139,92,246,.12);
+  color: #c4b5fd;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.control-center-live-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  box-shadow: 0 0 12px rgba(139,92,246,.8);
+}
+.control-center-panel {
+  height: 100%;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: linear-gradient(145deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+}
+.control-center-panel + .control-center-panel {
+  margin-top: 0;
+}
+.control-center-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.control-center-panel-title i {
+  color: #c4b5fd;
+}
+.control-center-panel-copy {
+  color: rgba(226,232,240,.68);
+  font-size: .84rem;
+  line-height: 1.7;
+}
+.cc-command-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(139,92,246,.28);
+  background: linear-gradient(135deg, rgba(139,92,246,.18), rgba(139,92,246,.08));
+  color: #f5f3ff;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  transition: all .25s ease;
+}
+.cc-command-primary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(196,181,253,.36);
+  box-shadow: 0 14px 30px rgba(76,29,149,.24);
+}
+.cc-keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  color: rgba(226,232,240,.86);
+  font-family: 'Courier New', monospace;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.cc-command-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.cc-command-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.07);
+  background: rgba(255,255,255,.035);
+  color: rgba(226,232,240,.82);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: all .2s ease;
+}
+.cc-command-chip:hover {
+  border-color: rgba(139,92,246,.24);
+  background: rgba(139,92,246,.12);
+  color: #fff;
+}
+.cc-mini-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+.cc-mini-metric {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
+.cc-mini-metric-label {
+  color: rgba(196,181,253,.62);
+  font-family: 'Courier New', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+}
+.cc-mini-metric-value {
+  margin-top: 8px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.cc-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.cc-status-card {
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+  transition: all .25s ease;
+}
+.cc-status-card.is-ready {
+  border-color: rgba(16,185,129,.22);
+  background: rgba(16,185,129,.07);
+}
+.cc-status-card.is-caution {
+  border-color: rgba(245,158,11,.24);
+  background: rgba(245,158,11,.08);
+}
+.cc-status-card.is-offline {
+  border-color: rgba(239,68,68,.24);
+  background: rgba(239,68,68,.08);
+}
+.cc-status-label {
+  color: rgba(226,232,240,.52);
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.cc-status-value {
+  margin-top: 8px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+}
+.cc-status-sub {
+  margin-top: 4px;
+  color: rgba(226,232,240,.58);
+  font-size: .72rem;
+}
+.cc-readiness-wrap {
+  margin-top: 16px;
+}
+.cc-readiness-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: rgba(226,232,240,.72);
+  font-size: .75rem;
+  letter-spacing: .08em;
+}
+.cc-readiness-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  overflow: hidden;
+}
+.cc-readiness-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(139,92,246,.75), rgba(196,181,253,.95));
+  transition: width .35s ease;
+}
+.cc-launch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.cc-launch-tile {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 98px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+  text-decoration: none;
+  transition: all .25s ease;
+}
+.cc-launch-tile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(139,92,246,.24);
+  background: rgba(139,92,246,.08);
+  box-shadow: 0 12px 24px rgba(15,23,42,.26);
+}
+.cc-launch-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  color: #fff;
+}
+.cc-launch-copy {
+  min-width: 0;
+}
+.cc-launch-title {
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.cc-launch-desc {
+  margin-top: 5px;
+  color: rgba(226,232,240,.62);
+  font-size: .74rem;
+  line-height: 1.55;
+}
+@media (max-width: 1200px) {
+  .cc-mini-metrics { grid-template-columns: 1fr; }
+}
+@media (max-width: 767px) {
+  .control-center-head { flex-direction: column; }
+  .cc-status-grid,
+  .cc-launch-grid { grid-template-columns: 1fr; }
+}
 </style>
 
 {% block content %}
@@ -277,6 +599,193 @@
       <div class="cmd-node d-none d-md-flex">
         <span class="cmd-lbl">ENCRYPTION</span>
         <span class="cmd-val cmd-purple">AES-256 ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SYSTEM CONTROL CENTER ═══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 animate-in" style="animation-delay:0.08s;">
+      <div class="glass-card control-center-shell p-4">
+        <div class="control-center-head">
+          <div>
+            <div class="control-center-kicker">SYSTEM CONTROL CENTER // MAX UPGRADE LAYER</div>
+            <div class="control-center-title">Run the whole safety stack from one launch surface</div>
+            <div class="control-center-copy">
+              We now have a global command grid across the app. This control center gives you the fastest route into emergency actions, AI systems, visual tools, and live device readiness without hunting through menus.
+            </div>
+          </div>
+          <div class="control-center-live-pill">
+            <span class="dot"></span>
+            <span>Always Armed</span>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-xl-4">
+            <div class="control-center-panel h-100">
+              <div class="control-center-panel-title">
+                <i class="bi bi-command"></i>
+                <span>Universal Command Core</span>
+              </div>
+              <div class="control-center-panel-copy">
+                Open the new global command palette from anywhere in the product, search modules instantly, and launch critical flows in one move.
+              </div>
+
+              <button type="button" class="cc-command-primary" id="dashboard-command-launch">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span>Open Command Palette</span>
+                <span class="cc-keycap">⌘K</span>
+              </button>
+
+              <div class="cc-command-chips">
+                <button type="button" class="cc-command-chip" data-dashboard-command="sos">
+                  <i class="bi bi-shield-exclamation"></i>
+                  <span>Emergency</span>
+                </button>
+                <button type="button" class="cc-command-chip" data-dashboard-command="ai">
+                  <i class="bi bi-stars"></i>
+                  <span>AI Stack</span>
+                </button>
+                <button type="button" class="cc-command-chip" data-dashboard-command="vision">
+                  <i class="bi bi-camera-video-fill"></i>
+                  <span>Visual Tools</span>
+                </button>
+                <button type="button" class="cc-command-chip" data-dashboard-command="map">
+                  <i class="bi bi-map-fill"></i>
+                  <span>Map Ops</span>
+                </button>
+              </div>
+
+              <div class="cc-mini-metrics">
+                <div class="cc-mini-metric">
+                  <div class="cc-mini-metric-label">TRUSTED CONTACTS</div>
+                  <div class="cc-mini-metric-value">{{ trusted_contacts|length }}</div>
+                </div>
+                <div class="cc-mini-metric">
+                  <div class="cc-mini-metric-label">ALERT RECORDS</div>
+                  <div class="cc-mini-metric-value">{{ alerts|length }}</div>
+                </div>
+                <div class="cc-mini-metric">
+                  <div class="cc-mini-metric-label">DANGER ZONES</div>
+                  <div class="cc-mini-metric-value">{{ danger_zones|length }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4">
+            <div class="control-center-panel h-100">
+              <div class="control-center-panel-title">
+                <i class="bi bi-activity"></i>
+                <span>Live Readiness Matrix</span>
+              </div>
+              <div class="control-center-panel-copy">
+                These checks tell us whether the browser is ready for camera modules, location-aware safety flows, and secure real-time protection.
+              </div>
+
+              <div class="cc-status-grid">
+                <div class="cc-status-card" id="cc-card-network">
+                  <div class="cc-status-label">Network</div>
+                  <div class="cc-status-value" id="cc-status-network">Checking...</div>
+                  <div class="cc-status-sub" id="cc-status-network-sub">Connection state</div>
+                </div>
+                <div class="cc-status-card" id="cc-card-camera">
+                  <div class="cc-status-label">Camera API</div>
+                  <div class="cc-status-value" id="cc-status-camera">Checking...</div>
+                  <div class="cc-status-sub" id="cc-status-camera-sub">Vision modules</div>
+                </div>
+                <div class="cc-status-card" id="cc-card-geo">
+                  <div class="cc-status-label">Geolocation</div>
+                  <div class="cc-status-value" id="cc-status-geo">Checking...</div>
+                  <div class="cc-status-sub" id="cc-status-geo-sub">Route intelligence</div>
+                </div>
+                <div class="cc-status-card" id="cc-card-notifications">
+                  <div class="cc-status-label">Notifications</div>
+                  <div class="cc-status-value" id="cc-status-notifications">Checking...</div>
+                  <div class="cc-status-sub" id="cc-status-notifications-sub">Alerts + prompts</div>
+                </div>
+                <div class="cc-status-card" id="cc-card-secure">
+                  <div class="cc-status-label">Secure Context</div>
+                  <div class="cc-status-value" id="cc-status-secure">Checking...</div>
+                  <div class="cc-status-sub" id="cc-status-secure-sub">HTTPS protection</div>
+                </div>
+                <div class="cc-status-card" id="cc-card-install">
+                  <div class="cc-status-label">Install Mode</div>
+                  <div class="cc-status-value" id="cc-status-install">Checking...</div>
+                  <div class="cc-status-sub" id="cc-status-install-sub">App shell state</div>
+                </div>
+              </div>
+
+              <div class="cc-readiness-wrap">
+                <div class="cc-readiness-head">
+                  <span>System readiness</span>
+                  <span id="cc-readiness-label">0 / 6 online</span>
+                </div>
+                <div class="cc-readiness-bar">
+                  <div class="cc-readiness-fill" id="cc-readiness-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4">
+            <div class="control-center-panel h-100">
+              <div class="control-center-panel-title">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Rapid Deployment Grid</span>
+              </div>
+              <div class="control-center-panel-copy">
+                The fastest surface for high-value modules when you need to move quickly between surveillance, defense, and escape tools.
+              </div>
+
+              <div class="cc-launch-grid">
+                <a class="cc-launch-tile" href="{{ url_for('vision_shield.index') }}">
+                  <span class="cc-launch-icon" style="background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.24);"><i class="bi bi-camera-video-fill" style="color:#93c5fd;"></i></span>
+                  <span class="cc-launch-copy">
+                    <span class="cc-launch-title">Vision Shield</span>
+                    <span class="cc-launch-desc">Silent gesture trigger and live puzzle response layer.</span>
+                  </span>
+                </a>
+                <a class="cc-launch-tile" href="{{ url_for('xray_vision.index') }}">
+                  <span class="cc-launch-icon" style="background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.24);"><i class="bi bi-badge-3d-fill" style="color:#67e8f9;"></i></span>
+                  <span class="cc-launch-copy">
+                    <span class="cc-launch-title">X-Ray Vision</span>
+                    <span class="cc-launch-desc">Aura mode plus reactive viewport scans and visual control.</span>
+                  </span>
+                </a>
+                <a class="cc-launch-tile" href="{{ url_for('safe_walk.index') }}">
+                  <span class="cc-launch-icon" style="background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.24);"><i class="bi bi-geo-alt-fill" style="color:#6ee7b7;"></i></span>
+                  <span class="cc-launch-copy">
+                    <span class="cc-launch-title">Safe Walk</span>
+                    <span class="cc-launch-desc">Protected travel, route tracing, and live movement awareness.</span>
+                  </span>
+                </a>
+                <a class="cc-launch-tile" href="{{ url_for('guardian.index') }}">
+                  <span class="cc-launch-icon" style="background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.24);"><i class="bi bi-shield-shaded" style="color:#c4b5fd;"></i></span>
+                  <span class="cc-launch-copy">
+                    <span class="cc-launch-title">Guardian Network</span>
+                    <span class="cc-launch-desc">Coordinate supporters, contacts, and your defensive circle.</span>
+                  </span>
+                </a>
+                <a class="cc-launch-tile" href="{{ url_for('gemini.guardian_page') }}">
+                  <span class="cc-launch-icon" style="background:rgba(244,114,182,.14);border:1px solid rgba(244,114,182,.24);"><i class="bi bi-stars" style="color:#f9a8d4;"></i></span>
+                  <span class="cc-launch-copy">
+                    <span class="cc-launch-title">ARIA Guardian</span>
+                    <span class="cc-launch-desc">AI assistance, safety reasoning, and support escalation.</span>
+                  </span>
+                </a>
+                <a class="cc-launch-tile" href="{{ url_for('danger.map_view') }}">
+                  <span class="cc-launch-icon" style="background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.24);"><i class="bi bi-map-fill" style="color:#fcd34d;"></i></span>
+                  <span class="cc-launch-copy">
+                    <span class="cc-launch-title">Danger Map</span>
+                    <span class="cc-launch-desc">Threat visibility, hotspot tracking, and location intelligence.</span>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1366,6 +1875,116 @@ window.currentUserId = window.RAKSHAK_DATA.userId;
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
 initDashboard(window.RAKSHAK_DATA.dangerZones, window.RAKSHAK_DATA.alerts);
+
+(function() {
+  const launchBtn = document.getElementById('dashboard-command-launch');
+  const launchChips = document.querySelectorAll('[data-dashboard-command]');
+  const readinessFill = document.getElementById('cc-readiness-fill');
+  const readinessLabel = document.getElementById('cc-readiness-label');
+  if (launchBtn) {
+    launchBtn.addEventListener('click', () => {
+      if (typeof window.openRakshakCommandPalette === 'function') window.openRakshakCommandPalette('');
+    });
+  }
+  launchChips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      if (typeof window.openRakshakCommandPalette === 'function') {
+        window.openRakshakCommandPalette(chip.dataset.dashboardCommand || '');
+      }
+    });
+  });
+
+  function setReadinessCard(id, state, subText, tone) {
+    const valueEl = document.getElementById(`cc-status-${id}`);
+    const subEl = document.getElementById(`cc-status-${id}-sub`);
+    const cardEl = document.getElementById(`cc-card-${id}`);
+    if (!valueEl || !subEl || !cardEl) return false;
+
+    valueEl.textContent = state;
+    subEl.textContent = subText;
+    cardEl.classList.remove('is-ready', 'is-caution', 'is-offline');
+    cardEl.classList.add(tone);
+    return tone === 'is-ready';
+  }
+
+  async function updateControlCenterReadiness() {
+    let readyCount = 0;
+
+    if (setReadinessCard(
+      'network',
+      navigator.onLine ? 'ONLINE' : 'OFFLINE',
+      navigator.onLine ? 'Live services reachable' : 'Network unavailable',
+      navigator.onLine ? 'is-ready' : 'is-offline'
+    )) readyCount++;
+
+    const hasCamera = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    if (setReadinessCard(
+      'camera',
+      hasCamera ? 'READY' : 'UNAVAILABLE',
+      hasCamera ? 'Camera stack detected' : 'Browser camera API missing',
+      hasCamera ? 'is-ready' : 'is-offline'
+    )) readyCount++;
+
+    const hasGeo = 'geolocation' in navigator;
+    if (setReadinessCard(
+      'geo',
+      hasGeo ? 'SUPPORTED' : 'UNAVAILABLE',
+      hasGeo ? 'Location intelligence enabled' : 'Location APIs missing',
+      hasGeo ? 'is-ready' : 'is-offline'
+    )) readyCount++;
+
+    let notificationState = 'UNSUPPORTED';
+    let notificationTone = 'is-offline';
+    let notificationSub = 'Browser notifications unavailable';
+    if ('Notification' in window) {
+      notificationState = Notification.permission.toUpperCase();
+      notificationTone = Notification.permission === 'granted' ? 'is-ready' : 'is-caution';
+      notificationSub = Notification.permission === 'granted'
+        ? 'Push alerts allowed'
+        : 'Permission can be enabled later';
+    }
+    if (setReadinessCard('notifications', notificationState, notificationSub, notificationTone)) readyCount++;
+
+    const secureState = window.isSecureContext;
+    if (setReadinessCard(
+      'secure',
+      secureState ? 'SECURE' : 'LIMITED',
+      secureState ? 'Protected browser context' : 'HTTPS-only features restricted',
+      secureState ? 'is-ready' : 'is-caution'
+    )) readyCount++;
+
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const hasInstallPrompt = !!document.getElementById('pwa-install-btn');
+    if (setReadinessCard(
+      'install',
+      isStandalone ? 'INSTALLED' : (hasInstallPrompt ? 'READY' : 'WEB'),
+      isStandalone ? 'Running as installed app' : (hasInstallPrompt ? 'Can be installed to device' : 'Browser session active'),
+      isStandalone || hasInstallPrompt ? 'is-ready' : 'is-caution'
+    )) readyCount++;
+
+    const readinessPct = Math.round((readyCount / 6) * 100);
+    if (readinessFill) readinessFill.style.width = `${readinessPct}%`;
+    if (readinessLabel) readinessLabel.textContent = `${readyCount} / 6 online`;
+
+    if (navigator.permissions && navigator.permissions.query) {
+      try {
+        const geoPermission = await navigator.permissions.query({ name: 'geolocation' });
+        setReadinessCard(
+          'geo',
+          geoPermission.state.toUpperCase(),
+          geoPermission.state === 'granted' ? 'Precise location allowed' : 'Permission requested on demand',
+          geoPermission.state === 'granted' ? 'is-ready' : 'is-caution'
+        );
+      } catch (err) {
+        /* Permission API can fail in some browsers; initial status remains. */
+      }
+    }
+  }
+
+  updateControlCenterReadiness();
+  window.addEventListener('online', updateControlCenterReadiness);
+  window.addEventListener('offline', updateControlCenterReadiness);
+})();
 </script>
 <script src="{{ url_for('static', filename='js/dashboard-page.js') }}"></script>
 {% endblock %}

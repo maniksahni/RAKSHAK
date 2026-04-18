@@ -172,6 +172,12 @@
     </button>
     {% endif %}
 
+    <button id="global-command-trigger" class="btn-glass rak-command-launch-btn" type="button" style="display:flex;align-items:center;gap:8px;">
+      <i class="bi bi-command" style="font-size:.85rem;"></i>
+      <span style="font-size:.72rem;font-weight:700;letter-spacing:.08em;">COMMAND</span>
+      <span class="rak-command-shortcut-pill">⌘K</span>
+    </button>
+
     <!-- Divider -->
     <div style="width:1px;height:24px;background:rgba(255,255,255,.07);margin:0 4px;"></div>
 
@@ -1161,6 +1167,87 @@ window.addEventListener('appinstalled', () => {
   {% block content %}{% endblock %}
 </div>
 
+{% if current_user.is_authenticated %}
+<div class="rak-command-palette-shell" id="rak-command-palette" aria-hidden="true">
+  <button class="rak-command-palette-backdrop" id="rak-command-backdrop" type="button" aria-label="Close command palette"></button>
+  <div class="rak-command-palette-panel" role="dialog" aria-modal="true" aria-labelledby="rak-command-title">
+    <div class="rak-command-palette-head">
+      <div class="rak-command-palette-kicker">UNIVERSAL COMMAND GRID</div>
+      <div class="rak-command-palette-title-row">
+        <div>
+          <div class="rak-command-palette-title" id="rak-command-title">Launch anything instantly</div>
+          <div class="rak-command-palette-subtitle">Routes, AI modules, emergency controls, and visual systems in one place.</div>
+        </div>
+        <div class="rak-command-palette-badge">
+          <i class="bi bi-lightning-charge-fill"></i>
+          <span>LIVE</span>
+        </div>
+      </div>
+      <div class="rak-command-search-wrap">
+        <i class="bi bi-search rak-command-search-icon"></i>
+        <input
+          id="rak-command-input"
+          class="rak-command-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Search dashboard, vision shield, SOS override, safe walk..."
+        >
+        <button id="rak-command-close" class="rak-command-close" type="button" aria-label="Close command palette">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="rak-command-palette-body">
+      <div class="rak-command-overview">
+        <div class="rak-command-overview-card">
+          <div class="rak-command-overview-label">CURRENT PAGE</div>
+          <div class="rak-command-overview-value">{{ request.endpoint or 'unknown' }}</div>
+        </div>
+        <div class="rak-command-overview-card">
+          <div class="rak-command-overview-label">RISK TIER</div>
+          <div class="rak-command-overview-value">{{ current_user.role|upper if current_user.is_admin else current_user.risk_level|upper }}</div>
+        </div>
+        <div class="rak-command-overview-card">
+          <div class="rak-command-overview-label">HOTKEY</div>
+          <div class="rak-command-overview-value">CTRL / CMD + K</div>
+        </div>
+      </div>
+
+      <div class="rak-command-results-meta">
+        <span id="rak-command-count">0 modules online</span>
+        <span class="rak-command-divider-dot"></span>
+        <span>Arrow keys to navigate</span>
+        <span class="rak-command-divider-dot"></span>
+        <span>Enter to launch</span>
+      </div>
+
+      <div class="rak-command-results" id="rak-command-results"></div>
+    </div>
+
+    <div class="rak-command-palette-foot">
+      <button type="button" class="rak-command-foot-chip" data-command-seed="">
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>All Modules</span>
+      </button>
+      <button type="button" class="rak-command-foot-chip" data-command-seed="sos">
+        <i class="bi bi-shield-exclamation"></i>
+        <span>Emergency</span>
+      </button>
+      <button type="button" class="rak-command-foot-chip" data-command-seed="vision">
+        <i class="bi bi-camera-video-fill"></i>
+        <span>Visual Stack</span>
+      </button>
+      <button type="button" class="rak-command-foot-chip" data-command-seed="ai">
+        <i class="bi bi-stars"></i>
+        <span>AI Modules</span>
+      </button>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <!-- ── Toast Container ─────────────────────────────────────────────────────── -->
 <div id="toast-container"></div>
 
@@ -1191,6 +1278,366 @@ window.addEventListener('appinstalled', () => {
 <style>
 @keyframes loadIn { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
 </style>
+
+{% if current_user.is_authenticated %}
+<style>
+body.command-palette-open { overflow: hidden; }
+.rak-command-launch-btn {
+  position: relative;
+  min-height: 34px;
+  border-color: rgba(196, 181, 253, 0.16);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(15, 8, 30, 0.8));
+}
+.rak-command-launch-btn:hover {
+  border-color: rgba(196, 181, 253, 0.35);
+  box-shadow: 0 10px 24px rgba(76, 29, 149, 0.22);
+}
+.rak-command-shortcut-pill {
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(196, 181, 253, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(224, 231, 255, 0.85);
+  font-family: 'Courier New', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.rak-command-palette-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 88px 20px 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.rak-command-palette-shell.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.rak-command-palette-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background:
+    radial-gradient(circle at top center, rgba(139, 92, 246, 0.18), transparent 38%),
+    rgba(3, 2, 8, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.rak-command-palette-panel {
+  position: relative;
+  width: min(980px, 100%);
+  max-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid rgba(196, 181, 253, 0.12);
+  background:
+    linear-gradient(155deg, rgba(26, 13, 38, 0.96), rgba(8, 5, 16, 0.98)),
+    rgba(8, 5, 16, 0.98);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(139, 92, 246, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(24px) scale(0.98);
+  transition: transform 0.25s cubic-bezier(.22,1,.36,1);
+}
+.rak-command-palette-shell.is-open .rak-command-palette-panel {
+  transform: translateY(0) scale(1);
+}
+.rak-command-palette-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(196, 181, 253, 0.8), rgba(139, 92, 246, 0.6), transparent);
+}
+.rak-command-palette-head,
+.rak-command-palette-foot {
+  padding: 22px 24px;
+}
+.rak-command-palette-head {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.06), rgba(255, 255, 255, 0));
+}
+.rak-command-palette-kicker {
+  margin-bottom: 10px;
+  color: rgba(196, 181, 253, 0.68);
+  font-family: 'Courier New', monospace;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+.rak-command-palette-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.rak-command-palette-title {
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.rak-command-palette-subtitle {
+  margin-top: 6px;
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.rak-command-palette-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.14);
+  border: 1px solid rgba(196, 181, 253, 0.18);
+  color: #c4b5fd;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.rak-command-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px 0 50px;
+  min-height: 64px;
+  border-radius: 18px;
+  border: 1px solid rgba(196, 181, 253, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.rak-command-search-wrap:focus-within {
+  border-color: rgba(196, 181, 253, 0.28);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
+}
+.rak-command-search-icon {
+  position: absolute;
+  left: 18px;
+  color: rgba(196, 181, 253, 0.78);
+  font-size: 1rem;
+}
+.rak-command-input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.rak-command-input::placeholder { color: rgba(226, 232, 240, 0.45); }
+.rak-command-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.72);
+  transition: all 0.2s ease;
+}
+.rak-command-close:hover {
+  color: #fff;
+  border-color: rgba(196, 181, 253, 0.24);
+  background: rgba(139, 92, 246, 0.12);
+}
+.rak-command-palette-body {
+  padding: 20px 24px 18px;
+  overflow: auto;
+}
+.rak-command-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.rak-command-overview-card {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+}
+.rak-command-overview-label {
+  color: rgba(196, 181, 253, 0.65);
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.rak-command-overview-value {
+  margin-top: 8px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.rak-command-results-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: rgba(226, 232, 240, 0.52);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+}
+.rak-command-divider-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(196, 181, 253, 0.28);
+}
+.rak-command-results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rak-command-result {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
+  color: #fff;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+.rak-command-result:hover,
+.rak-command-result.is-active {
+  border-color: rgba(196, 181, 253, 0.22);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.14), rgba(22, 163, 74, 0.04));
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.3);
+}
+.rak-command-result-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(196, 181, 253, 0.16);
+  color: #c4b5fd;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.rak-command-result-copy {
+  flex: 1;
+  min-width: 0;
+}
+.rak-command-result-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+.rak-command-result-subtitle {
+  margin-top: 4px;
+  color: rgba(226, 232, 240, 0.66);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+.rak-command-result-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.rak-command-tag {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.68);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.rak-command-result-arrow {
+  color: rgba(226, 232, 240, 0.45);
+  font-size: 1rem;
+}
+.rak-command-empty {
+  padding: 28px 22px;
+  border-radius: 20px;
+  border: 1px dashed rgba(196, 181, 253, 0.18);
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(226, 232, 240, 0.7);
+  text-align: center;
+}
+.rak-command-empty strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+}
+.rak-command-palette-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+.rak-command-foot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(226, 232, 240, 0.82);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.rak-command-foot-chip:hover {
+  border-color: rgba(196, 181, 253, 0.18);
+  background: rgba(139, 92, 246, 0.12);
+  color: #fff;
+}
+@media (max-width: 992px) {
+  .rak-command-launch-btn span:not(.rak-command-shortcut-pill) { display: none; }
+  .rak-command-palette-shell { padding: 76px 14px 18px; }
+  .rak-command-palette-panel { max-height: calc(100vh - 96px); border-radius: 24px; }
+  .rak-command-overview { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .rak-command-palette-head,
+  .rak-command-palette-body,
+  .rak-command-palette-foot { padding-left: 16px; padding-right: 16px; }
+  .rak-command-palette-title-row { flex-direction: column; }
+  .rak-command-search-wrap { min-height: 58px; }
+  .rak-command-shortcut-pill { display: none; }
+}
+</style>
+{% endif %}
 
 <!-- ── Scripts ─────────────────────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -1345,6 +1792,380 @@ document.addEventListener('click', e => {
   const dd = document.getElementById('notif-dropdown');
   if (wrap && dd && !wrap.contains(e.target)) dd.style.display = 'none';
 });
+
+{% if current_user.is_authenticated %}
+(function() {
+  const paletteEl = document.getElementById('rak-command-palette');
+  const backdropEl = document.getElementById('rak-command-backdrop');
+  const panelEl = paletteEl ? paletteEl.querySelector('.rak-command-palette-panel') : null;
+  const inputEl = document.getElementById('rak-command-input');
+  const resultsEl = document.getElementById('rak-command-results');
+  const countEl = document.getElementById('rak-command-count');
+  const triggerEl = document.getElementById('global-command-trigger');
+  const closeEl = document.getElementById('rak-command-close');
+  if (!paletteEl || !inputEl || !resultsEl || !countEl) return;
+
+  const currentEndpoint = {{ (request.endpoint or '') | tojson }};
+  const commandItems = [
+    {
+      id: 'dashboard',
+      title: 'Dashboard',
+      subtitle: 'Return to the main command hub and tactical overview.',
+      category: 'Core',
+      icon: 'bi-house-door-fill',
+      href: '{{ url_for("dashboard.index") }}',
+      keywords: 'home control center command overview'
+    },
+    {
+      id: 'profile',
+      title: 'My Profile',
+      subtitle: 'Review account identity, contact settings, and profile controls.',
+      category: 'Core',
+      icon: 'bi-person-badge-fill',
+      href: '{{ url_for("auth.profile") }}',
+      keywords: 'user account profile identity settings'
+    },
+    {
+      id: 'history',
+      title: 'Alert History',
+      subtitle: 'Inspect recent SOS activity and resolved incident traces.',
+      category: 'Intel',
+      icon: 'bi-clock-history',
+      href: '{{ url_for("sos.history") }}',
+      keywords: 'history alerts incidents sos logs timeline'
+    },
+    {
+      id: 'safety-score',
+      title: 'Safety Score',
+      subtitle: 'Open your live safety rating, trends, and risk signal summary.',
+      category: 'Intel',
+      icon: 'bi-speedometer2',
+      href: '{{ url_for("safety_score.index") }}',
+      keywords: 'score metrics analytics risk'
+    },
+    {
+      id: 'tips',
+      title: 'Safety Tips',
+      subtitle: 'Jump into protective guidance, best practices, and preparedness.',
+      category: 'Intel',
+      icon: 'bi-lightbulb-fill',
+      href: '{{ url_for("safety_tips.index") }}',
+      keywords: 'tips guidance preparedness awareness'
+    },
+    {
+      id: 'emergency-dial',
+      title: 'Emergency Dial',
+      subtitle: 'Reach rapid emergency calling tools and critical contact access.',
+      category: 'Emergency',
+      icon: 'bi-telephone-fill',
+      href: '{{ url_for("emergency.index") }}',
+      keywords: 'dial call emergency contacts hotline'
+    }
+    {% if current_user.is_admin %}
+    ,
+    {
+      id: 'admin-dashboard',
+      title: 'Admin Dashboard',
+      subtitle: 'Open admin command center for users, zones, and analytics.',
+      category: 'Admin',
+      icon: 'bi-shield-lock-fill',
+      href: '{{ url_for("admin.dashboard") }}',
+      keywords: 'admin command users zones analytics'
+    },
+    {
+      id: 'danger-map',
+      title: 'Live Map',
+      subtitle: 'Inspect live geographic activity, danger clusters, and signals.',
+      category: 'Admin',
+      icon: 'bi-map-fill',
+      href: '{{ url_for("danger.map_view") }}',
+      keywords: 'live map zones geofence heatmap'
+    }
+    {% else %}
+    ,
+    {
+      id: 'danger-map',
+      title: 'Danger Map',
+      subtitle: 'Scan nearby hotspots, unsafe zones, and route-aware threats.',
+      category: 'Emergency',
+      icon: 'bi-map-fill',
+      href: '{{ url_for("danger.map_view") }}',
+      keywords: 'map danger hotspot unsafe area route'
+    },
+    {
+      id: 'safe-walk',
+      title: 'Safe Walk',
+      subtitle: 'Start a monitored walk session with route-aware protection.',
+      category: 'Emergency',
+      icon: 'bi-geo-alt-fill',
+      href: '{{ url_for("safe_walk.index") }}',
+      keywords: 'walk escort tracking route safety'
+    },
+    {
+      id: 'fake-call',
+      title: 'Fake Call',
+      subtitle: 'Launch a discreet call escape flow when you need a way out.',
+      category: 'Emergency',
+      icon: 'bi-phone-vibrate-fill',
+      href: '{{ url_for("fake_call.index") }}',
+      keywords: 'fake call exit escape discreet'
+    },
+    {
+      id: 'aria',
+      title: 'ARIA Guardian',
+      subtitle: 'Open the AI guardian copilot for support, guidance, and escalation.',
+      category: 'AI',
+      icon: 'bi-robot',
+      href: '{{ url_for("gemini.guardian_page") }}',
+      keywords: 'ai guardian aria assistant support'
+    },
+    {
+      id: 'guardian-network',
+      title: 'Guardian Network',
+      subtitle: 'Manage your support circle and protection network.',
+      category: 'AI',
+      icon: 'bi-shield-shaded',
+      href: '{{ url_for("guardian.index") }}',
+      keywords: 'guardians network contacts circle support'
+    },
+    {
+      id: 'valkyrie',
+      title: 'Valkyrie Protocol',
+      subtitle: 'Access the dead-man safety system and voice guardian layer.',
+      category: 'AI',
+      icon: 'bi-fingerprint',
+      href: '{{ url_for("valkyrie.index") }}',
+      keywords: 'valkyrie deadman voice protocol'
+    },
+    {
+      id: 'vision-shield',
+      title: 'Vision Shield',
+      subtitle: 'Launch gesture-controlled safety detection and puzzle response mode.',
+      category: 'Visual',
+      icon: 'bi-camera-video-fill',
+      href: '{{ url_for("vision_shield.index") }}',
+      keywords: 'vision camera gesture shield puzzle'
+    },
+    {
+      id: 'xray-vision',
+      title: 'X-Ray Vision',
+      subtitle: 'Jump into aura and reactive viewport modes for immersive safety visuals.',
+      category: 'Visual',
+      icon: 'bi-badge-3d-fill',
+      href: '{{ url_for("xray_vision.index") }}',
+      keywords: 'xray aura bioscan viewport visual'
+    },
+    {
+      id: 'hardware-link',
+      title: 'Link Titan Ring',
+      subtitle: 'Reconnect wearable hardware and emergency biometrics sync.',
+      category: 'Device',
+      icon: 'bi-bluetooth',
+      action: 'hardware-link',
+      keywords: 'ring bluetooth wearable titan hardware device'
+    },
+    {
+      id: 'trigger-sos',
+      title: 'Trigger SOS Override',
+      subtitle: 'Open the emergency countdown and broadcast critical distress.',
+      category: 'Emergency',
+      icon: 'bi-shield-exclamation',
+      action: 'trigger-sos',
+      keywords: 'sos override emergency distress trigger'
+    }
+    {% endif %}
+  ];
+
+  const commandActions = {
+    'trigger-sos': () => {
+      closeCommandPalette();
+      if (typeof triggerGlobalSOS === 'function') triggerGlobalSOS();
+    },
+    'hardware-link': () => {
+      closeCommandPalette();
+      if (typeof startHardwareLink === 'function') startHardwareLink();
+    }
+  };
+
+  let filteredItems = [];
+  let activeIndex = 0;
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>\"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+  }
+
+  function isPaletteOpen() {
+    return paletteEl.classList.contains('is-open');
+  }
+
+  function focusPaletteInput() {
+    window.requestAnimationFrame(() => {
+      inputEl.focus();
+      inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+    });
+  }
+
+  function normalizeQuery(query) {
+    return query.trim().toLowerCase();
+  }
+
+  function getCommandMatches(query) {
+    const normalized = normalizeQuery(query);
+    if (!normalized) return commandItems.slice();
+    return commandItems.filter((item) => {
+      const haystack = `${item.title} ${item.subtitle} ${item.category} ${item.keywords || ''}`.toLowerCase();
+      return normalized.split(/\s+/).every((token) => haystack.includes(token));
+    });
+  }
+
+  function renderCommandResults() {
+    filteredItems = getCommandMatches(inputEl.value);
+    if (activeIndex >= filteredItems.length) activeIndex = 0;
+    countEl.textContent = `${filteredItems.length} module${filteredItems.length === 1 ? '' : 's'} online`;
+
+    if (!filteredItems.length) {
+      resultsEl.innerHTML = `
+        <div class="rak-command-empty">
+          <strong>No command match yet</strong>
+          Try terms like <code style="color:#c4b5fd;">vision</code>, <code style="color:#c4b5fd;">sos</code>, <code style="color:#c4b5fd;">guardian</code>, or <code style="color:#c4b5fd;">map</code>.
+        </div>
+      `;
+      return;
+    }
+
+    resultsEl.innerHTML = filteredItems.map((item, index) => {
+      const isActive = index === activeIndex ? ' is-active' : '';
+      const isCurrent = item.href && currentEndpoint && window.location.pathname === new URL(item.href, window.location.origin).pathname;
+      return `
+        <button type="button" class="rak-command-result${isActive}" data-command-index="${index}">
+          <span class="rak-command-result-icon"><i class="bi ${escapeHtml(item.icon)}"></i></span>
+          <span class="rak-command-result-copy">
+            <span class="rak-command-result-title">
+              <span>${escapeHtml(item.title)}</span>
+              ${isCurrent ? '<span class="rak-command-tag">Current</span>' : ''}
+            </span>
+            <span class="rak-command-result-subtitle">${escapeHtml(item.subtitle)}</span>
+            <span class="rak-command-result-meta">
+              <span class="rak-command-tag">${escapeHtml(item.category)}</span>
+              ${item.action ? '<span class="rak-command-tag">Instant Action</span>' : '<span class="rak-command-tag">Route</span>'}
+            </span>
+          </span>
+          <span class="rak-command-result-arrow"><i class="bi bi-arrow-up-right"></i></span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function setActiveIndex(nextIndex) {
+    if (!filteredItems.length) return;
+    activeIndex = (nextIndex + filteredItems.length) % filteredItems.length;
+    const nodes = resultsEl.querySelectorAll('.rak-command-result');
+    nodes.forEach((node, index) => node.classList.toggle('is-active', index === activeIndex));
+    const activeNode = nodes[activeIndex];
+    if (activeNode) activeNode.scrollIntoView({ block: 'nearest' });
+  }
+
+  function executeCommand(item) {
+    if (!item) return;
+    if (item.action && commandActions[item.action]) {
+      commandActions[item.action]();
+      return;
+    }
+    if (item.href) window.location.href = item.href;
+  }
+
+  function openCommandPalette(seed = '') {
+    paletteEl.classList.add('is-open');
+    paletteEl.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('command-palette-open');
+    inputEl.value = seed;
+    activeIndex = 0;
+    renderCommandResults();
+    focusPaletteInput();
+  }
+
+  function closeCommandPalette() {
+    paletteEl.classList.remove('is-open');
+    paletteEl.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('command-palette-open');
+  }
+
+  window.openRakshakCommandPalette = openCommandPalette;
+  window.closeRakshakCommandPalette = closeCommandPalette;
+
+  triggerEl?.addEventListener('click', () => openCommandPalette());
+  closeEl?.addEventListener('click', closeCommandPalette);
+  backdropEl?.addEventListener('click', closeCommandPalette);
+  inputEl.addEventListener('input', () => {
+    activeIndex = 0;
+    renderCommandResults();
+  });
+
+  resultsEl.addEventListener('mousemove', (event) => {
+    const target = event.target.closest('.rak-command-result');
+    if (!target) return;
+    const index = Number(target.dataset.commandIndex);
+    if (Number.isInteger(index)) setActiveIndex(index);
+  });
+
+  resultsEl.addEventListener('click', (event) => {
+    const target = event.target.closest('.rak-command-result');
+    if (!target) return;
+    const index = Number(target.dataset.commandIndex);
+    executeCommand(filteredItems[index]);
+  });
+
+  document.querySelectorAll('[data-command-seed]').forEach((chip) => {
+    chip.addEventListener('click', () => openCommandPalette(chip.dataset.commandSeed || ''));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const key = event.key.toLowerCase();
+    if ((event.metaKey || event.ctrlKey) && key === 'k') {
+      event.preventDefault();
+      if (isPaletteOpen()) closeCommandPalette();
+      else openCommandPalette();
+      return;
+    }
+    if (!isPaletteOpen()) return;
+
+    if (key === 'escape') {
+      event.preventDefault();
+      closeCommandPalette();
+      return;
+    }
+    if (key === 'arrowdown') {
+      event.preventDefault();
+      setActiveIndex(activeIndex + 1);
+      return;
+    }
+    if (key === 'arrowup') {
+      event.preventDefault();
+      setActiveIndex(activeIndex - 1);
+      return;
+    }
+    if (key === 'enter') {
+      const activeItem = filteredItems[activeIndex];
+      if (activeItem) {
+        event.preventDefault();
+        executeCommand(activeItem);
+      }
+    }
+  });
+
+  paletteEl.addEventListener('click', (event) => {
+    if (panelEl && !panelEl.contains(event.target) && event.target === paletteEl) closeCommandPalette();
+  });
+
+  renderCommandResults();
+})();
+{% endif %}
 
 // ── SocketIO init (for authenticated users) ──────────────────────────────────
 // ── Ambient Particle Canvas ──────────────────────────────────────────────────
