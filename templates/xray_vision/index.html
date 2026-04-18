@@ -874,6 +874,92 @@ a, button { cursor: inherit; }
   background: rgba(5, 8, 18, 0.72);
   border-color: rgba(255, 255, 255, 0.12);
 }
+
+.xv-wrap[data-mode="xray"]::before,
+.xv-wrap[data-mode="xray"] .xv-orb,
+.xv-wrap[data-mode="xray"] .xv-vignette,
+.xv-wrap[data-mode="xray"] .xv-scan-sweep,
+.xv-wrap[data-mode="xray"] .xv-center-reticle,
+.xv-wrap[data-mode="xray"] .xv-brand-hud,
+.xv-wrap[data-mode="xray"] .xv-left-panel,
+.xv-wrap[data-mode="xray"] .xv-right-panel,
+.xv-wrap[data-mode="xray"] .xv-bottom-rail,
+.xv-wrap[data-mode="xray"] .xv-status,
+.xv-wrap[data-mode="xray"] .xv-frame-counter {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.xv-wrap[data-mode="xray"] .xv-grid-overlay {
+  opacity: 0.08;
+  mask-image: none;
+  -webkit-mask-image: none;
+  background-size: 88px 58px;
+}
+
+.xv-wrap[data-mode="xray"] .xv-instructions {
+  top: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+}
+
+.xv-wrap[data-mode="xray"] .xv-ins-dot {
+  background: rgba(255,255,255,0.5);
+  box-shadow: 0 0 6px rgba(255,255,255,0.36);
+}
+
+.xv-wrap[data-mode="xray"] .xv-back-btn,
+.xv-wrap[data-mode="xray"] .xv-fps {
+  background: rgba(20, 20, 22, 0.3);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: none;
+  color: rgba(255,255,255,0.5);
+}
+
+.xv-wrap[data-mode="xray"] .xv-back-btn {
+  top: 18px;
+  left: 18px;
+  opacity: 0.42;
+}
+
+.xv-wrap[data-mode="xray"] .xv-fps {
+  top: 18px;
+  right: 18px;
+  opacity: 0.54;
+}
+
+.xv-wrap[data-mode="xray"] .xv-controls {
+  bottom: 18px;
+  right: 18px;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(20, 20, 22, 0.42);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+}
+
+.xv-wrap[data-mode="xray"] .xv-ctrl-group {
+  background: rgba(0,0,0,0.22);
+  border-color: rgba(255,255,255,0.06);
+}
+
+.xv-wrap[data-mode="xray"] .xv-ctrl-btn {
+  color: rgba(255,255,255,0.74);
+}
+
+.xv-wrap[data-mode="xray"] .xv-ctrl-btn:hover,
+.xv-wrap[data-mode="xray"] .xv-ctrl-btn.active {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.16);
+  box-shadow: none;
+}
 @keyframes xvInsBlink {
   50% { opacity: 0.3; }
 }
@@ -1497,6 +1583,7 @@ a, button { cursor: inherit; }
   let lastXrayEffectFrame = -1;
   let lastXrayEffectWidth = 0;
   let lastXrayEffectHeight = 0;
+  let xraySequenceStartedAt = 0;
 
   const maskCv = document.createElement('canvas');
   const mctx = maskCv.getContext('2d', { willReadFrequently: true });
@@ -1551,7 +1638,7 @@ a, button { cursor: inherit; }
     if (instructionsTextEl) {
       instructionsTextEl.textContent = auraMode
         ? 'Show one hand · rotate wrist through the field'
-        : 'Show both hands · frame your face to drive the viewport';
+        : 'Show both hands · hold the frame to cycle effects';
     }
     if (allowBtn) {
       allowBtn.innerHTML = auraMode
@@ -1561,7 +1648,7 @@ a, button { cursor: inherit; }
     if (loaderSub && !hasStarted) {
       loaderSub.textContent = auraMode
         ? 'Hands · Aura Vector Field'
-        : 'Dual Hands · Reactive Viewport';
+        : 'Dual Hands · Reactive Filters';
     }
   }
 
@@ -1855,13 +1942,34 @@ a, button { cursor: inherit; }
     return imageData;
   }
 
-  const XRAY_EFFECTS = [
-    { key: 'burning-micro', renderKey: 'burning', label: 'burning', hudLabel: 'BURNING', aspect: 1, sizeBias: 0.42, minW: 118, maxW: 190 },
-    { key: 'burning', renderKey: 'burning', label: 'burning', hudLabel: 'BURNING', aspect: 0.66, sizeBias: 0.92, minW: 280, maxW: 620 },
-    { key: 'glow', renderKey: 'glow', label: 'glow', hudLabel: 'GLOW', aspect: 0.66, sizeBias: 0.9, minW: 250, maxW: 560 },
-    { key: 'thermal', renderKey: 'thermal', label: 'thermal vision', hudLabel: 'THERMAL', aspect: 0.66, sizeBias: 0.94, minW: 280, maxW: 620 },
-    { key: 'pixelated', renderKey: 'pixelated', label: 'pixelated', hudLabel: 'PIXELATED', aspect: 0.66, sizeBias: 0.94, minW: 280, maxW: 620 }
+  const XRAY_SEQUENCE = [
+    { key: 'burning-micro', renderKey: 'burning', label: 'burning', hudLabel: 'BURNING', aspect: 1, sizeBias: 0.42, minW: 118, maxW: 190, duration: 850, yBias: -0.02, labelAnchor: 'below-left' },
+    { key: 'burning-wide', renderKey: 'burning', label: 'burning', hudLabel: 'BURNING', aspect: 0.66, sizeBias: 0.98, minW: 320, maxW: 640, duration: 1500, yBias: -0.04, labelAnchor: 'below-left' },
+    { key: 'glow-wide', renderKey: 'glow', label: 'glow', hudLabel: 'GLOW', aspect: 0.66, sizeBias: 0.9, minW: 250, maxW: 520, duration: 900, yBias: -0.02, labelAnchor: 'below-left' },
+    { key: 'glow-portrait', renderKey: 'glow', label: 'glow', hudLabel: 'GLOW', aspect: 1.24, sizeBias: 0.5, minW: 150, maxW: 210, duration: 820, yBias: -0.06, labelAnchor: 'below-left' },
+    { key: 'glow-band', renderKey: 'glow', label: 'glow', hudLabel: 'GLOW', aspect: 0.26, sizeBias: 1.02, minW: 360, maxW: 580, duration: 760, yBias: -0.12, labelAnchor: 'below-left' },
+    { key: 'thermal-wide', renderKey: 'thermal', label: 'thermal vision', hudLabel: 'THERMAL', aspect: 0.66, sizeBias: 0.98, minW: 320, maxW: 640, duration: 1380, yBias: -0.04, labelAnchor: 'below-left' },
+    { key: 'pixel-portrait', renderKey: 'pixelated', label: 'pixelated', hudLabel: 'PIXELATED', aspect: 0.9, sizeBias: 0.58, minW: 200, maxW: 260, duration: 980, yBias: -0.06, labelAnchor: 'above-left' },
+    { key: 'pixel-wide', renderKey: 'pixelated', label: 'pixelated', hudLabel: 'PIXELATED', aspect: 0.66, sizeBias: 0.98, minW: 320, maxW: 640, duration: 1500, yBias: -0.04, labelAnchor: 'above-left' }
   ];
+
+  function getXraySequenceEffect(activeMs, spreadFactor) {
+    if (spreadFactor < 0.14) return XRAY_SEQUENCE[0];
+    let remaining = activeMs;
+    for (let i = 0; i < XRAY_SEQUENCE.length; i++) {
+      const effect = XRAY_SEQUENCE[i];
+      if (remaining < effect.duration) return effect;
+      remaining -= effect.duration;
+    }
+    const loopSpan = XRAY_SEQUENCE.slice(1).reduce((sum, effect) => sum + effect.duration, 0);
+    let loopMs = activeMs % loopSpan;
+    for (let i = 1; i < XRAY_SEQUENCE.length; i++) {
+      const effect = XRAY_SEQUENCE[i];
+      if (loopMs < effect.duration) return effect;
+      loopMs -= effect.duration;
+    }
+    return XRAY_SEQUENCE[XRAY_SEQUENCE.length - 1];
+  }
 
   function renderBurningEffect(width, height) {
     drawMirroredVideoToCanvas(xrayFxCtx, width, height, 'contrast(1.2) saturate(1.25) brightness(1.04)');
@@ -1970,15 +2078,15 @@ a, button { cursor: inherit; }
     const handDistance = dist(leftCenter, rightCenter);
     const avgPalm = (getPalmSpan(leftHand) + getPalmSpan(rightHand)) / 2;
     const spreadFactor = clampValue((handDistance - avgPalm * 2) / Math.max(1, avgPalm * 3.2), 0, 1);
-    const cycleIndex = Math.floor(((now - sessionStartedAt) / 1650)) % XRAY_EFFECTS.length;
-    const effect = XRAY_EFFECTS[cycleIndex];
+    const activeMs = xraySequenceStartedAt ? Math.max(0, now - xraySequenceStartedAt) : 0;
+    const effect = getXraySequenceEffect(activeMs, spreadFactor);
     currentXrayEffectLabel = effect.hudLabel;
 
     const centerX = (leftCenter.x + rightCenter.x) * 0.5;
-    const centerY = (leftCenter.y + rightCenter.y) * 0.5 - avgPalm * 0.24;
-    const baseW = handDistance * (effect.aspect === 1 ? 0.72 : 1.18) * effect.sizeBias;
+    const centerY = (leftCenter.y + rightCenter.y) * 0.5 + avgPalm * effect.yBias;
+    const baseW = handDistance * (effect.aspect > 1 ? 0.54 : effect.aspect < 0.35 ? 1.18 : 1.08) * effect.sizeBias;
     const targetW = clampValue(baseW, effect.minW, Math.min(effect.maxW, W * 0.62));
-    const targetH = clampValue(targetW * effect.aspect, effect.aspect === 1 ? targetW : H * 0.24, H * 0.56);
+    const targetH = clampValue(targetW * effect.aspect, effect.aspect >= 1 ? targetW : H * 0.16, H * 0.56);
     const targetX = clampValue(centerX - targetW * 0.5, 34, W - targetW - 34);
     const targetY = clampValue(centerY - targetH * 0.5, 28, H - targetH - 34);
 
@@ -2019,7 +2127,9 @@ a, button { cursor: inherit; }
     ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
 
     const labelX = rect.x + 2;
-    const labelY = rect.y + rect.h + 14 > H - 10 ? rect.y - 8 : rect.y + rect.h + 14;
+    const labelY = effect.labelAnchor === 'above-left'
+      ? rect.y - 8
+      : (rect.y + rect.h + 14 > H - 10 ? rect.y - 8 : rect.y + rect.h + 14);
     ctx.fillStyle = 'rgba(255,255,255,0.94)';
     ctx.font = '11px Courier New';
     ctx.textAlign = 'left';
@@ -2434,17 +2544,13 @@ a, button { cursor: inherit; }
 
   /* ── HUD nodes bar (bottom of canvas) ── */
   function drawHudNodes() {
+    if (!isAuraMode()) return;
     const bY = H - 52;
     const auraMode = isAuraMode();
-    const nodes = auraMode
-      ? [
-          { x: 55, label: 'INPUT' }, { x: 145, label: 'HAND' }, { x: 245, label: 'FIELD' },
-          { x: 345, label: 'ORBIT' }, { x: 445, label: 'GLOW' }, { x: 540, label: 'OUTPUT' },
-        ]
-      : [
-          { x: 55, label: 'INPUT' }, { x: 145, label: 'DUAL' }, { x: 245, label: 'FRAME' },
-          { x: 345, label: 'FILTER' }, { x: 445, label: 'VIEW' }, { x: 540, label: 'OUTPUT' },
-        ];
+    const nodes = [
+      { x: 55, label: 'INPUT' }, { x: 145, label: 'HAND' }, { x: 245, label: 'FIELD' },
+      { x: 345, label: 'ORBIT' }, { x: 445, label: 'GLOW' }, { x: 540, label: 'OUTPUT' },
+    ];
     ctx.save();
     nodes.forEach((n, i) => {
       ctx.fillStyle = 'rgba(0,10,20,0.9)';
@@ -2460,20 +2566,14 @@ a, button { cursor: inherit; }
         ctx.beginPath(); ctx.moveTo(nodes[i - 1].x + 35, bY - 3);
         ctx.lineTo(n.x - 35, bY - 3); ctx.stroke();
       }
-      const on = auraMode
-        ? (currentHands && currentHands.length >= 1 && i <= Math.floor((frame * 0.12) % 6))
-        : (portalAlpha > 0.1 && i <= Math.floor((frame * 0.1) % 6));
+      const on = currentHands && currentHands.length >= 1 && i <= Math.floor((frame * 0.12) % 6);
       if (on) { ctx.fillStyle = `rgba(0,255,255,0.2)`; ctx.fillRect(n.x - 35, bY - 14, 70, 22); }
     });
 
-    if (auraMode && currentHands && currentHands.length >= 1) {
+    if (currentHands && currentHands.length >= 1) {
       ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
       ctx.fillText('AURA.FIELD // MEDIAPIPE_HANDS', W - 20, H - 35);
       ctx.fillText(`LOCK: 1/1 // FLOW: ${Math.round(portalAlpha * 100)}%`, W - 20, H - 20);
-    } else if (!auraMode && portalAlpha > 0.05 && currentHands && currentHands.length >= 2) {
-      ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
-      ctx.fillText(`XRAY.VIEW // ${currentXrayEffectLabel}`, W - 20, H - 35);
-      ctx.fillText(`FRAME: LOCKED // HANDS: 2/2`, W - 20, H - 20);
     }
     ctx.restore();
   }
@@ -2579,7 +2679,7 @@ a, button { cursor: inherit; }
       const rightCenter = getHandCenter(rightSideHand);
       const handDistance = dist(leftCenter, rightCenter);
       const avgPalmSpan = (getPalmSpan(leftSideHand) + getPalmSpan(rightSideHand)) / 2;
-      const frameThreshold = Math.max(170, avgPalmSpan * 2.15);
+      const frameThreshold = Math.max(118, avgPalmSpan * 1.26);
 
       portalActiveThisFrame = handDistance > frameThreshold;
       portalHold = false;
@@ -2597,7 +2697,12 @@ a, button { cursor: inherit; }
       currentXrayEffectLabel = 'SEARCH';
     }
 
+    const wasActive = isActive;
     isActive = portalActiveThisFrame;
+    if (!auraMode) {
+      if (portalActiveThisFrame && !wasActive) xraySequenceStartedAt = now;
+      if (!portalActiveThisFrame) xraySequenceStartedAt = 0;
+    }
     portalAlpha += isActive ? 0.08 : (auraMode ? -0.08 : -0.06);
     portalAlpha = Math.max(0, Math.min(1, portalAlpha));
 
@@ -2628,11 +2733,11 @@ a, button { cursor: inherit; }
       statusEl.style.color = '#0055aa';
       statusEl.style.textShadow = '0 0 10px #0055aa';
     } else if (!isActive) {
-      statusEl.textContent = 'ALIGN HANDS WIDER TO FRAME THE VIEW';
+      statusEl.textContent = 'HOLD BOTH HANDS TO START FILTER SEQUENCE';
       statusEl.style.color = theme.accent2;
       statusEl.style.textShadow = `0 0 12px ${theme.accent2}`;
     } else {
-      statusEl.textContent = '[ XRAY VIEWPORT LOCKED - HOLD THE FRAME ]';
+      statusEl.textContent = `[ ${currentXrayEffectLabel} FILTER LOCKED ]`;
       statusEl.style.color = isGlitching ? '#ff4444' : theme.accent;
       statusEl.style.textShadow = `0 0 15px ${isGlitching ? '#ff0000' : theme.accent}`;
     }
