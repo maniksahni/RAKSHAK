@@ -2435,7 +2435,7 @@ a, button { cursor: inherit; }
     sparkBurst = sparkBurst.filter(s => s.life > 0);
     sparkBurst.forEach(s => { s.update(); s.draw(); });
 
-    if (primaryHand && (auraMode || xrayManualPortalActive || (currentHands && currentHands.length >= 2))) {
+    if (auraMode && primaryHand) {
       drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
     }
 
