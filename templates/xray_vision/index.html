@@ -2933,6 +2933,8 @@ a, button { cursor: inherit; }
 
     if (!auraMode && leftSideHand && rightSideHand) {
       // XRAY mode = two hands → portal effect between them, then skeletons on top
+      // NO aura wheels here — that's an aura-mode-only signature so the two
+      // modes read distinctly different. Xray is all about the portal viewport.
       drawXrayViewport(leftSideHand, rightSideHand, Math.max(0.16, portalAlpha), perf, now);
       if (isGlitching && portalAlpha > 0.28) {
         ctx.save();
@@ -2940,10 +2942,6 @@ a, button { cursor: inherit; }
         ctx.fillRect(lerpPortal.x, lerpPortal.y, lerpPortal.w, lerpPortal.h);
         ctx.restore();
       }
-      /* Aura wheels around each hand in xray mode too (slightly dimmer so
-         the portal viewport stays the main focus) */
-      drawTouchAura(leftSideHand,  'left',  0.55 + portalAlpha * 0.25, perf.auraDetail * 0.9);
-      drawTouchAura(rightSideHand, 'right', 0.55 + portalAlpha * 0.25, perf.auraDetail * 0.9);
       /* Orbital crown hovers above the midpoint between hands once hands are stable.
          Fades in with portalAlpha so it only appears when the gesture holds. */
       if (portalAlpha > 0.35) {
@@ -2976,10 +2974,9 @@ a, button { cursor: inherit; }
         drawWristBox: true
       });
     } else if (!auraMode && (leftSideHand || rightSideHand)) {
-      // single hand visible while searching for the second — still show aura + skeleton
+      // single hand visible in xray mode while searching for the second —
+      // skeleton only, no aura wheel (aura is aura-mode exclusive)
       const onlyHand = leftSideHand || rightSideHand;
-      const onlySide = lmScale(onlyHand[9]).x < W * 0.5 ? 'left' : 'right';
-      drawTouchAura(onlyHand, onlySide, 0.55, perf.auraDetail * 0.9);
       drawHandSkeleton(onlyHand, {
         lineWidth: 3.0,
         dotRadius: 5.0,
