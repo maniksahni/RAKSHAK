@@ -1804,9 +1804,12 @@ a, button { cursor: inherit; }
     const spinA = frame * 0.018 * sideDir;
     const spinB = -frame * 0.012 * sideDir;
     const palette = auraMode
-      ? ['#ffffff', '#f8fafc', '#fde68a', '#bfdbfe', '#f9a8d4', '#a3e635', '#facc15']
+      /* Vivid TouchDesigner-style rainbow so the aura reads strong on bright webcam frames */
+      ? ['#ffffff', '#22d3ee', '#a3e635', '#facc15', '#f97316', '#f472b6', '#38bdf8']
       : ['#ffffff', '#fef08a', '#38bdf8', '#60a5fa', '#f59e0b', '#f472b6', '#4ade80'];
-    const digitPalette = ['#84cc16', '#a3e635', '#d9f99d'];
+    const digitPalette = auraMode
+      ? ['#a3e635', '#facc15', '#22d3ee', '#f472b6', '#f97316', '#ffffff']
+      : ['#84cc16', '#a3e635', '#d9f99d'];
     const sectorStart = auraMode
       ? (side === 'right' ? Math.PI * 0.30 + spinB : Math.PI * 0.76 + spinB)
       : (side === 'right' ? Math.PI * 0.18 + spinB : Math.PI * 0.82 + spinB);
@@ -1937,6 +1940,30 @@ a, button { cursor: inherit; }
       ctx.shadowColor = ctx.fillStyle;
       ctx.fillText(digit, center.x + Math.cos(angle) * ring, center.y + Math.sin(angle) * ring);
     });
+
+    /* Aura mode only: extra scattered digit stream that sweeps outward (matches reference) */
+    if (auraMode) {
+      const scatterCount = Math.max(14, Math.round(32 * detail));
+      const streamDigits = ['9', '5', '6', '7', '8', '3', '0', '1', '2', '4'];
+      ctx.font = `bold ${detail < 0.7 ? 10 : 13}px Courier New`;
+      for (let i = 0; i < scatterCount; i++) {
+        const t = i / scatterCount;
+        const swirl = spinA * 1.6 + t * Math.PI * 3.6;
+        const radius = orbitRadius * (1.05 + t * 1.15 + 0.08 * Math.sin(frame * 0.04 + i));
+        const jitter = (Math.sin(frame * 0.05 + i * 1.37) + Math.cos(frame * 0.07 + i * 0.9)) * 6;
+        const digit = streamDigits[(i + frame) % streamDigits.length];
+        const col = digitPalette[i % digitPalette.length];
+        ctx.fillStyle = col;
+        ctx.globalAlpha = 0.55 + 0.35 * Math.sin(frame * 0.06 + i);
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = col;
+        const sx = center.x + Math.cos(swirl) * radius + jitter * sideDir;
+        const sy = center.y + Math.sin(swirl) * radius + jitter * 0.6;
+        ctx.fillText(digit, sx, sy);
+      }
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+    }
 
     ctx.shadowBlur = 0;
     for (let i = 0; i < Math.max(1, Math.round(3 * detail)); i++) {
@@ -2248,6 +2275,13 @@ a, button { cursor: inherit; }
       ctx.scale(-1, 1);
       ctx.drawImage(vid, 0, videoRect.y, videoRect.w, videoRect.h);
       ctx.restore();
+      /* Dim the webcam feed in aura mode so the glow can pop (matches reference) */
+      if (auraMode) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.fillRect(videoRect.x, videoRect.y, videoRect.w, videoRect.h);
+        ctx.restore();
+      }
     } else if (auraMode) {
       drawAuraBackdrop();
     }
