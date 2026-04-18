@@ -1220,7 +1220,6 @@ a, button { cursor: inherit; }
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" crossorigin="anonymous"></script>
 
 <script>
 'use strict';
@@ -1485,14 +1484,22 @@ a, button { cursor: inherit; }
   let cameraStream = null;
   let cameraController = null;
   let handsEngine = null;
-  let holisticEngine = null;
   let hasStarted = false;
   let trackingBusy = false;
   let lastTrackingRunAt = 0;
+  let currentXrayEffectLabel = 'STANDBY';
+  let lastXrayEffectKey = '';
+  let lastXrayEffectFrame = -1;
+  let lastXrayEffectWidth = 0;
+  let lastXrayEffectHeight = 0;
 
   const maskCv = document.createElement('canvas');
   const mctx = maskCv.getContext('2d', { willReadFrequently: true });
   maskCv.width = 100; maskCv.height = 100;
+  const xrayFxCv = document.createElement('canvas');
+  const xrayFxCtx = xrayFxCv.getContext('2d', { willReadFrequently: true });
+  const xrayMiniCv = document.createElement('canvas');
+  const xrayMiniCtx = xrayMiniCv.getContext('2d', { willReadFrequently: true });
 
   function resize() {
     W = cv.width = wrapEl.clientWidth;
@@ -1528,21 +1535,21 @@ a, button { cursor: inherit; }
     document.querySelectorAll('.xv-ctrl-btn[data-vision-mode]').forEach(btn =>
       btn.classList.toggle('active', btn.dataset.visionMode === renderMode)
     );
-    if (densityGroupEl) densityGroupEl.hidden = auraMode;
+    if (densityGroupEl) densityGroupEl.hidden = true;
     if (instructionsTextEl) {
       instructionsTextEl.textContent = auraMode
         ? 'Show one hand · rotate wrist through the field'
-        : 'Show both hands · Pinch fingers together to open portal';
+        : 'Show both hands · frame your face to drive the viewport';
     }
     if (allowBtn) {
       allowBtn.innerHTML = auraMode
         ? '<i class="bi bi-stars me-2"></i>Initiate Aura Link'
-        : '<i class="bi bi-camera-video-fill me-2"></i>Initiate Neural Link';
+        : '<i class="bi bi-bounding-box-circles me-2"></i>Initiate X-Ray Link';
     }
     if (loaderSub && !hasStarted) {
       loaderSub.textContent = auraMode
         ? 'Hands · Aura Vector Field'
-        : 'Hands · Pose · Segmentation';
+        : 'Dual Hands · Reactive Viewport';
     }
   }
 
@@ -1558,7 +1565,7 @@ a, button { cursor: inherit; }
       loaderEl.style.display = '';
       loaderSub.textContent = isAuraMode()
         ? 'Switching to hand aura engine…'
-        : 'Switching to dual neural engine…';
+        : 'Switching to dual-hand viewport engine…';
       // Reset perf tier so a sluggish prior session doesn't throttle the new one
       perfTier = 'medium';
       fpsFrameCount = 0;
@@ -1585,24 +1592,20 @@ a, button { cursor: inherit; }
             : hasStarted
               ? 'AURA BOOT'
               : 'AURA STANDBY')
-      : (sosFired
-          ? 'SOS ACTIVE'
-          : isActive
-            ? 'PORTAL OPEN'
-            : videoReady()
-              ? 'SCANNING'
-              : hasStarted
-                ? 'CALIBRATING'
-                : 'STANDBY');
+      : (isActive
+          ? `XRAY ${currentXrayEffectLabel}`
+          : videoReady()
+            ? 'XRAY READY'
+            : hasStarted
+              ? 'XRAY BOOT'
+              : 'XRAY STANDBY');
     const readinessText = auraMode
       ? (isActive ? 'TRACKED' : (videoReady() ? 'READY' : 'SAFE'))
-      : (sosFired
-          ? 'LIVE'
-          : wrapEl.classList.contains('xv-sos-charging')
-            ? 'CHARGING'
-            : isActive
-              ? 'ARMED'
-              : 'SAFE');
+      : (isActive
+          ? 'LOCKED'
+          : hands >= 2
+            ? 'TRACKING'
+            : 'SEARCH');
 
     wrapEl.classList.toggle('xv-live', videoReady());
     wrapEl.classList.toggle('xv-portal-open', portalPct > 12);
@@ -1617,17 +1620,13 @@ a, button { cursor: inherit; }
               : hasStarted
                 ? 'SHOW ONE HAND TO BEGIN'
                 : 'AURA FIELD STANDBY')
-        : (sosFired
-            ? 'SOS BROADCAST LIVE'
-            : wrapEl.classList.contains('xv-sos-charging')
-              ? `SOS ARMING / HOLD ${holdRemaining}s`
-            : isActive
-              ? 'PORTAL SYNCHRONIZED'
-              : hands >= 2
-                ? 'HANDS LOCKED / ALIGN FINGERS'
-                : hasStarted
-                  ? 'NEURAL LINK LIVE'
-                  : 'NEURAL BIOSCAN STANDBY');
+        : (isActive
+            ? `${currentXrayEffectLabel} VIEW LOCKED`
+            : hands >= 2
+              ? 'DUAL HAND FRAME ACQUIRED'
+              : hasStarted
+                ? 'SHOW BOTH HANDS TO BEGIN'
+                : 'XRAY VIEWPORT STANDBY');
     }
     if (statePillEl) {
       statePillEl.textContent = sosFired
@@ -1639,29 +1638,21 @@ a, button { cursor: inherit; }
             : (hasStarted ? 'BOOTING' : 'IDLE');
     }
     if (themeLabelEl) themeLabelEl.textContent = currentThemeKey.toUpperCase();
-    if (densityLabelEl) densityLabelEl.textContent = auraMode ? 'AURA' : `${Math.round(PARTICLE_COUNT / 1000)}K`;
+    if (densityLabelEl) densityLabelEl.textContent = auraMode ? 'AURA' : 'FX';
     if (handsCountEl) handsCountEl.textContent = `${trackedHands}/${auraMode ? 1 : 2}`;
     if (portalLabelEl) {
       portalLabelEl.textContent = auraMode
         ? (isActive ? 'LOCKED' : 'SEARCH')
-        : (wrapEl.classList.contains('xv-sos-charging')
-            ? `HOLD ${holdRemaining}s`
-            : isActive
-              ? 'OPEN'
-              : (hands >= 2 ? 'ALIGN' : 'SEARCH'));
+        : (isActive ? 'LOCKED' : (hands >= 2 ? 'FRAME' : 'SEARCH'));
     }
     if (portalBarEl) portalBarEl.style.width = `${Math.max(6, portalPct)}%`;
     if (uptimeEl) uptimeEl.textContent = formatUptime(now - sessionStartedAt);
     if (sosArmedEl) {
       sosArmedEl.textContent = auraMode
         ? (hasStarted ? 'VISUAL' : 'OFFLINE')
-        : (sosFired
-            ? 'TRIGGERED'
-            : wrapEl.classList.contains('xv-sos-charging')
-              ? `T-${holdRemaining}s`
-              : (hasStarted ? 'ARMED' : 'OFFLINE'));
+        : (hasStarted ? 'DUAL' : 'OFFLINE');
     }
-    if (poseLockEl) poseLockEl.textContent = auraMode ? (trackedHands ? 'HAND' : 'SEARCH') : (currentPose ? 'LOCKED' : 'SEARCH');
+    if (poseLockEl) poseLockEl.textContent = auraMode ? (trackedHands ? 'HAND' : 'SEARCH') : (trackedHands >= 2 ? 'FRAME' : 'SEARCH');
     if (syncLabelEl) syncLabelEl.textContent = videoReady() ? 'SYNCED' : 'WAIT';
     if (modeLabelEl) modeLabelEl.textContent = modeText;
     if (energyLabelEl) energyLabelEl.textContent = `${energyPct}%`;
@@ -1669,16 +1660,12 @@ a, button { cursor: inherit; }
     if (energyModeEl) {
       energyModeEl.textContent = auraMode
         ? (isActive ? 'AURORA' : (videoReady() ? 'FLOW' : 'OFFLINE'))
-        : (wrapEl.classList.contains('xv-sos-charging')
-            ? 'OVERDRIVE'
-            : portalPct > 55
-              ? 'SURGING'
-              : (videoReady() ? 'NOMINAL' : 'OFFLINE'));
+        : (isActive ? currentXrayEffectLabel : (videoReady() ? 'VIEWPORT' : 'OFFLINE'));
     }
     if (energyBarEl) energyBarEl.style.width = `${Math.max(8, energyPct)}%`;
     if (bottomModeEl) bottomModeEl.textContent = modeText;
     if (bottomDepthEl) bottomDepthEl.textContent = `${portalPct}%`;
-    if (bottomLockEl) bottomLockEl.textContent = auraMode ? (trackedHands ? 'Hand Lock' : 'No Hand') : (currentPose ? 'Pose Lock' : 'No Pose');
+    if (bottomLockEl) bottomLockEl.textContent = auraMode ? (trackedHands ? 'Hand Lock' : 'No Hand') : (trackedHands >= 2 ? 'Two-Hand Lock' : 'No Frame');
     if (bottomSosEl) bottomSosEl.textContent = readinessText;
   }
 
@@ -1775,6 +1762,333 @@ a, button { cursor: inherit; }
 
   function getPalmSpan(handLm) {
     return dist(lmScale(handLm[5]), lmScale(handLm[17]));
+  }
+
+  function clampValue(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function lerpValue(from, to, t) {
+    return from + (to - from) * t;
+  }
+
+  function ensureCanvasSize(canvas, width, height) {
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+  }
+
+  function getHandCenter(handLm) {
+    return averagePoints([0, 5, 9, 13, 17].map(i => lmScale(handLm[i])));
+  }
+
+  function getMirroredVideoCrop(targetW, targetH) {
+    const srcW = vid.videoWidth || targetW;
+    const srcH = vid.videoHeight || targetH;
+    const srcAspect = srcW / srcH;
+    const dstAspect = targetW / targetH;
+    let sx = 0, sy = 0, sw = srcW, sh = srcH;
+    if (srcAspect > dstAspect) {
+      sw = srcH * dstAspect;
+      sx = (srcW - sw) / 2;
+    } else {
+      sh = srcW / dstAspect;
+      sy = (srcH - sh) / 2;
+    }
+    return { sx, sy, sw, sh };
+  }
+
+  function drawMirroredVideoToCanvas(targetCtx, width, height, filter = 'none') {
+    if (!videoReady()) return;
+    const crop = getMirroredVideoCrop(width, height);
+    targetCtx.save();
+    targetCtx.clearRect(0, 0, width, height);
+    targetCtx.filter = filter;
+    targetCtx.translate(width, 0);
+    targetCtx.scale(-1, 1);
+    targetCtx.drawImage(vid, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, width, height);
+    targetCtx.restore();
+    targetCtx.filter = 'none';
+  }
+
+  function samplePaletteColor(stops, t) {
+    if (t <= stops[0][0]) return stops[0][1];
+    for (let i = 1; i < stops.length; i++) {
+      const [stopT, stopCol] = stops[i];
+      const [prevT, prevCol] = stops[i - 1];
+      if (t <= stopT) {
+        const blend = (t - prevT) / Math.max(0.0001, stopT - prevT);
+        return [
+          Math.round(lerpValue(prevCol[0], stopCol[0], blend)),
+          Math.round(lerpValue(prevCol[1], stopCol[1], blend)),
+          Math.round(lerpValue(prevCol[2], stopCol[2], blend))
+        ];
+      }
+    }
+    return stops[stops.length - 1][1];
+  }
+
+  function applyPaletteMap(imageData, stops, { contrast = 1.15, gamma = 1 } = {}) {
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const lum = (0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]) / 255;
+      const shaped = clampValue(((lum - 0.5) * contrast) + 0.5, 0, 1);
+      const tone = Math.pow(shaped, gamma);
+      const col = samplePaletteColor(stops, tone);
+      data[i] = col[0];
+      data[i + 1] = col[1];
+      data[i + 2] = col[2];
+    }
+    return imageData;
+  }
+
+  const XRAY_EFFECTS = [
+    { key: 'burning', label: 'BURNING' },
+    { key: 'glow', label: 'GLOW' },
+    { key: 'thermal', label: 'THERMAL' },
+    { key: 'pixelated', label: 'PIXELATED' }
+  ];
+
+  function renderBurningEffect(width, height) {
+    drawMirroredVideoToCanvas(xrayFxCtx, width, height, 'contrast(1.2) saturate(1.25) brightness(1.04)');
+    const imageData = xrayFxCtx.getImageData(0, 0, width, height);
+    xrayFxCtx.putImageData(applyPaletteMap(imageData, [
+      [0, [5, 0, 0]],
+      [0.16, [34, 0, 12]],
+      [0.34, [92, 6, 14]],
+      [0.55, [210, 46, 12]],
+      [0.76, [255, 142, 18]],
+      [0.9, [255, 225, 72]],
+      [1, [255, 250, 220]]
+    ], { contrast: 1.42, gamma: 0.82 }), 0, 0);
+  }
+
+  function renderGlowEffect(width, height) {
+    drawMirroredVideoToCanvas(xrayFxCtx, width, height, 'grayscale(1) contrast(2.6) brightness(1.22)');
+    const imageData = xrayFxCtx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const lum = (0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]) / 255;
+      const highlight = Math.pow(clampValue((lum - 0.34) / 0.66, 0, 1), 0.45);
+      const glow = Math.pow(clampValue((lum - 0.24) / 0.76, 0, 1), 1.8);
+      data[i] = Math.round(20 + highlight * 235);
+      data[i + 1] = Math.round(32 + highlight * 223);
+      data[i + 2] = Math.round(36 + highlight * 219 + glow * 18);
+    }
+    xrayFxCtx.putImageData(imageData, 0, 0);
+  }
+
+  function renderThermalEffect(width, height) {
+    drawMirroredVideoToCanvas(xrayFxCtx, width, height, 'contrast(1.1) saturate(0.9) brightness(1.08)');
+    const imageData = xrayFxCtx.getImageData(0, 0, width, height);
+    xrayFxCtx.putImageData(applyPaletteMap(imageData, [
+      [0, [8, 0, 62]],
+      [0.14, [34, 10, 138]],
+      [0.3, [0, 58, 255]],
+      [0.48, [62, 220, 255]],
+      [0.65, [255, 181, 0]],
+      [0.82, [255, 96, 0]],
+      [1, [255, 0, 0]]
+    ], { contrast: 1.28, gamma: 0.9 }), 0, 0);
+  }
+
+  function renderPixelatedEffect(width, height) {
+    const miniW = clampValue(Math.round(width * (perfTier === 'low' ? 0.08 : perfTier === 'medium' ? 0.1 : 0.14)), 34, 86);
+    const miniH = Math.max(26, Math.round((height / width) * miniW));
+    ensureCanvasSize(xrayMiniCv, miniW, miniH);
+    drawMirroredVideoToCanvas(xrayMiniCtx, miniW, miniH, 'grayscale(1) contrast(1.65) brightness(1.05)');
+    const imageData = xrayMiniCtx.getImageData(0, 0, miniW, miniH);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const lum = (0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]) / 255;
+      const shade = Math.pow(clampValue(lum, 0, 1), 0.9);
+      data[i] = Math.round(4 + shade * 38);
+      data[i + 1] = Math.round(20 + shade * 255);
+      data[i + 2] = Math.round(8 + shade * 46);
+    }
+    xrayMiniCtx.putImageData(imageData, 0, 0);
+
+    xrayFxCtx.save();
+    xrayFxCtx.clearRect(0, 0, width, height);
+    xrayFxCtx.imageSmoothingEnabled = false;
+    xrayFxCtx.drawImage(xrayMiniCv, 0, 0, width, height);
+    xrayFxCtx.imageSmoothingEnabled = true;
+    xrayFxCtx.restore();
+  }
+
+  function renderXrayEffect(effectKey, width, height) {
+    ensureCanvasSize(xrayFxCv, width, height);
+    if (effectKey === 'glow') {
+      renderGlowEffect(width, height);
+      return;
+    }
+    if (effectKey === 'thermal') {
+      renderThermalEffect(width, height);
+      return;
+    }
+    if (effectKey === 'pixelated') {
+      renderPixelatedEffect(width, height);
+      return;
+    }
+    renderBurningEffect(width, height);
+  }
+
+  function getXrayRenderInterval() {
+    if (perfTier === 'low') return 6;
+    if (perfTier === 'medium') return 4;
+    return 3;
+  }
+
+  function drawXrayViewport(leftHand, rightHand, intensity, perf, now) {
+    const leftCenter = getHandCenter(leftHand);
+    const rightCenter = getHandCenter(rightHand);
+    const handDistance = dist(leftCenter, rightCenter);
+    const avgPalm = (getPalmSpan(leftHand) + getPalmSpan(rightHand)) / 2;
+    const spreadFactor = clampValue((handDistance - avgPalm * 2) / Math.max(1, avgPalm * 3.2), 0, 1);
+
+    const targetW = clampValue(handDistance * 0.96, W * 0.28, W * 0.62);
+    const targetH = clampValue(targetW * 0.66, H * 0.24, H * 0.56);
+    const targetX = clampValue(((leftCenter.x + rightCenter.x) * 0.5) - targetW * 0.5, 24, W - targetW - 24);
+    const targetY = clampValue(((leftCenter.y + rightCenter.y) * 0.5) - targetH * 0.56, 24, H - targetH - 24);
+
+    if (!lerpPortal.w) lerpPortal = { x: targetX, y: targetY, w: targetW, h: targetH };
+    lerpPortal.x += (targetX - lerpPortal.x) * 0.22;
+    lerpPortal.y += (targetY - lerpPortal.y) * 0.22;
+    lerpPortal.w += (targetW - lerpPortal.w) * 0.22;
+    lerpPortal.h += (targetH - lerpPortal.h) * 0.22;
+
+    const rect = { x: lerpPortal.x, y: lerpPortal.y, w: lerpPortal.w, h: lerpPortal.h };
+    const cycle = ((now - sessionStartedAt) / 2100) + spreadFactor * 0.75;
+    const effect = XRAY_EFFECTS[Math.floor(cycle) % XRAY_EFFECTS.length];
+    currentXrayEffectLabel = effect.label;
+
+    const sampleScale = perfTier === 'low' ? 0.24 : (perfTier === 'medium' ? 0.34 : 0.46);
+    const sampleW = clampValue(Math.round(rect.w * sampleScale), 140, 360);
+    const sampleH = clampValue(Math.round(rect.h * sampleScale), 96, 260);
+    if (
+      effect.key !== lastXrayEffectKey ||
+      frame - lastXrayEffectFrame >= getXrayRenderInterval() ||
+      Math.abs(sampleW - lastXrayEffectWidth) > 18 ||
+      Math.abs(sampleH - lastXrayEffectHeight) > 12
+    ) {
+      renderXrayEffect(effect.key, sampleW, sampleH);
+      lastXrayEffectKey = effect.key;
+      lastXrayEffectFrame = frame;
+      lastXrayEffectWidth = sampleW;
+      lastXrayEffectHeight = sampleH;
+    }
+
+    ctx.save();
+    ctx.fillStyle = `rgba(0, 0, 0, ${0.14 + intensity * 0.16})`;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,255,255,${0.12 + intensity * 0.22})`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([10, 12]);
+    ctx.beginPath();
+    ctx.moveTo(leftCenter.x, leftCenter.y);
+    ctx.lineTo(rect.x, rect.y + rect.h * 0.5);
+    ctx.moveTo(rightCenter.x, rightCenter.y);
+    ctx.lineTo(rect.x + rect.w, rect.y + rect.h * 0.5);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    ctx.save();
+    ctx.shadowBlur = 32;
+    ctx.shadowColor = effect.key === 'thermal'
+      ? 'rgba(255,110,0,0.45)'
+      : effect.key === 'pixelated'
+        ? 'rgba(0,255,120,0.42)'
+        : 'rgba(255,255,255,0.32)';
+    ctx.fillStyle = 'rgba(0,0,0,0.82)';
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(rect.x - 6, rect.y - 6, rect.w + 12, rect.h + 12, 18);
+      ctx.fill();
+    } else {
+      ctx.fillRect(rect.x - 6, rect.y - 6, rect.w + 12, rect.h + 12);
+    }
+    ctx.restore();
+
+    ctx.save();
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 12);
+      ctx.clip();
+    } else {
+      ctx.beginPath();
+      ctx.rect(rect.x, rect.y, rect.w, rect.h);
+      ctx.clip();
+    }
+    ctx.drawImage(xrayFxCv, 0, 0, xrayFxCv.width, xrayFxCv.height, rect.x, rect.y, rect.w, rect.h);
+
+    const vignette = ctx.createRadialGradient(
+      rect.x + rect.w * 0.5, rect.y + rect.h * 0.5, rect.w * 0.08,
+      rect.x + rect.w * 0.5, rect.y + rect.h * 0.5, rect.w * 0.8
+    );
+    vignette.addColorStop(0, 'rgba(255,255,255,0)');
+    vignette.addColorStop(1, 'rgba(0,0,0,0.38)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+
+    ctx.fillStyle = effect.key === 'pixelated'
+      ? 'rgba(0,255,102,0.08)'
+      : 'rgba(255,255,255,0.05)';
+    for (let y = rect.y; y < rect.y + rect.h; y += effect.key === 'pixelated' ? 8 : 10) {
+      ctx.fillRect(rect.x, y, rect.w, 1);
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.94)';
+    ctx.lineWidth = 1.25;
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(rect.x, rect.y, rect.w, rect.h, 12);
+      ctx.stroke();
+    } else {
+      ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+    }
+
+    const corner = Math.min(34, rect.w * 0.14);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = effect.key === 'thermal'
+      ? 'rgba(255,188,74,0.92)'
+      : effect.key === 'pixelated'
+        ? 'rgba(80,255,120,0.92)'
+        : 'rgba(255,255,255,0.92)';
+    [[rect.x, rect.y], [rect.x + rect.w, rect.y], [rect.x, rect.y + rect.h], [rect.x + rect.w, rect.y + rect.h]].forEach(([cx, cy], idx) => {
+      ctx.beginPath();
+      if (idx === 0) { ctx.moveTo(cx + corner, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + corner); }
+      if (idx === 1) { ctx.moveTo(cx - corner, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + corner); }
+      if (idx === 2) { ctx.moveTo(cx + corner, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy - corner); }
+      if (idx === 3) { ctx.moveTo(cx - corner, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy - corner); }
+      ctx.stroke();
+    });
+
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.font = '10px Courier New';
+    ctx.textAlign = 'left';
+    ctx.fillText(effect.label.toLowerCase(), rect.x + 10, rect.y + rect.h - 10);
+    ctx.textAlign = 'right';
+    ctx.fillText('dual hand viewport', rect.x + rect.w - 10, rect.y + rect.h - 10);
+    ctx.restore();
+
+    const fingertips = [leftHand[8], leftHand[12], rightHand[8], rightHand[12]].map(lmScale);
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.shadowBlur = 14;
+    ctx.shadowColor = effect.key === 'pixelated' ? 'rgba(0,255,102,0.8)' : 'rgba(255,255,255,0.7)';
+    fingertips.forEach(pt => {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
   }
 
   function drawTouchAura(handLm, side = 'solo', intensity = 0.65, detail = 1) {
@@ -2090,10 +2404,10 @@ a, button { cursor: inherit; }
       if (perfTier === 'medium') return 42;
       return 32;
     }
-    // XRAY mode = Holistic + segmentation — much heavier, needs longer gaps
-    if (perfTier === 'low') return 140;
-    if (perfTier === 'medium') return 100;
-    return 75;
+    // XRAY mode also uses Hands, but tracks two hands and drives the viewport.
+    if (perfTier === 'low') return 76;
+    if (perfTier === 'medium') return 56;
+    return 40;
   }
 
   function updatePerfTier(fps) {
@@ -2192,8 +2506,8 @@ a, button { cursor: inherit; }
           { x: 345, label: 'ORBIT' }, { x: 445, label: 'GLOW' }, { x: 540, label: 'OUTPUT' },
         ]
       : [
-          { x: 55, label: 'INPUT' }, { x: 145, label: 'DETECT' }, { x: 245, label: 'POSE' },
-          { x: 345, label: 'PORTAL' }, { x: 445, label: 'COMP' }, { x: 540, label: 'OUTPUT' },
+          { x: 55, label: 'INPUT' }, { x: 145, label: 'DUAL' }, { x: 245, label: 'FRAME' },
+          { x: 345, label: 'FILTER' }, { x: 445, label: 'VIEW' }, { x: 540, label: 'OUTPUT' },
         ];
     ctx.save();
     nodes.forEach((n, i) => {
@@ -2222,8 +2536,8 @@ a, button { cursor: inherit; }
       ctx.fillText(`LOCK: 1/1 // FLOW: ${Math.round(portalAlpha * 100)}%`, W - 20, H - 20);
     } else if (!auraMode && portalAlpha > 0.05 && currentHands && currentHands.length >= 2) {
       ctx.fillStyle = theme.accent; ctx.font = '9px Courier New'; ctx.textAlign = 'right';
-      ctx.fillText(`SYS.ONLINE // NEURAL_XRAY_V5`, W - 20, H - 35);
-      ctx.fillText(`PARTICLES: ${(PARTICLE_COUNT / 1000).toFixed(0)}K // CORE: STABLE`, W - 20, H - 20);
+      ctx.fillText(`XRAY.VIEW // ${currentXrayEffectLabel}`, W - 20, H - 35);
+      ctx.fillText(`FRAME: LOCKED // HANDS: 2/2`, W - 20, H - 20);
     }
     ctx.restore();
   }
@@ -2305,7 +2619,8 @@ a, button { cursor: inherit; }
 
     frameEl.textContent = `FRM: ${String(frame).padStart(4, '0')}${isGlitching ? ' [ERR]' : ''}`;
 
-    let lThumb, lIndex, rThumb, rIndex;
+    let leftSideHand = null;
+    let rightSideHand = null;
     let primaryHand = null;
     let handSide = 'left';
     let portalActiveThisFrame = false;
@@ -2322,48 +2637,38 @@ a, button { cursor: inherit; }
       portalActiveThisFrame = Boolean(primaryHand);
       sparkCooldown = 0;
     } else if (currentHands && currentHands.length >= 2) {
-      const h0 = currentHands[0], h1 = currentHands[1];
-      const h0_idx = lmScale(h0[8]), h1_idx = lmScale(h1[8]);
-      let leftSideHand, rightSideHand;
-      if (h0_idx.x < h1_idx.x) { leftSideHand = h0; rightSideHand = h1; }
-      else { leftSideHand = h1; rightSideHand = h0; }
+      const sortedHands = [...currentHands].sort((a, b) => lmScale(a[9]).x - lmScale(b[9]).x);
+      [leftSideHand, rightSideHand] = sortedHands;
+      const leftCenter = getHandCenter(leftSideHand);
+      const rightCenter = getHandCenter(rightSideHand);
+      const handDistance = dist(leftCenter, rightCenter);
+      const avgPalmSpan = (getPalmSpan(leftSideHand) + getPalmSpan(rightSideHand)) / 2;
+      const frameThreshold = Math.max(170, avgPalmSpan * 2.15);
 
-      lThumb = lmScale(leftSideHand[4]); lIndex = lmScale(leftSideHand[8]);
-      rThumb = lmScale(rightSideHand[4]); rIndex = lmScale(rightSideHand[8]);
-      const portalThreshold = Math.max(
-        180,
-        Math.min(260, (getPalmSpan(leftSideHand) + getPalmSpan(rightSideHand)) * 1.08)
-      );
-
-      if (dist(lIndex, rIndex) < portalThreshold) {
-        portalActiveThisFrame = true; portalHold = true; sparkCooldown--;
+      portalActiveThisFrame = handDistance > frameThreshold;
+      portalHold = false;
+      if (portalActiveThisFrame) {
+        sparkCooldown--;
         if (sparkCooldown <= 0) {
-          triggerSparks((lIndex.x + rIndex.x) / 2, (lIndex.y + rIndex.y) / 2);
-          sparkCooldown = 15;
+          triggerSparks((leftCenter.x + rightCenter.x) * 0.5, (leftCenter.y + rightCenter.y) * 0.5);
+          sparkCooldown = 22;
         }
-      } else if (portalHold) { portalActiveThisFrame = true; }
-      else { portalHold = false; }
+      } else {
+        sparkCooldown = 0;
+      }
     } else {
       portalHold = false;
+      currentXrayEffectLabel = 'SEARCH';
     }
 
     isActive = portalActiveThisFrame;
     portalAlpha += isActive ? 0.08 : (auraMode ? -0.08 : -0.06);
     portalAlpha = Math.max(0, Math.min(1, portalAlpha));
 
-    /* ── Sustained portal hook → SOS charging ── */
-    if (!auraMode && isActive) {
-      if (!portalHoldStartedAt) portalHoldStartedAt = now;
-      const heldMs = now - portalHoldStartedAt;
-      if (heldMs > 2500 && !sosFired) {
-        wrapEl.classList.add('xv-sos-charging');
-        const remaining = Math.max(0, Math.ceil((SOS_HOLD_MS - heldMs) / 1000));
-        sosCountdownEl.textContent = remaining;
-        if (heldMs >= SOS_HOLD_MS) triggerXRaySOS();
-      }
-    } else {
+    if (!auraMode) {
       portalHoldStartedAt = 0;
       wrapEl.classList.remove('xv-sos-charging');
+      sosFired = false;
     }
 
     /* Instructions visibility */
@@ -2383,17 +2688,16 @@ a, button { cursor: inherit; }
         statusEl.style.textShadow = `0 0 15px ${theme.accent}`;
       }
     } else if (!currentHands || currentHands.length < 2) {
-      statusEl.textContent = 'STANDBY: AWAITING BOTH HANDS';
+      statusEl.textContent = 'XRAY MODE: SHOW BOTH HANDS';
       statusEl.style.color = '#0055aa';
       statusEl.style.textShadow = '0 0 10px #0055aa';
     } else if (!isActive) {
-      statusEl.textContent = 'DETECTED: BRING BOTH INDEX FINGERS TOGETHER';
+      statusEl.textContent = 'ALIGN HANDS WIDER TO FRAME THE VIEW';
       statusEl.style.color = theme.accent2;
       statusEl.style.textShadow = `0 0 12px ${theme.accent2}`;
     } else {
-      statusEl.textContent = sosFired ? '◈ SOS BROADCAST ACTIVE ◈'
-        : '[ PORTAL FULLY ACTIVE - STRETCH HANDS ]';
-      statusEl.style.color = sosFired ? '#ff4444' : (isGlitching ? '#ff4444' : theme.accent);
+      statusEl.textContent = '[ XRAY VIEWPORT LOCKED - HOLD THE FRAME ]';
+      statusEl.style.color = isGlitching ? '#ff4444' : theme.accent;
       statusEl.style.textShadow = `0 0 15px ${isGlitching ? '#ff0000' : theme.accent}`;
     }
 
@@ -2404,391 +2708,13 @@ a, button { cursor: inherit; }
       drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
     }
 
-    if (!auraMode && portalAlpha > 0.01 && lThumb && rThumb) {
-      const rawPx = Math.min(lThumb.x, lIndex.x, rThumb.x, rIndex.x);
-      const rawPy = Math.min(lThumb.y, lIndex.y, rThumb.y, rIndex.y);
-      const rawPw = Math.max(lThumb.x, lIndex.x, rThumb.x, rIndex.x) - rawPx;
-      const rawPh = Math.max(lThumb.y, lIndex.y, rThumb.y, rIndex.y) - rawPy;
-
-      const scale = 0.85;
-      const cx = rawPx + rawPw / 2;
-      const cy = rawPy + rawPh / 2;
-      const px_raw = cx - (rawPw * scale) / 2;
-      const py_raw = cy - (rawPh * scale) / 2;
-      const pw_raw = rawPw * scale;
-      const ph_raw = rawPh * scale;
-
-      if (lerpPortal.w === 0) { lerpPortal = { x: px_raw, y: py_raw, w: pw_raw, h: ph_raw }; }
-      lerpPortal.x += (px_raw - lerpPortal.x) * 0.3;
-      lerpPortal.y += (py_raw - lerpPortal.y) * 0.3;
-      lerpPortal.w += (pw_raw - lerpPortal.w) * 0.3;
-      lerpPortal.h += (ph_raw - lerpPortal.h) * 0.3;
-
-      const px = lerpPortal.x, py = lerpPortal.y, pw = lerpPortal.w, ph = lerpPortal.h;
-
-      const pushOutward = (pt, oX, oY, amt) => ({ x: oX + (pt.x - oX) * amt, y: oY + (pt.y - oY) * amt });
-      const lThumbS = pushOutward(lThumb, cx, cy, scale);
-      const lIndexS = pushOutward(lIndex, cx, cy, scale);
-      const rThumbS = pushOutward(rThumb, cx, cy, scale);
-      const rIndexS = pushOutward(rIndex, cx, cy, scale);
-
-      if (pw > 15 && ph > 15) {
+    if (!auraMode && leftSideHand && rightSideHand) {
+      drawXrayViewport(leftSideHand, rightSideHand, Math.max(0.16, portalAlpha), perf, now);
+      if (isGlitching && portalAlpha > 0.28) {
         ctx.save();
-        ctx.globalAlpha = 1.0;
-
-        ctx.beginPath();
-        ctx.moveTo(lThumbS.x, lThumbS.y);
-        ctx.lineTo(rThumbS.x, rThumbS.y);
-        ctx.lineTo(rIndexS.x, rIndexS.y);
-        ctx.lineTo(lIndexS.x, lIndexS.y);
-        ctx.closePath();
-        ctx.clip();
-
-        /* Carbon void (fully opaque black) */
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(px, py, pw, ph);
-
-        /* Depth fog vignette */
-        const vig = ctx.createRadialGradient(px + pw / 2, py + ph / 2, pw * 0.1, px + pw / 2, py + ph / 2, pw * 0.9);
-        vig.addColorStop(0, 'rgba(0, 20, 80, 0)');
-        vig.addColorStop(0.6, 'rgba(0, 15, 50, 0.8)');
-        vig.addColorStop(1, 'rgba(0, 5, 20, 1)');
-        ctx.fillStyle = vig; ctx.fillRect(px, py, pw, ph);
-
-        /* Dual-layer grid */
-        ctx.lineWidth = 1; ctx.beginPath();
-        for (let gx = px; gx < px + pw; gx += 8) { ctx.moveTo(gx, py); ctx.lineTo(gx, py + ph); }
-        for (let gy = py; gy < py + ph; gy += 8) { ctx.moveTo(px, gy); ctx.lineTo(px + pw, gy); }
-        ctx.strokeStyle = theme.gridColor; ctx.stroke();
-
-        ctx.beginPath();
-        for (let gx = px; gx < px + pw; gx += 40) { ctx.moveTo(gx, py); ctx.lineTo(gx, py + ph); }
-        for (let gy = py; gy < py + ph; gy += 40) { ctx.moveTo(px, gy); ctx.lineTo(px + pw, gy); }
-        ctx.strokeStyle = theme.gridColor; ctx.stroke();
-
-        dataPackets.forEach(p => {
-          p.xBase += p.spd;
-          if (p.xBase > 1.2) p.xBase = -0.2;
-          ctx.fillStyle = 'rgba(0,255,180,0.5)';
-          ctx.fillRect(px + p.xBase * pw, py + p.yOff * ph, p.w, 1);
-        });
-
-        if (currentPose) {
-          const pose = currentPose;
-          const getPtOld = (idx) => mapToPortal(pose[idx].x, pose[idx].y, px, py, pw, ph);
-
-          /* Background sparks */
-          for (let i = 0; i < perf.bgSparkCount; i++) {
-            ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,200,100,0.8)' : 'rgba(255,255,255,0.7)';
-            const bgS = Math.random() > 0.8 ? 3 : 1.5;
-            ctx.fillRect(px + Math.random() * pw, py + Math.random() * ph, bgS, bgS);
-          }
-
-          /* Topographic ripple echoes */
-          const validBody = [11, 13, 15, 23, 25, 27, 28, 26, 24, 16, 14, 12].filter(i => pose[i] && pose[i].visibility > 0.4);
-          if (validBody.length > 2) {
-            const pts = validBody.map(i => getPtOld(i));
-
-            if (pose[12] && pose[11] && pose[8] && pose[7] && pose[0] && pose[8].visibility > 0.4 && pose[7].visibility > 0.4) {
-              const rSh = getPtOld(12), lSh = getPtOld(11);
-              const rEar = getPtOld(8), lEar = getPtOld(7), nose = getPtOld(0);
-              const cX2 = (rEar.x + lEar.x) / 2;
-              const earY = (rEar.y + lEar.y) / 2;
-              const headW = Math.max(Math.abs(rEar.x - lEar.x), Math.hypot(nose.x - cX2, nose.y - earY) * 2.0, 40);
-
-              pts.push({ x: rSh.x * 0.7 + cX2 * 0.3, y: rSh.y * 0.7 + earY * 0.3 });
-              pts.push({ x: rEar.x - headW * 0.1, y: earY + headW * 0.5 });
-              pts.push({ x: rEar.x + headW * 0.1, y: rEar.y });
-              pts.push({ x: rEar.x + headW * 0.05, y: rEar.y - headW * 0.6 });
-              pts.push({ x: cX2 + headW * 0.35, y: earY - headW * 0.95 });
-              pts.push({ x: cX2, y: earY - headW * 1.1 });
-              pts.push({ x: cX2 - headW * 0.35, y: earY - headW * 0.95 });
-              pts.push({ x: lEar.x - headW * 0.05, y: lEar.y - headW * 0.6 });
-              pts.push({ x: lEar.x - headW * 0.1, y: lEar.y });
-              pts.push({ x: lEar.x + headW * 0.1, y: earY + headW * 0.5 });
-              pts.push({ x: lSh.x * 0.7 + cX2 * 0.3, y: lSh.y * 0.7 + earY * 0.3 });
-            }
-
-            pts.push(pts[0]);
-            const cxR = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-            const cyR = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-
-            const numEchoes = perf.echoCount;
-            for (let e = 1; e <= numEchoes; e++) {
-              ctx.beginPath();
-              pts.forEach((p, index) => {
-                const dx = p.x - cxR; const dy = p.y - cyR;
-                const distVal = Math.hypot(dx, dy) || 1;
-                const amt = e * 20 + Math.sin(frame * 0.05 + e) * 8;
-                const extX = p.x + (dx / distVal) * amt;
-                const extY = p.y + (dy / distVal) * amt;
-                index === 0 ? ctx.moveTo(extX, extY) : ctx.lineTo(extX, extY);
-              });
-              ctx.closePath();
-              ctx.strokeStyle = theme.rippleColor(0.4 - (e / numEchoes) * 0.35);
-              ctx.lineWidth = e === 1 ? 2 : 1;
-              ctx.stroke();
-            }
-          }
-
-          /* Neural energy body system */
-          const getPt = (idx) => mapToPortal(currentPose[idx].x, currentPose[idx].y, px, py, pw, ph);
-          const cXc = (getPt(11).x + getPt(12).x) / 2;
-          const cYc = (getPt(11).y + getPt(12).y) / 2;
-
-          if (lastChestPos.x === 0 || isNaN(lastChestPos.x)) { lastChestPos.x = cXc; lastChestPos.y = cYc; }
-          bodyDelta.x = cXc - lastChestPos.x;
-          bodyDelta.y = cYc - lastChestPos.y;
-          lastChestPos.x = cXc; lastChestPos.y = cYc;
-
-          const hTargetX = getPt(11).x - 160;
-          const hTargetY = getPt(11).y - 40;
-          if (hudPos.x === 0 || isNaN(hudPos.x)) { hudPos.x = hTargetX; hudPos.y = hTargetY; }
-          hudPos.x += (hTargetX - hudPos.x) * 0.1;
-          hudPos.y += (hTargetY - hudPos.y) * 0.1;
-
-          /* Drift compensation */
-          const activeParticleCount = Math.min(
-            BODY_PARTICLES.length,
-            Math.max(2200, Math.floor(PARTICLE_COUNT * perf.particleFactor))
-          );
-
-          for (let i = 0; i < activeParticleCount; i++) {
-            const p = BODY_PARTICLES[i];
-            p.x += bodyDelta.x; p.y += bodyDelta.y;
-            p.targetX += bodyDelta.x; p.targetY += bodyDelta.y;
-          }
-
-          /* Body polygon + head arc */
-          const hEarR = getPt(8), hEarL = getPt(7);
-          const hWidth = dist(hEarL, hEarR) * 1.4;
-          const hCX = (hEarL.x + hEarR.x) / 2;
-          const hCY = (hEarL.y + hEarR.y) / 2 - hWidth * 0.6;
-
-          const bodyPath = new Path2D();
-          const headPoints = [];
-          for (let i = 0; i <= 8; i++) {
-            const ang = Math.PI + (i / 8) * Math.PI;
-            headPoints.push({ x: hCX + Math.cos(ang) * hWidth / 2, y: hCY + Math.sin(ang) * hWidth / 1.8 });
-          }
-
-          const rawPoints = [
-            hEarR, getPt(10), getPt(12), getPt(14), getPt(16),
-            getPt(20), getPt(18), getPt(22),
-            getPt(24), getPt(26), getPt(28), getPt(32),
-            getPt(31), getPt(27), getPt(25), getPt(23),
-            getPt(21), getPt(17), getPt(19),
-            getPt(15), getPt(13), getPt(11), hEarL, getPt(9)
-          ];
-
-          const thickPoints = rawPoints.map((p, i) => {
-            let amt = 25;
-            if (p === hEarR || p === hEarL) amt = 8;
-            if (i >= 2 && i <= 7) amt = 12;
-            if (i >= 8 && i <= 10) amt = 18;
-            if (i >= 12 && i <= 14) amt = 18;
-            if (i >= 16 && i <= 21) amt = 12;
-            return expandOutward(p, cXc, amt);
-          });
-
-          bodyPath.moveTo(headPoints[0].x, headPoints[0].y);
-          headPoints.forEach(p => bodyPath.lineTo(p.x, p.y));
-          thickPoints.forEach(p => bodyPath.lineTo(p.x, p.y));
-          bodyPath.closePath();
-
-          /* Mask-based particle redistribution */
-          const validCoords = getMaskCoords(perf);
-
-          const hTarget = getPt(0);
-          const headDensity = Math.floor(activeParticleCount * 0.15);
-
-          for (let i = 0; i < activeParticleCount; i++) {
-            const p = BODY_PARTICLES[i];
-            if (i < headDensity) {
-              if (frame % 8 === 0 || dist(p, { x: p.targetX, y: p.targetY }) < 5) {
-                const ang = Math.random() * Math.PI * 2;
-                const rad = Math.random() * (hWidth * 0.45);
-                p.targetX = hCX + Math.cos(ang) * rad;
-                p.targetY = hCY + Math.sin(ang) * rad * 1.25;
-                p.colorTier = 0;
-              }
-            } else if (validCoords.length > 0) {
-              if (frame % 5 === 0 || dist(p, { x: p.targetX, y: p.targetY }) < 5) {
-                const coord = validCoords[Math.floor(Math.random() * validCoords.length)];
-                const target = mapToPortal(coord.x, coord.y, px, py, pw, ph);
-                p.targetX = target.x; p.targetY = target.y;
-                p.colorTier = getAnatomicalZone(target.y, currentPose, px, py, ph);
-              }
-            } else {
-              if (frame % 20 === 0) {
-                p.targetX = cXc + (Math.random() - 0.5) * 50;
-                p.targetY = cYc + (Math.random() - 0.5) * 80;
-              }
-            }
-          }
-
-          /* Render layers */
-          surgeT = (frame % 180) / 180;
-          const surgeRadius = surgeT * H * 0.8;
-
-          ctx.save();
-          ctx.clip(bodyPath);
-
-          const splitA = Math.floor(activeParticleCount * 0.3);
-          const splitB = Math.floor(activeParticleCount * 0.7);
-          ['BACK', 'MID', 'FRONT'].forEach(layer => {
-            let start = 0, end = splitA;
-            if (layer === 'MID') { start = splitA; end = splitB; }
-            if (layer === 'FRONT') { start = splitB; end = activeParticleCount; }
-            for (let i = start; i < end; i++) {
-              const p = BODY_PARTICLES[i];
-              p.update(0, 0, isGlitching);
-              const dToC = dist(p, { x: cXc, y: cYc });
-              if (Math.abs(dToC - surgeRadius) < 20) {
-                p.size *= 1.8; p.life = 1.0;
-                p.x += (p.x - cXc) * 0.1; p.y += (p.y - cYc) * 0.1;
-              }
-              p.draw(ctx, layer);
-            }
-          });
-          ctx.restore();
-
-          /* Joint ring FX + orbiting nodes */
-          const joints = [11, 12, 13, 14, 23, 24, 25, 26, 27, 28];
-          joints.forEach(jIdx => {
-            if (currentPose[jIdx] && currentPose[jIdx].visibility > 0.5) {
-              const pt = getPt(jIdx);
-              const orbitAngle = frame * 0.08 + jIdx * 0.7;
-              ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-              for (let i = 0; i < 4; i++) {
-                const ox = pt.x + Math.cos(orbitAngle + i * Math.PI / 2) * 5;
-                const oy = pt.y + Math.sin(orbitAngle + i * Math.PI / 2) * 5;
-                ctx.fillRect(ox - 1, oy - 1, 2, 2);
-              }
-            }
-          });
-
-          /* Data stream columns */
-          ctx.fillStyle = 'rgba(0, 255, 204, 0.3)';
-          for (let col = 0; col < perf.dataColumns; col++) {
-            const colX = px + (pw / (perf.dataColumns + 1)) * (col + 1);
-            const riseY = py + ph - ((frame * 2 + col * 40) % ph);
-            if (ctx.isPointInPath(bodyPath, colX, riseY)) {
-              ctx.fillRect(colX, riseY, 1, 15);
-            }
-          }
-
-          /* Joints count for HUD */
-          let vizJoints = 0;
-          for (let i = 0; i <= 32; i++) { if (pose[i] && pose[i].visibility > 0.4) vizJoints++; }
-
-          /* Live data HUD */
-          ctx.save();
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = isGlitching ? 'rgba(255,0,0,0.4)' : 'rgba(0,0,0,0.85)';
-          ctx.strokeStyle = theme.hudAccent;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          if (ctx.roundRect) ctx.roundRect(hudPos.x, hudPos.y, 140, 90, 4);
-          else ctx.rect(hudPos.x, hudPos.y, 140, 90);
-          ctx.fill(); ctx.stroke();
-
-          ctx.fillStyle = isGlitching ? '#ff0000' : theme.accent;
-          ctx.fillRect(hudPos.x, hudPos.y, 4, 90);
-
-          ctx.save();
-          ctx.translate(hudPos.x + 125, hudPos.y + 20);
-          ctx.rotate(frame * 0.05);
-          ctx.strokeStyle = theme.hudAccent; ctx.lineWidth = 0.5;
-          ctx.beginPath(); ctx.moveTo(-8, 0); ctx.lineTo(8, 0); ctx.moveTo(0, -8); ctx.lineTo(0, 8); ctx.stroke();
-          ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.stroke();
-          ctx.restore();
-
-          ctx.fillStyle = theme.hudAccent; ctx.font = 'bold 9px Courier New'; ctx.textAlign = "left";
-          ctx.fillText('► NEURAL_CORE BIOSCAN', hudPos.x + 10, hudPos.y + 15);
-          ctx.fillText(`► NODES: ${vizJoints}/33`, hudPos.x + 10, hudPos.y + 28);
-          ctx.fillText(`► HEX: 0x${Math.floor(Math.random() * 0xFFFF).toString(16).toUpperCase()}`, hudPos.x + 10, hudPos.y + 41);
-          ctx.fillText(`► STABILITY: ${(98 + Math.random() * 2).toFixed(1)}%`, hudPos.x + 10, hudPos.y + 54);
-          ctx.fillText(`► FLUX:   ${(Math.random() * 1000).toFixed(0)} GHz`, hudPos.x + 10, hudPos.y + 67);
-          ctx.fillText(`► STATUS: [SYNCHRONIZED]`, hudPos.x + 10, hudPos.y + 80);
-
-          [13, 14, 25, 26].forEach(idx => {
-            const pt = getPt(idx);
-            if (currentPose[idx].visibility > 0.5) {
-              ctx.fillStyle = 'rgba(0, 255, 255, 0.4)';
-              ctx.font = '7px Courier New';
-              ctx.fillText(`[${idx}:${(Math.random() * 100).toFixed(0)}%]`, pt.x + 10, pt.y);
-            }
-          });
-
-          ctx.restore();
-
-          for (let i = streamParticles.length - 1; i >= 0; i--) {
-            const p = streamParticles[i];
-            p.update(); p.draw(ctx);
-            if (p.life <= 0) streamParticles.splice(i, 1);
-          }
-        }
-
-        /* Laser scanline */
-        const sy = py + ((scanY % 1) * ph);
-        const sg = ctx.createLinearGradient(0, sy - 60, 0, sy);
-        sg.addColorStop(0, 'rgba(0,255,255,0)');
-        sg.addColorStop(1, theme.scanColor);
-        ctx.fillStyle = sg; ctx.fillRect(px, Math.max(py, sy - 60), pw, sy - Math.max(py, sy - 60));
-        ctx.fillStyle = '#ffffff'; ctx.shadowBlur = 15; ctx.shadowColor = theme.scanCore;
-        ctx.fillRect(px, sy - 2, pw, 2); ctx.shadowBlur = 0;
-
-        /* Glitch overlay */
-        if (isGlitching) {
-          try {
-            const numSlices = perf.glitchMinSlices + Math.floor(Math.random() * perf.glitchSliceVariance);
-            for (let i = 0; i < numSlices; i++) {
-              const sY = py + Math.random() * (ph - 20);
-              const sH = 8 + Math.random() * 12;
-              const sOff = (Math.random() - 0.5) * 80;
-              ctx.drawImage(cv, px, sY, pw, sH, px + sOff, sY, pw, sH);
-            }
-          } catch (e) { /* tainted canvas, ignore */ }
-
-          if (Math.random() < 0.3) {
-            ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fillRect(px, py, pw, ph);
-            ctx.fillStyle = '#fff';
-            for (let j = 0; j < 200; j++) ctx.fillRect(px + Math.random() * pw, py + Math.random() * ph, 1, 1);
-            ctx.fillStyle = 'rgba(255,50,50,0.9)'; ctx.font = 'bold 16px Courier M';
-            ctx.fillText('SCAN INTERRUPT', px + pw / 2 - 60, py + ph / 2);
-          }
-
-          ctx.fillStyle = 'rgba(255,50,50,0.7)'; ctx.font = '10px Courier New';
-          for (let i = 0; i < 5; i++) {
-            const errs = ['0xFFE3 >> CORRUPT', '4A:2C:FF >> NULL', 'ERR: SEG FAULT', 'BUFFER UNDERRUN'];
-            ctx.fillText(errs[Math.floor(Math.random() * errs.length)],
-                         px + Math.random() * (pw - 100), py + Math.random() * ph);
-          }
-        }
-
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        ctx.fillRect(lerpPortal.x, lerpPortal.y, lerpPortal.w, lerpPortal.h);
         ctx.restore();
-
-        /* Portal border + corner squares */
-        const bHue = theme.portalHue + Math.sin(frame * 0.02) * 20;
-        [{ lw: 6, col: `hsla(${bHue}, 100%, 60%, 0.2)`, blur: 25 },
-         { lw: 1.5, col: `hsla(${bHue}, 100%, 60%, 0.9)`, blur: 10 }].forEach(pass => {
-          ctx.beginPath();
-          ctx.moveTo(lThumbS.x, lThumbS.y); ctx.lineTo(rThumbS.x, rThumbS.y);
-          ctx.lineTo(rIndexS.x, rIndexS.y); ctx.lineTo(lIndexS.x, lIndexS.y); ctx.closePath();
-          ctx.lineWidth = pass.lw; ctx.strokeStyle = pass.col; ctx.shadowBlur = pass.blur;
-          ctx.shadowColor = `hsl(${bHue}, 100%, 60%)`; ctx.stroke();
-        });
-        ctx.shadowBlur = 0;
-
-        const sq = 24;
-        ctx.fillStyle = 'rgba(0, 255, 180, 0.8)';
-        ctx.shadowBlur = 15; ctx.shadowColor = 'rgba(0, 255, 180, 1)';
-        ctx.fillRect(lThumbS.x - sq / 2, lThumbS.y - sq / 2, sq, sq);
-        ctx.fillRect(rThumbS.x - sq / 2, rThumbS.y - sq / 2, sq, sq);
-        ctx.fillRect(rIndexS.x - sq / 2, rIndexS.y - sq / 2, sq, sq);
-        ctx.fillRect(lIndexS.x - sq / 2, lIndexS.y - sq / 2, sq, sq);
-        ctx.shadowBlur = 0;
       }
     }
 
@@ -2806,7 +2732,7 @@ a, button { cursor: inherit; }
     updateTelemetry();
     try {
       const auraMode = isAuraMode();
-      loaderSub.textContent = auraMode ? 'Loading MediaPipe Hands…' : 'Loading MediaPipe Holistic…';
+      loaderSub.textContent = 'Loading MediaPipe Hands…';
       if (!navigator.mediaDevices?.getUserMedia) {
         loaderEl.innerHTML = 'CAMERA API UNAVAILABLE';
         hasStarted = false;
@@ -2816,48 +2742,27 @@ a, button { cursor: inherit; }
 
       const preferredVideoWidth = auraMode
         ? (window.innerWidth <= 900 ? 720 : 960)
-        : (window.innerWidth <= 900 ? 640 : 960);
+        : (window.innerWidth <= 900 ? 720 : 1024);
       const preferredVideoHeight = auraMode
         ? (window.innerWidth <= 900 ? 540 : 540)
-        : (window.innerWidth <= 900 ? 480 : 540);
+        : (window.innerWidth <= 900 ? 540 : 640);
 
-      if (auraMode) {
-        handsEngine = new Hands({
-          locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
-        });
-        handsEngine.setOptions({
-          maxNumHands: 1,
-          modelComplexity: 0,
-          minDetectionConfidence: 0.55,
-          minTrackingConfidence: 0.55
-        });
-        handsEngine.onResults(res => {
-          currentHands = res.multiHandLandmarks?.length ? [res.multiHandLandmarks[0]] : [];
-          currentPose = null;
-          currentMask = null;
-        });
-      } else {
-        holisticEngine = new Holistic({
-          locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`
-        });
-        // Segmentation mask is the heaviest part of Holistic.
-        // Only enable it on large windows where perf can absorb it.
-        const useSegmentation = window.innerWidth > 1100;
-        holisticEngine.setOptions({
-          modelComplexity: 0,
-          smoothLandmarks: true,
-          minDetectionConfidence: 0.7,
-          minTrackingConfidence: 0.7,
-          enableSegmentation: useSegmentation
-        });
-        holisticEngine.onResults(res => {
-          currentHands = [];
-          if (res.leftHandLandmarks) currentHands.push(res.leftHandLandmarks);
-          if (res.rightHandLandmarks) currentHands.push(res.rightHandLandmarks);
-          currentPose = res.poseLandmarks;
-          currentMask = res.segmentationMask;
-        });
-      }
+      handsEngine = new Hands({
+        locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+      });
+      handsEngine.setOptions({
+        maxNumHands: auraMode ? 1 : 2,
+        modelComplexity: 0,
+        minDetectionConfidence: auraMode ? 0.55 : 0.6,
+        minTrackingConfidence: auraMode ? 0.55 : 0.6
+      });
+      handsEngine.onResults(res => {
+        currentHands = res.multiHandLandmarks?.length
+          ? res.multiHandLandmarks.slice(0, auraMode ? 1 : 2)
+          : [];
+        currentPose = null;
+        currentMask = null;
+      });
 
       loaderSub.textContent = 'Accessing camera…';
       let stream;
@@ -2884,12 +2789,12 @@ a, button { cursor: inherit; }
       loaderEl.style.display = 'none';
       loaderSub.textContent = auraMode
         ? 'Camera linked · stabilizing aura field'
-        : 'Camera linked · synchronizing telemetry';
+        : 'Camera linked · framing reactive viewport';
       statusEl.textContent = 'SYSTEM READY';
 
       cameraController = new Camera(vid, {
         onFrame: async () => {
-          const activeEngine = isAuraMode() ? handsEngine : holisticEngine;
+          const activeEngine = handsEngine;
           if (!activeEngine || trackingBusy) return;
           const now = performance.now();
           if (now - lastTrackingRunAt < getInferenceInterval()) return;
@@ -2928,8 +2833,6 @@ a, button { cursor: inherit; }
 
     try { await handsEngine?.close?.(); } catch (e) {}
     handsEngine = null;
-    try { await holisticEngine?.close?.(); } catch (e) {}
-    holisticEngine = null;
     currentHands = [];
     currentPose = null;
     currentMask = null;
@@ -2937,6 +2840,10 @@ a, button { cursor: inherit; }
     lastMaskRefreshFrame = -1;
     trackingBusy = false;
     lastTrackingRunAt = 0;
+    lastXrayEffectKey = '';
+    lastXrayEffectFrame = -1;
+    lastXrayEffectWidth = 0;
+    lastXrayEffectHeight = 0;
     portalAlpha = 0;
     portalHoldStartedAt = 0;
     portalHold = false;
