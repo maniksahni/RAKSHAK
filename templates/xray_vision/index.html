@@ -1443,7 +1443,7 @@ a, button { cursor: inherit; }
     if (densityLabelEl) densityLabelEl.textContent = `${Math.round(count / 1000)}K`;
     updateTelemetry();
   }
-  const initialDensity = parseInt(readStored(STORAGE_KEYS.density) || '10000', 10);
+  const initialDensity = parseInt(readStored(STORAGE_KEYS.density) || '5000', 10);
 
   let currentHands = [];
   let currentPose = null;
@@ -1455,6 +1455,8 @@ a, button { cursor: inherit; }
   let cameraController = null;
   let holisticEngine = null;
   let hasStarted = false;
+  let holisticBusy = false;
+  let lastHolisticRunAt = 0;
 
   const maskCv = document.createElement('canvas');
   const mctx = maskCv.getContext('2d', { willReadFrequently: true });
@@ -1921,6 +1923,12 @@ a, button { cursor: inherit; }
     return PERF_PROFILES[perfTier] || PERF_PROFILES.medium;
   }
 
+  function getInferenceInterval() {
+    if (perfTier === 'low') return 96;
+    if (perfTier === 'medium') return 78;
+    return 58;
+  }
+
   function updatePerfTier(fps) {
     let nextTier = 'medium';
     if (fps >= 32) nextTier = 'high';
@@ -1966,7 +1974,7 @@ a, button { cursor: inherit; }
   let portalHoldStartedAt = 0;
   const SOS_HOLD_MS = 10000;      /* 10 seconds sustained portal → trigger */
   let sosFired = false;
-  rebuildParticles([5000, 10000, 15000].includes(initialDensity) ? initialDensity : 10000);
+  rebuildParticles([5000, 10000, 15000].includes(initialDensity) ? initialDensity : 5000);
 
   function triggerXRaySOS() {
     if (sosFired) return;
@@ -2601,7 +2609,19 @@ a, button { cursor: inherit; }
       statusEl.textContent = 'SYSTEM READY';
 
       cameraController = new Camera(vid, {
-        onFrame: async () => { await holisticEngine.send({ image: vid }); },
+        onFrame: async () => {
+          if (!holisticEngine || holisticBusy) return;
+          const now = performance.now();
+          if (now - lastHolisticRunAt < getInferenceInterval()) return;
+
+          holisticBusy = true;
+          lastHolisticRunAt = now;
+          try {
+            await holisticEngine.send({ image: vid });
+          } finally {
+            holisticBusy = false;
+          }
+        },
         width: preferredVideoWidth,
         height: preferredVideoHeight
       });
@@ -2633,6 +2653,8 @@ a, button { cursor: inherit; }
     currentMask = null;
     cachedMaskCoords = [];
     lastMaskRefreshFrame = -1;
+    holisticBusy = false;
+    lastHolisticRunAt = 0;
     portalAlpha = 0;
     portalHoldStartedAt = 0;
     portalHold = false;
