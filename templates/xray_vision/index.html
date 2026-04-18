@@ -13,10 +13,20 @@
 body, html {
   overflow: hidden;
   height: 100vh;
-  background: #000;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(0, 136, 255, 0.12), transparent 26%),
+    radial-gradient(circle at 82% 16%, rgba(0, 255, 204, 0.1), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(255, 68, 136, 0.08), transparent 35%),
+    #000;
   font-family: 'Courier New', monospace;
 }
 a, button { cursor: inherit; }
+
+:root {
+  --xv-panel-bg: rgba(4, 14, 26, 0.74);
+  --xv-panel-border: rgba(180, 240, 255, 0.12);
+  --xv-panel-shadow: 0 20px 50px rgba(0, 0, 0, 0.58);
+}
 
 .xv-wrap {
   position: fixed;
@@ -27,6 +37,17 @@ a, button { cursor: inherit; }
   background: #000;
   overflow: hidden;
   z-index: 10;
+}
+
+.xv-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.03), transparent 48%),
+    linear-gradient(180deg, rgba(0, 5, 10, 0.1), rgba(0, 0, 0, 0.38));
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Fullscreen (desktop-only override when fullscreen active) */
@@ -41,6 +62,7 @@ a, button { cursor: inherit; }
   width: 100%; height: 100%;
   object-fit: cover;
   opacity: 0;                     /* The canvas mirrors it — raw video hidden */
+  z-index: 2;
 }
 
 #xv-canvas {
@@ -49,6 +71,403 @@ a, button { cursor: inherit; }
   width: 100%;
   height: 100%;
   display: block;
+  z-index: 3;
+}
+
+/* Ambient overlays */
+.xv-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(50px);
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: screen;
+  z-index: 4;
+  animation: xvOrbFloat 13s ease-in-out infinite;
+}
+.xv-orb-a {
+  width: 320px;
+  height: 320px;
+  top: 12%;
+  left: 18%;
+  background: radial-gradient(circle, rgba(0, 255, 204, 0.25), transparent 68%);
+}
+.xv-orb-b {
+  width: 360px;
+  height: 360px;
+  right: 8%;
+  bottom: 10%;
+  background: radial-gradient(circle, rgba(0, 136, 255, 0.24), transparent 68%);
+  animation-delay: -4s;
+}
+.xv-grid-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.15;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0.22) 100%);
+  -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0.22) 100%);
+}
+.xv-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 32%, rgba(0, 0, 0, 0.55) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.48), transparent 22%, transparent 78%, rgba(0, 0, 0, 0.54));
+}
+.xv-scan-sweep {
+  position: absolute;
+  inset: -18% -20%;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.08) 50%, transparent 60%),
+    linear-gradient(180deg, transparent, rgba(0, 255, 204, 0.06), transparent);
+  transform: translate3d(-18%, 0, 0);
+  transition: opacity 0.35s ease;
+  animation: xvSweepMove 8s linear infinite;
+}
+.xv-center-reticle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 220px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0.22;
+  border: 1px solid rgba(180, 240, 255, 0.12);
+  box-shadow:
+    0 0 0 18px rgba(255, 255, 255, 0.02),
+    inset 0 0 30px rgba(255, 255, 255, 0.025);
+  transition: opacity 0.35s ease, transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.xv-center-reticle::before,
+.xv-center-reticle::after {
+  content: '';
+  position: absolute;
+  inset: 50%;
+  background: rgba(180, 240, 255, 0.18);
+  transform: translate(-50%, -50%);
+}
+.xv-center-reticle::before {
+  width: 84px;
+  height: 1px;
+}
+.xv-center-reticle::after {
+  width: 1px;
+  height: 84px;
+}
+@keyframes xvOrbFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(16px, -14px, 0) scale(1.08); }
+}
+@keyframes xvSweepMove {
+  0% { transform: translate3d(-18%, 0, 0); }
+  100% { transform: translate3d(18%, 0, 0); }
+}
+
+/* Premium brand HUD */
+.xv-brand-hud {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 32;
+  pointer-events: none;
+  text-align: center;
+}
+.xv-brand-kicker {
+  font-size: 0.58rem;
+  letter-spacing: 0.26em;
+  color: rgba(207, 250, 254, 0.56);
+  text-transform: uppercase;
+}
+.xv-brand-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.4rem, 2vw, 2.1rem);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff, var(--xv-accent, #00ffcc), var(--xv-accent2, #0088ff));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(0, 255, 204, 0.12);
+  transition: filter 0.35s ease, transform 0.35s ease;
+}
+.xv-brand-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(180, 240, 255, 0.12);
+  background: rgba(3, 10, 18, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(218, 248, 255, 0.8);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, transform 0.3s ease;
+}
+.xv-brand-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--xv-accent, #00ffcc);
+  box-shadow: 0 0 12px var(--xv-accent, #00ffcc);
+  animation: xvInsBlink 1.4s ease infinite;
+}
+
+/* Side telemetry panels */
+.xv-side-panel {
+  position: absolute;
+  top: 128px;
+  width: min(250px, 22vw);
+  padding: 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(4, 12, 20, 0.8), rgba(1, 8, 14, 0.72));
+  border: 1px solid var(--xv-panel-border);
+  box-shadow: var(--xv-panel-shadow);
+  backdrop-filter: blur(20px) saturate(1.25);
+  -webkit-backdrop-filter: blur(20px) saturate(1.25);
+  z-index: 28;
+  overflow: hidden;
+  transition: border-color 0.32s ease, box-shadow 0.32s ease, background 0.32s ease, transform 0.32s ease;
+}
+.xv-side-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 14px;
+  right: 14px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+}
+.xv-side-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent 42%);
+  pointer-events: none;
+}
+.xv-left-panel { left: 20px; }
+.xv-right-panel { right: 20px; }
+.xv-panel-head { margin-bottom: 16px; }
+.xv-panel-kicker {
+  font-size: 0.56rem;
+  letter-spacing: 0.24em;
+  color: rgba(173, 232, 244, 0.56);
+  text-transform: uppercase;
+}
+.xv-panel-title {
+  margin-top: 6px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(240, 252, 255, 0.94);
+  text-transform: uppercase;
+}
+.xv-metric-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.xv-metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(195, 235, 245, 0.68);
+}
+.xv-metric-row strong {
+  color: rgba(240, 252, 255, 0.94);
+  font-size: 0.64rem;
+}
+.xv-meter-block {
+  margin-top: 16px;
+}
+.xv-meter-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(186, 224, 233, 0.62);
+}
+.xv-meter-label strong {
+  color: var(--xv-accent, #00ffcc);
+  font-size: 0.63rem;
+}
+.xv-meter {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.xv-meter i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--xv-accent, #00ffcc), var(--xv-accent2, #0088ff));
+  box-shadow: 0 0 16px rgba(0, 255, 204, 0.35);
+  transition: width 0.24s ease;
+}
+.xv-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.xv-stat-card {
+  padding: 11px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.xv-stat-card span {
+  display: block;
+  font-size: 0.52rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(174, 215, 224, 0.5);
+  margin-bottom: 6px;
+}
+.xv-stat-card strong {
+  display: block;
+  color: rgba(239, 252, 255, 0.95);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+.xv-phase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.xv-phase-item {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.xv-phase-item span {
+  display: block;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(174, 215, 224, 0.48);
+}
+.xv-phase-item strong {
+  display: block;
+  margin-top: 5px;
+  color: rgba(243, 253, 255, 0.94);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+.xv-phase-item small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(189, 224, 232, 0.54);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.xv-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+.xv-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.05);
+  color: rgba(216, 246, 255, 0.74);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.xv-kbd {
+  min-width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.42);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--xv-accent, #00ffcc);
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+/* Bottom telemetry rail */
+.xv-bottom-rail {
+  position: absolute;
+  left: 22px;
+  bottom: 22px;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  z-index: 29;
+  pointer-events: none;
+}
+.xv-rail-item {
+  min-width: 118px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: rgba(4, 12, 20, 0.72);
+  border: 1px solid rgba(180, 240, 255, 0.12);
+  box-shadow: 0 16px 34px rgba(0,0,0,0.44);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, transform 0.3s ease;
+}
+.xv-rail-item span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.52rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(174, 215, 224, 0.48);
+}
+.xv-rail-item strong {
+  display: block;
+  color: rgba(240, 252, 255, 0.94);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
 }
 
 /* ── Top-left status ── */
@@ -63,6 +482,13 @@ a, button { cursor: inherit; }
   z-index: 30;
   font-weight: 700;
   pointer-events: none;
+  padding: 8px 11px;
+  border-radius: 12px;
+  background: rgba(3, 10, 18, 0.62);
+  border: 1px solid rgba(180, 240, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 /* ── Top-right frame counter ── */
@@ -77,6 +503,13 @@ a, button { cursor: inherit; }
   z-index: 30;
   font-weight: 600;
   pointer-events: none;
+  padding: 8px 11px;
+  border-radius: 12px;
+  background: rgba(3, 10, 18, 0.62);
+  border: 1px solid rgba(180, 240, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 /* ── Center loader ── */
@@ -142,6 +575,17 @@ a, button { cursor: inherit; }
   width: 90%;
   text-align: center;
   box-shadow: 0 0 60px rgba(0, 255, 204, 0.18), 0 40px 80px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+.xv-perm-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
 }
 .xv-perm-icon {
   font-size: 2.2rem;
@@ -233,7 +677,7 @@ a, button { cursor: inherit; }
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 255, 204, 0.2);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.62);
 }
 
 .xv-ctrl-btn {
@@ -382,7 +826,7 @@ a, button { cursor: inherit; }
 /* ══ Instruction card (top-center during idle) ══ */
 .xv-instructions {
   position: absolute;
-  top: 54px;
+  top: 112px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -414,9 +858,121 @@ a, button { cursor: inherit; }
   50% { opacity: 0.3; }
 }
 
+.xv-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.32), transparent 45%),
+    rgba(255,255,255,0.08);
+}
+.xv-flash.active {
+  animation: xvFlash 0.42s ease;
+}
+@keyframes xvFlash {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes xvMeterPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+
+.xv-wrap.xv-live .xv-grid-overlay { opacity: 0.22; }
+.xv-wrap.xv-live .xv-scan-sweep { opacity: 0.42; }
+.xv-wrap.xv-live .xv-brand-sub,
+.xv-wrap.xv-live .xv-status,
+.xv-wrap.xv-live .xv-frame-counter {
+  border-color: rgba(0, 255, 204, 0.2);
+  box-shadow: 0 0 22px rgba(0, 255, 204, 0.12);
+}
+.xv-wrap.xv-live .xv-center-reticle {
+  opacity: 0.34;
+  border-color: rgba(180, 240, 255, 0.22);
+}
+.xv-wrap.xv-portal-open .xv-brand-title {
+  filter: drop-shadow(0 0 18px rgba(0, 255, 204, 0.32));
+  transform: scale(1.02);
+}
+.xv-wrap.xv-portal-open .xv-brand-sub {
+  transform: translateY(-1px);
+  background: rgba(2, 16, 26, 0.78);
+}
+.xv-wrap.xv-portal-open .xv-side-panel,
+.xv-wrap.xv-portal-open .xv-rail-item {
+  border-color: rgba(0, 255, 204, 0.26);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.5), 0 0 22px rgba(0, 255, 204, 0.12);
+}
+.xv-wrap.xv-portal-open .xv-center-reticle {
+  opacity: 0.52;
+  transform: translate(-50%, -50%) scale(1.06);
+  border-color: rgba(0, 255, 204, 0.34);
+  box-shadow:
+    0 0 0 18px rgba(0, 255, 204, 0.05),
+    inset 0 0 42px rgba(0, 255, 204, 0.06),
+    0 0 34px rgba(0, 255, 204, 0.14);
+}
+.xv-wrap.xv-portal-open .xv-meter i {
+  animation: xvMeterPulse 1.5s ease-in-out infinite;
+}
+.xv-wrap.xv-sos-charging .xv-brand-sub,
+.xv-wrap.xv-sos-charging .xv-side-panel,
+.xv-wrap.xv-sos-charging .xv-rail-item {
+  border-color: rgba(255, 120, 120, 0.24);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.52), 0 0 24px rgba(255, 64, 96, 0.12);
+}
+.xv-wrap.xv-alerting .xv-brand-title {
+  background: linear-gradient(135deg, #fff, #ff8080, #ff4d67);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(255, 80, 110, 0.28));
+}
+.xv-wrap.xv-alerting .xv-brand-sub,
+.xv-wrap.xv-alerting .xv-status,
+.xv-wrap.xv-alerting .xv-frame-counter,
+.xv-wrap.xv-alerting .xv-side-panel,
+.xv-wrap.xv-alerting .xv-rail-item {
+  border-color: rgba(255, 92, 116, 0.28);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.54), 0 0 24px rgba(255, 82, 108, 0.16);
+}
+.xv-wrap.xv-alerting .xv-meter i {
+  background: linear-gradient(90deg, #ff9b9b, #ff5c74);
+  box-shadow: 0 0 20px rgba(255, 92, 116, 0.3);
+}
+.xv-wrap.xv-alerting .xv-grid-overlay { opacity: 0.28; }
+.xv-wrap.xv-alerting .xv-center-reticle {
+  opacity: 0.65;
+  border-color: rgba(255, 120, 120, 0.4);
+  box-shadow:
+    0 0 0 18px rgba(255, 82, 108, 0.06),
+    inset 0 0 42px rgba(255, 82, 108, 0.08),
+    0 0 34px rgba(255, 82, 108, 0.16);
+}
+
 /* ══ Mobile tweaks ══ */
+@media (max-width: 1220px) {
+  .xv-side-panel { display: none; }
+  .xv-bottom-rail {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 90px;
+  }
+}
 @media (max-width: 900px) {
   .xv-wrap { left: 0; top: 56px; }
+  .xv-center-reticle { width: 160px; height: 160px; }
+  .xv-brand-hud {
+    width: calc(100% - 110px);
+    top: 10px;
+  }
+  .xv-brand-kicker { font-size: 0.48rem; letter-spacing: 0.18em; }
+  .xv-brand-title { font-size: 1rem; letter-spacing: 0.22em; text-indent: 0.22em; }
+  .xv-brand-sub { font-size: 0.5rem; padding: 5px 10px; }
+  .xv-bottom-rail { display: none; }
   .xv-controls {
     bottom: 14px;
     right: 50%;
@@ -427,7 +983,7 @@ a, button { cursor: inherit; }
   }
   .xv-ctrl-btn span { display: none; }            /* icons only on mobile */
   .xv-ctrl-group .xv-ctrl-btn span { display: inline; }  /* keep density labels */
-  .xv-instructions { font-size: 0.52rem; padding: 6px 12px; top: 46px; }
+  .xv-instructions { font-size: 0.52rem; padding: 6px 12px; top: 84px; }
   .xv-back-btn { top: 46px; left: 12px; font-size: 0.55rem; padding: 6px 10px; }
   .xv-fps { top: 46px; right: 12px; font-size: 0.55rem; padding: 3px 8px; }
   .xv-status { font-size: 10px; letter-spacing: 2px; top: 12px; left: 12px; }
@@ -464,8 +1020,101 @@ a, button { cursor: inherit; }
 
 <!-- ══ Main Wrapper ══ -->
 <div class="xv-wrap" id="xv-wrap">
+  <div class="xv-orb xv-orb-a"></div>
+  <div class="xv-orb xv-orb-b"></div>
+  <div class="xv-grid-overlay"></div>
+  <div class="xv-vignette"></div>
+  <div class="xv-scan-sweep"></div>
+  <div class="xv-center-reticle"></div>
+
   <video id="xv-video" autoplay playsinline muted></video>
   <canvas id="xv-canvas"></canvas>
+
+  <div class="xv-brand-hud">
+    <div class="xv-brand-kicker">RAKSHAK / VISUAL SAFETY SUITE</div>
+    <div class="xv-brand-title">X-RAY VISION</div>
+    <div class="xv-brand-sub">
+      <span class="xv-brand-dot"></span>
+      <span id="xv-hero-state">NEURAL BIOSCAN STANDBY</span>
+    </div>
+  </div>
+
+  <div class="xv-side-panel xv-left-panel">
+    <div class="xv-panel-head">
+      <div class="xv-panel-kicker">System</div>
+      <div class="xv-panel-title">Core Telemetry</div>
+    </div>
+    <div class="xv-metric-stack">
+      <div class="xv-metric-row"><span>Neural Link</span><strong id="xv-state-pill">IDLE</strong></div>
+      <div class="xv-metric-row"><span>Theme</span><strong id="xv-theme-label">CYAN</strong></div>
+      <div class="xv-metric-row"><span>Particle Load</span><strong id="xv-density-label">10K</strong></div>
+      <div class="xv-metric-row"><span>Hands Locked</span><strong id="xv-hands-count">0/2</strong></div>
+    </div>
+    <div class="xv-meter-block">
+      <div class="xv-meter-label">
+        <span>Portal Stability</span>
+        <strong id="xv-portal-label">SEARCH</strong>
+      </div>
+      <div class="xv-meter"><i id="xv-portal-bar"></i></div>
+    </div>
+    <div class="xv-panel-grid">
+      <div class="xv-stat-card">
+        <span>Session</span>
+        <strong id="xv-uptime">00:00</strong>
+      </div>
+      <div class="xv-stat-card">
+        <span>SOS</span>
+        <strong id="xv-sos-armed">OFFLINE</strong>
+      </div>
+      <div class="xv-stat-card">
+        <span>Pose Lock</span>
+        <strong id="xv-pose-lock">SEARCH</strong>
+      </div>
+      <div class="xv-stat-card">
+        <span>Frame Sync</span>
+        <strong id="xv-sync-label">IDLE</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="xv-side-panel xv-right-panel">
+    <div class="xv-panel-head">
+      <div class="xv-panel-kicker">Diagnostics</div>
+      <div class="xv-panel-title">Scan Matrix</div>
+    </div>
+    <div class="xv-phase-list">
+      <div class="xv-phase-item">
+        <span>Mode</span>
+        <strong id="xv-mode-label">STANDBY</strong>
+        <small>Render state</small>
+      </div>
+      <div class="xv-phase-item">
+        <span>Core Energy</span>
+        <strong id="xv-energy-label">30%</strong>
+        <small>Portal charge potential</small>
+      </div>
+      <div class="xv-phase-item">
+        <span>SOS Readiness</span>
+        <strong id="xv-readiness-label">SAFE</strong>
+        <small>Portal hold escalation</small>
+      </div>
+    </div>
+    <div class="xv-meter-block">
+      <div class="xv-meter-label">
+        <span>Energy Flux</span>
+        <strong id="xv-energy-mode">NOMINAL</strong>
+      </div>
+      <div class="xv-meter"><i id="xv-energy-bar"></i></div>
+    </div>
+    <div class="xv-shortcuts">
+      <div class="xv-shortcut"><span class="xv-kbd">1</span><span>Cyan</span></div>
+      <div class="xv-shortcut"><span class="xv-kbd">2</span><span>Rose</span></div>
+      <div class="xv-shortcut"><span class="xv-kbd">3</span><span>Amber</span></div>
+      <div class="xv-shortcut"><span class="xv-kbd">S</span><span>Snap</span></div>
+      <div class="xv-shortcut"><span class="xv-kbd">F</span><span>Full</span></div>
+      <div class="xv-shortcut"><span class="xv-kbd">SOS</span><span>10s Hold</span></div>
+    </div>
+  </div>
 
   <!-- Overlay: status / frame / back / fps -->
   <div class="xv-status" id="xv-status">INITIALIZING...</div>
@@ -493,6 +1142,25 @@ a, button { cursor: inherit; }
     <div class="xv-loader-bar"></div>
   </div>
 
+  <div class="xv-bottom-rail">
+    <div class="xv-rail-item">
+      <span>Mode</span>
+      <strong id="xv-bottom-mode">Standby</strong>
+    </div>
+    <div class="xv-rail-item">
+      <span>Portal</span>
+      <strong id="xv-bottom-depth">0%</strong>
+    </div>
+    <div class="xv-rail-item">
+      <span>Lock</span>
+      <strong id="xv-bottom-lock">No Pose</strong>
+    </div>
+    <div class="xv-rail-item">
+      <span>SOS</span>
+      <strong id="xv-bottom-sos">Safe</strong>
+    </div>
+  </div>
+
   <!-- Bottom-right controls -->
   <div class="xv-controls" id="xv-controls">
     <!-- Theme toggle group -->
@@ -517,6 +1185,8 @@ a, button { cursor: inherit; }
       <i class="bi bi-arrows-fullscreen"></i><span>FULL</span>
     </button>
   </div>
+
+  <div class="xv-flash" id="xv-flash"></div>
 </div>
 {% endblock %}
 
@@ -556,6 +1226,32 @@ a, button { cursor: inherit; }
   const allowBtn = document.getElementById('xv-perm-allow-btn');
   const screenshotBtn = document.getElementById('xv-screenshot-btn');
   const fullscreenBtn = document.getElementById('xv-fullscreen-btn');
+  const flashEl = document.getElementById('xv-flash');
+  const heroStateEl = document.getElementById('xv-hero-state');
+  const statePillEl = document.getElementById('xv-state-pill');
+  const themeLabelEl = document.getElementById('xv-theme-label');
+  const densityLabelEl = document.getElementById('xv-density-label');
+  const handsCountEl = document.getElementById('xv-hands-count');
+  const portalLabelEl = document.getElementById('xv-portal-label');
+  const portalBarEl = document.getElementById('xv-portal-bar');
+  const uptimeEl = document.getElementById('xv-uptime');
+  const sosArmedEl = document.getElementById('xv-sos-armed');
+  const poseLockEl = document.getElementById('xv-pose-lock');
+  const syncLabelEl = document.getElementById('xv-sync-label');
+  const modeLabelEl = document.getElementById('xv-mode-label');
+  const energyLabelEl = document.getElementById('xv-energy-label');
+  const readinessLabelEl = document.getElementById('xv-readiness-label');
+  const energyModeEl = document.getElementById('xv-energy-mode');
+  const energyBarEl = document.getElementById('xv-energy-bar');
+  const bottomModeEl = document.getElementById('xv-bottom-mode');
+  const bottomDepthEl = document.getElementById('xv-bottom-depth');
+  const bottomLockEl = document.getElementById('xv-bottom-lock');
+  const bottomSosEl = document.getElementById('xv-bottom-sos');
+  const STORAGE_KEYS = {
+    theme: 'rakshak_xray_theme',
+    density: 'rakshak_xray_density'
+  };
+  const sessionStartedAt = performance.now();
 
   let W = 0, H = 0;
   let frame = 0;
@@ -564,6 +1260,7 @@ a, button { cursor: inherit; }
   let sparkBurst = [];
   let streamParticles = [];
   let dataPackets = [];
+  let currentThemeKey = 'cyan';
 
   /* Math LUTs for hot-loop optimization */
   const RAND_LUT = new Float32Array(5000);
@@ -645,15 +1342,35 @@ a, button { cursor: inherit; }
     },
   };
 
+  function readStored(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+
+  function writeStored(key, value) {
+    try { window.localStorage.setItem(key, value); } catch (e) {}
+  }
+
+  function formatUptime(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const mins = String(Math.floor(total / 60)).padStart(2, '0');
+    const secs = String(total % 60).padStart(2, '0');
+    return `${mins}:${secs}`;
+  }
+
   let theme = THEMES.cyan;
   function setTheme(key) {
     if (!THEMES[key]) return;
+    currentThemeKey = key;
     theme = THEMES[key];
     document.documentElement.style.setProperty('--xv-accent', theme.accent);
     document.documentElement.style.setProperty('--xv-accent2', theme.accent2);
+    wrapEl.dataset.theme = key;
     document.querySelectorAll('.xv-ctrl-btn[data-theme]').forEach(b =>
       b.classList.toggle('active', b.dataset.theme === key)
     );
+    writeStored(STORAGE_KEYS.theme, key);
+    if (themeLabelEl) themeLabelEl.textContent = key.toUpperCase();
+    updateTelemetry();
   }
 
   function getParticleColor(zone, age) {
@@ -722,8 +1439,11 @@ a, button { cursor: inherit; }
     document.querySelectorAll('.xv-ctrl-btn[data-density]').forEach(b =>
       b.classList.toggle('active', parseInt(b.dataset.density, 10) === count)
     );
+    writeStored(STORAGE_KEYS.density, String(count));
+    if (densityLabelEl) densityLabelEl.textContent = `${Math.round(count / 1000)}K`;
+    updateTelemetry();
   }
-  rebuildParticles(10000);
+  const initialDensity = parseInt(readStored(STORAGE_KEYS.density) || '10000', 10);
 
   let currentHands = [];
   let currentPose = null;
@@ -749,6 +1469,94 @@ a, button { cursor: inherit; }
 
   function videoReady() {
     return vid.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && vid.videoWidth > 0 && vid.videoHeight > 0;
+  }
+
+  function updateTelemetry(now = performance.now()) {
+    const hands = currentHands ? currentHands.length : 0;
+    const portalPct = Math.round(portalAlpha * 100);
+    const holdRemaining = portalHoldStartedAt
+      ? Math.max(0, Math.ceil((SOS_HOLD_MS - (now - portalHoldStartedAt)) / 1000))
+      : SOS_HOLD_MS / 1000;
+    const energyPct = Math.min(100, Math.round(28 + portalPct * 0.72));
+    const modeText = sosFired
+      ? 'SOS ACTIVE'
+      : isActive
+        ? 'PORTAL OPEN'
+        : videoReady()
+          ? 'SCANNING'
+          : hasStarted
+            ? 'CALIBRATING'
+            : 'STANDBY';
+    const readinessText = sosFired
+      ? 'LIVE'
+      : wrapEl.classList.contains('xv-sos-charging')
+        ? 'CHARGING'
+        : isActive
+          ? 'ARMED'
+          : 'SAFE';
+
+    wrapEl.classList.toggle('xv-live', videoReady());
+    wrapEl.classList.toggle('xv-portal-open', portalPct > 12);
+    wrapEl.classList.toggle('xv-alerting', sosFired);
+
+    if (heroStateEl) {
+      heroStateEl.textContent = sosFired
+        ? 'SOS BROADCAST LIVE'
+        : wrapEl.classList.contains('xv-sos-charging')
+          ? `SOS ARMING / HOLD ${holdRemaining}s`
+        : isActive
+          ? 'PORTAL SYNCHRONIZED'
+          : hands >= 2
+            ? 'HANDS LOCKED / ALIGN FINGERS'
+            : hasStarted
+              ? 'NEURAL LINK LIVE'
+              : 'NEURAL BIOSCAN STANDBY';
+    }
+    if (statePillEl) {
+      statePillEl.textContent = sosFired
+        ? 'SOS'
+        : wrapEl.classList.contains('xv-sos-charging')
+          ? 'ARMED'
+          : videoReady()
+            ? 'LIVE'
+            : (hasStarted ? 'BOOTING' : 'IDLE');
+    }
+    if (themeLabelEl) themeLabelEl.textContent = currentThemeKey.toUpperCase();
+    if (densityLabelEl) densityLabelEl.textContent = `${Math.round(PARTICLE_COUNT / 1000)}K`;
+    if (handsCountEl) handsCountEl.textContent = `${hands}/2`;
+    if (portalLabelEl) {
+      portalLabelEl.textContent = wrapEl.classList.contains('xv-sos-charging')
+        ? `HOLD ${holdRemaining}s`
+        : isActive
+          ? 'OPEN'
+          : (hands >= 2 ? 'ALIGN' : 'SEARCH');
+    }
+    if (portalBarEl) portalBarEl.style.width = `${Math.max(6, portalPct)}%`;
+    if (uptimeEl) uptimeEl.textContent = formatUptime(now - sessionStartedAt);
+    if (sosArmedEl) {
+      sosArmedEl.textContent = sosFired
+        ? 'TRIGGERED'
+        : wrapEl.classList.contains('xv-sos-charging')
+          ? `T-${holdRemaining}s`
+          : (hasStarted ? 'ARMED' : 'OFFLINE');
+    }
+    if (poseLockEl) poseLockEl.textContent = currentPose ? 'LOCKED' : 'SEARCH';
+    if (syncLabelEl) syncLabelEl.textContent = videoReady() ? 'SYNCED' : 'WAIT';
+    if (modeLabelEl) modeLabelEl.textContent = modeText;
+    if (energyLabelEl) energyLabelEl.textContent = `${energyPct}%`;
+    if (readinessLabelEl) readinessLabelEl.textContent = readinessText;
+    if (energyModeEl) {
+      energyModeEl.textContent = wrapEl.classList.contains('xv-sos-charging')
+        ? 'OVERDRIVE'
+        : portalPct > 55
+          ? 'SURGING'
+          : (videoReady() ? 'NOMINAL' : 'OFFLINE');
+    }
+    if (energyBarEl) energyBarEl.style.width = `${Math.max(8, energyPct)}%`;
+    if (bottomModeEl) bottomModeEl.textContent = modeText;
+    if (bottomDepthEl) bottomDepthEl.textContent = `${portalPct}%`;
+    if (bottomLockEl) bottomLockEl.textContent = currentPose ? 'Pose Lock' : 'No Pose';
+    if (bottomSosEl) bottomSosEl.textContent = readinessText;
   }
 
   /* ── Utility classes (from original) ── */
@@ -841,6 +1649,7 @@ a, button { cursor: inherit; }
   let portalHoldStartedAt = 0;
   const SOS_HOLD_MS = 10000;      /* 10 seconds sustained portal → trigger */
   let sosFired = false;
+  rebuildParticles([5000, 10000, 15000].includes(initialDensity) ? initialDensity : 10000);
 
   function triggerXRaySOS() {
     if (sosFired) return;
@@ -1406,6 +2215,7 @@ a, button { cursor: inherit; }
     }
 
     drawHudNodes();
+    updateTelemetry(now);
     requestAnimationFrame(drawFrame);
   }
 
@@ -1415,11 +2225,13 @@ a, button { cursor: inherit; }
   async function startEngines() {
     if (hasStarted) return;
     hasStarted = true;
+    updateTelemetry();
     try {
       loaderSub.textContent = 'Loading MediaPipe Holistic…';
       if (!navigator.mediaDevices?.getUserMedia) {
         loaderEl.innerHTML = 'CAMERA API UNAVAILABLE';
         hasStarted = false;
+        updateTelemetry();
         return;
       }
 
@@ -1455,6 +2267,7 @@ a, button { cursor: inherit; }
       } catch (e) {
         loaderEl.innerHTML = `CAMERA ERROR: ${e.name}`;
         hasStarted = false;
+        updateTelemetry();
         return;
       }
 
@@ -1462,6 +2275,7 @@ a, button { cursor: inherit; }
       vid.srcObject = stream;
       await vid.play();
       loaderEl.style.display = 'none';
+      loaderSub.textContent = 'Camera linked · synchronizing telemetry';
       statusEl.textContent = 'SYSTEM READY';
 
       cameraController = new Camera(vid, {
@@ -1470,9 +2284,11 @@ a, button { cursor: inherit; }
         height: 720
       });
       cameraController.start();
+      updateTelemetry();
     } catch (err) {
       loaderEl.innerHTML = 'ENGINE INITIALIZATION FAILED';
       hasStarted = false;
+      updateTelemetry();
       console.error('X-Ray engine error:', err);
     }
   }
@@ -1490,12 +2306,22 @@ a, button { cursor: inherit; }
 
     try { await holisticEngine?.close?.(); } catch (e) {}
     holisticEngine = null;
+    currentHands = [];
+    currentPose = null;
+    currentMask = null;
+    portalAlpha = 0;
+    portalHoldStartedAt = 0;
+    portalHold = false;
+    sosFired = false;
+    wrapEl.classList.remove('xv-sos-charging');
     hasStarted = false;
+    updateTelemetry();
   }
 
   /* Start the draw loop immediately (even during init, it'll draw black) */
   requestAnimationFrame(drawFrame);
-  setTheme('cyan');
+  setTheme(readStored(STORAGE_KEYS.theme) || 'cyan');
+  updateTelemetry();
 
   /* ══ Permission modal flow ══ */
   allowBtn.addEventListener('click', () => {
@@ -1528,6 +2354,11 @@ a, button { cursor: inherit; }
       a.href = url;
       a.download = `xray-vision-${Date.now()}.png`;
       a.click();
+      if (flashEl) {
+        flashEl.classList.remove('active');
+        void flashEl.offsetWidth;
+        flashEl.classList.add('active');
+      }
       if (window.showToast) window.showToast('◈ Snapshot captured', 'success');
     } catch (e) {
       if (window.showToast) window.showToast('Screenshot blocked — canvas tainted', 'error');
@@ -1551,6 +2382,7 @@ a, button { cursor: inherit; }
     } catch (e) {
       /* Fallback: toggle CSS class */
       wrapEl.classList.toggle('xv-fullscreen');
+      fullscreenBtn.classList.toggle('active', wrapEl.classList.contains('xv-fullscreen'));
       setTimeout(resize, 50);
     }
   });
@@ -1559,6 +2391,7 @@ a, button { cursor: inherit; }
     const active = document.fullscreenElement === wrapEl;
     wrapEl.classList.toggle('xv-fullscreen', active);
     fullscreenBtn.classList.toggle('active', active);
+    updateTelemetry();
     setTimeout(resize, 50);
   });
 
