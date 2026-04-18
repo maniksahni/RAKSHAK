@@ -1024,13 +1024,32 @@ function onResults(results) {
     return;
   }
 
-  /* Process first hand */
-  const landmarks = results.multiHandLandmarks[0];
-  const handedness = results.multiHandedness ? results.multiHandedness[0].label : 'Right';
+  /* Draw skeletons on ALL detected hands (up to maxNumHands=2) */
+  for (let h = 0; h < handCount; h++) {
+    const lm = results.multiHandLandmarks[h];
+    const hd = (results.multiHandedness && results.multiHandedness[h])
+      ? results.multiHandedness[h].label : 'Right';
+    drawHand(lm, hd === 'Right');
+  }
 
-  drawHand(landmarks, handedness === 'Right');
-
-  const { gesture, confidence } = classifyGesture(landmarks);
+  /* Classify gesture across all hands — pick the strongest signal.
+     V-sign (disarm) takes absolute priority. For stop/fist, use whichever
+     hand has higher confidence. This lets EITHER hand trigger SOS —
+     critical for scenarios where one hand may be restrained. */
+  let gesture = null;
+  let confidence = 0;
+  for (let h = 0; h < handCount; h++) {
+    const res = classifyGesture(results.multiHandLandmarks[h]);
+    if (res.gesture === 'v') {        // V = instant priority, stop searching
+      gesture = 'v';
+      confidence = res.confidence;
+      break;
+    }
+    if (res.gesture && res.confidence > confidence) {
+      gesture = res.gesture;
+      confidence = res.confidence;
+    }
+  }
 
   /* V-sign: instant disarm */
   if (gesture === 'v') {
@@ -1105,7 +1124,7 @@ async function initVisionShield() {
     });
 
     VS.hands.setOptions({
-      maxNumHands: 1,
+      maxNumHands: 2,           /* Track both hands — matches reference demo */
       modelComplexity: 0,       /* Lite model — fast */
       minDetectionConfidence: 0.65,
       minTrackingConfidence: 0.6
