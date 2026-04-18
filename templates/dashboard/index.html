@@ -227,6 +227,12 @@
           <a href="{{ url_for('safe_walk.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;transition:all .3s;" onmouseover="this.style.background='rgba(139,92,246,.18)'" onmouseout="this.style.background='rgba(139,92,246,.08)'">
             <i class="bi bi-geo-alt-fill"></i> Safe Walk
           </a>
+          <a href="{{ url_for('vision_shield.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:#93c5fd;transition:all .3s;" onmouseover="this.style.background='rgba(96,165,250,.18)'" onmouseout="this.style.background='rgba(96,165,250,.08)'">
+            <i class="bi bi-camera-video-fill"></i> Vision Shield
+          </a>
+          <a href="{{ url_for('xray_vision.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);color:#67e8f9;transition:all .3s;" onmouseover="this.style.background='rgba(34,211,238,.18)'" onmouseout="this.style.background='rgba(34,211,238,.08)'">
+            <i class="bi bi-badge-3d-fill"></i> X-Ray Vision
+          </a>
         </div>
       </div>
       <!-- Status microchips row -->
@@ -1171,6 +1177,73 @@
     }
   }
   </script>
+
+  <!-- ══ Visual Safety Suite ══ -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6 animate-in" style="animation-delay: 0.12s;">
+      <div class="glass-card p-4 h-100 d-flex flex-column" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;border:1px solid rgba(96,165,250,0.26);background:linear-gradient(135deg,rgba(10,18,36,0.96),rgba(4,8,18,0.98));box-shadow:inset 0 0 24px rgba(96,165,250,0.08), 0 10px 30px rgba(0,0,0,0.45);">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(96,165,250,0.65),transparent);"></div>
+        <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:52px;height:52px;border-radius:16px;background:rgba(96,165,250,0.14);border:1px solid rgba(96,165,250,0.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 18px rgba(96,165,250,0.16);">
+              <i class="bi bi-camera-video-fill" style="font-size:1.3rem;color:#93c5fd;"></i>
+            </div>
+            <div>
+              <div style="font-size:0.7rem;letter-spacing:0.18em;color:rgba(147,197,253,0.7);font-family:'Courier New',monospace;">VISUAL RESPONSE SUITE</div>
+              <h6 style="margin:4px 0 0;font-family:var(--font-display);font-weight:800;letter-spacing:0.06em;color:#e0f2fe;">VISION SHIELD</h6>
+            </div>
+          </div>
+          <span style="font-size:.45rem;font-weight:900;letter-spacing:.12em;background:rgba(96,165,250,0.14);border:1px solid rgba(96,165,250,0.3);color:#93c5fd;padding:4px 8px;border-radius:999px;flex-shrink:0;">GESTURE SOS</span>
+        </div>
+        <p style="font-size:0.86rem;line-height:1.7;color:rgba(226,232,240,0.78);margin-bottom:16px;">
+          Use silent distress gestures when speaking or touching the screen is not safe. Camera-based detection arms emergency response without exposing intent.
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="font-size:0.6rem;padding:4px 10px;border-radius:999px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.16);color:#bfdbfe;">Hand landmarks</span>
+          <span style="font-size:0.6rem;padding:4px 10px;border-radius:999px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.16);color:#bfdbfe;">Silent trigger</span>
+          <span style="font-size:0.6rem;padding:4px 10px;border-radius:999px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.16);color:#bfdbfe;">Guardian broadcast</span>
+        </div>
+        <div class="mt-auto d-flex align-items-center justify-content-between gap-3">
+          <div style="font-size:0.68rem;color:rgba(148,163,184,0.72);letter-spacing:0.08em;">BEST FOR LOW-VISIBILITY DISTRESS</div>
+          <a href="{{ url_for('vision_shield.index') }}" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-size:0.72rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;background:linear-gradient(135deg,rgba(96,165,250,0.22),rgba(59,130,246,0.14));border:1px solid rgba(96,165,250,0.32);color:#dbeafe;box-shadow:0 10px 24px rgba(2,6,23,0.3);">
+            Launch Shield <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 animate-in" style="animation-delay: 0.16s;">
+      <div class="glass-card p-4 h-100 d-flex flex-column" style="border-radius:var(--radius-lg);position:relative;overflow:hidden;border:1px solid rgba(34,211,238,0.24);background:linear-gradient(135deg,rgba(3,14,22,0.98),rgba(1,6,12,0.98));box-shadow:inset 0 0 24px rgba(34,211,238,0.08), 0 10px 30px rgba(0,0,0,0.45);">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(34,211,238,0.6),transparent);"></div>
+        <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div style="width:52px;height:52px;border-radius:16px;background:rgba(34,211,238,0.12);border:1px solid rgba(34,211,238,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 18px rgba(34,211,238,0.14);">
+              <i class="bi bi-badge-3d-fill" style="font-size:1.3rem;color:#67e8f9;"></i>
+            </div>
+            <div>
+              <div style="font-size:0.7rem;letter-spacing:0.18em;color:rgba(103,232,249,0.7);font-family:'Courier New',monospace;">NEURAL BIOSCAN ENGINE</div>
+              <h6 style="margin:4px 0 0;font-family:var(--font-display);font-weight:800;letter-spacing:0.06em;color:#cffafe;">X-RAY VISION</h6>
+            </div>
+          </div>
+          <span style="font-size:.45rem;font-weight:900;letter-spacing:.12em;background:rgba(34,211,238,0.14);border:1px solid rgba(34,211,238,0.28);color:#67e8f9;padding:4px 8px;border-radius:999px;flex-shrink:0;">BIOSCAN</span>
+        </div>
+        <p style="font-size:0.86rem;line-height:1.7;color:rgba(226,232,240,0.78);margin-bottom:16px;">
+          Turn body segmentation, pose tracking, and two-hand portal gestures into an immersive safety interface with fullscreen scan mode, snapshots, and sustained-hold SOS escalation.
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="font-size:0.6rem;padding:4px 10px;border-radius:999px;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.16);color:#a5f3fc;">Pose + hands</span>
+          <span style="font-size:0.6rem;padding:4px 10px;border-radius:999px;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.16);color:#a5f3fc;">Portal gesture</span>
+          <span style="font-size:0.6rem;padding:4px 10px;border-radius:999px;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.16);color:#a5f3fc;">Immersive HUD</span>
+        </div>
+        <div class="mt-auto d-flex align-items-center justify-content-between gap-3">
+          <div style="font-size:0.68rem;color:rgba(148,163,184,0.72);letter-spacing:0.08em;">BEST FOR HIGH-IMMERSION DEMO MODE</div>
+          <a href="{{ url_for('xray_vision.index') }}" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-size:0.72rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;background:linear-gradient(135deg,rgba(34,211,238,0.2),rgba(8,145,178,0.12));border:1px solid rgba(34,211,238,0.3);color:#cffafe;box-shadow:0 10px 24px rgba(2,6,23,0.3);">
+            Launch X-Ray <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ══ Emergency Quick Dial Grid ══ -->
   <div class="row g-4 mb-4">
