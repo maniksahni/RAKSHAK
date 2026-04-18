@@ -1489,8 +1489,6 @@ a, button { cursor: inherit; }
   let hasStarted = false;
   let trackingBusy = false;
   let lastTrackingRunAt = 0;
-  let xrayManualPortalActive = false;
-  let xrayBodyLockActive = false;
 
   const maskCv = document.createElement('canvas');
   const mctx = maskCv.getContext('2d', { willReadFrequently: true });
@@ -1585,10 +1583,8 @@ a, button { cursor: inherit; }
               : 'AURA STANDBY')
       : (sosFired
           ? 'SOS ACTIVE'
-          : xrayManualPortalActive
+          : isActive
             ? 'PORTAL OPEN'
-            : xrayBodyLockActive
-              ? 'BODY LOCK'
             : videoReady()
               ? 'SCANNING'
               : hasStarted
@@ -1600,10 +1596,8 @@ a, button { cursor: inherit; }
           ? 'LIVE'
           : wrapEl.classList.contains('xv-sos-charging')
             ? 'CHARGING'
-            : xrayManualPortalActive
+            : isActive
               ? 'ARMED'
-              : xrayBodyLockActive
-                ? 'TRACKED'
               : 'SAFE');
 
     wrapEl.classList.toggle('xv-live', videoReady());
@@ -1623,10 +1617,8 @@ a, button { cursor: inherit; }
             ? 'SOS BROADCAST LIVE'
             : wrapEl.classList.contains('xv-sos-charging')
               ? `SOS ARMING / HOLD ${holdRemaining}s`
-            : xrayManualPortalActive
+            : isActive
               ? 'PORTAL SYNCHRONIZED'
-              : xrayBodyLockActive
-                ? 'BODY LOCK ACQUIRED'
               : hands >= 2
                 ? 'HANDS LOCKED / ALIGN FINGERS'
                 : hasStarted
@@ -1650,10 +1642,8 @@ a, button { cursor: inherit; }
         ? (isActive ? 'LOCKED' : 'SEARCH')
         : (wrapEl.classList.contains('xv-sos-charging')
             ? `HOLD ${holdRemaining}s`
-            : xrayManualPortalActive
+            : isActive
               ? 'OPEN'
-              : xrayBodyLockActive
-                ? 'LOCK'
               : (hands >= 2 ? 'ALIGN' : 'SEARCH'));
     }
     if (portalBarEl) portalBarEl.style.width = `${Math.max(6, portalPct)}%`;
@@ -1677,8 +1667,6 @@ a, button { cursor: inherit; }
         ? (isActive ? 'AURORA' : (videoReady() ? 'FLOW' : 'OFFLINE'))
         : (wrapEl.classList.contains('xv-sos-charging')
             ? 'OVERDRIVE'
-            : xrayBodyLockActive
-              ? 'TRACKING'
             : portalPct > 55
               ? 'SURGING'
               : (videoReady() ? 'NOMINAL' : 'OFFLINE'));
@@ -1686,9 +1674,7 @@ a, button { cursor: inherit; }
     if (energyBarEl) energyBarEl.style.width = `${Math.max(8, energyPct)}%`;
     if (bottomModeEl) bottomModeEl.textContent = modeText;
     if (bottomDepthEl) bottomDepthEl.textContent = `${portalPct}%`;
-    if (bottomLockEl) bottomLockEl.textContent = auraMode
-      ? (trackedHands ? 'Hand Lock' : 'No Hand')
-      : (xrayManualPortalActive ? 'Portal Lock' : (currentPose ? 'Body Lock' : 'No Pose'));
+    if (bottomLockEl) bottomLockEl.textContent = auraMode ? (trackedHands ? 'Hand Lock' : 'No Hand') : (currentPose ? 'Pose Lock' : 'No Pose');
     if (bottomSosEl) bottomSosEl.textContent = readinessText;
   }
 
@@ -1785,108 +1771,6 @@ a, button { cursor: inherit; }
 
   function getPalmSpan(handLm) {
     return dist(lmScale(handLm[5]), lmScale(handLm[17]));
-  }
-
-  function getPoseScreenPoint(pose, idx) {
-    if (!pose || !pose[idx]) return null;
-    return { x: (1 - pose[idx].x) * W, y: pose[idx].y * H };
-  }
-
-  function getAutoXrayPortal(pose) {
-    if (!pose) return null;
-    const lShoulder = getPoseScreenPoint(pose, 11);
-    const rShoulder = getPoseScreenPoint(pose, 12);
-    if (!pose[11] || !pose[12] || pose[11].visibility <= 0.18 || pose[12].visibility <= 0.18) return null;
-    if (!lShoulder || !rShoulder) return null;
-
-    const shoulderMid = averagePoints([lShoulder, rShoulder]);
-    const shoulderSpan = Math.max(96, dist(lShoulder, rShoulder));
-    const lHipRaw = pose[23] && pose[23].visibility > 0.16 ? getPoseScreenPoint(pose, 23) : null;
-    const rHipRaw = pose[24] && pose[24].visibility > 0.16 ? getPoseScreenPoint(pose, 24) : null;
-
-    let lHip = lHipRaw;
-    let rHip = rHipRaw;
-    if (lHip && !rHip) rHip = { x: shoulderMid.x + (shoulderMid.x - lHip.x), y: lHip.y };
-    if (rHip && !lHip) lHip = { x: shoulderMid.x - (rHip.x - shoulderMid.x), y: rHip.y };
-    if (!lHip || !rHip) {
-      const estHipY = Math.min(H - 44, shoulderMid.y + shoulderSpan * 1.55);
-      const hipOffset = shoulderSpan * 0.34;
-      lHip = { x: shoulderMid.x - hipOffset, y: estHipY };
-      rHip = { x: shoulderMid.x + hipOffset, y: estHipY };
-    }
-
-    const hipMid = averagePoints([lHip, rHip]);
-    const centerX = (shoulderMid.x + hipMid.x) * 0.5;
-    const hipSpan = Math.max(shoulderSpan * 0.82, dist(lHip, rHip));
-    const torsoHeight = Math.max(180, hipMid.y - shoulderMid.y);
-    const width = Math.min(W * 0.72, Math.max(shoulderSpan * 2.05, hipSpan * 1.72, 260));
-    const top = Math.max(34, Math.min(lShoulder.y, rShoulder.y) - shoulderSpan * 0.74);
-    const bottom = Math.min(H - 28, Math.max(lHip.y, rHip.y) + torsoHeight * 0.42);
-    const left = Math.max(24, centerX - width / 2);
-    const right = Math.min(W - 24, centerX + width / 2);
-    const topInset = Math.min(width * 0.12, 36);
-
-    return {
-      lThumb: { x: left + topInset, y: top },
-      rThumb: { x: right - topInset, y: top },
-      rIndex: { x: right, y: bottom },
-      lIndex: { x: left, y: bottom }
-    };
-  }
-
-  function drawXrayHandGuide(handLm) {
-    if (!handLm) return;
-    const wrist = lmScale(handLm[0]);
-    const palmLeft = lmScale(handLm[5]);
-    const palmRight = lmScale(handLm[17]);
-    const indexTip = lmScale(handLm[8]);
-    const middleTip = lmScale(handLm[12]);
-    const thumbTip = lmScale(handLm[4]);
-    const palmCenter = averagePoints([wrist, palmLeft, palmRight, lmScale(handLm[9])]);
-    const radius = Math.max(28, getPalmSpan(handLm) * 0.82);
-    const orbit = radius * 1.28;
-    const pulse = 0.8 + Math.sin(frame * 0.08) * 0.08;
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'screen';
-
-    ctx.strokeStyle = `rgba(255,255,255,${0.3 * pulse})`;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.arc(palmCenter.x, palmCenter.y, orbit, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.strokeStyle = theme.scanColor;
-    ctx.lineWidth = 1.6;
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = theme.scanCore;
-    for (let i = 0; i < 4; i++) {
-      const ang = frame * 0.03 + i * (Math.PI / 2);
-      const inner = orbit * 0.58;
-      const outer = orbit * 0.98;
-      ctx.beginPath();
-      ctx.moveTo(palmCenter.x + Math.cos(ang) * inner, palmCenter.y + Math.sin(ang) * inner);
-      ctx.lineTo(palmCenter.x + Math.cos(ang) * outer, palmCenter.y + Math.sin(ang) * outer);
-      ctx.stroke();
-    }
-
-    ctx.shadowBlur = 0;
-    [thumbTip, indexTip, middleTip].forEach((pt, idx) => {
-      const ring = 6 + idx * 1.8 + Math.sin(frame * 0.06 + idx) * 1.2;
-      ctx.strokeStyle = idx === 1 ? '#ffffff' : theme.accent;
-      ctx.lineWidth = 1.1;
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, ring, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.strokeStyle = `rgba(255,255,255,${0.22 + idx * 0.08})`;
-      ctx.beginPath();
-      ctx.moveTo(palmCenter.x, palmCenter.y);
-      ctx.lineTo(pt.x, pt.y);
-      ctx.stroke();
-    });
-
-    ctx.restore();
   }
 
   function drawTouchAura(handLm, side = 'solo', intensity = 0.65, detail = 1) {
@@ -2384,8 +2268,6 @@ a, button { cursor: inherit; }
     let primaryHand = null;
     let handSide = 'left';
     let portalActiveThisFrame = false;
-    let manualPortalThisFrame = false;
-    let xrayAutoScanThisFrame = false;
 
     if (currentHands && currentHands.length >= 1) {
       primaryHand = [...currentHands].reduce((best, hand) =>
@@ -2413,7 +2295,6 @@ a, button { cursor: inherit; }
       );
 
       if (dist(lIndex, rIndex) < portalThreshold) {
-        manualPortalThisFrame = true;
         portalActiveThisFrame = true; portalHold = true; sparkCooldown--;
         if (sparkCooldown <= 0) {
           triggerSparks((lIndex.x + rIndex.x) / 2, (lIndex.y + rIndex.y) / 2);
@@ -2425,30 +2306,12 @@ a, button { cursor: inherit; }
       portalHold = false;
     }
 
-    if (!auraMode) {
-      const autoPortal = getAutoXrayPortal(currentPose);
-      if (autoPortal) {
-        xrayAutoScanThisFrame = true;
-        if (!manualPortalThisFrame) {
-          lThumb = autoPortal.lThumb;
-          lIndex = autoPortal.lIndex;
-          rThumb = autoPortal.rThumb;
-          rIndex = autoPortal.rIndex;
-          portalActiveThisFrame = true;
-        }
-      }
-    }
-
     isActive = portalActiveThisFrame;
-    xrayManualPortalActive = !auraMode && manualPortalThisFrame;
-    xrayBodyLockActive = !auraMode && xrayAutoScanThisFrame && !manualPortalThisFrame;
-    if (auraMode || manualPortalThisFrame) portalAlpha += 0.08;
-    else if (xrayAutoScanThisFrame) portalAlpha += 0.045;
-    else portalAlpha += auraMode ? -0.08 : -0.06;
+    portalAlpha += isActive ? 0.08 : (auraMode ? -0.08 : -0.06);
     portalAlpha = Math.max(0, Math.min(1, portalAlpha));
 
     /* ── Sustained portal hook → SOS charging ── */
-    if (!auraMode && manualPortalThisFrame) {
+    if (!auraMode && isActive) {
       if (!portalHoldStartedAt) portalHoldStartedAt = now;
       const heldMs = now - portalHoldStartedAt;
       if (heldMs > 2500 && !sosFired) {
@@ -2465,7 +2328,7 @@ a, button { cursor: inherit; }
     /* Instructions visibility */
     instructionsEl.style.opacity = auraMode
       ? (primaryHand ? '0' : '1')
-      : (xrayAutoScanThisFrame ? '0' : '1');
+      : ((!currentHands || currentHands.length < 2) ? '1' : '0');
 
     /* Status text */
     if (auraMode) {
@@ -2478,34 +2341,26 @@ a, button { cursor: inherit; }
         statusEl.style.color = theme.accent;
         statusEl.style.textShadow = `0 0 15px ${theme.accent}`;
       }
-    } else if (!currentPose) {
-      statusEl.textContent = 'STANDBY: STEP INTO FRAME';
+    } else if (!currentHands || currentHands.length < 2) {
+      statusEl.textContent = 'STANDBY: AWAITING BOTH HANDS';
       statusEl.style.color = '#0055aa';
       statusEl.style.textShadow = '0 0 10px #0055aa';
-    } else if (manualPortalThisFrame) {
+    } else if (!isActive) {
+      statusEl.textContent = 'DETECTED: BRING BOTH INDEX FINGERS TOGETHER';
+      statusEl.style.color = theme.accent2;
+      statusEl.style.textShadow = `0 0 12px ${theme.accent2}`;
+    } else {
       statusEl.textContent = sosFired ? '◈ SOS BROADCAST ACTIVE ◈'
         : '[ PORTAL FULLY ACTIVE - STRETCH HANDS ]';
       statusEl.style.color = sosFired ? '#ff4444' : (isGlitching ? '#ff4444' : theme.accent);
       statusEl.style.textShadow = `0 0 15px ${isGlitching ? '#ff0000' : theme.accent}`;
-    } else if (!currentHands || currentHands.length < 2) {
-      statusEl.textContent = xrayAutoScanThisFrame
-        ? 'BODY LOCK ACTIVE: RAISE BOTH HANDS'
-        : 'BODY LOCK: RAISE BOTH HANDS TO ARM PORTAL';
-      statusEl.style.color = theme.accent2;
-      statusEl.style.textShadow = `0 0 12px ${theme.accent2}`;
-    } else {
-      statusEl.textContent = 'BODY LOCK: BRING BOTH INDEX FINGERS TOGETHER';
-      statusEl.style.color = theme.accent2;
-      statusEl.style.textShadow = `0 0 12px ${theme.accent2}`;
     }
 
     sparkBurst = sparkBurst.filter(s => s.life > 0);
     sparkBurst.forEach(s => { s.update(); s.draw(); });
 
-    if (auraMode && primaryHand) {
+    if (primaryHand) {
       drawTouchAura(primaryHand, handSide, 0.64 + portalAlpha * 0.36, perf.auraDetail);
-    } else if (!auraMode && currentHands && currentHands.length) {
-      currentHands.forEach(hand => drawXrayHandGuide(hand));
     }
 
     if (!auraMode && portalAlpha > 0.01 && lThumb && rThumb) {
@@ -2920,10 +2775,10 @@ a, button { cursor: inherit; }
 
       const preferredVideoWidth = auraMode
         ? (window.innerWidth <= 900 ? 720 : 960)
-        : (window.innerWidth <= 900 ? 960 : 1280);
+        : (window.innerWidth <= 900 ? 640 : 960);
       const preferredVideoHeight = auraMode
         ? (window.innerWidth <= 900 ? 540 : 540)
-        : (window.innerWidth <= 900 ? 720 : 720);
+        : (window.innerWidth <= 900 ? 480 : 540);
 
       if (auraMode) {
         handsEngine = new Hands({
@@ -2945,10 +2800,10 @@ a, button { cursor: inherit; }
           locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`
         });
         holisticEngine.setOptions({
-          modelComplexity: 1,
+          modelComplexity: 0,
           smoothLandmarks: true,
-          minDetectionConfidence: 0.62,
-          minTrackingConfidence: 0.62,
+          minDetectionConfidence: 0.7,
+          minTrackingConfidence: 0.7,
           enableSegmentation: true
         });
         holisticEngine.onResults(res => {
@@ -2966,8 +2821,8 @@ a, button { cursor: inherit; }
         video: {
           facingMode: 'user',
           frameRate: { ideal: 24, max: 30 },
-          width: { ideal: preferredVideoWidth, max: 1280 },
-          height: { ideal: preferredVideoHeight, max: 720 }
+          width: { ideal: preferredVideoWidth, max: auraMode ? 1280 : preferredVideoWidth },
+          height: { ideal: preferredVideoHeight, max: auraMode ? 720 : preferredVideoHeight }
         }
       };
       try {
@@ -3042,8 +2897,6 @@ a, button { cursor: inherit; }
     portalHoldStartedAt = 0;
     portalHold = false;
     sosFired = false;
-    xrayManualPortalActive = false;
-    xrayBodyLockActive = false;
     wrapEl.classList.remove('xv-sos-charging');
     hasStarted = false;
     updateTelemetry();
