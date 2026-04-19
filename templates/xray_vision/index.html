@@ -1391,6 +1391,8 @@ a, button { cursor: inherit; }
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<!-- Three.js for real 3D Studio-mode effects (refractive crystal, nested cubes) -->
+<script src="https://unpkg.com/three@0.150.1/build/three.min.js" crossorigin="anonymous"></script>
 
 <script>
 'use strict';
@@ -2969,6 +2971,219 @@ a, button { cursor: inherit; }
     ctx.restore();
   }
 
+  /* ────────────────────────────────────────────────────────────────
+     Three.js Studio engine — real WebGL 3D for reference-parity effects.
+     Renders refractive icosahedron (DEPTH) and nested wireframe cubes
+     (BOX) into an offscreen canvas; the main Canvas 2D loop composites
+     that canvas via drawImage(). Lazy-initialised on first request.
+     Falls back to the Canvas 2D implementations when THREE is missing.
+     ──────────────────────────────────────────────────────────────── */
+  let studioThree = null;
+  let studioThreeFailed = false;
+
+  function buildEquirectEnvCanvas(size = 1024) {
+    // Procedural 2:1 equirectangular environment — neon cyan→violet→pink
+    // gradient with streaks, gives refractive materials something
+    // visually punchy to distort.
+    const env = document.createElement('canvas');
+    env.width = size * 2;
+    env.height = size;
+    const ec = env.getContext('2d');
+    const grad = ec.createLinearGradient(0, 0, 0, env.height);
+    grad.addColorStop(0.00, '#020a22');
+    grad.addColorStop(0.18, '#0b3d7a');
+    grad.addColorStop(0.38, '#2ba5ff');
+    grad.addColorStop(0.58, '#b95cff');
+    grad.addColorStop(0.78, '#ff4d9a');
+    grad.addColorStop(1.00, '#1a0026');
+    ec.fillStyle = grad;
+    ec.fillRect(0, 0, env.width, env.height);
+    // Overlay streaks for directionality
+    ec.globalCompositeOperation = 'screen';
+    for (let i = 0; i < 60; i++) {
+      const y = Math.random() * env.height;
+      const w = 80 + Math.random() * 400;
+      const x = Math.random() * env.width;
+      ec.fillStyle = `rgba(255,255,255,${0.06 + Math.random() * 0.14})`;
+      ec.fillRect(x, y, w, 2 + Math.random() * 3);
+    }
+    ec.globalCompositeOperation = 'source-over';
+    // Hot spots (simulated light sources for specular highlights)
+    const spots = [
+      { x: env.width * 0.22, y: env.height * 0.22, r: 140, c: 'rgba(255,255,255,0.85)' },
+      { x: env.width * 0.78, y: env.height * 0.32, r: 110, c: 'rgba(255,220,255,0.75)' },
+      { x: env.width * 0.5,  y: env.height * 0.78, r: 90,  c: 'rgba(190,255,255,0.7)'  }
+    ];
+    for (const s of spots) {
+      const g = ec.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
+      g.addColorStop(0, s.c);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ec.fillStyle = g;
+      ec.beginPath();
+      ec.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ec.fill();
+    }
+    return env;
+  }
+
+  function initStudioThree() {
+    if (studioThree || studioThreeFailed) return studioThree;
+    if (typeof THREE === 'undefined') {
+      studioThreeFailed = true;
+      return null;
+    }
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const renderer = new THREE.WebGLRenderer({
+        canvas, alpha: true, antialias: true,
+        premultipliedAlpha: false, preserveDrawingBuffer: false
+      });
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+      if (renderer.outputEncoding !== undefined) {
+        renderer.outputEncoding = THREE.sRGBEncoding;
+      }
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.25;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+      camera.position.set(0, 0, 4.8);
+
+      // Env map (for refraction / reflection)
+      const envCanvas = buildEquirectEnvCanvas(768);
+      const envTex = new THREE.CanvasTexture(envCanvas);
+      envTex.mapping = THREE.EquirectangularReflectionMapping;
+      if (THREE.sRGBEncoding !== undefined) envTex.encoding = THREE.sRGBEncoding;
+      scene.environment = envTex;
+
+      // Lighting — key + rim + fill for specular punch
+      scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+      const keyL = new THREE.DirectionalLight(0xffffff, 1.3);
+      keyL.position.set(3, 4, 5);
+      scene.add(keyL);
+      const rimL = new THREE.DirectionalLight(0x8ad4ff, 0.9);
+      rimL.position.set(-4, 1, -3);
+      scene.add(rimL);
+      const fillL = new THREE.DirectionalLight(0xff9ed8, 0.55);
+      fillL.position.set(0, -3, 2);
+      scene.add(fillL);
+
+      // DEPTH: refractive icosahedron
+      const crystalGeo = new THREE.IcosahedronGeometry(1, 0);
+      const crystalMat = new THREE.MeshPhysicalMaterial({
+        color: 0xd4f2ff,
+        metalness: 0.0,
+        roughness: 0.04,
+        transmission: 1.0,
+        thickness: 1.8,
+        ior: 1.85,
+        attenuationColor: 0xaae0ff,
+        attenuationDistance: 2.2,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.02,
+        envMapIntensity: 1.6,
+        side: THREE.DoubleSide,
+        transparent: true
+      });
+      const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+      crystal.visible = false;
+      scene.add(crystal);
+
+      // Faint wireframe overlay on crystal edges (makes facets pop)
+      const crystalEdges = new THREE.LineSegments(
+        new THREE.EdgesGeometry(crystalGeo),
+        new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45 })
+      );
+      crystal.add(crystalEdges);
+
+      // BOX: nested wireframe cubes (reference frame 4)
+      const boxGroup = new THREE.Group();
+      const boxSizes  = [2.1, 1.55, 1.1, 0.75];
+      const boxColors = [0xffffff, 0x69ff8f, 0x4ed8ff, 0xffea58];
+      const boxMeshes = [];
+      boxSizes.forEach((s, i) => {
+        const geo = new THREE.BoxGeometry(s, s, s);
+        const edges = new THREE.EdgesGeometry(geo);
+        const mat = new THREE.LineBasicMaterial({
+          color: boxColors[i], transparent: true,
+          opacity: Math.max(0.35, 0.8 - i * 0.14)
+        });
+        const line = new THREE.LineSegments(edges, mat);
+        boxGroup.add(line);
+        boxMeshes.push(line);
+      });
+      boxGroup.visible = false;
+      scene.add(boxGroup);
+
+      studioThree = {
+        canvas, renderer, scene, camera,
+        crystal, boxGroup, boxMeshes, envTex,
+        lastSize: 512
+      };
+      return studioThree;
+    } catch (err) {
+      console.warn('[studio-three] init failed, falling back to Canvas 2D:', err);
+      studioThreeFailed = true;
+      return null;
+    }
+  }
+
+  /**
+   * Render a Studio 3D effect into the offscreen WebGL canvas and return
+   * it. Caller composites via drawImage. Returns null if Three.js is not
+   * available; caller should use the Canvas 2D fallback.
+   *
+   * @param {'depth'|'frames'} effectKey
+   * @param {number} size  Pixel size of the square render target.
+   * @param {number} now   High-res timestamp (ms).
+   */
+  function renderStudioThreeEffect(effectKey, size, now) {
+    const e = initStudioThree();
+    if (!e) return null;
+    const target = Math.max(192, Math.min(1024, Math.round(size * 2)));
+    if (target !== e.lastSize) {
+      e.canvas.width = target;
+      e.canvas.height = target;
+      e.renderer.setSize(target, target, false);
+      e.camera.aspect = 1;
+      e.camera.updateProjectionMatrix();
+      e.lastSize = target;
+    }
+
+    e.crystal.visible = false;
+    e.boxGroup.visible = false;
+
+    if (effectKey === 'depth') {
+      e.crystal.visible = true;
+      e.crystal.rotation.x = now * 0.00055;
+      e.crystal.rotation.y = now * 0.00082;
+      e.crystal.rotation.z = now * 0.00026;
+      const pulse = 1.0 + Math.sin(now * 0.0014) * 0.04;
+      e.crystal.scale.setScalar(1.55 * pulse);
+    } else if (effectKey === 'frames') {
+      e.boxGroup.visible = true;
+      e.boxGroup.rotation.x = now * 0.00034 + Math.sin(now * 0.0008) * 0.12;
+      e.boxGroup.rotation.y = now * 0.00052;
+      e.boxGroup.rotation.z = Math.sin(now * 0.00042) * 0.18;
+      e.boxMeshes.forEach((m, i) => {
+        m.rotation.x = now * 0.00028 * (i + 1) * (i % 2 === 0 ? 1 : -0.8);
+        m.rotation.y = now * 0.00046 * (i + 1) * (i % 2 === 0 ? -0.7 : 1);
+      });
+    }
+
+    try {
+      e.renderer.render(e.scene, e.camera);
+    } catch (err) {
+      console.warn('[studio-three] render failed:', err);
+      studioThreeFailed = true;
+      return null;
+    }
+    return e.canvas;
+  }
+
   /* Purple/magenta portal cloud — matches frame 12 of the reference:
      a glitchy nebulous mass with chromatic-aberration ghosts and
      displaced bands. Drawn centered at (cx, cy) with radius ~size. */
@@ -3203,14 +3418,35 @@ a, button { cursor: inherit; }
     } else if (effect.key === 'scan') {
       drawStudioScanBar(primaryHand, leftHand, rightHand, now);
     } else if (effect.key === 'frames' && dualHands) {
-      drawStudioRecursiveFrames(leftHand, rightHand, now, fxAnchorX, fxAnchorY);
+      // Try real 3D nested cubes via Three.js; fallback to Canvas 2D frames
+      const boxSize = palmSpan * 2.4;
+      const boxCanvas = renderStudioThreeEffect('frames', boxSize, now);
+      if (boxCanvas) {
+        const draw = boxSize * 2;
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.drawImage(boxCanvas, fxAnchorX - draw / 2, fxAnchorY - draw / 2, draw, draw);
+        ctx.restore();
+      } else {
+        drawStudioRecursiveFrames(leftHand, rightHand, now, fxAnchorX, fxAnchorY);
+      }
     } else if (effect.key === 'torus') {
       drawChromeTorus(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.85 : 2.05), now, 1.0);
     } else if (effect.key === 'portal') {
       drawStudioPortalCloud(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.75 : 1.95), now, 1.0);
     } else if (effect.key === 'depth') {
-      // Huge icy "Depth Pixel Refractions" gem — matches reference frame 2
-      drawStudioDepthCrystal(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.95 : 2.15), now, 1.0);
+      // Real refractive 3D icosahedron via Three.js — matches reference frame 2
+      const depthSize = palmSpan * (dualHands ? 2.15 : 2.35);
+      const depthCanvas = renderStudioThreeEffect('depth', depthSize, now);
+      if (depthCanvas) {
+        const draw = depthSize * 2;
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.drawImage(depthCanvas, fxAnchorX - draw / 2, fxAnchorY - draw / 2, draw, draw);
+        ctx.restore();
+      } else {
+        drawStudioDepthCrystal(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.95 : 2.15), now, 1.0);
+      }
     } else if (effect.key === 'hud') {
       drawStudioHudPanels(primaryHand, dualHands ? rightHand : null, now);
       if (dualHands) {
