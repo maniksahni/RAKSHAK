@@ -2314,21 +2314,23 @@ a, button { cursor: inherit; }
   ];
 
   const STUDIO_DUAL_SEQUENCE = [
-    { key: 'ribbon', hudLabel: 'RIBBON', duration: 1540 },
-    { key: 'torus', hudLabel: 'TORUS', duration: 1500 },
-    { key: 'scan', hudLabel: 'SCAN', duration: 1360 },
-    { key: 'hud', hudLabel: 'MESH', duration: 1380 },
-    { key: 'prism', hudLabel: 'PRISM', duration: 1560 },
+    { key: 'ribbon',  hudLabel: 'RIBBON',  duration: 1540 },
+    { key: 'torus',   hudLabel: 'TORUS',   duration: 1500 },
+    { key: 'scan',    hudLabel: 'SCAN',    duration: 1360 },
+    { key: 'portal',  hudLabel: 'PORTAL',  duration: 1560 },
+    { key: 'hud',     hudLabel: 'MESH',    duration: 1380 },
+    { key: 'prism',   hudLabel: 'PRISM',   duration: 1560 },
     { key: 'kaleido', hudLabel: 'KALEIDO', duration: 1540 },
-    { key: 'wire', hudLabel: 'WIRE', duration: 1500 }
+    { key: 'wire',    hudLabel: 'WIRE',    duration: 1500 }
   ];
 
   const STUDIO_SOLO_SEQUENCE = [
-    { key: 'torus', hudLabel: 'TORUS', duration: 1600 },
-    { key: 'scan', hudLabel: 'SCAN', duration: 1360 },
-    { key: 'prism', hudLabel: 'PRISM', duration: 1640 },
+    { key: 'torus',   hudLabel: 'TORUS',   duration: 1600 },
+    { key: 'scan',    hudLabel: 'SCAN',    duration: 1360 },
+    { key: 'portal',  hudLabel: 'PORTAL',  duration: 1560 },
+    { key: 'prism',   hudLabel: 'PRISM',   duration: 1640 },
     { key: 'kaleido', hudLabel: 'KALEIDO', duration: 1500 },
-    { key: 'wire', hudLabel: 'WIRE', duration: 1480 }
+    { key: 'wire',    hudLabel: 'WIRE',    duration: 1480 }
   ];
 
   const PRISM_VERTS = [
@@ -2951,6 +2953,86 @@ a, button { cursor: inherit; }
     ctx.restore();
   }
 
+  /* Purple/magenta portal cloud — matches frame 12 of the reference:
+     a glitchy nebulous mass with chromatic-aberration ghosts and
+     displaced bands. Drawn centered at (cx, cy) with radius ~size. */
+  function drawStudioPortalCloud(cx, cy, size, now, intensity = 1) {
+    if (intensity <= 0.02) return;
+    const t = now * 0.001;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+
+    // Outer soft halo
+    const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 1.35);
+    halo.addColorStop(0,    `rgba(220,120,255,${0.48 * intensity})`);
+    halo.addColorStop(0.35, `rgba(160,60,220,${0.30 * intensity})`);
+    halo.addColorStop(0.75, `rgba(80,40,140,${0.12 * intensity})`);
+    halo.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(cx, cy, size * 1.35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Swirling wispy bands (noise-like)
+    const bands = 10;
+    for (let i = 0; i < bands; i++) {
+      const ang = t * (0.7 + i * 0.11) + i * 0.63;
+      const rx = size * (0.55 + 0.4 * Math.sin(t * 1.2 + i));
+      const ry = size * (0.35 + 0.25 * Math.cos(t * 0.9 + i * 0.7));
+      const cxw = cx + Math.cos(ang) * size * 0.18;
+      const cyw = cy + Math.sin(ang * 1.3) * size * 0.12;
+
+      ctx.save();
+      ctx.translate(cxw, cyw);
+      ctx.rotate(ang);
+      const band = ctx.createLinearGradient(-rx, 0, rx, 0);
+      const hue = 280 + Math.sin(t * 0.8 + i) * 30;
+      band.addColorStop(0,   `hsla(${hue - 15}, 90%, 55%, 0)`);
+      band.addColorStop(0.5, `hsla(${hue},      90%, 60%, ${0.30 * intensity})`);
+      band.addColorStop(1,   `hsla(${hue + 15}, 90%, 55%, 0)`);
+      ctx.fillStyle = band;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Chromatic ghost ring (RGB-split)
+    const ghost = [
+      { color: `rgba(255,90,180,${0.55 * intensity})`, dx:  3.5, dy:  0   },
+      { color: `rgba(120,220,255,${0.40 * intensity})`, dx: -3.5, dy:  0.8 },
+      { color: `rgba(255,255,255,${0.55 * intensity})`, dx:  0,   dy: -2.2 }
+    ];
+    for (const g of ghost) {
+      ctx.strokeStyle = g.color;
+      ctx.lineWidth = 1.6;
+      ctx.shadowColor = g.color;
+      ctx.shadowBlur = 14 * intensity;
+      ctx.beginPath();
+      ctx.ellipse(cx + g.dx, cy + g.dy, size * 0.85, size * 0.55, Math.sin(t) * 0.2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Sparkle stars scattered inside
+    ctx.shadowBlur = 6 * intensity;
+    ctx.fillStyle = `rgba(255,255,255,${0.9 * intensity})`;
+    ctx.shadowColor = 'rgba(255,200,255,0.8)';
+    const sparkCount = 18;
+    for (let i = 0; i < sparkCount; i++) {
+      const a = t * 1.6 + i * 0.88;
+      const r = size * (0.25 + 0.55 * ((i * 37) % 100) / 100);
+      const sx = cx + Math.cos(a) * r;
+      const sy = cy + Math.sin(a * 1.2) * r * 0.6;
+      const sp = 1 + 0.8 * Math.sin(t * 3 + i);
+      ctx.beginPath();
+      ctx.arc(sx, sy, sp, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
   function drawStudioScene(primaryHand, leftHand, rightHand, now, perf) {
     if (!primaryHand) return;
     const handsCount = currentHands ? currentHands.length : 0;
@@ -2973,6 +3055,16 @@ a, button { cursor: inherit; }
     ctx.rect(stageRect.x, stageRect.y, stageRect.w, stageRect.h);
     ctx.clip();
 
+    /* Reference effects sit at face/head level, ~2× palm span in size.
+       Compute a shared "floating anchor" above the hand(s) so every effect
+       lands where the reference video places it. */
+    const fxAnchorX = dualHands
+      ? (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5
+      : anchor.x;
+    const fxAnchorY = dualHands
+      ? (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5 - palmSpan * 0.55
+      : anchor.y - palmSpan * 0.75;
+
     if (effect.key === 'ribbon' && dualHands) {
       drawStudioRibbonDistortion(leftHand, rightHand, now);
       drawStudioHudPanels(leftHand, rightHand, now);
@@ -2981,20 +3073,16 @@ a, button { cursor: inherit; }
     } else if (effect.key === 'frames' && dualHands) {
       drawStudioRecursiveFrames(leftHand, rightHand, now);
     } else if (effect.key === 'torus') {
-      const cx = dualHands ? (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5 : anchor.x;
-      const cy = dualHands
-        ? (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5 - palmSpan * 0.86
-        : anchor.y - palmSpan * 0.96;
-      drawChromeTorus(cx, cy, palmSpan * (dualHands ? 0.98 : 1.12), now, 0.92);
+      drawChromeTorus(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.85 : 2.05), now, 1.0);
+    } else if (effect.key === 'portal') {
+      drawStudioPortalCloud(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.75 : 1.95), now, 1.0);
     } else if (effect.key === 'hud') {
       drawStudioHudPanels(primaryHand, dualHands ? rightHand : null, now);
       if (dualHands) {
-        const cx = (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5;
-        const cy = (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5;
         ctx.save();
         ctx.strokeStyle = 'rgba(255,255,255,0.3)';
         ctx.lineWidth = 1;
-        ctx.strokeRect(cx - 32, cy - 18, 64, 36);
+        ctx.strokeRect(fxAnchorX - 32, fxAnchorY - 18, 64, 36);
         ctx.restore();
       }
     } else if (effect.key === 'kaleido') {
@@ -3002,11 +3090,8 @@ a, button { cursor: inherit; }
     } else if (effect.key === 'wire') {
       drawStudioWireCrystal(primaryHand, leftHand, rightHand, now);
     } else {
-      const cx = dualHands ? (getHandCenter(leftHand).x + getHandCenter(rightHand).x) * 0.5 : anchor.x;
-      const cy = dualHands
-        ? (getHandCenter(leftHand).y + getHandCenter(rightHand).y) * 0.5 - palmSpan * 0.7
-        : anchor.y - palmSpan * 1.02;
-      drawPrismCrystal(cx, cy, palmSpan * (dualHands ? 0.88 : 0.94), now, 0.92);
+      // Prism crystal — enlarged to reference scale (frame 5 is a huge gem)
+      drawPrismCrystal(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.65 : 1.85), now, 1.0);
     }
 
     if (dualHands) drawPalmConnector(leftHand, rightHand, 0.42);
