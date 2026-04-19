@@ -3052,11 +3052,22 @@ a, button { cursor: inherit; }
       const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
       camera.position.set(0, 0, 4.8);
 
-      // Env map (for refraction / reflection)
-      const envCanvas = buildEquirectEnvCanvas(768);
-      const envTex = new THREE.CanvasTexture(envCanvas);
-      envTex.mapping = THREE.EquirectangularReflectionMapping;
-      if (THREE.sRGBEncoding !== undefined) envTex.encoding = THREE.sRGBEncoding;
+      // Live video env map — crystal refracts the user's actual face feed,
+      // matching the TouchDesigner "Depth Pixel Refractions" look.
+      let envTex;
+      try {
+        envTex = new THREE.VideoTexture(vid);
+        envTex.mapping = THREE.EquirectangularReflectionMapping;
+        envTex.minFilter = THREE.LinearFilter;
+        envTex.magFilter = THREE.LinearFilter;
+        if (THREE.sRGBEncoding !== undefined) envTex.encoding = THREE.sRGBEncoding;
+      } catch (err) {
+        // Fallback to procedural gradient if VideoTexture init fails
+        const envCanvas = buildEquirectEnvCanvas(768);
+        envTex = new THREE.CanvasTexture(envCanvas);
+        envTex.mapping = THREE.EquirectangularReflectionMapping;
+        if (THREE.sRGBEncoding !== undefined) envTex.encoding = THREE.sRGBEncoding;
+      }
       scene.environment = envTex;
 
       // Lighting — key + rim + fill for specular punch
@@ -3071,20 +3082,22 @@ a, button { cursor: inherit; }
       fillL.position.set(0, -3, 2);
       scene.add(fillL);
 
-      // DEPTH: refractive icosahedron
-      const crystalGeo = new THREE.IcosahedronGeometry(1, 0);
+      // DEPTH: angular cut-diamond geometry (octahedron subdivided for
+      // hexagonal-bipyramid look matching reference frame 2)
+      const crystalGeo = new THREE.OctahedronGeometry(1, 1);
       const crystalMat = new THREE.MeshPhysicalMaterial({
-        color: 0xd4f2ff,
+        color: 0xffffff,
         metalness: 0.0,
-        roughness: 0.04,
+        roughness: 0.02,
         transmission: 1.0,
-        thickness: 1.8,
-        ior: 1.85,
-        attenuationColor: 0xaae0ff,
-        attenuationDistance: 2.2,
+        thickness: 2.4,
+        ior: 1.9,
+        attenuationColor: 0xb0e4ff,
+        attenuationDistance: 3.0,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.02,
-        envMapIntensity: 1.6,
+        clearcoatRoughness: 0.01,
+        envMapIntensity: 2.2,
+        specularIntensity: 1.6,
         side: THREE.DoubleSide,
         transparent: true
       });
@@ -3418,13 +3431,13 @@ a, button { cursor: inherit; }
     } else if (effect.key === 'scan') {
       drawStudioScanBar(primaryHand, leftHand, rightHand, now);
     } else if (effect.key === 'frames' && dualHands) {
-      // Try real 3D nested cubes via Three.js; fallback to Canvas 2D frames
-      const boxSize = palmSpan * 2.4;
+      // Real 3D nested cubes via Three.js; normal blend so edges look clean
+      const handDist = dist(getHandCenter(leftHand), getHandCenter(rightHand));
+      const boxSize = Math.max(palmSpan * 3.2, handDist * 0.78);
       const boxCanvas = renderStudioThreeEffect('frames', boxSize, now);
       if (boxCanvas) {
-        const draw = boxSize * 2;
+        const draw = boxSize * 1.6;
         ctx.save();
-        ctx.globalCompositeOperation = 'screen';
         ctx.drawImage(boxCanvas, fxAnchorX - draw / 2, fxAnchorY - draw / 2, draw, draw);
         ctx.restore();
       } else {
@@ -3435,13 +3448,17 @@ a, button { cursor: inherit; }
     } else if (effect.key === 'portal') {
       drawStudioPortalCloud(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.75 : 1.95), now, 1.0);
     } else if (effect.key === 'depth') {
-      // Real refractive 3D icosahedron via Three.js — matches reference frame 2
-      const depthSize = palmSpan * (dualHands ? 2.15 : 2.35);
+      // Huge face-covering refractive diamond — refracts the LIVE video through
+      // MeshPhysicalMaterial(transmission=1, ior=1.9) and compositing via normal
+      // blend so the refraction is believable (not washed-out "screen" blend).
+      const handDist = dualHands
+        ? dist(getHandCenter(leftHand), getHandCenter(rightHand))
+        : palmSpan * 2.4;
+      const depthSize = Math.max(palmSpan * 3.6, handDist * 0.82);
       const depthCanvas = renderStudioThreeEffect('depth', depthSize, now);
       if (depthCanvas) {
-        const draw = depthSize * 2;
+        const draw = depthSize * 1.8;
         ctx.save();
-        ctx.globalCompositeOperation = 'screen';
         ctx.drawImage(depthCanvas, fxAnchorX - draw / 2, fxAnchorY - draw / 2, draw, draw);
         ctx.restore();
       } else {
