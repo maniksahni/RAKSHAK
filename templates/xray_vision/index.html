@@ -2315,9 +2315,11 @@ a, button { cursor: inherit; }
 
   const STUDIO_DUAL_SEQUENCE = [
     { key: 'ribbon',  hudLabel: 'RIBBON',  duration: 1540 },
+    { key: 'frames',  hudLabel: 'BOX',     duration: 1460 },
     { key: 'torus',   hudLabel: 'TORUS',   duration: 1500 },
     { key: 'scan',    hudLabel: 'SCAN',    duration: 1360 },
     { key: 'portal',  hudLabel: 'PORTAL',  duration: 1560 },
+    { key: 'depth',   hudLabel: 'DEPTH',   duration: 1620 },
     { key: 'hud',     hudLabel: 'MESH',    duration: 1380 },
     { key: 'prism',   hudLabel: 'PRISM',   duration: 1560 },
     { key: 'kaleido', hudLabel: 'KALEIDO', duration: 1540 },
@@ -2328,6 +2330,7 @@ a, button { cursor: inherit; }
     { key: 'torus',   hudLabel: 'TORUS',   duration: 1600 },
     { key: 'scan',    hudLabel: 'SCAN',    duration: 1360 },
     { key: 'portal',  hudLabel: 'PORTAL',  duration: 1560 },
+    { key: 'depth',   hudLabel: 'DEPTH',   duration: 1640 },
     { key: 'prism',   hudLabel: 'PRISM',   duration: 1640 },
     { key: 'kaleido', hudLabel: 'KALEIDO', duration: 1500 },
     { key: 'wire',    hudLabel: 'WIRE',    duration: 1480 }
@@ -2695,12 +2698,17 @@ a, button { cursor: inherit; }
     ctx.translate(midX, midY);
     ctx.rotate(angle);
     ctx.globalCompositeOperation = 'screen';
+    const hueBase = (now * 0.08) % 360;   // slow rainbow rotation
     for (let i = 0; i < strips; i++) {
       const sy = Math.floor((i / strips) * sampleH);
       const sh = Math.max(2, Math.ceil(sampleH / strips));
       const drift = Math.sin(now * 0.004 + i * 0.72) * (14 + avgPalm * 0.08);
       const sway = Math.cos(now * 0.0032 + i * 0.65) * 4.2;
       const y = -height * 0.5 + i * destStripH + sway;
+
+      /* Reference "Bloody Fabric" look: each strip gets a different
+         hue, tinted via a color wash blended on top. */
+      const stripHue = (hueBase + i * (360 / strips)) % 360;
 
       ctx.globalAlpha = 0.34;
       ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift, y, width, destStripH + 1);
@@ -2713,8 +2721,15 @@ a, button { cursor: inherit; }
         ctx.drawImage(studioFxCv, 0, sy, sampleW, sh, -width * 0.5 + drift - 4, y, width, destStripH + 1);
       }
 
+      /* Rainbow chromatic wash on top of each strip — screen-blended so
+         bright pixels pick up the hue (fabric-dye effect). */
+      ctx.globalAlpha = 0.32;
+      ctx.fillStyle = `hsl(${stripHue}, 95%, 58%)`;
+      ctx.fillRect(-width * 0.5 + drift, y, width, destStripH + 1);
+
       if (i % 2 === 0) {
-        ctx.strokeStyle = i % 4 === 0 ? 'rgba(255,255,255,0.22)' : 'rgba(80,255,160,0.2)';
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = `hsla(${(stripHue + 180) % 360}, 100%, 70%, 0.38)`;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(-width * 0.48, y + destStripH * 0.5);
@@ -2725,11 +2740,12 @@ a, button { cursor: inherit; }
     ctx.restore();
   }
 
-  function drawStudioRecursiveFrames(leftHand, rightHand, now) {
+  function drawStudioRecursiveFrames(leftHand, rightHand, now, anchorX, anchorY) {
     const leftCenter = getHandCenter(leftHand);
     const rightCenter = getHandCenter(rightHand);
-    const midX = (leftCenter.x + rightCenter.x) * 0.5;
-    const midY = (leftCenter.y + rightCenter.y) * 0.5;
+    // Prefer face-level anchor when provided (matches reference "Box Within Box" position)
+    const midX = (typeof anchorX === 'number') ? anchorX : (leftCenter.x + rightCenter.x) * 0.5;
+    const midY = (typeof anchorY === 'number') ? anchorY : (leftCenter.y + rightCenter.y) * 0.5;
     const handDistance = dist(leftCenter, rightCenter);
     const angle = Math.atan2(rightCenter.y - leftCenter.y, rightCenter.x - leftCenter.x);
     const sampleW = perfTier === 'low' ? 180 : (perfTier === 'medium' ? 220 : 280);
@@ -3033,6 +3049,122 @@ a, button { cursor: inherit; }
     ctx.restore();
   }
 
+  /* Reference frame 2: huge cyan/white translucent gem at face level
+     ("Depth Pixel Refractions"). Icy glass look — low-saturation fills,
+     bright specular highlights, subtle chromatic edge ghosts. */
+  function drawStudioDepthCrystal(cx, cy, size, now, intensity = 1) {
+    if (intensity <= 0.02) return;
+    const ax = now * 0.00042;
+    const ay = now * 0.00068;
+    const az = now * 0.00030;
+    const sinX = Math.sin(ax), cosX = Math.cos(ax);
+    const sinY = Math.sin(ay), cosY = Math.cos(ay);
+    const sinZ = Math.sin(az), cosZ = Math.cos(az);
+
+    const project = ([x, y, z]) => {
+      let x1 = x * cosY + z * sinY;
+      let z1 = -x * sinY + z * cosY;
+      let y2 = y * cosX - z1 * sinX;
+      let z2 = y * sinX + z1 * cosX;
+      let x3 = x1 * cosZ - y2 * sinZ;
+      let y3 = x1 * sinZ + y2 * cosZ;
+      const persp = 1 / (1 + z2 * 0.26);
+      return { x: cx + x3 * size * persp, y: cy + y3 * size * persp, z: z2, persp };
+    };
+
+    const pts = PRISM_VERTS.map(project);
+    const faces = PRISM_FACES.map(f => ({
+      idx: f,
+      z: (pts[f[0]].z + pts[f[1]].z + pts[f[2]].z) / 3
+    })).sort((a, b) => a.z - b.z);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+
+    // Giant icy halo
+    const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 2.1);
+    halo.addColorStop(0,    `rgba(255,255,255,${0.38 * intensity})`);
+    halo.addColorStop(0.28, `rgba(180,235,255,${0.26 * intensity})`);
+    halo.addColorStop(0.65, `rgba(100,180,230,${0.12 * intensity})`);
+    halo.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(cx, cy, size * 2.1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Faces — nearly monochrome ice, with brightness driven by depth
+    faces.forEach((face) => {
+      const [a, b, c] = face.idx;
+      const depthLight = 0.22 + Math.max(0, -face.z) * 0.55;
+      const alpha = (0.14 + depthLight * 0.35) * intensity;
+      const bright = Math.min(255, Math.round(210 + depthLight * 45));
+      const fillStyle = `rgba(${bright - 40},${bright - 10},${bright},${alpha.toFixed(3)})`;
+      ctx.fillStyle = fillStyle;
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.lineTo(pts[c].x, pts[c].y);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // Inner white specular highlight edges (makes it look cut)
+    ctx.strokeStyle = `rgba(255,255,255,${0.55 * intensity})`;
+    ctx.lineWidth = 1.1 * intensity;
+    ctx.shadowColor = 'rgba(200,240,255,0.9)';
+    ctx.shadowBlur = 12 * intensity;
+    for (const [a, b] of PRISM_EDGES) {
+      ctx.beginPath();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
+    }
+
+    // Subtle chromatic ghost (cyan + magenta split, small offset)
+    const ghosts = [
+      { color: `rgba(120,230,255,${0.42 * intensity})`, dx:  2.2, dy:  0   },
+      { color: `rgba(255,180,230,${0.32 * intensity})`, dx: -2.2, dy:  0.6 }
+    ];
+    for (const g of ghosts) {
+      ctx.strokeStyle = g.color;
+      ctx.shadowColor = g.color;
+      ctx.shadowBlur = 10 * intensity;
+      for (const [a, b] of PRISM_EDGES) {
+        ctx.beginPath();
+        ctx.moveTo(pts[a].x + g.dx, pts[a].y + g.dy);
+        ctx.lineTo(pts[b].x + g.dx, pts[b].y + g.dy);
+        ctx.stroke();
+      }
+    }
+
+    // Vertex sparkles — bigger, brighter than standard prism
+    ctx.shadowBlur = 14 * intensity;
+    ctx.shadowColor = 'rgba(255,255,255,1)';
+    ctx.fillStyle = `rgba(255,255,255,${0.95 * intensity})`;
+    for (const pt of pts) {
+      const r = 2.4 * intensity + Math.max(0, -pt.z) * 1.6;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Inner caustic rays — thin white lines from nearest vertex outward
+    const frontVert = pts.reduce((a, b) => (a.z < b.z ? a : b));
+    ctx.strokeStyle = `rgba(255,255,255,${0.25 * intensity})`;
+    ctx.lineWidth = 0.8;
+    ctx.shadowBlur = 4 * intensity;
+    for (let i = 0; i < 5; i++) {
+      const ang = (now * 0.0008 + i * (Math.PI * 2 / 5));
+      ctx.beginPath();
+      ctx.moveTo(frontVert.x, frontVert.y);
+      ctx.lineTo(frontVert.x + Math.cos(ang) * size * 1.6,
+                 frontVert.y + Math.sin(ang) * size * 1.6);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
   function drawStudioScene(primaryHand, leftHand, rightHand, now, perf) {
     if (!primaryHand) return;
     const handsCount = currentHands ? currentHands.length : 0;
@@ -3071,11 +3203,14 @@ a, button { cursor: inherit; }
     } else if (effect.key === 'scan') {
       drawStudioScanBar(primaryHand, leftHand, rightHand, now);
     } else if (effect.key === 'frames' && dualHands) {
-      drawStudioRecursiveFrames(leftHand, rightHand, now);
+      drawStudioRecursiveFrames(leftHand, rightHand, now, fxAnchorX, fxAnchorY);
     } else if (effect.key === 'torus') {
       drawChromeTorus(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.85 : 2.05), now, 1.0);
     } else if (effect.key === 'portal') {
       drawStudioPortalCloud(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.75 : 1.95), now, 1.0);
+    } else if (effect.key === 'depth') {
+      // Huge icy "Depth Pixel Refractions" gem — matches reference frame 2
+      drawStudioDepthCrystal(fxAnchorX, fxAnchorY, palmSpan * (dualHands ? 1.95 : 2.15), now, 1.0);
     } else if (effect.key === 'hud') {
       drawStudioHudPanels(primaryHand, dualHands ? rightHand : null, now);
       if (dualHands) {
