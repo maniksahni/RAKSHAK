@@ -1,4 +1,5 @@
 from flask import (Blueprint, render_template, request, redirect,
+                   current_app,
                    url_for, flash, jsonify)
 from flask_login import logout_user, login_required, current_user
 from models import query_db, log_audit
@@ -37,6 +38,34 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
     return render_template('auth/login.html')
+
+@auth_bp.route('/dev-login/<role>')
+def dev_login(role):
+    if not (current_app.debug or current_app.config.get('ENV') == 'development'
+            or current_app.config.get('ALLOW_DEV_LOGIN')):
+        return "Not found", 404
+
+    from models import User
+    from flask_login import login_user
+    next_url = request.args.get('next', '').strip()
+    if not next_url.startswith('/'):
+        next_url = ''
+    if role == 'admin':
+        # Admin is usually ID 1 (seeded in DB)
+        u = User.get_by_id(1)
+        if u:
+            login_user(u)
+            return redirect(next_url or url_for('admin.dashboard'))
+    elif role == 'user':
+        # Try to find a regular user or create one
+        u = User.get_by_id(2)
+        if not u:
+            # Let's fallback to 1 if 2 doesn't exist
+            u = User.get_by_id(1)
+        if u:
+            login_user(u)
+            return redirect(next_url or url_for('dashboard.index'))
+    return "User not found", 404
 
 
 # ── Logout ────────────────────────────────────────────────────────────────────

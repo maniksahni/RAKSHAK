@@ -5,6 +5,7 @@ Used by both the AI engine route (request context) and the APScheduler backgroun
 import logging
 from models import query_db, log_audit
 from socket_events import emit_sos_alert
+from modules.sos.notifiers import dispatch_sos_notifications, summarize_delivery
 
 log = logging.getLogger('rakshak')
 
@@ -52,7 +53,7 @@ def trigger_auto_sos(user_id, socketio):
 
         # Notify trusted contacts
         contacts = query_db(
-            'SELECT contact_email FROM trusted_contacts WHERE user_id=%s', (user_id,)
+            'SELECT * FROM trusted_contacts WHERE user_id=%s', (user_id,)
         )
         contact_user_ids = []
         for c in (contacts or []):
@@ -64,15 +65,21 @@ def trigger_auto_sos(user_id, socketio):
         user_info = query_db('SELECT full_name FROM users WHERE id=%s',
                              (user_id,), one=True)
         name = user_info['full_name'] if user_info else 'User'
-
-        emit_sos_alert(socketio, {
+        alert_payload = {
             'id': alert_id, 'user_id': user_id,
             'latitude': lat, 'longitude': lng,
             'trigger_type': 'auto_ai',
             'message': f'AUTO SOS: {name} stopped responding'
-        }, contact_user_ids, user_id)
+        }
 
-        log.warning(f'Auto-SOS fired for user {user_id} (alert #{alert_id})')
+        delivery = summarize_delivery(
+            dispatch_sos_notifications(user_info or {'full_name': name},
+                                       contacts, alert_payload)
+        )
+
+        emit_sos_alert(socketio, alert_payload, contact_user_ids, user_id)
+
+        log.warning(f'Auto-SOS fired for user {user_id} (alert #{alert_id}); delivery={delivery}')
 
     except Exception as e:
         log.error(f'Auto-SOS failed for user {user_id}: {e}')
