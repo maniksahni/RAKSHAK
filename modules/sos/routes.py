@@ -6,6 +6,7 @@ from models import query_db, log_audit
 from socket_events import emit_sos_alert
 from pdf_reports import generate_sos_report
 from healer import validate_coords, validate_battery, sanitize_str
+from modules.sos.notifiers import dispatch_sos_notifications, summarize_delivery
 from datetime import datetime
 
 log = logging.getLogger('rakshak')
@@ -73,6 +74,7 @@ def index():
 
 
 # ── Trigger SOS ───────────────────────────────────────────────────────────────
+@sos_bp.route('/broadcast', methods=['POST'])
 @sos_bp.route('/trigger', methods=['POST'])
 @login_required
 def trigger_sos():
@@ -154,17 +156,41 @@ def trigger_sos():
         alert_dict['created_at'] = alert_dict.get('created_at', datetime.now()).isoformat() \
             if hasattr(alert_dict.get('created_at'), 'isoformat') else str(alert_dict.get('created_at', ''))
 
+        delivery_results = dispatch_sos_notifications(current_user, contacts, alert_dict)
+        delivery = summarize_delivery(delivery_results)
+
         emit_sos_alert(get_socketio(), alert_dict, contact_user_ids, current_user.id)
         log_audit(current_user.id, 'sos_triggered', 'sos_alerts', alert_id,
-                  new_value={'lat': lat, 'lng': lng, 'type': trigger_type},
+                  new_value={'lat': lat, 'lng': lng, 'type': trigger_type,
+                             'delivery': delivery},
                   ip_address=request.remote_addr)
 
         return jsonify(success=True, alert_id=alert_id,
-                       message='SOS Alert sent to your trusted contacts!')
+                       message='SOS Alert sent to your trusted contacts!',
+                       delivery=delivery)
 
     except Exception as e:
         log.error(f'SOS trigger failed for user {current_user.id}: {e}')
         return jsonify(success=False, error='SOS failed. Please try again.'), 500
+
+
+@sos_bp.route('/notification-preview')
+@login_required
+def notification_preview():
+    """Preview free SOS notification delivery without creating an alert."""
+    contacts = query_db(
+        'SELECT * FROM trusted_contacts WHERE user_id=%s ORDER BY created_at ASC',
+        (current_user.id,)
+    )
+    preview_alert = {
+        'trigger_type': 'preview',
+        'address': 'Preview location',
+        'message': 'This is a RAKSHAK notification preview. No SOS was triggered.',
+    }
+    delivery = summarize_delivery(
+        dispatch_sos_notifications(current_user, contacts, preview_alert)
+    )
+    return jsonify(success=True, delivery=delivery)
 
 
 # ── Alert History ─────────────────────────────────────────────────────────────
