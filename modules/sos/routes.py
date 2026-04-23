@@ -159,6 +159,22 @@ def trigger_sos():
         delivery_results = dispatch_sos_notifications(current_user, contacts, alert_dict)
         delivery = summarize_delivery(delivery_results)
 
+        if delivery.get('auto_delivered', 0) > 0:
+            message_text = (
+                f"SOS alert created. Automatic delivery reached "
+                f"{delivery.get('auto_delivered', 0)} channel(s)."
+            )
+        elif delivery.get('manual_links_generated', 0) > 0:
+            message_text = (
+                "SOS alert created, but automatic email/SMS did not send. "
+                "Check trusted contact email settings or SMTP."
+            )
+        else:
+            message_text = (
+                "SOS alert created, but no notification channel delivered. "
+                "Check trusted contacts and SOS channel settings."
+            )
+
         emit_sos_alert(get_socketio(), alert_dict, contact_user_ids, current_user.id)
         log_audit(current_user.id, 'sos_triggered', 'sos_alerts', alert_id,
                   new_value={'lat': lat, 'lng': lng, 'type': trigger_type,
@@ -166,7 +182,7 @@ def trigger_sos():
                   ip_address=request.remote_addr)
 
         return jsonify(success=True, alert_id=alert_id,
-                       message='SOS Alert sent to your trusted contacts!',
+                       message=message_text,
                        delivery=delivery)
 
     except Exception as e:

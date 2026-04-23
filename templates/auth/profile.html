@@ -409,7 +409,16 @@
             <i class="bi bi-shield-check"></i> {{ contacts|length }}/5
           </span>
         </div>
-        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">These people will receive SOS alerts through their trusted email, plus phone-based quick share links.</p>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.45rem;">These people will receive SOS alerts through their trusted email, plus phone-based quick share links.</p>
+        <p style="font-size:0.72rem;color:var(--accent-amber);margin-bottom:0.9rem;">
+          <i class="bi bi-info-circle me-1"></i>
+          SOS email goes to each trusted contact's email, not your own login email.
+        </p>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button type="button" class="btn-rakshak" style="padding:8px 14px;font-size:0.76rem;" onclick="previewSosDelivery()">
+            Test Trusted Delivery <i class="bi bi-broadcast ms-1"></i>
+          </button>
+        </div>
 
         <div id="contacts-list" style="flex:1;">
           {% if contacts %}
@@ -701,6 +710,37 @@ async function deleteContact(id) {
     if (el) { el.style.transition='all .3s'; el.style.opacity='0'; el.style.transform='scale(0.9)'; setTimeout(()=>el.remove(),300); }
     showToast('Contact removed.', 'info');
   } else showToast(data.error||'Failed', 'error');
+}
+
+/* ── SOS Delivery Preview ── */
+async function previewSosDelivery() {
+  showLoading('Testing trusted SOS delivery...');
+  try {
+    const res = await fetch('/sos/notification-preview');
+    const data = await res.json();
+    hideLoading();
+    if (!data.success) {
+      showToast(data.error || 'Preview failed.', 'error');
+      return;
+    }
+    const delivery = data.delivery || {};
+    if ((delivery.email_sent || 0) > 0) {
+      showToast(`Trusted email sent to ${delivery.email_sent} contact(s).`, 'success', 7000);
+    } else if ((delivery.email_not_configured || 0) > 0) {
+      showToast('SMTP not configured on this app instance.', 'warning', 8000);
+    } else if ((delivery.email_disabled || 0) > 0) {
+      showToast('Email Alert is turned off for one or more trusted contacts.', 'warning', 8000);
+    } else if ((delivery.email_failed || 0) > 0) {
+      showToast('Trusted email delivery failed. Recheck the contact email.', 'warning', 8000);
+    } else if ((delivery.manual_links_generated || 0) > 0) {
+      showToast('Only phone/WhatsApp share links were generated. No automatic email was sent.', 'warning', 8000);
+    } else {
+      showToast('No trusted delivery channel is active right now.', 'warning', 8000);
+    }
+  } catch (err) {
+    hideLoading();
+    showToast('Preview failed. Try again.', 'error');
+  }
 }
 
 /* ── Safety Score Ring Animation ── */
