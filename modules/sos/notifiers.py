@@ -178,11 +178,50 @@ def dispatch_sos_notifications(user, contacts, alert):
 
 
 def summarize_delivery(results):
+    email_sent = 0
+    sms_sent = 0
+    whatsapp_sent = 0
+    manual_links_generated = 0
+    email_disabled = 0
+    email_not_configured = 0
+    email_failed = 0
+
+    for r in results:
+        channel = r.get('channel')
+        success = bool(r.get('success'))
+        configured = bool(r.get('configured'))
+        detail = (r.get('detail') or '').strip().lower()
+
+        if channel == 'email':
+            if success:
+                email_sent += 1
+            elif detail == 'disabled for contact':
+                email_disabled += 1
+            elif not configured:
+                email_not_configured += 1
+            else:
+                email_failed += 1
+        elif channel == 'sms' and success:
+            sms_sent += 1
+        elif channel == 'whatsapp' and success:
+            whatsapp_sent += 1
+        elif channel == 'free_share_links' and success:
+            manual_links_generated += 1
+
+    auto_delivered = email_sent + sms_sent + whatsapp_sent
     summary = {
         'attempted': len(results),
         'sent': sum(1 for r in results if r.get('success')),
         'configured': sum(1 for r in results if r.get('configured')),
         'not_configured': sum(1 for r in results if not r.get('configured')),
+        'auto_delivered': auto_delivered,
+        'email_sent': email_sent,
+        'sms_sent': sms_sent,
+        'whatsapp_sent': whatsapp_sent,
+        'manual_links_generated': manual_links_generated,
+        'email_disabled': email_disabled,
+        'email_not_configured': email_not_configured,
+        'email_failed': email_failed,
         'channels': results,
     }
     return summary
