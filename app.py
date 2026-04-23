@@ -410,6 +410,12 @@ def _auto_migrate_guardian(app):
         ('notify_email', 'ALTER TABLE trusted_contacts ADD COLUMN notify_email BOOLEAN DEFAULT TRUE'),
         ('notify_phone', 'ALTER TABLE trusted_contacts ADD COLUMN notify_phone BOOLEAN DEFAULT TRUE'),
     ]
+    SOS_COLUMN_MIGRATIONS = [
+        ('sos_lat_nullable', "ALTER TABLE sos_alerts MODIFY COLUMN latitude DECIMAL(10,8) NULL DEFAULT NULL"),
+        ('sos_lng_nullable', "ALTER TABLE sos_alerts MODIFY COLUMN longitude DECIMAL(11,8) NULL DEFAULT NULL"),
+        ('sos_trigger_type_varchar', "ALTER TABLE sos_alerts MODIFY COLUMN trigger_type VARCHAR(32) DEFAULT 'manual'"),
+        ('sos_status_varchar', "ALTER TABLE sos_alerts MODIFY COLUMN status VARCHAR(20) DEFAULT 'active'"),
+    ]
     TABLE_MIGRATIONS = [
         """CREATE TABLE IF NOT EXISTS ai_chat_logs (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -452,6 +458,14 @@ def _auto_migrate_guardian(app):
                     pass
                 else:
                     log.warning(f'Guardian migration {col_name}: {e}')
+
+        # SOS table compatibility migrations
+        for migration_name, sql in SOS_COLUMN_MIGRATIONS:
+            try:
+                cursor.execute(sql)
+                log.info(f'SOS migration applied: {migration_name}')
+            except mysql.connector.Error as e:
+                log.warning(f'SOS migration {migration_name}: {e}')
 
         # Table migrations
         for sql in TABLE_MIGRATIONS:

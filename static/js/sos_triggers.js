@@ -79,12 +79,25 @@
       if (typeof CSRF_TOKEN !== 'undefined') {
         headers['X-CSRFToken'] = CSRF_TOKEN;
       }
+      headers['Accept'] = 'application/json';
       fetch('/sos/trigger', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(payload)
       })
-        .then(function (r) { return r.json(); })
+        .then(async function (r) {
+          var raw = await r.text();
+          var d = {};
+          try {
+            d = raw ? JSON.parse(raw) : {};
+          } catch (_) {
+            throw new Error(raw || ('HTTP ' + r.status));
+          }
+          if (!r.ok) {
+            throw new Error(d.error || d.message || ('HTTP ' + r.status));
+          }
+          return d;
+        })
         .then(function (d) {
           if (d.success) {
             if (typeof showToast === 'function') {
@@ -95,8 +108,10 @@
             if (typeof showToast === 'function') showToast(d.error || 'SOS failed', 'error');
           }
         })
-        .catch(function () {
-          if (typeof showToast === 'function') showToast('Network error sending SOS', 'error');
+        .catch(function (err) {
+          if (typeof showToast === 'function') {
+            showToast((err && err.message) ? err.message : 'SOS failed', 'error', 8000);
+          }
         });
     }
 

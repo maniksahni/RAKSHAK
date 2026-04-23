@@ -47,10 +47,10 @@ SCHEMA_SQL = [
     """CREATE TABLE IF NOT EXISTS sos_alerts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    latitude DECIMAL(10, 8) NOT NULL,
-    longitude DECIMAL(11, 8) NOT NULL,
+    latitude DECIMAL(10, 8) DEFAULT NULL,
+    longitude DECIMAL(11, 8) DEFAULT NULL,
     address TEXT DEFAULT NULL,
-    trigger_type VARCHAR(20) DEFAULT 'manual',
+    trigger_type VARCHAR(32) DEFAULT 'manual',
     status VARCHAR(20) DEFAULT 'active',
     message TEXT DEFAULT NULL,
     battery_level INT DEFAULT NULL,
