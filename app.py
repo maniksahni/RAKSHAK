@@ -345,9 +345,11 @@ def _auto_init_db(app):
     for attempt in range(10):
         try:
             with app.app_context():
-                from models import query_db
+                from models import close_db, query_db
                 query_db("SELECT 1 FROM users LIMIT 1")
                 log.info('DB tables already exist — skipping init.')
+                close_db(None)
+                _auto_migrate_guardian(app)
                 return
         except Exception as e:
             err = str(e)
@@ -397,12 +399,16 @@ def _auto_init_db(app):
 
 def _auto_migrate_guardian(app):
     """Add Guardian Angel columns & ai_chat_logs table if they don't exist."""
-    COLUMN_MIGRATIONS = [
+    USER_COLUMN_MIGRATIONS = [
         ('guardian_active',    'ALTER TABLE users ADD COLUMN guardian_active BOOLEAN DEFAULT FALSE'),
         ('guardian_lat',       'ALTER TABLE users ADD COLUMN guardian_lat DECIMAL(10,8) DEFAULT NULL'),
         ('guardian_lng',       'ALTER TABLE users ADD COLUMN guardian_lng DECIMAL(11,8) DEFAULT NULL'),
         ('guardian_radius_km', 'ALTER TABLE users ADD COLUMN guardian_radius_km DECIMAL(4,2) DEFAULT 1.0'),
         ('guardian_since',     'ALTER TABLE users ADD COLUMN guardian_since TIMESTAMP NULL DEFAULT NULL'),
+    ]
+    CONTACT_COLUMN_MIGRATIONS = [
+        ('notify_email', 'ALTER TABLE trusted_contacts ADD COLUMN notify_email BOOLEAN DEFAULT TRUE'),
+        ('notify_phone', 'ALTER TABLE trusted_contacts ADD COLUMN notify_phone BOOLEAN DEFAULT TRUE'),
     ]
     TABLE_MIGRATIONS = [
         """CREATE TABLE IF NOT EXISTS ai_chat_logs (
@@ -437,7 +443,7 @@ def _auto_migrate_guardian(app):
         cursor = conn.cursor()
 
         # Column migrations (skip duplicates)
-        for col_name, sql in COLUMN_MIGRATIONS:
+        for col_name, sql in USER_COLUMN_MIGRATIONS + CONTACT_COLUMN_MIGRATIONS:
             try:
                 cursor.execute(sql)
                 log.info(f'Guardian migration: added column {col_name}')

@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS trusted_contacts (
     contact_name VARCHAR(100) NOT NULL,
     contact_email VARCHAR(150) NOT NULL,
     contact_phone VARCHAR(20) NOT NULL,
+    notify_email BOOLEAN DEFAULT TRUE,
+    notify_phone BOOLEAN DEFAULT TRUE,
     relationship VARCHAR(50) DEFAULT 'Friend',
     is_verified BOOLEAN DEFAULT FALSE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

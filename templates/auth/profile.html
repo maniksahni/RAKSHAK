@@ -179,6 +179,16 @@
   display:flex;align-items:center;gap:6px;margin-top:3px;font-size:0.66rem;color:var(--text-muted);font-family:'Courier New',monospace;letter-spacing:0.03em;word-break:break-all;
 }
 .contact-meta i { color:rgba(139,92,246,0.8);font-size:0.68rem;flex:0 0 auto; }
+.contact-channel-row { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px; }
+.contact-channel-pill {
+  display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 8px;font-size:0.52rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.42);
+}
+.contact-channel-pill.active.email { border-color:rgba(139,92,246,0.45);background:rgba(139,92,246,0.13);color:#c4b5fd; }
+.contact-channel-pill.active.phone { border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.1);color:#86efac; }
+.sos-channel-box {
+  display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.1);font-size:0.72rem;color:var(--text-secondary);font-weight:800;letter-spacing:0.05em;text-transform:uppercase;
+}
+.sos-channel-box input { accent-color:#8b5cf6; }
 .contact-relationship { background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6); }
 
 /* Toggle Fix */
@@ -406,6 +416,8 @@
           <div class="contact-grid">
             {% for c in contacts %}
             <div class="contact-card" id="contact-{{ c.id }}">
+              {% set email_on = c.get('notify_email', true) %}
+              {% set phone_on = c.get('notify_phone', true) %}
               <button onclick="deleteContact({{ c.id }})" class="contact-delete" title="Remove">
                 <i class="bi bi-x-lg"></i>
               </button>
@@ -416,6 +428,14 @@
                   <div class="contact-meta"><i class="bi bi-envelope-at"></i><span>{{ c.contact_email }}</span></div>
                   <div class="contact-meta"><i class="bi bi-telephone"></i><span>{{ c.contact_phone }}</span></div>
                 </div>
+              </div>
+              <div class="contact-channel-row">
+                <span class="contact-channel-pill {% if email_on %}active email{% endif %}">
+                  <i class="bi bi-envelope-paper-heart"></i> Email {% if email_on %}On{% else %}Off{% endif %}
+                </span>
+                <span class="contact-channel-pill {% if phone_on %}active phone{% endif %}">
+                  <i class="bi bi-phone-vibrate"></i> Phone {% if phone_on %}On{% else %}Off{% endif %}
+                </span>
               </div>
               <div class="d-flex align-items-center justify-content-between">
                 <span class="contact-relationship">{{ c.relationship }}</span>
@@ -453,6 +473,19 @@
                 <select name="relationship" class="form-control form-control-dark form-select-dark" style="appearance:auto;">
                   <option>Friend</option><option>Family</option><option>Colleague</option><option>Neighbour</option><option>Partner</option>
                 </select>
+              </div>
+              <div class="col-12">
+                <div style="font-size:0.62rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin:4px 0 6px;">Select SOS channels for this contact</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <label class="sos-channel-box">
+                    <input type="checkbox" name="notify_email" value="1" checked>
+                    <i class="bi bi-envelope-at"></i> Email Alert
+                  </label>
+                  <label class="sos-channel-box">
+                    <input type="checkbox" name="notify_phone" value="1" checked>
+                    <i class="bi bi-phone-vibrate"></i> Phone / WhatsApp / SMS
+                  </label>
+                </div>
               </div>
               <div class="col-12">
                 <button type="submit" class="btn-rakshak w-100" style="padding:10px 20px;font-size:0.9rem;">
@@ -641,6 +674,12 @@ document.getElementById('profile-form').addEventListener('submit', async functio
 async function addContact(e) {
   e.preventDefault();
   const form = document.getElementById('contact-form');
+  const emailChannel = form.querySelector('input[name="notify_email"]')?.checked;
+  const phoneChannel = form.querySelector('input[name="notify_phone"]')?.checked;
+  if (!emailChannel && !phoneChannel) {
+    showToast('Select Email Alert, Phone/SMS, or both.', 'error');
+    return;
+  }
   const fd = new FormData(form);
   const res = await fetch('/auth/contacts/add', {method:'POST',body:fd});
   const data = await res.json();
