@@ -155,11 +155,30 @@
     }
 
     function submitSOS(payload, modeLabel) {
+      const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      if (typeof CSRF_TOKEN !== 'undefined') {
+        headers['X-CSRFToken'] = CSRF_TOKEN;
+      }
       fetch('/sos/trigger', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: JSON.stringify(payload)
-      }).then(r => r.json()).then(d => {
+      }).then(async (r) => {
+        const raw = await r.text();
+        let d = {};
+        try {
+          d = raw ? JSON.parse(raw) : {};
+        } catch (_) {
+          throw new Error(raw || `HTTP ${r.status}`);
+        }
+        if (!r.ok) {
+          throw new Error(d.error || d.message || `HTTP ${r.status}`);
+        }
+        return d;
+      }).then(d => {
         finishLoading();
         if (d.success) {
           if (typeof showToast === 'function') {
@@ -191,9 +210,11 @@
             showToast(d.error || "SOS FAILED", "error");
           }
         }
-      }).catch(function() {
+      }).catch(function(err) {
         finishLoading();
-        if(typeof showToast === 'function') showToast("NETWORK FAILURE - RETRYING...", "error");
+        if (typeof showToast === 'function') {
+          showToast((err && err.message) ? err.message : "SOS FAILED", "error", 8000);
+        }
       });
     }
 

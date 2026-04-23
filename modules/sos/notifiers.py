@@ -185,6 +185,8 @@ def summarize_delivery(results):
     email_disabled = 0
     email_not_configured = 0
     email_failed = 0
+    first_email_error = ''
+    email_failure_contacts = []
 
     for r in results:
         channel = r.get('channel')
@@ -201,6 +203,10 @@ def summarize_delivery(results):
                 email_not_configured += 1
             else:
                 email_failed += 1
+                if not first_email_error:
+                    first_email_error = (r.get('detail') or '').strip()[:180]
+                if r.get('contact'):
+                    email_failure_contacts.append(r.get('contact'))
         elif channel == 'sms' and success:
             sms_sent += 1
         elif channel == 'whatsapp' and success:
@@ -222,6 +228,8 @@ def summarize_delivery(results):
         'email_disabled': email_disabled,
         'email_not_configured': email_not_configured,
         'email_failed': email_failed,
+        'first_email_error': first_email_error,
+        'email_failure_contacts': email_failure_contacts,
         'channels': results,
     }
     return summary
