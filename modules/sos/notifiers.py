@@ -23,6 +23,15 @@ def _contact_label(contact):
     return contact.get('contact_name') or contact.get('contact_email') or contact.get('contact_phone') or 'contact'
 
 
+def _pref_enabled(contact, key, default=True):
+    value = contact.get(key)
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return value.strip().lower() not in ('0', 'false', 'off', 'no', '')
+    return bool(value)
+
+
 def _safe_location(alert):
     lat = alert.get('latitude')
     lng = alert.get('longitude')
@@ -123,10 +132,10 @@ def _free_share_links(contact, subject, body):
     encoded_subject = quote(subject)
     links = {}
 
-    if phone:
+    if _pref_enabled(contact, 'notify_phone') and phone:
         links['whatsapp'] = f'https://wa.me/{phone.replace("+", "")}?text={encoded_body}'
         links['sms'] = f'sms:{phone}?&body={encoded_body}'
-    if email:
+    if _pref_enabled(contact, 'notify_email') and email:
         links['mailto'] = f'mailto:{email}?subject={encoded_subject}&body={encoded_body}'
 
     return {
@@ -157,9 +166,12 @@ def dispatch_sos_notifications(user, contacts, alert):
     results = []
     for contact in contacts:
         contact = dict(contact)
-        results.append(_send_email(contact, subject, body))
+        if _pref_enabled(contact, 'notify_email'):
+            results.append(_send_email(contact, subject, body))
+        else:
+            results.append({'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'disabled for contact'})
         results.append(_free_share_links(contact, subject, body))
-        if _configured('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN'):
+        if _pref_enabled(contact, 'notify_phone') and _configured('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN'):
             results.append(_send_twilio(contact, body, whatsapp=False))
             results.append(_send_twilio(contact, body, whatsapp=True))
     return results
