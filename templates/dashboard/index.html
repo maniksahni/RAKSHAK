@@ -1450,7 +1450,12 @@
               </div>
               <div style="min-width:0; overflow:hidden;flex:1;">
                 <div style="font-size:.85rem; font-weight:700; color:rgba(255,255,255,.9); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ contact.contact_name }}</div>
-                <div style="font-size:.62rem; color:rgba(255,255,255,.35); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;letter-spacing:.03em;">{{ contact.contact_email }}</div>
+                <div style="font-size:.62rem; color:rgba(255,255,255,.45); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;letter-spacing:.03em;">
+                  <i class="bi bi-envelope-at" style="color:#8b5cf6;font-size:.6rem;margin-right:4px;"></i>{{ contact.contact_email }}
+                </div>
+                <div style="font-size:.58rem; color:rgba(255,255,255,.28); font-family:'Courier New', monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;letter-spacing:.03em;margin-top:2px;">
+                  <i class="bi bi-telephone" style="color:#10b981;font-size:.55rem;margin-right:4px;"></i>{{ contact.contact_phone }}
+                </div>
               </div>
               <!-- Online dot -->
               <div style="margin-left:auto; flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;">
