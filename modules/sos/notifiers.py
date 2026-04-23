@@ -14,6 +14,14 @@ import requests
 
 log = logging.getLogger('rakshak')
 
+RESERVED_EMAIL_DOMAINS = {
+    'example.com',
+    'example.org',
+    'example.net',
+    'localhost',
+    'invalid',
+}
+
 
 def _configured(*keys):
     return all(os.environ.get(k) for k in keys)
@@ -21,6 +29,22 @@ def _configured(*keys):
 
 def _contact_label(contact):
     return contact.get('contact_name') or contact.get('contact_email') or contact.get('contact_phone') or 'contact'
+
+
+def _deliverable_email(email):
+    email = (email or '').strip().lower()
+    if '@' not in email:
+        return False
+    domain = email.rsplit('@', 1)[-1].rstrip('.')
+    if (
+        not domain
+        or domain in RESERVED_EMAIL_DOMAINS
+        or domain.endswith('.local')
+        or domain.endswith('.localhost')
+        or domain.endswith('.invalid')
+    ):
+        return False
+    return True
 
 
 def _pref_enabled(contact, key, default=True):
@@ -68,6 +92,14 @@ def _send_email(contact, subject, body):
     recipient = contact.get('contact_email')
     if not recipient:
         return {'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'missing contact email'}
+    if not _deliverable_email(recipient):
+        return {
+            'channel': 'email',
+            'contact': recipient,
+            'success': False,
+            'configured': True,
+            'detail': 'undeliverable contact email domain',
+        }
 
     try:
         msg = EmailMessage()

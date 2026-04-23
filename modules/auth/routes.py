@@ -8,6 +8,14 @@ import re
 
 auth_bp = Blueprint('auth', __name__)
 
+RESERVED_EMAIL_DOMAINS = {
+    'example.com',
+    'example.org',
+    'example.net',
+    'localhost',
+    'invalid',
+}
+
 
 def validate_phone(p):
     p = p.strip()
@@ -20,8 +28,19 @@ def validate_phone(p):
 
 
 def validate_email(e):
-    """Basic email format validation."""
-    return re.match(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$', e.strip())
+    """Validate format and reject reserved/local-only domains."""
+    email = (e or '').strip().lower()
+    if not re.match(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$', email):
+        return False
+    domain = email.rsplit('@', 1)[-1].rstrip('.')
+    if (
+        domain in RESERVED_EMAIL_DOMAINS
+        or domain.endswith('.local')
+        or domain.endswith('.localhost')
+        or domain.endswith('.invalid')
+    ):
+        return False
+    return True
 
 
 # ── Register (Google-only — page renders OAuth prompt) ────────────────────────
@@ -57,10 +76,20 @@ def dev_login(role):
             login_user(u)
             return redirect(next_url or url_for('admin.dashboard'))
     elif role == 'user':
-        # Try to find a regular user or create one
-        u = User.get_by_id(2)
+        # Prefer the latest real non-local account over stale local/demo users.
+        user_row = query_db(
+            """SELECT * FROM users
+               WHERE email NOT LIKE %s
+                 AND email NOT LIKE %s
+                 AND email <> %s
+               ORDER BY id DESC
+               LIMIT 1""",
+            ('%@%.local', '%@%.localhost', 'admin@rakshak.com'),
+            one=True
+        )
+        u = User(user_row) if user_row else None
         if not u:
-            # Let's fallback to 1 if 2 doesn't exist
+            # Fallback to the seeded admin only when no regular user exists.
             u = User.get_by_id(1)
         if u:
             login_user(u)

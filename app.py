@@ -410,6 +410,24 @@ def _auto_migrate_guardian(app):
         ('notify_email', 'ALTER TABLE trusted_contacts ADD COLUMN notify_email BOOLEAN DEFAULT TRUE'),
         ('notify_phone', 'ALTER TABLE trusted_contacts ADD COLUMN notify_phone BOOLEAN DEFAULT TRUE'),
     ]
+    CONTACT_DATA_CLEANUPS = [
+        (
+            'disable_reserved_email_contacts',
+            """UPDATE trusted_contacts
+               SET notify_email = FALSE
+               WHERE notify_email = TRUE
+                 AND (
+                    LOWER(TRIM(contact_email)) LIKE '%@%.local'
+                    OR LOWER(TRIM(contact_email)) LIKE '%@localhost'
+                    OR LOWER(TRIM(contact_email)) LIKE '%@%.localhost'
+                    OR LOWER(TRIM(contact_email)) LIKE '%@invalid'
+                    OR LOWER(TRIM(contact_email)) LIKE '%@%.invalid'
+                    OR LOWER(TRIM(contact_email)) LIKE '%@example.com'
+                    OR LOWER(TRIM(contact_email)) LIKE '%@example.org'
+                    OR LOWER(TRIM(contact_email)) LIKE '%@example.net'
+                 )""",
+        ),
+    ]
     SOS_COLUMN_MIGRATIONS = [
         ('sos_lat_nullable', "ALTER TABLE sos_alerts MODIFY COLUMN latitude DECIMAL(10,8) NULL DEFAULT NULL"),
         ('sos_lng_nullable', "ALTER TABLE sos_alerts MODIFY COLUMN longitude DECIMAL(11,8) NULL DEFAULT NULL"),
@@ -466,6 +484,15 @@ def _auto_migrate_guardian(app):
                 log.info(f'SOS migration applied: {migration_name}')
             except mysql.connector.Error as e:
                 log.warning(f'SOS migration {migration_name}: {e}')
+
+        # Disable obviously undeliverable trusted-contact email domains left by old demo data.
+        for cleanup_name, sql in CONTACT_DATA_CLEANUPS:
+            try:
+                cursor.execute(sql)
+                if cursor.rowcount:
+                    log.info(f'Contact cleanup applied: {cleanup_name} ({cursor.rowcount} row(s))')
+            except mysql.connector.Error as e:
+                log.warning(f'Contact cleanup {cleanup_name}: {e}')
 
         # Table migrations
         for sql in TABLE_MIGRATIONS:
