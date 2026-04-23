@@ -6,7 +6,10 @@ objects and log errors instead of raising into the emergency path.
 """
 import logging
 import os
+import socket
 import smtplib
+import ssl
+import time
 from email.message import EmailMessage
 from urllib.parse import quote
 
@@ -84,6 +87,14 @@ def _sos_text(user, alert):
     )
 
 
+def _smtp_variants(host, port, use_tls):
+    variants = [(host, port, use_tls, False, 'primary')]
+    # Gmail and some providers are more reliable over implicit SSL on 465.
+    if host == 'smtp.gmail.com' and port != 465:
+        variants.append((host, 465, False, True, 'ssl-fallback'))
+    return variants
+
+
 def _send_email(contact, subject, body):
     required = ('SMTP_HOST', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_FROM')
     if not _configured(*required):
@@ -101,25 +112,61 @@ def _send_email(contact, subject, body):
             'detail': 'undeliverable contact email domain',
         }
 
-    try:
-        msg = EmailMessage()
-        msg['Subject'] = subject
-        msg['From'] = os.environ['SMTP_FROM']
-        msg['To'] = recipient
-        msg.set_content(body)
+    msg = EmailMessage()
+    msg['Subject'] = subject
+    msg['From'] = os.environ['SMTP_FROM']
+    msg['To'] = recipient
+    msg.set_content(body)
 
-        host = os.environ['SMTP_HOST']
-        port = int(os.environ.get('SMTP_PORT', '587'))
-        use_tls = os.environ.get('SMTP_USE_TLS', 'true').lower() != 'false'
-        with smtplib.SMTP(host, port, timeout=10) as smtp:
-            if use_tls:
-                smtp.starttls()
-            smtp.login(os.environ['SMTP_USERNAME'], os.environ['SMTP_PASSWORD'])
-            smtp.send_message(msg)
-        return {'channel': 'email', 'contact': recipient, 'success': True, 'configured': True, 'detail': 'sent'}
-    except Exception as exc:
-        log.warning('SOS email delivery failed for %s: %s', recipient, exc)
-        return {'channel': 'email', 'contact': recipient, 'success': False, 'configured': True, 'detail': str(exc)}
+    host = os.environ['SMTP_HOST']
+    port = int(os.environ.get('SMTP_PORT', '587'))
+    use_tls = os.environ.get('SMTP_USE_TLS', 'true').lower() != 'false'
+    username = os.environ['SMTP_USERNAME']
+    password = os.environ['SMTP_PASSWORD']
+    timeout_seconds = int(os.environ.get('SMTP_TIMEOUT_SECONDS', '20'))
+    attempts_per_variant = max(1, int(os.environ.get('SMTP_RETRY_ATTEMPTS', '2')))
+
+    last_error = 'SMTP delivery failed'
+    for variant_host, variant_port, variant_tls, variant_ssl, variant_label in _smtp_variants(host, port, use_tls):
+        for attempt in range(1, attempts_per_variant + 1):
+            try:
+                if variant_ssl:
+                    context = ssl.create_default_context()
+                    with smtplib.SMTP_SSL(variant_host, variant_port, timeout=timeout_seconds, context=context) as smtp:
+                        smtp.ehlo()
+                        smtp.login(username, password)
+                        smtp.send_message(msg)
+                else:
+                    with smtplib.SMTP(variant_host, variant_port, timeout=timeout_seconds) as smtp:
+                        smtp.ehlo()
+                        if variant_tls:
+                            smtp.starttls(context=ssl.create_default_context())
+                            smtp.ehlo()
+                        smtp.login(username, password)
+                        smtp.send_message(msg)
+                return {
+                    'channel': 'email',
+                    'contact': recipient,
+                    'success': True,
+                    'configured': True,
+                    'detail': f'sent via {variant_label}',
+                }
+            except (socket.timeout, TimeoutError) as exc:
+                last_error = f'timed out via {variant_label} (attempt {attempt}/{attempts_per_variant})'
+                log.warning('SOS email timeout for %s via %s: %s', recipient, variant_label, exc)
+            except smtplib.SMTPException as exc:
+                last_error = f'{exc.__class__.__name__}: {exc}'
+                log.warning('SOS email SMTP error for %s via %s: %s', recipient, variant_label, exc)
+                # Auth / recipient / permanent SMTP errors should not be spam-retried endlessly.
+                if getattr(exc, 'smtp_code', 0) >= 500:
+                    break
+            except Exception as exc:
+                last_error = str(exc)
+                log.warning('SOS email delivery failed for %s via %s: %s', recipient, variant_label, exc)
+            if attempt < attempts_per_variant:
+                time.sleep(1.2 * attempt)
+
+    return {'channel': 'email', 'contact': recipient, 'success': False, 'configured': True, 'detail': last_error}
 
 
 def _send_twilio(contact, body, whatsapp=False):
