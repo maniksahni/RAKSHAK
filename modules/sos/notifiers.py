@@ -87,15 +87,15 @@ def _sos_text(user, alert):
     )
 
 
-def _smtp_variants(host, port, use_tls):
+def _smtp_variants(host, port, use_tls, allow_ssl_fallback=True):
     variants = [(host, port, use_tls, False, 'primary')]
     # Gmail and some providers are more reliable over implicit SSL on 465.
-    if host == 'smtp.gmail.com' and port != 465:
+    if allow_ssl_fallback and host == 'smtp.gmail.com' and port != 465:
         variants.append((host, 465, False, True, 'ssl-fallback'))
     return variants
 
 
-def _send_email(contact, subject, body):
+def _send_email(contact, subject, body, smtp_options=None):
     required = ('SMTP_HOST', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_FROM')
     if not _configured(*required):
         return {'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': False, 'detail': 'SMTP not configured'}
@@ -118,16 +118,18 @@ def _send_email(contact, subject, body):
     msg['To'] = recipient
     msg.set_content(body)
 
-    host = os.environ['SMTP_HOST']
-    port = int(os.environ.get('SMTP_PORT', '587'))
-    use_tls = os.environ.get('SMTP_USE_TLS', 'true').lower() != 'false'
+    smtp_options = dict(smtp_options or {})
+    host = smtp_options.get('host') or os.environ['SMTP_HOST']
+    port = int(smtp_options.get('port') or os.environ.get('SMTP_PORT', '587'))
+    use_tls = bool(smtp_options.get('use_tls', os.environ.get('SMTP_USE_TLS', 'true').lower() != 'false'))
     username = os.environ['SMTP_USERNAME']
     password = os.environ['SMTP_PASSWORD']
-    timeout_seconds = int(os.environ.get('SMTP_TIMEOUT_SECONDS', '20'))
-    attempts_per_variant = max(1, int(os.environ.get('SMTP_RETRY_ATTEMPTS', '2')))
+    timeout_seconds = int(smtp_options.get('timeout_seconds') or os.environ.get('SMTP_TIMEOUT_SECONDS', '20'))
+    attempts_per_variant = max(1, int(smtp_options.get('retry_attempts') or os.environ.get('SMTP_RETRY_ATTEMPTS', '2')))
+    allow_ssl_fallback = bool(smtp_options.get('allow_ssl_fallback', True))
 
     last_error = 'SMTP delivery failed'
-    for variant_host, variant_port, variant_tls, variant_ssl, variant_label in _smtp_variants(host, port, use_tls):
+    for variant_host, variant_port, variant_tls, variant_ssl, variant_label in _smtp_variants(host, port, use_tls, allow_ssl_fallback=allow_ssl_fallback):
         for attempt in range(1, attempts_per_variant + 1):
             try:
                 if variant_ssl:
@@ -227,7 +229,7 @@ def _free_share_links(contact, subject, body):
     }
 
 
-def dispatch_sos_notifications(user, contacts, alert):
+def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     """Send SOS where possible and always provide free manual share links.
 
     Free mode:
@@ -246,7 +248,7 @@ def dispatch_sos_notifications(user, contacts, alert):
     for contact in contacts:
         contact = dict(contact)
         if _pref_enabled(contact, 'notify_email'):
-            results.append(_send_email(contact, subject, body))
+            results.append(_send_email(contact, subject, body, smtp_options=smtp_options))
         else:
             results.append({'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'disabled for contact'})
         results.append(_free_share_links(contact, subject, body))

@@ -714,11 +714,16 @@ async function deleteContact(id) {
 
 /* ── SOS Delivery Preview ── */
 async function previewSosDelivery() {
+  const controller = new AbortController();
+  const timeoutMs = 16000;
+  const abortTimer = setTimeout(() => controller.abort(), timeoutMs);
   showLoading('Testing trusted SOS delivery...');
   try {
-    const res = await fetch('/sos/notification-preview');
+    const res = await fetch('/sos/notification-preview', {
+      signal: controller.signal,
+      headers: { 'Accept': 'application/json' }
+    });
     const data = await res.json();
-    hideLoading();
     if (!data.success) {
       showToast(data.error || 'Preview failed.', 'error');
       return;
@@ -742,8 +747,14 @@ async function previewSosDelivery() {
       showToast('No trusted delivery channel is active right now.', 'warning', 8000);
     }
   } catch (err) {
+    if (err.name === 'AbortError') {
+      showToast('Trusted delivery test took too long. Mail server slow lag raha hai, try again in a moment.', 'warning', 9000);
+    } else {
+      showToast('Preview failed. Try again.', 'error');
+    }
+  } finally {
+    clearTimeout(abortTimer);
     hideLoading();
-    showToast('Preview failed. Try again.', 'error');
   }
 }
 

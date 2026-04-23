@@ -203,8 +203,14 @@ def notification_preview():
         'address': 'Preview location',
         'message': 'This is a RAKSHAK notification preview. No SOS was triggered.',
     }
+    # Keep UI preview fast. Real SOS can use stronger retry/fallback logic.
+    preview_smtp_options = {
+        'timeout_seconds': 6,
+        'retry_attempts': 1,
+        'allow_ssl_fallback': True,
+    }
     delivery = summarize_delivery(
-        dispatch_sos_notifications(current_user, contacts, preview_alert)
+        dispatch_sos_notifications(current_user, contacts, preview_alert, smtp_options=preview_smtp_options)
     )
     return jsonify(success=True, delivery=delivery)
 
