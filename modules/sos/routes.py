@@ -1,6 +1,6 @@
 import logging
 from flask import (Blueprint, render_template, request, jsonify,
-                   send_file, abort)
+                   send_file, abort, redirect, url_for)
 from flask_login import login_required, current_user
 from models import query_db, log_audit
 from socket_events import emit_sos_alert
@@ -23,7 +23,7 @@ def get_socketio():
 @sos_bp.route('/dashboard')
 @login_required
 def dashboard_index():
-    return render_template('dashboard/index.html')
+    return redirect(url_for('dashboard.index'))
 
 
 # Alias route registered in app as blueprint 'dashboard'
