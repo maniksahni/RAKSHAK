@@ -1445,6 +1445,102 @@ h1,h2,h3,h4,h5,h6 {
   }
 }
 
+/* ── Global phone hardening (start-to-end mobile stability) ─────────────── */
+@media (max-width: 991px) {
+  .container,
+  .container-fluid {
+    padding-left: 0.7rem !important;
+    padding-right: 0.7rem !important;
+  }
+
+  .navbar-rakshak {
+    height: auto !important;
+    min-height: 56px !important;
+    padding: 0.45rem 0.55rem !important;
+  }
+
+  .navbar-rakshak .w-100 {
+    flex-wrap: wrap !important;
+    gap: 0.35rem !important;
+    padding-right: 0 !important;
+  }
+
+  #hardware-link-btn,
+  #global-command-trigger {
+    padding: 0.35rem 0.5rem !important;
+  }
+
+  #global-nav-sos {
+    padding: 0.35rem 0.62rem !important;
+    height: auto !important;
+  }
+
+  .user-pill {
+    max-width: 56vw !important;
+    padding: 0.3rem 0.45rem !important;
+    gap: 0.35rem !important;
+  }
+
+  .notif-dropdown {
+    right: -8px !important;
+    width: min(92vw, 320px) !important;
+  }
+
+  .sidebar {
+    width: 84vw !important;
+    max-width: 320px !important;
+  }
+
+  .sidebar-link {
+    padding: 11px 12px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .main-content .row {
+    --bs-gutter-x: 0.75rem;
+  }
+
+  .main-content table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-content img,
+  .main-content video,
+  .main-content canvas {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  #hardware-link-btn span,
+  #global-command-trigger span,
+  #global-command-trigger .rak-command-shortcut-pill,
+  .user-pill > span,
+  .logout-btn span {
+    display: none !important;
+  }
+
+  #global-nav-sos span:last-child {
+    font-size: 0.62rem !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  .user-pill {
+    max-width: none !important;
+    padding: 0.24rem 0.38rem !important;
+  }
+
+  .user-avatar {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.72rem !important;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════
    RAKSHAK — NEW PREMIUM LOGO SYSTEM
    Navbar:  .rkn-*   (compact, horizontal)
