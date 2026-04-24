@@ -52,7 +52,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
-<body>
+<body class="{% if current_user.is_authenticated %}is-auth{% else %}is-public{% endif %}">
 
   <!-- GLOBAL PARTICLES BACKGROUND -->
   <div id="particles-js" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; opacity:0.3; pointer-events:none;"></div>
@@ -1309,7 +1309,7 @@ window.addEventListener('appinstalled', () => {
 {% endif %}
 
 <!-- ── Main Wrap ────────────────────────────────────────────────────────────── -->
-<div {% if current_user.is_authenticated %}class="main-content" style="padding-top:70px;"{% else %}style="padding-top:60px;"{% endif %}>
+<div class="main-content">
 
   <!-- Flash messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -2314,10 +2314,12 @@ const sidebarBackdrop = document.getElementById('sidebar-backdrop');
 function closeSidebar(){
   if(sidebarEl) sidebarEl.classList.remove('open');
   if(sidebarBackdrop) sidebarBackdrop.classList.remove('show');
+  document.body.classList.remove('sidebar-open');
 }
 function openSidebar(){
   if(sidebarEl) sidebarEl.classList.add('open');
   if(sidebarBackdrop) sidebarBackdrop.classList.add('show');
+  document.body.classList.add('sidebar-open');
 }
 if (sidebarToggle) {
   sidebarToggle.addEventListener('click', () => {
@@ -2327,6 +2329,9 @@ if (sidebarToggle) {
 if(sidebarBackdrop){
   sidebarBackdrop.addEventListener('click', closeSidebar);
 }
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSidebar();
+});
 
 // ── Notification Dropdown ────────────────────────────────────────────────────
 function toggleNotifDropdown() {
