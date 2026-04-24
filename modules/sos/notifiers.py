@@ -129,53 +129,52 @@ def _sos_html(user, alert):
     return f"""\
 <!doctype html>
 <html>
-  <body style="margin:0;padding:0;background:#080812;font-family:Inter,Arial,sans-serif;color:#efeefe;">
+  <body style="margin:0;padding:0;background:#08070a;font-family:Inter,Arial,sans-serif;color:#efeefe;">
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-      RAKSHAK emergency alert for {user_name}. Immediate response requested.
+      [RAKSHAK] {severity} SOS alert for {user_name}. Immediate response requested.
     </div>
-    <div style="max-width:680px;margin:20px auto;padding:0 10px;">
-      <div style="background:radial-gradient(120% 120% at 10% 0%,rgba(124,58,237,.22),transparent 45%),#0f1022;border:1px solid rgba(139,92,246,.34);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.03) inset;">
-        <div style="padding:16px 20px;background:linear-gradient(90deg,#6d28d9,#8b5cf6 58%,#a78bfa);">
-          <div style="font-size:12px;letter-spacing:.18em;font-weight:700;color:#efe9ff;opacity:.9;">RAKSHAK • PRIORITY CHANNEL</div>
-          <div style="margin-top:6px;font-size:26px;line-height:1.1;font-weight:800;color:#fff;">SOS INCIDENT ALERT</div>
+    <div style="max-width:700px;margin:18px auto;padding:0 10px;">
+      <div style="background:radial-gradient(120% 120% at 0% 0%,rgba(139,92,246,.18),transparent 52%),radial-gradient(80% 80% at 100% 100%,rgba(124,58,237,.12),transparent 55%),#0d0c14;border:1px solid rgba(139,92,246,.32);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.55),inset 0 0 40px rgba(139,92,246,.05);">
+        <div style="padding:12px 18px;background:linear-gradient(90deg,rgba(15,12,24,.98),rgba(25,20,40,.94));border-bottom:1px solid rgba(139,92,246,.35);">
+          <div style="font-family:'Space Grotesk','Rajdhani',Arial,sans-serif;font-size:20px;font-weight:800;letter-spacing:.18em;color:#c4b5fd;">RAKSHAK</div>
+          <div style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:.18em;color:#9b87d7;margin-top:2px;">TACTICAL INCIDENT CHANNEL</div>
         </div>
+        <div style="height:2px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.8),rgba(124,58,237,.45),transparent);"></div>
 
-        <div style="padding:18px 20px 8px;">
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <span style="padding:7px 12px;border-radius:999px;background:{sev_bg};border:1px solid {sev_border};color:#ffe5e5;font-size:12px;font-weight:800;letter-spacing:.07em;">SEVERITY • {severity}</span>
-            <span style="padding:7px 12px;border-radius:999px;background:rgba(99,102,241,.18);border:1px solid rgba(99,102,241,.36);color:#d7ddff;font-size:12px;font-weight:700;">INCIDENT #{alert_id}</span>
+        <div style="padding:18px;">
+          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;">
+            <div style="font-family:'Space Grotesk','Rajdhani',Arial,sans-serif;color:#ffffff;font-size:25px;font-weight:800;line-height:1.1;">SOS INCIDENT ALERT</div>
+            <div style="font-family:'Courier New',monospace;font-size:11px;color:#9b87d7;letter-spacing:.12em;">INCIDENT #{alert_id}</div>
           </div>
-          <p style="margin:14px 0 0;color:#f0ebff;font-size:15px;line-height:1.5;">
-            An emergency signal has been triggered and requires immediate attention.
-          </p>
-        </div>
 
-        <div style="padding:14px 20px 0;">
-          <table style="width:100%;border-collapse:separate;border-spacing:0 8px;font-size:14px;">
-            <tr><td style="padding:0;color:#a9a5d6;width:120px;">Time</td><td style="padding:0;color:#ffffff;font-weight:600;">{created}</td></tr>
-            <tr><td style="padding:0;color:#a9a5d6;">User</td><td style="padding:0;color:#ffffff;font-weight:700;">{user_name}</td></tr>
-            <tr><td style="padding:0;color:#a9a5d6;">Trigger</td><td style="padding:0;color:#ffffff;font-weight:700;">{trigger}</td></tr>
-            <tr><td style="padding:0;color:#a9a5d6;">Location</td><td style="padding:0;color:#ffffff;font-weight:600;">{escape(location)}</td></tr>
-          </table>
-        </div>
-
-        <div style="padding:16px 20px 0;">
-          {maps_cta}
-        </div>
-
-        <div style="padding:16px 20px 0;">
-          <div style="padding:14px 14px;background:linear-gradient(180deg,#171833,#13142b);border:1px solid rgba(139,92,246,.24);border-radius:12px;">
-            <div style="font-size:11px;color:#a9a5d6;letter-spacing:.12em;margin-bottom:8px;font-weight:700;">MESSAGE</div>
-            <div style="color:#ffffff;line-height:1.62;font-size:15px;white-space:pre-wrap;">{msg}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+            <span style="padding:6px 12px;border-radius:999px;background:{sev_bg};border:1px solid {sev_border};color:#ffe5e5;font-size:11px;font-weight:800;letter-spacing:.08em;font-family:'Courier New',monospace;">SEVERITY • {severity}</span>
+            <span style="padding:6px 12px;border-radius:999px;background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.35);color:#c9ffe6;font-size:11px;font-weight:700;letter-spacing:.08em;font-family:'Courier New',monospace;">SHIELD • ACTIVE</span>
           </div>
-        </div>
 
-        <div style="padding:16px 20px 20px;">
-          <div style="padding:12px 14px;background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.4);border-radius:12px;color:#ffd6d6;font-size:13px;font-weight:600;">
-            Immediate action required: Please contact or assist the user now.
+          <div style="margin-top:14px;padding:14px;background:rgba(255,255,255,.02);border:1px solid rgba(139,92,246,.2);border-radius:12px;">
+            <table style="width:100%;border-collapse:separate;border-spacing:0 10px;font-size:14px;">
+              <tr><td style="padding:0;color:#9b87d7;width:118px;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.08em;">TIME</td><td style="padding:0;color:#ffffff;font-weight:600;">{created}</td></tr>
+              <tr><td style="padding:0;color:#9b87d7;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.08em;">USER</td><td style="padding:0;color:#ffffff;font-weight:700;">{user_name}</td></tr>
+              <tr><td style="padding:0;color:#9b87d7;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.08em;">TRIGGER</td><td style="padding:0;color:#ffffff;font-weight:700;">{trigger}</td></tr>
+              <tr><td style="padding:0;color:#9b87d7;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.08em;">LOCATION</td><td style="padding:0;color:#ffffff;font-weight:600;">{escape(location)}</td></tr>
+            </table>
           </div>
-          <div style="margin-top:14px;font-size:11px;color:#8b88b7;letter-spacing:.04em;">
-            This is an automated RAKSHAK emergency notification.
+
+          <div style="margin-top:12px;">
+            {maps_cta}
+          </div>
+
+          <div style="margin-top:14px;padding:12px;background:linear-gradient(180deg,rgba(139,92,246,.08),rgba(124,58,237,.04));border:1px solid rgba(139,92,246,.24);border-radius:12px;">
+            <div style="font-size:11px;color:#9b87d7;letter-spacing:.12em;margin-bottom:8px;font-weight:700;font-family:'Courier New',monospace;">MESSAGE PAYLOAD</div>
+            <div style="color:#f4f2ff;line-height:1.62;font-size:15px;white-space:pre-wrap;">{msg}</div>
+          </div>
+
+          <div style="margin-top:14px;padding:12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:12px;color:#ffd6d6;font-size:13px;font-weight:600;">
+            Immediate action required: Contact or assist the user now.
+          </div>
+          <div style="margin-top:14px;font-size:10px;color:#7f74aa;letter-spacing:.08em;font-family:'Courier New',monospace;">
+            AUTOGENERATED BY RAKSHAK EMERGENCY PROTOCOL
           </div>
         </div>
       </div>
