@@ -10,6 +10,7 @@ import socket
 import smtplib
 import ssl
 import time
+from base64 import urlsafe_b64encode
 from email.message import EmailMessage
 from urllib.parse import quote
 
@@ -202,6 +203,103 @@ def _send_resend_email(contact, subject, body):
         }
 
 
+def _send_gmail_api_email(contact, subject, body):
+    required = (
+        'GMAIL_API_CLIENT_ID',
+        'GMAIL_API_CLIENT_SECRET',
+        'GMAIL_API_REFRESH_TOKEN',
+        'GMAIL_API_SENDER',
+    )
+    if not _configured(*required):
+        return {
+            'channel': 'email',
+            'contact': _contact_label(contact),
+            'success': False,
+            'configured': False,
+            'detail': 'Gmail API not configured',
+        }
+
+    recipient = contact.get('contact_email')
+    if not recipient:
+        return {'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'missing contact email'}
+    if not _deliverable_email(recipient):
+        return {
+            'channel': 'email',
+            'contact': recipient,
+            'success': False,
+            'configured': True,
+            'detail': 'undeliverable contact email domain',
+        }
+
+    sender = os.environ['GMAIL_API_SENDER']
+    msg = EmailMessage()
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = recipient
+    msg.set_content(body)
+
+    token_payload = {
+        'client_id': os.environ['GMAIL_API_CLIENT_ID'],
+        'client_secret': os.environ['GMAIL_API_CLIENT_SECRET'],
+        'refresh_token': os.environ['GMAIL_API_REFRESH_TOKEN'],
+        'grant_type': 'refresh_token',
+    }
+
+    try:
+        token_resp = requests.post(
+            'https://oauth2.googleapis.com/token',
+            data=token_payload,
+            timeout=15,
+        )
+        if not token_resp.ok:
+            return {
+                'channel': 'email',
+                'contact': recipient,
+                'success': False,
+                'configured': True,
+                'detail': f'Gmail token refresh failed: {token_resp.status_code}',
+            }
+
+        access_token = token_resp.json().get('access_token')
+        if not access_token:
+            return {
+                'channel': 'email',
+                'contact': recipient,
+                'success': False,
+                'configured': True,
+                'detail': 'Gmail token refresh returned no access token',
+            }
+
+        raw_message = urlsafe_b64encode(msg.as_bytes()).decode('utf-8')
+        send_resp = requests.post(
+            'https://gmail.googleapis.com/gmail/v1/users/me/messages/send',
+            headers={
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json',
+            },
+            json={'raw': raw_message},
+            timeout=20,
+        )
+        ok = 200 <= send_resp.status_code < 300
+        detail = 'sent via Gmail API' if ok else f'Gmail API {send_resp.status_code}: {send_resp.text[:180]}'
+        return {
+            'channel': 'email',
+            'contact': recipient,
+            'success': ok,
+            'configured': True,
+            'detail': detail,
+        }
+    except Exception as exc:
+        log.warning('Gmail API delivery failed for %s: %s', recipient, exc)
+        return {
+            'channel': 'email',
+            'contact': recipient,
+            'success': False,
+            'configured': True,
+            'detail': f'Gmail API error: {exc}',
+        }
+
+
 def _send_email(contact, subject, body, smtp_options=None):
     required = ('SMTP_HOST', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_FROM')
     if not _configured(*required):
@@ -358,6 +456,7 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     """Send SOS where possible and always provide free manual share links.
 
     Free mode:
+    - Gmail API sends automatically over HTTPS when GMAIL_API_* env vars exist.
     - Resend email sends over HTTPS when RESEND_* env vars are configured.
     - Otherwise SMTP email sends automatically when SMTP_* env vars are configured.
     - WhatsApp/SMS are generated as wa.me and sms: links because automatic
@@ -374,7 +473,9 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     for contact in contacts:
         contact = dict(contact)
         if _pref_enabled(contact, 'notify_email'):
-            if _configured('RESEND_API_KEY', 'RESEND_FROM'):
+            if _configured('GMAIL_API_CLIENT_ID', 'GMAIL_API_CLIENT_SECRET', 'GMAIL_API_REFRESH_TOKEN', 'GMAIL_API_SENDER'):
+                results.append(_send_gmail_api_email(contact, subject, body))
+            elif _configured('RESEND_API_KEY', 'RESEND_FROM'):
                 results.append(_send_resend_email(contact, subject, body))
             else:
                 results.append(_send_email(contact, subject, body, smtp_options=smtp_options))
