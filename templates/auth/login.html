@@ -260,6 +260,26 @@ body, html { overflow: hidden; height: 100%; margin: 0; background: #030308; }
   .lp-stat-row { flex-wrap: wrap; }
   .lp-right-nav { position: static; justify-content: center; margin-bottom: 40px; }
 }
+
+@media (max-width: 768px) {
+  /* Phone: keep it simple and readable */
+  body, html { overflow: auto; }
+  .login-root { min-height: 100svh; height: auto; }
+
+  /* Hide cinematic left panel on phones (too heavy + too tall) */
+  .lp-left { display: none; }
+  .lp-right { min-height: 100svh; }
+
+  .lp-tilt-stage { padding: 72px 14px 26px; }
+  .lp-card { max-width: 420px; }
+  .lp-card-inner { padding: 26px 18px; }
+  .lp-card-title { font-size: 2.1rem; line-height: 1.05; }
+  .lp-card-sub { margin-bottom: 22px; }
+  .lp-feature-item { padding: 12px 14px; gap: 12px; }
+  .lp-feature-text h4 { font-size: 0.84rem; }
+  .lp-feature-text p { font-size: 0.72rem; }
+  .lp-footer-info { margin-top: 24px; padding-top: 16px; }
+}
 </style>
 {% endblock %}
 
