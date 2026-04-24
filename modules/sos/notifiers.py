@@ -79,13 +79,51 @@ def _sos_text(user, alert):
     trigger = alert.get('trigger_type') or 'manual'
     msg = alert.get('message') or 'Emergency assistance requested.'
     return (
-        f'RAKSHAK SOS ALERT\\n'
-        f'User: {_user_name(user)}\\n'
-        f'Trigger: {trigger}\\n'
-        f'Location: {location}\\n'
-        f'Message: {msg}\\n'
-        f'Please contact or assist immediately.'
+        'RAKSHAK SOS ALERT\n'
+        '=================\n\n'
+        f'User: {_user_name(user)}\n'
+        f'Trigger: {str(trigger).upper()}\n'
+        f'Location: {location}\n\n'
+        f'Message:\n{msg}\n\n'
+        'Action Required:\n'
+        'Please contact or assist immediately.'
     )
+
+
+def _sos_html(user, alert):
+    location = alert.get('address') or _safe_location(alert)
+    trigger = str(alert.get('trigger_type') or 'manual').upper()
+    msg = (alert.get('message') or 'Emergency assistance requested.').strip()
+    user_name = _user_name(user)
+    return f"""\
+<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background:#0b0b12;font-family:Inter,Arial,sans-serif;color:#efeefe;">
+    <div style="max-width:620px;margin:18px auto;background:#111122;border:1px solid rgba(139,92,246,.35);border-radius:14px;overflow:hidden;">
+      <div style="padding:14px 18px;background:linear-gradient(90deg,#7c3aed,#8b5cf6);color:white;font-weight:700;letter-spacing:.06em;">
+        RAKSHAK SOS ALERT
+      </div>
+      <div style="padding:18px;">
+        <p style="margin:0 0 14px 0;color:#f8f5ff;font-size:14px;">
+          An emergency signal has been triggered and requires immediate attention.
+        </p>
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          <tr><td style="padding:8px 0;color:#b9a8e8;width:110px;">User</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{user_name}</td></tr>
+          <tr><td style="padding:8px 0;color:#b9a8e8;">Trigger</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{trigger}</td></tr>
+          <tr><td style="padding:8px 0;color:#b9a8e8;">Location</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{location}</td></tr>
+        </table>
+        <div style="margin-top:14px;padding:12px 14px;background:#16162a;border:1px solid rgba(139,92,246,.2);border-radius:10px;">
+          <div style="font-size:12px;color:#b9a8e8;letter-spacing:.05em;margin-bottom:6px;">MESSAGE</div>
+          <div style="color:#ffffff;line-height:1.5;font-size:14px;white-space:pre-wrap;">{msg}</div>
+        </div>
+        <div style="margin-top:16px;padding:10px 12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:10px;color:#ffd7d7;font-size:13px;">
+          Please contact or assist immediately.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+"""
 
 
 def _smtp_variants(host, port, use_tls, allow_ssl_fallback=True):
@@ -141,7 +179,7 @@ def _smtp_connect(host, port, *, use_ssl=False, timeout_seconds=20):
     raise OSError(last_error or f'Unable to connect to SMTP host {host}:{port}')
 
 
-def _send_resend_email(contact, subject, body):
+def _send_resend_email(contact, subject, body, html_body=None):
     if not _configured('RESEND_API_KEY', 'RESEND_FROM'):
         return {
             'channel': 'email',
@@ -169,6 +207,8 @@ def _send_resend_email(contact, subject, body):
         'subject': subject,
         'text': body,
     }
+    if html_body:
+        payload['html'] = html_body
     reply_to = (os.environ.get('RESEND_REPLY_TO') or '').strip()
     if reply_to:
         payload['reply_to'] = reply_to
@@ -203,7 +243,7 @@ def _send_resend_email(contact, subject, body):
         }
 
 
-def _send_gmail_api_email(contact, subject, body):
+def _send_gmail_api_email(contact, subject, body, html_body=None):
     required = (
         'GMAIL_API_CLIENT_ID',
         'GMAIL_API_CLIENT_SECRET',
@@ -237,6 +277,8 @@ def _send_gmail_api_email(contact, subject, body):
     msg['From'] = sender
     msg['To'] = recipient
     msg.set_content(body)
+    if html_body:
+        msg.add_alternative(html_body, subtype='html')
 
     token_payload = {
         'client_id': os.environ['GMAIL_API_CLIENT_ID'],
@@ -300,7 +342,7 @@ def _send_gmail_api_email(contact, subject, body):
         }
 
 
-def _send_email(contact, subject, body, smtp_options=None):
+def _send_email(contact, subject, body, smtp_options=None, html_body=None):
     required = ('SMTP_HOST', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_FROM')
     if not _configured(*required):
         return {'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': False, 'detail': 'SMTP not configured'}
@@ -322,6 +364,8 @@ def _send_email(contact, subject, body, smtp_options=None):
     msg['From'] = os.environ['SMTP_FROM']
     msg['To'] = recipient
     msg.set_content(body)
+    if html_body:
+        msg.add_alternative(html_body, subtype='html')
 
     smtp_options = dict(smtp_options or {})
     host = smtp_options.get('host') or os.environ['SMTP_HOST']
@@ -468,17 +512,18 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     contacts = contacts or []
     alert = dict(alert or {})
     body = _sos_text(user, alert)
+    html_body = _sos_html(user, alert)
     subject = f'RAKSHAK SOS Alert from {_user_name(user)}'
     results = []
     for contact in contacts:
         contact = dict(contact)
         if _pref_enabled(contact, 'notify_email'):
             if _configured('GMAIL_API_CLIENT_ID', 'GMAIL_API_CLIENT_SECRET', 'GMAIL_API_REFRESH_TOKEN', 'GMAIL_API_SENDER'):
-                results.append(_send_gmail_api_email(contact, subject, body))
+                results.append(_send_gmail_api_email(contact, subject, body, html_body=html_body))
             elif _configured('RESEND_API_KEY', 'RESEND_FROM'):
-                results.append(_send_resend_email(contact, subject, body))
+                results.append(_send_resend_email(contact, subject, body, html_body=html_body))
             else:
-                results.append(_send_email(contact, subject, body, smtp_options=smtp_options))
+                results.append(_send_email(contact, subject, body, smtp_options=smtp_options, html_body=html_body))
         else:
             results.append({'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'disabled for contact'})
         results.append(_free_share_links(contact, subject, body))
