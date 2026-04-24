@@ -466,6 +466,16 @@
   .map-controls::-webkit-scrollbar { display: none; }
   .map-ctrl-btn { padding: 8px 12px; font-size: 0.72rem; }
 
+  .threat-ops-bar {
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+  .threat-op-chip {
+    padding: 6px 10px;
+    font-size: 0.68rem;
+  }
+
   .legend {
     bottom: 60px; left: 10px; right: 10px;
     min-width: auto;
@@ -487,6 +497,8 @@
 
 @media (max-width: 480px) {
   #map { height: 52vh; min-height: 260px; }
+  .threat-ops-bar { display: none; }
+  .map-title-bar { right: 10px; }
   .surveillance-title { font-size: 0.85rem; }
   .surveillance-icon { width: 40px; height: 40px; border-radius: 12px; }
   .surveillance-icon i { font-size: 1.1rem; }
