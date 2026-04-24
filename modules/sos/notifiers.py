@@ -140,6 +140,68 @@ def _smtp_connect(host, port, *, use_ssl=False, timeout_seconds=20):
     raise OSError(last_error or f'Unable to connect to SMTP host {host}:{port}')
 
 
+def _send_resend_email(contact, subject, body):
+    if not _configured('RESEND_API_KEY', 'RESEND_FROM'):
+        return {
+            'channel': 'email',
+            'contact': _contact_label(contact),
+            'success': False,
+            'configured': False,
+            'detail': 'Resend not configured',
+        }
+
+    recipient = contact.get('contact_email')
+    if not recipient:
+        return {'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'missing contact email'}
+    if not _deliverable_email(recipient):
+        return {
+            'channel': 'email',
+            'contact': recipient,
+            'success': False,
+            'configured': True,
+            'detail': 'undeliverable contact email domain',
+        }
+
+    payload = {
+        'from': os.environ['RESEND_FROM'],
+        'to': [recipient],
+        'subject': subject,
+        'text': body,
+    }
+    reply_to = (os.environ.get('RESEND_REPLY_TO') or '').strip()
+    if reply_to:
+        payload['reply_to'] = reply_to
+
+    try:
+        resp = requests.post(
+            'https://api.resend.com/emails',
+            json=payload,
+            headers={
+                'Authorization': f"Bearer {os.environ['RESEND_API_KEY']}",
+                'Content-Type': 'application/json',
+            },
+            timeout=15,
+        )
+        ok = 200 <= resp.status_code < 300
+        detail = 'sent via resend' if ok else f'Resend {resp.status_code}: {resp.text[:180]}'
+        return {
+            'channel': 'email',
+            'contact': recipient,
+            'success': ok,
+            'configured': True,
+            'detail': detail,
+        }
+    except Exception as exc:
+        log.warning('Resend email delivery failed for %s: %s', recipient, exc)
+        return {
+            'channel': 'email',
+            'contact': recipient,
+            'success': False,
+            'configured': True,
+            'detail': f'Resend error: {exc}',
+        }
+
+
 def _send_email(contact, subject, body, smtp_options=None):
     required = ('SMTP_HOST', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_FROM')
     if not _configured(*required):
@@ -221,6 +283,16 @@ def _send_email(contact, subject, body, smtp_options=None):
             if attempt < attempts_per_variant:
                 time.sleep(1.2 * attempt)
 
+    if (
+        'ENETUNREACH' in str(last_error)
+        or 'Network is unreachable' in str(last_error)
+        or 'timed out' in str(last_error).lower()
+    ):
+        last_error = (
+            'SMTP unreachable from host. Railway Free/Trial/Hobby blocks outbound SMTP. '
+            'Configure RESEND_API_KEY + RESEND_FROM, or upgrade Railway to Pro.'
+        )
+
     return {'channel': 'email', 'contact': recipient, 'success': False, 'configured': True, 'detail': last_error}
 
 
@@ -286,7 +358,8 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     """Send SOS where possible and always provide free manual share links.
 
     Free mode:
-    - SMTP email sends automatically when SMTP_* env vars are configured.
+    - Resend email sends over HTTPS when RESEND_* env vars are configured.
+    - Otherwise SMTP email sends automatically when SMTP_* env vars are configured.
     - WhatsApp/SMS are generated as wa.me and sms: links because automatic
       WhatsApp/SMS requires a gateway/provider.
 
@@ -301,7 +374,10 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     for contact in contacts:
         contact = dict(contact)
         if _pref_enabled(contact, 'notify_email'):
-            results.append(_send_email(contact, subject, body, smtp_options=smtp_options))
+            if _configured('RESEND_API_KEY', 'RESEND_FROM'):
+                results.append(_send_resend_email(contact, subject, body))
+            else:
+                results.append(_send_email(contact, subject, body, smtp_options=smtp_options))
         else:
             results.append({'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'disabled for contact'})
         results.append(_free_share_links(contact, subject, body))
