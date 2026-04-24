@@ -130,7 +130,19 @@ a,button{cursor:none}
 .shd{text-align:center;margin-bottom:5rem}
 .eye{display:inline-flex;align-items:center;gap:8px;font-size:.65rem;font-weight:700;letter-spacing:.45em;text-transform:uppercase;color:var(--accent);margin-bottom:1.2rem;font-family:var(--mono);border:1px solid rgba(139,92,246,.3);padding:10px 28px;border-radius:50px;background:rgba(139,92,246,.16);position:relative;overflow:hidden;box-shadow:0 0 25px rgba(139,92,246,.15)}
 /* eye::before shimmer + eyePulse removed — two infinite animations on every section tag was constant repaint. Static glow is enough. */
-.stit{font-size:clamp(3rem,5.5vw,4.8rem);font-weight:900;line-height:1.06;letter-spacing:-.04em;text-shadow:0 0 80px rgba(139,92,246,.18)}
+.stit{
+  font-size:clamp(3rem,5.5vw,4.8rem);
+  font-weight:900;
+  line-height:1.06;
+  letter-spacing:-.04em;
+  text-shadow:0 0 80px rgba(139,92,246,.18);
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.stit .grad,.stit .grad-r,.stit .grad-n{
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
+}
 .ssub{font-family:var(--int);font-size:1.08rem;color:rgba(255,255,255,.62);max-width:580px;margin:1.2rem auto 0;line-height:1.75}
 .grad{background:linear-gradient(135deg,#fff 0%,var(--accent) 40%,var(--blue) 70%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .grad-r{background:linear-gradient(135deg,#ff6b6b,#ff3b3b,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -604,6 +616,7 @@ a,button{cursor:none}
   .dash-map{grid-column:span 1}
   .floaters{display:none}
 
+  .shd{padding:0 .25rem}
   .stit{font-size:clamp(2.35rem,9.6vw,3.4rem);line-height:1.1}
   .ssub{font-size:1rem;line-height:1.7;padding:0 .25rem}
   .dash{padding:6.5rem 1.25rem}
@@ -645,7 +658,7 @@ a,button{cursor:none}
   .tech-g{grid-template-columns:1fr 1fr}
   .stats-g{grid-template-columns:1fr}
 
-  .stit{font-size:clamp(2.05rem,10.2vw,2.85rem);letter-spacing:-.03em}
+  .stit{font-size:clamp(2.05rem,10.2vw,2.85rem);letter-spacing:-.03em;line-height:1.12}
   .dash{padding:6rem 1rem}
   .dash-tt{letter-spacing:.14em}
 }
