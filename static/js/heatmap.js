@@ -12,6 +12,42 @@ let reportingMode = false;
 let selectedLat = null, selectedLng = null;
 let userLoc = null;
 let globalViewActive = false;
+let darkTileFailures = 0;
+let darkFallbackApplied = false;
+
+const DARK_TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const DARK_TILE_ATTR = 'CARTO';
+const FALLBACK_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const FALLBACK_TILE_ATTR = '&copy; OpenStreetMap contributors';
+
+function createDarkLayer() {
+  return L.tileLayer(DARK_TILE_URL, { maxZoom: 19, attribution: DARK_TILE_ATTR });
+}
+
+function createFallbackLayer() {
+  return L.tileLayer(FALLBACK_TILE_URL, { maxZoom: 19, attribution: FALLBACK_TILE_ATTR });
+}
+
+function applyDarkFallback(message) {
+  if (!heatMap || darkFallbackApplied) return;
+  darkFallbackApplied = true;
+  if (darkLayer && heatMap.hasLayer(darkLayer)) heatMap.removeLayer(darkLayer);
+  darkLayer = createFallbackLayer();
+  darkLayer.addTo(heatMap);
+  if (message) showToast(message, 'warning', 3200);
+}
+
+function bindDarkLayerFallback(layer) {
+  if (!layer) return;
+  darkTileFailures = 0;
+  layer.on('tileerror', () => {
+    darkTileFailures += 1;
+    // Some tile providers briefly fail. Switch only after repeated failures.
+    if (darkTileFailures >= 6) {
+      applyDarkFallback('Dark tiles unavailable, switched to fallback map.');
+    }
+  });
+}
 
 // ── GLOBAL CRIME HOTSPOTS DATA ──────────────────────────────────────────────
 // Real-world high-crime areas for women's safety awareness
@@ -78,9 +114,9 @@ document.addEventListener('DOMContentLoaded', initHeatmap);
 async function initHeatmap() {
   // Initialize dark Leaflet map
   heatMap = L.map('map', { zoomControl: true, attributionControl: false });
-  darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19
-  }).addTo(heatMap);
+  darkLayer = createDarkLayer();
+  bindDarkLayerFallback(darkLayer);
+  darkLayer.addTo(heatMap);
   heatMap.setView([20.5937, 78.9629], 4);
 
   markersLayer = L.layerGroup().addTo(heatMap);
@@ -507,9 +543,8 @@ function toggleSatellite() {
     });
   }
   if (!darkLayer) {
-    darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution:'CARTO',maxZoom:19
-    });
+    darkLayer = darkFallbackApplied ? createFallbackLayer() : createDarkLayer();
+    bindDarkLayerFallback(darkLayer);
   }
   if (isSatellite) {
     heatMap.removeLayer(satelliteLayer);
