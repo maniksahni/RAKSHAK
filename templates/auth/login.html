@@ -10,10 +10,15 @@
 /* Hide the default public navbar for full immersion */
 .navbar-rakshak { display: none !important; }
 
-body, html { overflow: hidden; height: 100vh; margin: 0; background: #030308; }
+body, html { overflow: hidden; height: 100%; margin: 0; background: #030308; }
 
 .login-root {
-  display: flex; height: 100vh; width: 100vw; position: relative;
+  display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
+  height: 100svh;
+  width: 100%;
+  position: relative;
   font-family: 'Inter', sans-serif;
 }
 
