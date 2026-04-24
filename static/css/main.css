@@ -1453,6 +1453,9 @@ h1,h2,h3,h4,h5,h6 {
     padding-right: 0.7rem !important;
   }
 
+  /* Prevent accidental horizontal scroll from hover transforms / fixed UI */
+  .main-content { overflow-x: clip; }
+
   .navbar-rakshak {
     height: auto !important;
     min-height: 56px !important;
@@ -1505,6 +1508,13 @@ h1,h2,h3,h4,h5,h6 {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  /* On touch devices, translate-on-hover can create a 1–3px horizontal overflow */
+  .table-dark-custom tbody tr:hover,
+  .alert-feed-item:hover,
+  .checklist-item:hover {
+    transform: none !important;
   }
 
   .main-content img,
