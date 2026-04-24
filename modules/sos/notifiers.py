@@ -11,7 +11,9 @@ import smtplib
 import ssl
 import time
 from base64 import urlsafe_b64encode
+from datetime import datetime
 from email.message import EmailMessage
+from html import escape
 from urllib.parse import quote
 
 import requests
@@ -78,12 +80,20 @@ def _sos_text(user, alert):
     location = alert.get('address') or _safe_location(alert)
     trigger = alert.get('trigger_type') or 'manual'
     msg = alert.get('message') or 'Emergency assistance requested.'
+    created = alert.get('created_at') or datetime.utcnow().isoformat() + 'Z'
+    alert_id = alert.get('id') or 'N/A'
+    lat = alert.get('latitude')
+    lng = alert.get('longitude')
+    maps = f'https://maps.google.com/?q={lat},{lng}' if lat is not None and lng is not None else 'N/A'
     return (
         'RAKSHAK SOS ALERT\n'
         '=================\n\n'
+        f'Incident ID: {alert_id}\n'
+        f'Time: {created}\n'
         f'User: {_user_name(user)}\n'
         f'Trigger: {str(trigger).upper()}\n'
-        f'Location: {location}\n\n'
+        f'Location: {location}\n'
+        f'Map: {maps}\n\n'
         f'Message:\n{msg}\n\n'
         'Action Required:\n'
         'Please contact or assist immediately.'
@@ -93,8 +103,29 @@ def _sos_text(user, alert):
 def _sos_html(user, alert):
     location = alert.get('address') or _safe_location(alert)
     trigger = str(alert.get('trigger_type') or 'manual').upper()
-    msg = (alert.get('message') or 'Emergency assistance requested.').strip()
-    user_name = _user_name(user)
+    msg = escape((alert.get('message') or 'Emergency assistance requested.').strip())
+    user_name = escape(_user_name(user))
+    alert_id = escape(str(alert.get('id') or 'N/A'))
+    created = escape(str(alert.get('created_at') or (datetime.utcnow().isoformat() + 'Z')))
+    severity = 'HIGH'
+    sev_bg = 'rgba(239,68,68,.18)'
+    sev_border = 'rgba(239,68,68,.48)'
+    if trigger in {'PREVIEW', 'TEST'}:
+        severity = 'TEST'
+        sev_bg = 'rgba(59,130,246,.18)'
+        sev_border = 'rgba(59,130,246,.48)'
+    elif trigger in {'MANUAL', 'BUTTON'}:
+        severity = 'CRITICAL'
+    lat = alert.get('latitude')
+    lng = alert.get('longitude')
+    maps_link = f'https://maps.google.com/?q={lat},{lng}' if lat is not None and lng is not None else ''
+    maps_cta = (
+        f'<a href="{maps_link}" target="_blank" '
+        'style="display:inline-block;margin-top:12px;padding:10px 14px;background:#1f1f3a;'
+        'border:1px solid rgba(139,92,246,.35);border-radius:10px;color:#e9ddff;'
+        'text-decoration:none;font-size:13px;font-weight:600;">Open Live Location in Maps</a>'
+        if maps_link else ''
+    )
     return f"""\
 <!doctype html>
 <html>
@@ -107,11 +138,17 @@ def _sos_html(user, alert):
         <p style="margin:0 0 14px 0;color:#f8f5ff;font-size:14px;">
           An emergency signal has been triggered and requires immediate attention.
         </p>
+        <div style="display:inline-block;margin:0 0 14px 0;padding:6px 10px;background:{sev_bg};border:1px solid {sev_border};border-radius:999px;color:#ffe5e5;font-size:12px;font-weight:700;letter-spacing:.06em;">
+          SEVERITY: {severity}
+        </div>
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          <tr><td style="padding:8px 0;color:#b9a8e8;width:110px;">Incident ID</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{alert_id}</td></tr>
+          <tr><td style="padding:8px 0;color:#b9a8e8;">Time</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{created}</td></tr>
           <tr><td style="padding:8px 0;color:#b9a8e8;width:110px;">User</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{user_name}</td></tr>
           <tr><td style="padding:8px 0;color:#b9a8e8;">Trigger</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{trigger}</td></tr>
-          <tr><td style="padding:8px 0;color:#b9a8e8;">Location</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{location}</td></tr>
+          <tr><td style="padding:8px 0;color:#b9a8e8;">Location</td><td style="padding:8px 0;color:#ffffff;font-weight:600;">{escape(location)}</td></tr>
         </table>
+        {maps_cta}
         <div style="margin-top:14px;padding:12px 14px;background:#16162a;border:1px solid rgba(139,92,246,.2);border-radius:10px;">
           <div style="font-size:12px;color:#b9a8e8;letter-spacing:.05em;margin-bottom:6px;">MESSAGE</div>
           <div style="color:#ffffff;line-height:1.5;font-size:14px;white-space:pre-wrap;">{msg}</div>
@@ -513,7 +550,14 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     alert = dict(alert or {})
     body = _sos_text(user, alert)
     html_body = _sos_html(user, alert)
-    subject = f'RAKSHAK SOS Alert from {_user_name(user)}'
+    trigger = str(alert.get('trigger_type') or 'manual').lower()
+    if trigger == 'preview':
+        prefix = '[TEST]'
+    elif trigger in {'manual', 'button'}:
+        prefix = '[CRITICAL]'
+    else:
+        prefix = '[ALERT]'
+    subject = f'{prefix} RAKSHAK SOS - {_user_name(user)}'
     results = []
     for contact in contacts:
         contact = dict(contact)
