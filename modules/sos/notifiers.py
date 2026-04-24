@@ -95,6 +95,51 @@ def _smtp_variants(host, port, use_tls, allow_ssl_fallback=True):
     return variants
 
 
+def _smtp_endpoints(host, port):
+    infos = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+    seen = set()
+    ordered = []
+    for family, socktype, proto, canonname, sockaddr in sorted(
+        infos,
+        key=lambda info: 0 if info[0] == socket.AF_INET else 1
+    ):
+        key = (family, sockaddr[0], sockaddr[1])
+        if key in seen:
+            continue
+        seen.add(key)
+        ordered.append((family, socktype, proto, canonname, sockaddr))
+    return ordered
+
+
+def _smtp_connect(host, port, *, use_ssl=False, timeout_seconds=20):
+    last_error = None
+    for family, socktype, proto, _canonname, sockaddr in _smtp_endpoints(host, port):
+        smtp = None
+        ip_address = sockaddr[0]
+        family_label = 'ipv4' if family == socket.AF_INET else 'ipv6'
+        try:
+            if use_ssl:
+                smtp = smtplib.SMTP_SSL(timeout=timeout_seconds, context=ssl.create_default_context())
+            else:
+                smtp = smtplib.SMTP(timeout=timeout_seconds)
+            # Preserve the original hostname for TLS SNI/certificate validation
+            # while connecting to a resolved address directly.
+            smtp._host = host
+            smtp.connect(ip_address, sockaddr[1])
+            smtp._host = host
+            return smtp, f'{ip_address} [{family_label}]'
+        except Exception as exc:
+            last_error = f'{type(exc).__name__}: {exc}'
+            log.warning('SOS SMTP connect failed for %s:%s via %s [%s]: %s',
+                        host, port, ip_address, family_label, exc)
+            if smtp is not None:
+                try:
+                    smtp.close()
+                except Exception:
+                    pass
+    raise OSError(last_error or f'Unable to connect to SMTP host {host}:{port}')
+
+
 def _send_email(contact, subject, body, smtp_options=None):
     required = ('SMTP_HOST', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'SMTP_FROM')
     if not _configured(*required):
@@ -131,27 +176,26 @@ def _send_email(contact, subject, body, smtp_options=None):
     last_error = 'SMTP delivery failed'
     for variant_host, variant_port, variant_tls, variant_ssl, variant_label in _smtp_variants(host, port, use_tls, allow_ssl_fallback=allow_ssl_fallback):
         for attempt in range(1, attempts_per_variant + 1):
+            smtp = None
             try:
-                if variant_ssl:
-                    context = ssl.create_default_context()
-                    with smtplib.SMTP_SSL(variant_host, variant_port, timeout=timeout_seconds, context=context) as smtp:
-                        smtp.ehlo()
-                        smtp.login(username, password)
-                        smtp.send_message(msg)
-                else:
-                    with smtplib.SMTP(variant_host, variant_port, timeout=timeout_seconds) as smtp:
-                        smtp.ehlo()
-                        if variant_tls:
-                            smtp.starttls(context=ssl.create_default_context())
-                            smtp.ehlo()
-                        smtp.login(username, password)
-                        smtp.send_message(msg)
+                smtp, endpoint_label = _smtp_connect(
+                    variant_host,
+                    variant_port,
+                    use_ssl=variant_ssl,
+                    timeout_seconds=timeout_seconds,
+                )
+                smtp.ehlo()
+                if variant_tls:
+                    smtp.starttls(context=ssl.create_default_context())
+                    smtp.ehlo()
+                smtp.login(username, password)
+                smtp.send_message(msg)
                 return {
                     'channel': 'email',
                     'contact': recipient,
                     'success': True,
                     'configured': True,
-                    'detail': f'sent via {variant_label}',
+                    'detail': f'sent via {variant_label} ({endpoint_label})',
                 }
             except (socket.timeout, TimeoutError) as exc:
                 last_error = f'timed out via {variant_label} (attempt {attempt}/{attempts_per_variant})'
@@ -165,6 +209,15 @@ def _send_email(contact, subject, body, smtp_options=None):
             except Exception as exc:
                 last_error = str(exc)
                 log.warning('SOS email delivery failed for %s via %s: %s', recipient, variant_label, exc)
+            finally:
+                if smtp is not None:
+                    try:
+                        smtp.quit()
+                    except Exception:
+                        try:
+                            smtp.close()
+                        except Exception:
+                            pass
             if attempt < attempts_per_variant:
                 time.sleep(1.2 * attempt)
 
