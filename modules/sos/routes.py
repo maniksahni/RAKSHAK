@@ -167,7 +167,7 @@ def trigger_sos():
         elif delivery.get('manual_links_generated', 0) > 0:
             message_text = (
                 "SOS alert created, but automatic email/SMS did not send. "
-                "Check trusted contact email settings or SMTP."
+                "Check trusted contact email settings or the configured email provider."
             )
         else:
             message_text = (
