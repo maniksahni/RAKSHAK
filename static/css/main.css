@@ -1433,8 +1433,17 @@ h1,h2,h3,h4,h5,h6 {
 .sidebar-nav-scroll{position:relative;}
 .sidebar-nav-scroll::after{display:none;}
 
-/* main-content offset for narrower sidebar */
-.main-content{margin-left:240px!important}
+/* main-content offset for authenticated desktop shell only */
+@media (min-width: 992px) {
+  .main-content { margin-left: 240px !important; }
+}
+@media (max-width: 991px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════
    RAKSHAK — NEW PREMIUM LOGO SYSTEM
