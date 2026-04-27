@@ -8,6 +8,7 @@ venv/
 *.db
 .claude/
 .cursor/
+.continue/
 node_modules/
 .venv/
 .vscode/

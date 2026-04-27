@@ -1,0 +1,11 @@
+#!/bin/sh
+# Auto-push after each local commit. Enable in this clone:
+#   git config core.hooksPath .githooks
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
+[ "$branch" = "HEAD" ] && exit 0
+
+if git rev-parse --abbrev-ref "${branch}@{u}" >/dev/null 2>&1; then
+  git push
+else
+  git push -u origin "$branch"
+fi
