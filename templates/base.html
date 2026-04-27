@@ -310,9 +310,12 @@
       <i class="bi bi-bluetooth" style="font-size:.8rem"></i> <span style="font-size:.7rem;font-weight:700;letter-spacing:.05em">LINK RING</span>
     </button>
 
-    <!-- SOS OVERRIDE (icon + label — match compact scale of LINK RING) -->
+    <!-- SOS OVERRIDE: inline SVG so icon always shows (no webfont dependency) -->
     <button id="global-nav-sos" type="button" onclick="triggerGlobalSOS()" aria-label="Trigger SOS override">
-      <i class="bi bi-shield-exclamation nav-sos-icon" aria-hidden="true"></i>
+      <svg class="nav-sos-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M12 2.5l7 3.2v5c0 4.2-2.4 7.3-7 8.5-4.6-1.2-7-4.3-7-8.5v-5l7-3.2z"/>
+        <path d="M12 8.2V12"/><circle cx="12" cy="15.5" r="0.9" fill="currentColor" stroke="none"/>
+      </svg>
       <span class="nav-sos-label">SOS OVERRIDE</span>
     </button>
     {% endif %}

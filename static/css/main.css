@@ -1375,12 +1375,14 @@ h1,h2,h3,h4,h5,h6 {
   cursor:pointer;
 }
 #global-nav-sos .nav-sos-icon{
-  font-size:.8rem!important;
-  line-height:1!important;
   flex-shrink:0;
   position:relative;
   z-index:1;
-  opacity:.95;
+  display:block;
+  width:15px;
+  height:15px;
+  color:#fff!important;
+  opacity:.98;
 }
 #global-nav-sos .nav-sos-label{
   position:relative;
@@ -1594,7 +1596,8 @@ h1,h2,h3,h4,h5,h6 {
   }
 
   #global-nav-sos .nav-sos-icon {
-    font-size: 0.72rem !important;
+    width: 14px !important;
+    height: 14px !important;
   }
 
   .user-pill {
