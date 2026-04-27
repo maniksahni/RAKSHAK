@@ -1204,7 +1204,7 @@
   </a>
   <div class="d-flex gap-3">
     <a href="{{ url_for('auth.login') }}" class="btn-glass text-decoration-none" style="padding:8px 20px;font-size:0.9rem;">Login</a>
-    <a href="{{ url_for('auth.register') }}" class="btn-rakshak text-decoration-none" style="padding:8px 24px;font-size:0.9rem;">Get Protected</a>
+    <a href="{{ url_for('auth.login', flow='register') }}" class="btn-rakshak text-decoration-none" style="padding:8px 24px;font-size:0.9rem;">Get Protected</a>
   </div>
 </nav>
 {% endif %}

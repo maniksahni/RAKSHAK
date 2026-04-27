@@ -43,20 +43,23 @@ def validate_email(e):
     return True
 
 
-# ── Register (Google-only — page renders OAuth prompt) ────────────────────────
+# ── Register: same premium auth page as login (onboarding copy via ?flow=register) ─
 @auth_bp.route('/register')
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
-    return render_template('auth/register.html')
+    return redirect(url_for('auth.login', flow='register'))
 
 
-# ── Login (Google-only — page renders OAuth prompt) ───────────────────────────
+# ── Login (Google-only) — /login?flow=register shows signup wording ──────────
 @auth_bp.route('/login')
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
-    return render_template('auth/login.html')
+    flow = (request.args.get('flow') or 'login').lower()
+    if flow not in ('login', 'register'):
+        flow = 'login'
+    return render_template('auth/login.html', auth_flow=flow)
 
 @auth_bp.route('/dev-login/<role>')
 def dev_login(role):

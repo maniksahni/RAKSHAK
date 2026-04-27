@@ -932,7 +932,7 @@ a,button{cursor:none}
   </a>
   <div class="rk-nav-actions">
     <a href="{{ url_for('auth.login') }}" class="rk-nav-link">Sign In</a>
-    <a href="{{ url_for('auth.register') }}" class="rk-nav-btn">Get Protected</a>
+    <a href="{{ url_for('auth.login', flow='register') }}" class="rk-nav-btn">Get Protected</a>
 </div>
 </nav>
 
@@ -1001,7 +1001,7 @@ a,button{cursor:none}
     </h1>
     <p class="hero-p">India's most advanced AI-powered women's safety platform. Real-time threat detection, automatic SOS, danger zone mapping, and 24/7 intelligent monitoring — all powered by cutting-edge AI.</p>
     <div class="hero-cta">
-      <a href="{{ url_for('auth.register') }}" class="mbtn pri" data-mag>
+      <a href="{{ url_for('auth.login', flow='register') }}" class="mbtn pri" data-mag>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Get Protected — Free
       </a>
@@ -1289,7 +1289,7 @@ a,button{cursor:none}
     <h2 class="cta-h">Ready to feel<br><span class="grad">protected?</span></h2>
     <p class="cta-p">Sign up in 30 seconds. No credit card. No hidden fees. Just real protection powered by AI.</p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-      <a href="{{ url_for('auth.register') }}" class="mbtn pri" data-mag style="font-size:1.18rem;padding:22px 52px">
+      <a href="{{ url_for('auth.login', flow='register') }}" class="mbtn pri" data-mag style="font-size:1.18rem;padding:22px 52px">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Get Protected — Free
       </a>
@@ -1312,7 +1312,7 @@ a,button{cursor:none}
     <div>
       <div class="ftch">Platform</div>
       <a href="{{ url_for('auth.login') }}" class="ftl"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign In</a>
-      <a href="{{ url_for('auth.register') }}" class="ftl"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Register Free</a>
+      <a href="{{ url_for('auth.login', flow='register') }}" class="ftl"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Register Free</a>
       <a href="#features" class="ftl"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Features</a>
         </div>
     <div>

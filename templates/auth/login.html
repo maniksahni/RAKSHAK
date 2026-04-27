@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Secure Access — RAKSHAK{% endblock %}
+{% set flow = auth_flow|default('login') %}
+{% block title %}{% if flow == 'register' %}Join RAKSHAK — Secure Access{% else %}Secure Access — RAKSHAK{% endif %}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -410,16 +411,26 @@ function startBiometricAuth(e) {
     <!-- Top Nav links only visible on desktop -->
     <div class="lp-right-nav d-none d-lg-flex">
       <a href="{{ url_for('main.index') }}" class="lp-btn-outline"><i class="bi bi-house me-1"></i> Home</a>
-      <a href="{{ url_for('auth.register') }}" class="lp-btn-solid">Get Protected</a>
+      {% if flow == 'register' %}
+      <a href="{{ url_for('auth.login') }}" class="lp-btn-solid">Sign In</a>
+      {% else %}
+      <a href="{{ url_for('auth.login', flow='register') }}" class="lp-btn-solid">Get Protected</a>
+      {% endif %}
     </div>
 
     <div class="lp-card">
       <div class="lp-card-inner">
         <!-- Header -->
         <div style="text-align: center; margin-bottom: 30px;">
+          {% if flow == 'register' %}
+          <div class="lp-card-tag"><span class="lp-hero-badge-dot"></span>Onboarding</div>
+          <h1 class="lp-welcome">Join <span>RAKSHAK.</span></h1>
+          <p class="lp-card-sub">Create your account with Google — instant setup, no passwords, full protection.</p>
+          {% else %}
           <div class="lp-card-tag"><span class="lp-hero-badge-dot"></span>Secure Access Portal</div>
           <h1 class="lp-welcome">Welcome <span>back.</span></h1>
           <p class="lp-card-sub">Authenticate to access your central command.</p>
+          {% endif %}
         </div>
 
         <!-- The Google Button -->
@@ -430,7 +441,7 @@ function startBiometricAuth(e) {
             <path fill="#8b5cf6" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
             <path fill="#7c3aed" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
           </svg>
-          <span class="lp-google-text">Authenticate with Google</span>
+          <span class="lp-google-text">{% if flow == 'register' %}Sign up with Google{% else %}Authenticate with Google{% endif %}</span>
           <svg class="lp-google-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
         </a>
 
@@ -463,6 +474,14 @@ function startBiometricAuth(e) {
               <p>Real-time telemetry tracking with fail-deadly triggers.</p>
             </div>
           </div>
+        </div>
+
+        <div class="lp-auth-switch" style="text-align:center;margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid rgba(255,255,255,0.06);">
+          {% if flow == 'register' %}
+          <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0;">Already have an account? <a href="{{ url_for('auth.login') }}" style="color:#c4b5fd;font-weight:700;text-decoration:none;">Sign in</a></p>
+          {% else %}
+          <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0;">New here? <a href="{{ url_for('auth.login', flow='register') }}" style="color:#c4b5fd;font-weight:700;text-decoration:none;">Get Protected</a></p>
+          {% endif %}
         </div>
 
         <!-- Footer -->
