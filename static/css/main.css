@@ -78,6 +78,10 @@ body.sidebar-open { overflow: hidden; }
 /* Authenticated shell navbar offset (desktop sidebar) */
 @media (min-width: 992px) {
   .navbar-rakshak.auth-shell { left: 240px; right: 0; }
+  .is-auth .sidebar {
+    top: 70px;
+    height: calc(100dvh - 70px);
+  }
 }
 
 ::selection { background: var(--red-glow); color: var(--text-primary); }
