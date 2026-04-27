@@ -110,7 +110,7 @@ Whether walking alone at night or navigating unfamiliar areas, RAKSHAK acts as a
 | **PDF Reports** | ReportLab, Pillow |
 | **Task Scheduling** | APScheduler |
 | **Rate Limiting** | Flask-Limiter |
-| **Deployment** | Railway, Nixpacks, Docker |
+| **Deployment** | Railway (Docker) |
 | **PWA** | Service Worker, Web App Manifest |
 
 ---
@@ -194,7 +194,7 @@ Whether walking alone at night or navigating unfamiliar areas, RAKSHAK acts as a
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/RAKSHAK.git
+git clone https://github.com/maniksahni/RAKSHAK.git
 cd RAKSHAK
 
 # Create virtual environment
@@ -303,7 +303,6 @@ RAKSHAK/
 │
 ├── Dockerfile              # Docker build configuration
 ├── docker-compose.yml      # Local multi-container setup
-├── Procfile                # Railway process configuration
 ├── requirements.txt        # Python dependencies
 └── README.md               # You are here!
 ```
@@ -329,7 +328,7 @@ RAKSHAK/
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is released under the **MIT License**.
 
 ---
 
