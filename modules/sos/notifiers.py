@@ -537,14 +537,17 @@ def _send_email_with_fallbacks(contact, subject, body, smtp_options=None, html_b
     providers.append(lambda: _send_email(contact, subject, body, smtp_options=smtp_options, html_body=html_body))
 
     last_result = None
+    configured_failure = None
     for provider in providers:
         result = provider()
         last_result = result
         if result.get('success'):
             return result
         if result.get('configured'):
+            if configured_failure is None:
+                configured_failure = result
             log.warning('SOS email provider failed for %s: %s', result.get('contact'), result.get('detail'))
-    return last_result or {
+    return configured_failure or last_result or {
         'channel': 'email',
         'contact': _contact_label(contact),
         'success': False,
