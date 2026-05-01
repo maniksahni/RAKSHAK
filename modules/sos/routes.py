@@ -6,7 +6,7 @@ from models import query_db, log_audit
 from socket_events import emit_sos_alert
 from pdf_reports import generate_sos_report
 from healer import validate_coords, validate_battery, sanitize_str
-from modules.sos.notifiers import dispatch_sos_notifications, summarize_delivery
+from modules.sos.notifiers import dispatch_sos_notifications, summarize_delivery, email_provider_diagnostics
 from datetime import datetime
 
 log = logging.getLogger('rakshak')
@@ -212,7 +212,10 @@ def notification_preview():
     delivery = summarize_delivery(
         dispatch_sos_notifications(current_user, contacts, preview_alert, smtp_options=preview_smtp_options)
     )
-    return jsonify(success=True, delivery=delivery)
+    payload = {'success': True, 'delivery': delivery}
+    if getattr(current_user, 'is_admin', False):
+        payload['provider_debug'] = email_provider_diagnostics()
+    return jsonify(payload)
 
 
 # ── Alert History ─────────────────────────────────────────────────────────────

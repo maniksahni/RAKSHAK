@@ -553,6 +553,35 @@ def _send_email_with_fallbacks(contact, subject, body, smtp_options=None, html_b
     }
 
 
+def email_provider_diagnostics():
+    providers = {
+        'gmail_api': (
+            'GMAIL_API_CLIENT_ID',
+            'GMAIL_API_CLIENT_SECRET',
+            'GMAIL_API_REFRESH_TOKEN',
+            'GMAIL_API_SENDER',
+        ),
+        'resend': (
+            'RESEND_API_KEY',
+            'RESEND_FROM',
+        ),
+        'smtp': (
+            'SMTP_HOST',
+            'SMTP_USERNAME',
+            'SMTP_PASSWORD',
+            'SMTP_FROM',
+        ),
+    }
+    diagnostics = {}
+    for name, keys in providers.items():
+        missing = [key for key in keys if not _env(key)]
+        diagnostics[name] = {
+            'configured': not missing,
+            'missing': missing,
+        }
+    return diagnostics
+
+
 def _send_twilio(contact, body, whatsapp=False):
     required = ('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN')
     from_key = 'TWILIO_WHATSAPP_FROM' if whatsapp else 'TWILIO_SMS_FROM'
