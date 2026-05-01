@@ -30,7 +30,17 @@ RESERVED_EMAIL_DOMAINS = {
 
 
 def _configured(*keys):
-    return all(os.environ.get(k) for k in keys)
+    return all(_env(k) for k in keys)
+
+
+def _env(key, default=None):
+    value = os.environ.get(key)
+    if value is None:
+        return default
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+        value = value[1:-1].strip()
+    return value or default
 
 
 def _http_error_detail(resp, limit=180):
@@ -281,14 +291,14 @@ def _send_resend_email(contact, subject, body, html_body=None):
         }
 
     payload = {
-        'from': os.environ['RESEND_FROM'],
+        'from': _env('RESEND_FROM'),
         'to': [recipient],
         'subject': subject,
         'text': body,
     }
     if html_body:
         payload['html'] = html_body
-    reply_to = (os.environ.get('RESEND_REPLY_TO') or '').strip()
+    reply_to = _env('RESEND_REPLY_TO', '')
     if reply_to:
         payload['reply_to'] = reply_to
 
@@ -297,7 +307,7 @@ def _send_resend_email(contact, subject, body, html_body=None):
             'https://api.resend.com/emails',
             json=payload,
             headers={
-                'Authorization': f"Bearer {os.environ['RESEND_API_KEY']}",
+                'Authorization': f"Bearer {_env('RESEND_API_KEY')}",
                 'Content-Type': 'application/json',
             },
             timeout=15,
@@ -350,7 +360,7 @@ def _send_gmail_api_email(contact, subject, body, html_body=None):
             'detail': 'undeliverable contact email domain',
         }
 
-    sender = os.environ['GMAIL_API_SENDER']
+    sender = _env('GMAIL_API_SENDER')
     msg = EmailMessage()
     msg['Subject'] = subject
     msg['From'] = sender
@@ -360,9 +370,9 @@ def _send_gmail_api_email(contact, subject, body, html_body=None):
         msg.add_alternative(html_body, subtype='html')
 
     token_payload = {
-        'client_id': os.environ['GMAIL_API_CLIENT_ID'],
-        'client_secret': os.environ['GMAIL_API_CLIENT_SECRET'],
-        'refresh_token': os.environ['GMAIL_API_REFRESH_TOKEN'],
+        'client_id': _env('GMAIL_API_CLIENT_ID'),
+        'client_secret': _env('GMAIL_API_CLIENT_SECRET'),
+        'refresh_token': _env('GMAIL_API_REFRESH_TOKEN'),
         'grant_type': 'refresh_token',
     }
 
@@ -441,20 +451,20 @@ def _send_email(contact, subject, body, smtp_options=None, html_body=None):
 
     msg = EmailMessage()
     msg['Subject'] = subject
-    msg['From'] = os.environ['SMTP_FROM']
+    msg['From'] = _env('SMTP_FROM')
     msg['To'] = recipient
     msg.set_content(body)
     if html_body:
         msg.add_alternative(html_body, subtype='html')
 
     smtp_options = dict(smtp_options or {})
-    host = smtp_options.get('host') or os.environ['SMTP_HOST']
-    port = int(smtp_options.get('port') or os.environ.get('SMTP_PORT', '587'))
-    use_tls = bool(smtp_options.get('use_tls', os.environ.get('SMTP_USE_TLS', 'true').lower() != 'false'))
-    username = os.environ['SMTP_USERNAME']
-    password = os.environ['SMTP_PASSWORD']
-    timeout_seconds = int(smtp_options.get('timeout_seconds') or os.environ.get('SMTP_TIMEOUT_SECONDS', '20'))
-    attempts_per_variant = max(1, int(smtp_options.get('retry_attempts') or os.environ.get('SMTP_RETRY_ATTEMPTS', '2')))
+    host = smtp_options.get('host') or _env('SMTP_HOST')
+    port = int(smtp_options.get('port') or _env('SMTP_PORT', '587'))
+    use_tls = bool(smtp_options.get('use_tls', _env('SMTP_USE_TLS', 'true').lower() != 'false'))
+    username = _env('SMTP_USERNAME')
+    password = _env('SMTP_PASSWORD')
+    timeout_seconds = int(smtp_options.get('timeout_seconds') or _env('SMTP_TIMEOUT_SECONDS', '20'))
+    attempts_per_variant = max(1, int(smtp_options.get('retry_attempts') or _env('SMTP_RETRY_ATTEMPTS', '2')))
     allow_ssl_fallback = bool(smtp_options.get('allow_ssl_fallback', True))
 
     last_error = 'SMTP delivery failed'
@@ -554,11 +564,11 @@ def _send_twilio(contact, body, whatsapp=False):
     if not phone:
         return {'channel': channel, 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'missing contact phone'}
 
-    sid = os.environ['TWILIO_ACCOUNT_SID']
-    token = os.environ['TWILIO_AUTH_TOKEN']
+    sid = _env('TWILIO_ACCOUNT_SID')
+    token = _env('TWILIO_AUTH_TOKEN')
     to_number = f'whatsapp:{phone}' if whatsapp and not phone.startswith('whatsapp:') else phone
     payload = {
-        'From': os.environ[from_key],
+        'From': _env(from_key),
         'To': to_number,
         'Body': body,
     }
