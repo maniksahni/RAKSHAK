@@ -729,21 +729,12 @@ async function previewSosDelivery() {
       return;
     }
     const delivery = data.delivery || {};
-    const providerDebug = data.provider_debug || {};
     const failedContact = (delivery.email_failure_contacts || [])[0];
     const failedReason = (delivery.first_email_error || '').trim();
     if ((delivery.email_sent || 0) > 0) {
       showToast(`Trusted email sent to ${delivery.email_sent} contact(s).`, 'success', 7000);
     } else if ((delivery.email_not_configured || 0) > 0) {
-      const hints = [];
-      if (providerDebug.gmail_api && !providerDebug.gmail_api.configured && (providerDebug.gmail_api.missing || []).length) {
-        hints.push(`Gmail API missing ${providerDebug.gmail_api.missing.join(', ')}`);
-      }
-      if (providerDebug.smtp && !providerDebug.smtp.configured && (providerDebug.smtp.missing || []).length) {
-        hints.push(`SMTP missing ${providerDebug.smtp.missing.join(', ')}`);
-      }
-      const detail = hints.length ? ` ${hints[0]}.` : '';
-      showToast((`Automatic email provider not configured on this app instance.${detail}`).slice(0, 240), 'warning', 9000);
+      showToast('Automatic email provider not configured on this app instance.', 'warning', 8000);
     } else if ((delivery.email_disabled || 0) > 0) {
       showToast('Email Alert is turned off for one or more trusted contacts.', 'warning', 8000);
     } else if ((delivery.email_failed || 0) > 0) {
