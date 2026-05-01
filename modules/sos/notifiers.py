@@ -268,70 +268,6 @@ def _smtp_connect(host, port, *, use_ssl=False, timeout_seconds=20):
     raise OSError(last_error or f'Unable to connect to SMTP host {host}:{port}')
 
 
-def _send_resend_email(contact, subject, body, html_body=None):
-    if not _configured('RESEND_API_KEY', 'RESEND_FROM'):
-        return {
-            'channel': 'email',
-            'contact': _contact_label(contact),
-            'success': False,
-            'configured': False,
-            'detail': 'Resend not configured',
-        }
-
-    recipient = contact.get('contact_email')
-    if not recipient:
-        return {'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'missing contact email'}
-    if not _deliverable_email(recipient):
-        return {
-            'channel': 'email',
-            'contact': recipient,
-            'success': False,
-            'configured': True,
-            'detail': 'undeliverable contact email domain',
-        }
-
-    payload = {
-        'from': _env('RESEND_FROM'),
-        'to': [recipient],
-        'subject': subject,
-        'text': body,
-    }
-    if html_body:
-        payload['html'] = html_body
-    reply_to = _env('RESEND_REPLY_TO', '')
-    if reply_to:
-        payload['reply_to'] = reply_to
-
-    try:
-        resp = requests.post(
-            'https://api.resend.com/emails',
-            json=payload,
-            headers={
-                'Authorization': f"Bearer {_env('RESEND_API_KEY')}",
-                'Content-Type': 'application/json',
-            },
-            timeout=15,
-        )
-        ok = 200 <= resp.status_code < 300
-        detail = 'sent via resend' if ok else f'Resend {resp.status_code}: {resp.text[:180]}'
-        return {
-            'channel': 'email',
-            'contact': recipient,
-            'success': ok,
-            'configured': True,
-            'detail': detail,
-        }
-    except Exception as exc:
-        log.warning('Resend email delivery failed for %s: %s', recipient, exc)
-        return {
-            'channel': 'email',
-            'contact': recipient,
-            'success': False,
-            'configured': True,
-            'detail': f'Resend error: {exc}',
-        }
-
-
 def _send_gmail_api_email(contact, subject, body, html_body=None):
     required = (
         'GMAIL_API_CLIENT_ID',
@@ -522,7 +458,7 @@ def _send_email(contact, subject, body, smtp_options=None, html_body=None):
     ):
         last_error = (
             'SMTP unreachable from host. Railway Free/Trial/Hobby blocks outbound SMTP. '
-            'Configure RESEND_API_KEY + RESEND_FROM, or upgrade Railway to Pro.'
+            'Use Gmail API instead, or upgrade Railway to Pro for outbound SMTP.'
         )
 
     return {'channel': 'email', 'contact': recipient, 'success': False, 'configured': True, 'detail': last_error}
@@ -532,8 +468,6 @@ def _send_email_with_fallbacks(contact, subject, body, smtp_options=None, html_b
     providers = []
     if _configured('GMAIL_API_CLIENT_ID', 'GMAIL_API_CLIENT_SECRET', 'GMAIL_API_REFRESH_TOKEN', 'GMAIL_API_SENDER'):
         providers.append(lambda: _send_gmail_api_email(contact, subject, body, html_body=html_body))
-    if _configured('RESEND_API_KEY', 'RESEND_FROM'):
-        providers.append(lambda: _send_resend_email(contact, subject, body, html_body=html_body))
     providers.append(lambda: _send_email(contact, subject, body, smtp_options=smtp_options, html_body=html_body))
 
     last_result = None
@@ -563,10 +497,6 @@ def email_provider_diagnostics():
             'GMAIL_API_CLIENT_SECRET',
             'GMAIL_API_REFRESH_TOKEN',
             'GMAIL_API_SENDER',
-        ),
-        'resend': (
-            'RESEND_API_KEY',
-            'RESEND_FROM',
         ),
         'smtp': (
             'SMTP_HOST',
@@ -648,7 +578,6 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
 
     Free mode:
     - Gmail API sends automatically over HTTPS when GMAIL_API_* env vars exist.
-    - Resend email sends over HTTPS when RESEND_* env vars are configured.
     - Otherwise SMTP email sends automatically when SMTP_* env vars are configured.
     - WhatsApp/SMS are generated as wa.me and sms: links because automatic
       WhatsApp/SMS requires a gateway/provider.

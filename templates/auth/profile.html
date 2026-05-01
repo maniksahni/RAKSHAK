@@ -739,9 +739,6 @@ async function previewSosDelivery() {
       if (providerDebug.gmail_api && !providerDebug.gmail_api.configured && (providerDebug.gmail_api.missing || []).length) {
         hints.push(`Gmail API missing ${providerDebug.gmail_api.missing.join(', ')}`);
       }
-      if (providerDebug.resend && !providerDebug.resend.configured && (providerDebug.resend.missing || []).length) {
-        hints.push(`Resend missing ${providerDebug.resend.missing.join(', ')}`);
-      }
       if (providerDebug.smtp && !providerDebug.smtp.configured && (providerDebug.smtp.missing || []).length) {
         hints.push(`SMTP missing ${providerDebug.smtp.missing.join(', ')}`);
       }
