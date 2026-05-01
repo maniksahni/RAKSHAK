@@ -33,6 +33,26 @@ def _configured(*keys):
     return all(os.environ.get(k) for k in keys)
 
 
+def _http_error_detail(resp, limit=180):
+    try:
+        payload = resp.json()
+    except ValueError:
+        payload = None
+
+    if isinstance(payload, dict):
+        err = payload.get('error')
+        desc = payload.get('error_description') or payload.get('message')
+        if isinstance(err, dict):
+            desc = desc or err.get('message')
+            err = err.get('status') or err.get('code') or err.get('message')
+        parts = [str(p).strip() for p in (err, desc) if p and str(p).strip()]
+        if parts:
+            return ': '.join(parts)[:limit]
+
+    text = (getattr(resp, 'text', '') or '').strip()
+    return text[:limit]
+
+
 def _contact_label(contact):
     return contact.get('contact_name') or contact.get('contact_email') or contact.get('contact_phone') or 'contact'
 
@@ -353,12 +373,13 @@ def _send_gmail_api_email(contact, subject, body, html_body=None):
             timeout=15,
         )
         if not token_resp.ok:
+            detail = _http_error_detail(token_resp) or 'unknown token refresh error'
             return {
                 'channel': 'email',
                 'contact': recipient,
                 'success': False,
                 'configured': True,
-                'detail': f'Gmail token refresh failed: {token_resp.status_code}',
+                'detail': f'Gmail token refresh failed: {token_resp.status_code} {detail}',
             }
 
         access_token = token_resp.json().get('access_token')
@@ -497,6 +518,31 @@ def _send_email(contact, subject, body, smtp_options=None, html_body=None):
     return {'channel': 'email', 'contact': recipient, 'success': False, 'configured': True, 'detail': last_error}
 
 
+def _send_email_with_fallbacks(contact, subject, body, smtp_options=None, html_body=None):
+    providers = []
+    if _configured('GMAIL_API_CLIENT_ID', 'GMAIL_API_CLIENT_SECRET', 'GMAIL_API_REFRESH_TOKEN', 'GMAIL_API_SENDER'):
+        providers.append(lambda: _send_gmail_api_email(contact, subject, body, html_body=html_body))
+    if _configured('RESEND_API_KEY', 'RESEND_FROM'):
+        providers.append(lambda: _send_resend_email(contact, subject, body, html_body=html_body))
+    providers.append(lambda: _send_email(contact, subject, body, smtp_options=smtp_options, html_body=html_body))
+
+    last_result = None
+    for provider in providers:
+        result = provider()
+        last_result = result
+        if result.get('success'):
+            return result
+        if result.get('configured'):
+            log.warning('SOS email provider failed for %s: %s', result.get('contact'), result.get('detail'))
+    return last_result or {
+        'channel': 'email',
+        'contact': _contact_label(contact),
+        'success': False,
+        'configured': False,
+        'detail': 'No email provider configured',
+    }
+
+
 def _send_twilio(contact, body, whatsapp=False):
     required = ('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN')
     from_key = 'TWILIO_WHATSAPP_FROM' if whatsapp else 'TWILIO_SMS_FROM'
@@ -584,12 +630,7 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
     for contact in contacts:
         contact = dict(contact)
         if _pref_enabled(contact, 'notify_email'):
-            if _configured('GMAIL_API_CLIENT_ID', 'GMAIL_API_CLIENT_SECRET', 'GMAIL_API_REFRESH_TOKEN', 'GMAIL_API_SENDER'):
-                results.append(_send_gmail_api_email(contact, subject, body, html_body=html_body))
-            elif _configured('RESEND_API_KEY', 'RESEND_FROM'):
-                results.append(_send_resend_email(contact, subject, body, html_body=html_body))
-            else:
-                results.append(_send_email(contact, subject, body, smtp_options=smtp_options, html_body=html_body))
+            results.append(_send_email_with_fallbacks(contact, subject, body, smtp_options=smtp_options, html_body=html_body))
         else:
             results.append({'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'disabled for contact'})
         results.append(_free_share_links(contact, subject, body))
