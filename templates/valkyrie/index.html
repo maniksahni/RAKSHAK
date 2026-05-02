@@ -262,7 +262,7 @@ let isArmed = false;
 let countdownTimer = null;
 let timeLeft = 5;
 let enteredPin = "";
-const CORRECT_PIN = "1234"; // Hardcoded for demo/project purposes
+const valkyrieCsrfToken = window.CSRF_TOKEN || '{{ csrf_token() }}';
 
 const zone = document.getElementById('v-zone');
 const statusText = document.getElementById('v-status');
@@ -345,8 +345,18 @@ function updateDots() {
   });
 }
 
-function verifyPin() {
-  if(enteredPin === CORRECT_PIN) {
+async function verifyPin() {
+  try {
+    const resp = await fetch('/valkyrie/verify-pin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': valkyrieCsrfToken
+      },
+      body: JSON.stringify({ pin: enteredPin })
+    });
+    const data = await resp.json();
+    if(data.success) {
     // DISARM
     clearInterval(countdownTimer);
     countdownTimer = null;
@@ -359,12 +369,22 @@ function verifyPin() {
       statusText.style.color = "rgba(255,255,255,0.7)";
     }, 3000);
     if(window.tacticalAnnounce) tacticalAnnounce("Authorization accepted. Stand down.");
-  } else {
+    } else {
     // WRONG PIN
     enteredPin = "";
     updateDots();
     numVal.style.color = "#fff";
     setTimeout(()=> numVal.style.color = "#ef4444", 200);
+      if (data && data.error) {
+        statusText.textContent = data.error;
+        statusText.style.color = "#f59e0b";
+      }
+    }
+  } catch (e) {
+    enteredPin = "";
+    updateDots();
+    statusText.textContent = "PIN verification unavailable.";
+    statusText.style.color = "#f59e0b";
   }
 }
 

@@ -5,6 +5,7 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
+    ALLOW_DEV_LOGIN = os.environ.get('ALLOW_DEV_LOGIN', '').strip().lower() in ('1', 'true', 'yes', 'on')
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = 3600
     WTF_CSRF_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE']  # Allow GET without CSRF token

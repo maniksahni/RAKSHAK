@@ -63,8 +63,7 @@ def login():
 
 @auth_bp.route('/dev-login/<role>')
 def dev_login(role):
-    if not (current_app.debug or current_app.config.get('ENV') == 'development'
-            or current_app.config.get('ALLOW_DEV_LOGIN')):
+    if not current_app.config.get('ALLOW_DEV_LOGIN'):
         return "Not found", 404
 
     from models import User
