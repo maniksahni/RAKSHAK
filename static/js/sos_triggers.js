@@ -8,8 +8,10 @@
 
   // ── Settings (localStorage) ─────────────────────────────────────────────────
   const DEFAULTS = {
-    shake_sos_enabled: true,
-    volume_sos_enabled: true,
+    shake_sos_enabled: false,
+    volume_sos_enabled: false,
+    triple_tap_sos_enabled: false,
+    movement_sos_enabled: false,
     countdown_seconds: 5
   };
 
@@ -285,6 +287,7 @@
   var tripleClickCooldown = false;
 
   document.addEventListener('click', function (e) {
+    if (!getSetting('triple_tap_sos_enabled')) return;
     if (tripleClickCooldown || countdownTimer) return;
     // Only fire on triple-click (3 clicks in rapid succession)
     var now = Date.now();
@@ -315,6 +318,7 @@
   var GEOFENCE_SPEED_THRESHOLD = 50; // 500m in 10s = 50 m/s
 
   function checkGeofenceBreach(pos) {
+    if (!getSetting('movement_sos_enabled')) return;
     var now = Date.now();
     if (lastGeoPos && lastGeoTime) {
       var timeDelta = (now - lastGeoTime) / 1000; // seconds
@@ -421,6 +425,8 @@
 
     var shakeEnabled = getSetting('shake_sos_enabled');
     var volumeEnabled = getSetting('volume_sos_enabled');
+    var tripleTapEnabled = getSetting('triple_tap_sos_enabled');
+    var movementEnabled = getSetting('movement_sos_enabled');
     var countdown = getSetting('countdown_seconds');
 
     var modal = document.createElement('div');
@@ -447,6 +453,20 @@
           '</label>' +
         '</div>' +
 
+        '<div style="margin-bottom:20px;">' +
+          '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
+            '<input type="checkbox" id="sos-set-triple" ' + (tripleTapEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#7c3aed;">' +
+            '<div><div style="font-weight:600;font-size:0.9rem;">Triple-Tap SOS</div><div style="font-size:0.75rem;color:#888;">Trigger SOS only if you intentionally enable rapid background triple-tap detection</div></div>' +
+          '</label>' +
+        '</div>' +
+
+        '<div style="margin-bottom:20px;">' +
+          '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
+            '<input type="checkbox" id="sos-set-movement" ' + (movementEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#7c3aed;">' +
+            '<div><div style="font-weight:600;font-size:0.9rem;">Movement SOS Warning</div><div style="font-size:0.75rem;color:#888;">Watch for sudden location jumps and arm SOS only when explicitly enabled</div></div>' +
+          '</label>' +
+        '</div>' +
+
         '<div style="margin-bottom:24px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
           '<label style="font-weight:600;font-size:0.9rem;display:block;margin-bottom:8px;">Countdown (seconds)</label>' +
           '<input type="range" id="sos-set-countdown" min="3" max="10" value="' + countdown + '" style="width:100%;accent-color:#7c3aed;">' +
@@ -469,6 +489,8 @@
     document.getElementById('sos-settings-save').onclick = function () {
       setSetting('shake_sos_enabled', document.getElementById('sos-set-shake').checked);
       setSetting('volume_sos_enabled', document.getElementById('sos-set-volume').checked);
+      setSetting('triple_tap_sos_enabled', document.getElementById('sos-set-triple').checked);
+      setSetting('movement_sos_enabled', document.getElementById('sos-set-movement').checked);
       setSetting('countdown_seconds', parseInt(slider.value, 10));
       if (typeof showToast === 'function') showToast('SOS trigger settings saved', 'success');
       modal.remove();
