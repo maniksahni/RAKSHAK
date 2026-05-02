@@ -4,6 +4,7 @@ from models import query_db, log_audit
 from socket_events import emit_danger_zone
 from datetime import datetime, timedelta
 from functools import wraps
+from app import limiter
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -176,6 +177,7 @@ def list_users():
 @admin_bp.route('/users/<int:uid>/toggle', methods=['POST'])
 @login_required
 @admin_required
+@limiter.limit('60 per hour;20 per minute')
 def toggle_user(uid):
     try:
         if uid == current_user.id:
@@ -195,6 +197,7 @@ def toggle_user(uid):
 @admin_bp.route('/users/<int:uid>/change-role', methods=['POST'])
 @login_required
 @admin_required
+@limiter.limit('60 per hour;20 per minute')
 def change_role(uid):
     try:
         new_role = request.get_json().get('role')
@@ -234,6 +237,7 @@ def pending_zones():
 @admin_bp.route('/danger-zones/<int:zone_id>/approve', methods=['POST'])
 @login_required
 @admin_required
+@limiter.limit('120 per hour;30 per minute')
 def approve_zone(zone_id):
     try:
         query_db(
@@ -256,6 +260,7 @@ def approve_zone(zone_id):
 @admin_bp.route('/danger-zones/<int:zone_id>/reject', methods=['POST'])
 @login_required
 @admin_required
+@limiter.limit('120 per hour;30 per minute')
 def reject_zone(zone_id):
     try:
         query_db("UPDATE danger_zones SET status='rejected' WHERE id=%s", (zone_id,), commit=True)

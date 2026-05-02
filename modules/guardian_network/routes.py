@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, render_template
 from flask_login import login_required, current_user
 from models import query_db, log_audit
+from app import limiter
 
 log = logging.getLogger('rakshak')
 guardian_bp = Blueprint('guardian', __name__)
@@ -36,6 +37,7 @@ def haversine_km(lat1, lng1, lat2, lng2):
 # ── Opt-in as Guardian Angel ───────────────────────────────────────────────────
 @guardian_bp.route('/opt-in', methods=['POST'])
 @login_required
+@limiter.limit('30 per hour;10 per minute')
 def opt_in():
     """User opts in as a Guardian Angel for their area."""
     try:
@@ -74,6 +76,7 @@ def opt_in():
 # ── Opt-out as Guardian Angel ──────────────────────────────────────────────────
 @guardian_bp.route('/opt-out', methods=['POST'])
 @login_required
+@limiter.limit('30 per hour;10 per minute')
 def opt_out():
     """User opts out of Guardian Angel program."""
     try:
@@ -89,6 +92,7 @@ def opt_out():
 # ── Get Nearby Guardians ───────────────────────────────────────────────────────
 @guardian_bp.route('/nearby', methods=['POST'])
 @login_required
+@limiter.limit('120 per hour;30 per minute')
 def nearby_guardians():
     """Get anonymized nearby Guardian Angels."""
     try:
@@ -143,6 +147,7 @@ def nearby_guardians():
 # ── Alert Guardians on SOS ─────────────────────────────────────────────────────
 @guardian_bp.route('/alert-guardians', methods=['POST'])
 @login_required
+@limiter.limit('20 per hour;5 per minute')
 def alert_guardians():
     """
     Called when SOS is triggered — notifies nearby Guardian Angels.
@@ -150,12 +155,31 @@ def alert_guardians():
     """
     try:
         data = request.get_json() or {}
-        lat = float(data.get('latitude', 0))
-        lng = float(data.get('longitude', 0))
         alert_id = data.get('alert_id')
 
-        if not lat or not lng:
-            return jsonify(success=True, alerted=0)  # Silent fail — SOS already logged
+        if not alert_id:
+            return jsonify(success=False, error='alert_id required'), 400
+
+        alert = query_db(
+            """SELECT id, user_id, latitude, longitude, status, created_at
+               FROM sos_alerts
+               WHERE id=%s AND user_id=%s""",
+            (alert_id, current_user.id),
+            one=True
+        )
+        if not alert:
+            return jsonify(success=False, error='Alert not found'), 404
+
+        if (alert.get('status') or '').lower() != 'active':
+            return jsonify(success=False, error='Only active alerts can notify guardians'), 400
+
+        lat = alert.get('latitude')
+        lng = alert.get('longitude')
+        if lat is None or lng is None:
+            return jsonify(success=True, alerted=0)
+
+        lat = float(lat)
+        lng = float(lng)
 
         # Radius: 1km hard limit for guardian alerts
         radius_km = 1.0
@@ -194,7 +218,11 @@ def alert_guardians():
         if alerted_count > 0:
             try:
                 from app import socketio
-                for g in nearby_guardians[:alerted_count]:
+                for g in nearby_guardians:
+                    if haversine_km(lat, lng,
+                                    float(g['guardian_lat'] or 0),
+                                    float(g['guardian_lng'] or 0)) > radius_km:
+                        continue
                     socketio.emit('guardian_sos_alert', {
                         'type': 'guardian_needed',
                         'approx_distance': 'nearby',

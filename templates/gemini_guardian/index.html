@@ -681,6 +681,11 @@ let currentMode = 'chat';
 let userLocation = null;
 let selectedOracleHour = -1;
 let isThinking = false;
+const ariaCsrfToken = window.CSRF_TOKEN || '{{ csrf_token() }}';
+const ariaJsonHeaders = {
+  'Content-Type': 'application/json',
+  'X-CSRFToken': ariaCsrfToken
+};
 
 // ── Mode Selection ──────────────────────────────────────
 function setMode(mode) {
@@ -751,7 +756,7 @@ async function sendMessage() {
   try {
     const res = await fetch('/aria/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: ariaJsonHeaders,
       body: JSON.stringify({ message: msg, history: chatHistory.slice(-10) })
     });
     const data = await res.json();
@@ -858,7 +863,7 @@ async function runThreatAnalysis() {
     const now = new Date();
     const res = await fetch('/aria/analyze-threat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: ariaJsonHeaders,
       body: JSON.stringify({
         latitude: userLocation.lat,
         longitude: userLocation.lng,
@@ -937,7 +942,7 @@ async function runOracle() {
 
     const res = await fetch('/aria/predict-safety', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: ariaJsonHeaders,
       body: JSON.stringify({
         latitude: lat, longitude: lng,
         target_time: targetTime,

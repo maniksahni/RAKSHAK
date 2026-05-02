@@ -203,11 +203,6 @@ def create_app(config_name=None):
     app.register_blueprint(vision_shield_bp, url_prefix='/vision-shield')
     app.register_blueprint(xray_vision_bp,   url_prefix='/xray-vision')
 
-    # Exempt internal APIs from CSRF as they are invoked via fetch without tokens
-    csrf.exempt(gemini_bp)
-    csrf.exempt(guardian_bp)
-    csrf.exempt(vision_shield_bp)
-    csrf.exempt(xray_vision_bp)
     # ── Google OAuth ──────────────────────────────────────────────────────
     register_google_oauth(app)
 

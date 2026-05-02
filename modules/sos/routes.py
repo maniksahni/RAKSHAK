@@ -8,6 +8,7 @@ from pdf_reports import generate_sos_report
 from healer import validate_coords, validate_battery, sanitize_str
 from modules.sos.notifiers import dispatch_sos_notifications, summarize_delivery
 from datetime import datetime
+from app import limiter
 
 log = logging.getLogger('rakshak')
 
@@ -77,6 +78,7 @@ def index():
 @sos_bp.route('/broadcast', methods=['POST'])
 @sos_bp.route('/trigger', methods=['POST'])
 @login_required
+@limiter.limit('30 per hour;6 per minute')
 def trigger_sos():
     try:
         data         = request.get_json() or {}
@@ -192,6 +194,7 @@ def trigger_sos():
 
 @sos_bp.route('/notification-preview', methods=['POST'])
 @login_required
+@limiter.limit('20 per hour;5 per minute')
 def notification_preview():
     """Preview free SOS notification delivery without creating an alert."""
     contacts = query_db(

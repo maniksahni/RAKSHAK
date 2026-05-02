@@ -6,10 +6,10 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/health')
 def health_check():
-    """Liveness health check — safe for platform startup probes."""
+    """Primary health check — returns degraded status when dependencies fail."""
     try:
         from healer import build_health_response
-        payload, code = build_health_response(strict=False)
+        payload, code = build_health_response(strict=True)
         return jsonify(payload), code
     except Exception as e:
         return jsonify(status='unhealthy', error=str(e)), 503

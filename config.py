@@ -22,8 +22,8 @@ class Config:
     KEEP_ALIVE_URL = os.environ.get('KEEP_ALIVE_URL', '')  # e.g. https://rakshak.up.railway.app/health
 
     # Rate limiting
-    RATELIMIT_STORAGE_URL = 'memory://'
-    RATELIMIT_DEFAULT = '100000 per day;10000 per hour'
+    RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'memory://')
+    RATELIMIT_DEFAULT = os.environ.get('RATELIMIT_DEFAULT', '5000 per day;500 per hour')
 
     # SocketIO
     SOCKETIO_ASYNC_MODE = 'eventlet'

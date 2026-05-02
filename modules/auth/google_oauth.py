@@ -15,6 +15,7 @@ from flask import Blueprint, redirect, url_for, session, request, flash
 from flask_login import login_user, current_user
 from authlib.integrations.flask_client import OAuth
 from models import User, query_db, log_audit
+from app import limiter
 
 log = logging.getLogger('rakshak')
 
@@ -28,7 +29,10 @@ google = None   # populated after init
 def _get_admin_emails():
     """Return set of lowercase emails that should have admin role via Google login."""
     raw = os.environ.get('GOOGLE_ADMIN_EMAILS', '')
-    base = {os.environ.get('ADMIN_EMAIL', 'admin@rakshak.com').strip().lower()}
+    base = set()
+    admin_email = (os.environ.get('ADMIN_EMAIL') or '').strip().lower()
+    if admin_email:
+        base.add(admin_email)
     extras = {e.strip().lower() for e in raw.split(',') if e.strip()}
     return base | extras
 
@@ -51,6 +55,7 @@ def register_google_oauth(app):
 
 # ── Step 1: redirect user to Google ──────────────────────────────────────────
 @google_bp.route('/auth/google/login')
+@limiter.limit('30 per hour')
 def google_login():
     if current_user.is_authenticated:
         if current_user.is_admin:
@@ -75,6 +80,7 @@ def google_login():
 
 # ── Step 2: Google redirects back here ───────────────────────────────────────
 @google_bp.route('/auth/google/callback')
+@limiter.limit('60 per hour')
 def google_callback():
     if not os.environ.get('GOOGLE_CLIENT_ID'):
         flash('Google login is not configured.', 'warning')
@@ -152,5 +158,5 @@ def google_callback():
     except Exception as e:
         import traceback
         log.error(f'Google OAuth callback failed: {e}\n{traceback.format_exc()}')
-        flash(f'Google login failed: {e}', 'error')
+        flash('Google login failed. Please try again.', 'error')
         return redirect(url_for('auth.login'))

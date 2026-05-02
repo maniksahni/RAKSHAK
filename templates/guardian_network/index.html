@@ -415,6 +415,11 @@ input[type="range"]::-webkit-slider-thumb {
 let userLoc = null;
 let guardianActive = false;
 let currentRadius = 1.0;
+const guardianCsrfToken = window.CSRF_TOKEN || '{{ csrf_token() }}';
+const guardianJsonHeaders = {
+  'Content-Type': 'application/json',
+  'X-CSRFToken': guardianCsrfToken
+};
 
 // ── On Load ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -481,7 +486,7 @@ async function toggleGuardian(checkbox) {
     try {
       const res = await fetch('/guardian/opt-in', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: guardianJsonHeaders,
         body: JSON.stringify({
           latitude: userLoc.lat, longitude: userLoc.lng,
           radius_km: currentRadius
@@ -501,7 +506,10 @@ async function toggleGuardian(checkbox) {
   } else {
     // Opt out
     try {
-      await fetch('/guardian/opt-out', { method: 'POST' });
+      await fetch('/guardian/opt-out', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': guardianCsrfToken }
+      });
       guardianActive = false;
       updateToggleUI(false, 0);
       showToast('Guardian Angel mode deactivated', 'info');
@@ -535,7 +543,7 @@ function updateRadius(val) {
   if (guardianActive && userLoc) {
     fetch('/guardian/opt-in', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: guardianJsonHeaders,
       body: JSON.stringify({ latitude: userLoc.lat, longitude: userLoc.lng, radius_km: currentRadius })
     }).catch(() => {});
   }
@@ -547,7 +555,7 @@ async function loadNearby() {
   try {
     const res = await fetch('/guardian/nearby', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: guardianJsonHeaders,
       body: JSON.stringify({ latitude: userLoc.lat, longitude: userLoc.lng, radius_km: 2.0 })
     });
     const data = await res.json();

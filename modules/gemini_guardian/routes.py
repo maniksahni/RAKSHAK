@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify, render_template, session
 from flask_login import login_required, current_user
 from models import query_db, log_audit
+from app import limiter
 
 log = logging.getLogger('rakshak')
 gemini_bp = Blueprint('gemini', __name__)
@@ -398,6 +399,7 @@ def _build_local_prediction(lat, lng, target_time, target_date):
 # ── Threat Analysis API ────────────────────────────────────────────────────────
 @gemini_bp.route('/analyze-threat', methods=['POST'])
 @login_required
+@limiter.limit('120 per hour;30 per minute')
 def analyze_threat():
     """
     Analyze a specific location/situation using the local ARIA engine.
@@ -424,6 +426,7 @@ def analyze_threat():
 # ── Safety Chat API ────────────────────────────────────────────────────────────
 @gemini_bp.route('/chat', methods=['POST'])
 @login_required
+@limiter.limit('240 per hour;60 per minute')
 def safety_chat():
     """
     Conversational AI safety chat with context-aware responses.
@@ -490,6 +493,7 @@ def safety_chat():
 # ── Predictive Safety Oracle ───────────────────────────────────────────────────
 @gemini_bp.route('/predict-safety', methods=['POST'])
 @login_required
+@limiter.limit('120 per hour;30 per minute')
 def predict_safety():
     """
     Local predictive safety scoring based on historical patterns,
