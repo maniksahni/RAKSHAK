@@ -8,7 +8,7 @@ from models import query_db, log_audit
 from app import limiter
 
 log = logging.getLogger('rakshak')
-gemini_bp = Blueprint('gemini', __name__)
+aria_guardian_bp = Blueprint('aria_guardian', __name__)
 
 # NOTE: ARIA runs on a local inference engine (no external API key required).
 RAKSHAK_SYSTEM_PROMPT = """You are ARIA — Advanced Rakshak Intelligence Assistant — an elite AI safety guardian embedded in RAKSHAK, India's most advanced women's safety platform.
@@ -397,7 +397,7 @@ def _build_local_prediction(lat, lng, target_time, target_date):
 
 
 # ── Threat Analysis API ────────────────────────────────────────────────────────
-@gemini_bp.route('/analyze-threat', methods=['POST'])
+@aria_guardian_bp.route('/analyze-threat', methods=['POST'])
 @login_required
 @limiter.limit('120 per hour;30 per minute')
 def analyze_threat():
@@ -424,7 +424,7 @@ def analyze_threat():
 
 
 # ── Safety Chat API ────────────────────────────────────────────────────────────
-@gemini_bp.route('/chat', methods=['POST'])
+@aria_guardian_bp.route('/chat', methods=['POST'])
 @login_required
 @limiter.limit('240 per hour;60 per minute')
 def safety_chat():
@@ -491,7 +491,7 @@ def safety_chat():
 
 
 # ── Predictive Safety Oracle ───────────────────────────────────────────────────
-@gemini_bp.route('/predict-safety', methods=['POST'])
+@aria_guardian_bp.route('/predict-safety', methods=['POST'])
 @login_required
 @limiter.limit('120 per hour;30 per minute')
 def predict_safety():
@@ -527,7 +527,7 @@ def predict_safety():
 
 
 # ── Guardian AI Page ───────────────────────────────────────────────────────────
-@gemini_bp.route('/')
+@aria_guardian_bp.route('/')
 @login_required
 def guardian_page():
-    return render_template('gemini_guardian/index.html')
+    return render_template('aria_guardian/index.html')

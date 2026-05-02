@@ -449,7 +449,7 @@
   <div class="sb-section-label" style="margin-top:8px;color:rgba(196,181,253,.5);">
     <i class="bi bi-stars" style="color:rgba(196,181,253,.45);"></i> AI FEATURES
   </div>
-  <a class="sidebar-link {% if request.endpoint=='gemini.guardian_page' %}active{% endif %}" href="{{ url_for('gemini.guardian_page') }}" style="position:relative;">
+  <a class="sidebar-link {% if request.endpoint=='aria_guardian.guardian_page' %}active{% endif %}" href="{{ url_for('aria_guardian.guardian_page') }}" style="position:relative;">
     <i class="bi bi-robot" style="color:#c4b5fd;"></i>
     <span>ARIA Guardian</span>
     <span style="font-size:.45rem;font-weight:800;letter-spacing:.08em;background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(109,40,217,.5));border:1px solid rgba(139,92,246,.4);color:#c4b5fd;padding:2px 7px;border-radius:8px;margin-left:auto;flex-shrink:0;">AI</span>
@@ -2498,7 +2498,7 @@ document.addEventListener('click', e => {
       subtitle: 'Open the AI guardian copilot for support, guidance, and escalation.',
       category: 'AI',
       icon: 'bi-robot',
-      href: '{{ url_for("gemini.guardian_page") }}',
+      href: '{{ url_for("aria_guardian.guardian_page") }}',
       keywords: 'ai guardian aria assistant support'
     },
     {
