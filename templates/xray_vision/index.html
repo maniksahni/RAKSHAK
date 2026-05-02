@@ -525,6 +525,10 @@ a, button { cursor: inherit; }
   line-height: 2;
   pointer-events: none;
 }
+.xv-loader-title {
+  display: inline-block;
+  min-width: 18ch;
+}
 .xv-loader-sub {
   font-size: 12px;
   color: var(--xv-accent2, #0088ff);
@@ -1329,9 +1333,9 @@ a, button { cursor: inherit; }
 
   <!-- Center loader -->
   <div class="xv-loader" id="xv-loader">
-    LOADING DUAL NEURAL ENGINE...<br>
+    <span class="xv-loader-title" id="xv-loader-title">LOADING DUAL NEURAL ENGINE...</span><br>
     <span class="xv-loader-sub" id="xv-loader-sub">Hands · Pose · Segmentation</span>
-    <div class="xv-loader-bar"></div>
+    <div class="xv-loader-bar" id="xv-loader-bar"></div>
   </div>
 
   <div class="xv-bottom-rail">
@@ -1416,7 +1420,9 @@ a, button { cursor: inherit; }
   const statusEl = document.getElementById('xv-status');
   const frameEl = document.getElementById('xv-frame-counter');
   const loaderEl = document.getElementById('xv-loader');
+  const loaderTitleEl = document.getElementById('xv-loader-title');
   const loaderSub = document.getElementById('xv-loader-sub');
+  const loaderBarEl = document.getElementById('xv-loader-bar');
   const fpsEl = document.getElementById('xv-fps');
   const instructionsEl = document.getElementById('xv-instructions');
   const instructionsTextEl = document.getElementById('xv-instructions-text');
@@ -1453,6 +1459,10 @@ a, button { cursor: inherit; }
     density: 'rakshak_xray_density',
     mode: 'rakshak_xray_mode'
   };
+  const STARTUP_TIMEOUT_MS = 9000;
+  const TRACKING_STALL_TIMEOUT_MS = 7000;
+  const WATCHDOG_INTERVAL_MS = 2500;
+  const MAX_STARTUP_RECOVERY_ATTEMPTS = 2;
   const sessionStartedAt = performance.now();
 
   let W = 0, H = 0;
@@ -1664,9 +1674,11 @@ a, button { cursor: inherit; }
   let hasStarted = false;
   let startupRetryCount = 0;
   let engineBootId = 0;
+  let engineRecoveryInFlight = false;
   let hasTrackingResults = false;
   let lastTrackingResultsAt = 0;
   let startupRecoveryTimer = null;
+  let engineWatchdogTimer = null;
   let trackingBusy = false;
   let lastTrackingRunAt = 0;
   let currentXrayEffectLabel = 'STANDBY';
@@ -1700,6 +1712,143 @@ a, button { cursor: inherit; }
     if (startupRecoveryTimer) {
       clearTimeout(startupRecoveryTimer);
       startupRecoveryTimer = null;
+    }
+  }
+
+  function clearEngineWatchdog() {
+    if (engineWatchdogTimer) {
+      clearInterval(engineWatchdogTimer);
+      engineWatchdogTimer = null;
+    }
+  }
+
+  function setLoaderState(title, subtitle = '', { show = true, showBar = true } = {}) {
+    if (loaderEl) loaderEl.style.display = show ? '' : 'none';
+    if (loaderTitleEl) loaderTitleEl.textContent = title;
+    if (loaderSub) loaderSub.textContent = subtitle;
+    if (loaderBarEl) loaderBarEl.style.display = showBar ? '' : 'none';
+  }
+
+  function hasLiveVideoTrack(stream = cameraStream) {
+    if (!stream || typeof stream.getVideoTracks !== 'function') return false;
+    return stream.getVideoTracks().some(track => track.readyState === 'live' && track.enabled !== false);
+  }
+
+  function attachCameraTrackRecovery(stream) {
+    if (!stream || typeof stream.getVideoTracks !== 'function') return;
+    const recoveryBootId = engineBootId;
+    stream.getVideoTracks().forEach(track => {
+      track.addEventListener('ended', () => {
+        if (
+          !document.hidden &&
+          hasStarted &&
+          recoveryBootId === engineBootId &&
+          stream === cameraStream
+        ) {
+          void recoverEngines('Camera feed disconnected. Reconnecting…');
+        }
+      }, { once: true });
+    });
+  }
+
+  function startEngineWatchdog() {
+    clearEngineWatchdog();
+    engineWatchdogTimer = setInterval(() => {
+      if (!hasStarted || document.hidden) return;
+
+      const now = performance.now();
+      if (cameraStream && !hasLiveVideoTrack()) {
+        void recoverEngines('Camera feed dropped. Rebooting engine…');
+        return;
+      }
+      if (hasTrackingResults && lastTrackingResultsAt && (now - lastTrackingResultsAt) > TRACKING_STALL_TIMEOUT_MS) {
+        void recoverEngines('Tracking stalled. Recalibrating engine…');
+      }
+    }, WATCHDOG_INTERVAL_MS);
+  }
+
+  async function waitForVideoReady(timeoutMs = 6000) {
+    if (videoReady()) return;
+    await new Promise((resolve, reject) => {
+      let done = false;
+      const cleanup = () => {
+        vid.removeEventListener('loadedmetadata', onReady);
+        vid.removeEventListener('loadeddata', onReady);
+        vid.removeEventListener('canplay', onReady);
+      };
+      const onReady = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        cleanup();
+        resolve();
+      };
+      const timer = setTimeout(() => {
+        if (done) return;
+        done = true;
+        cleanup();
+        reject(new Error('video-ready-timeout'));
+      }, timeoutMs);
+      vid.addEventListener('loadedmetadata', onReady, { once: true });
+      vid.addEventListener('loadeddata', onReady, { once: true });
+      vid.addEventListener('canplay', onReady, { once: true });
+    });
+  }
+
+  async function requestCameraStream(profiles) {
+    let lastError = null;
+    for (const constraints of profiles) {
+      try {
+        return await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (err) {
+        lastError = err;
+      }
+    }
+    throw lastError || new Error('camera-unavailable');
+  }
+
+  function buildCameraProfiles(auraMode, studioMode) {
+    const desktop = window.innerWidth > 900;
+    const primaryWidth = auraMode ? (desktop ? 960 : 720) : (desktop ? 848 : 640);
+    const primaryHeight = auraMode ? 540 : (studioMode ? 480 : (desktop ? 540 : 480));
+    const fallbackWidth = auraMode ? 720 : 640;
+    const fallbackHeight = 480;
+
+    return [
+      {
+        video: {
+          facingMode: 'user',
+          frameRate: auraMode
+            ? { ideal: 24, max: 30 }
+            : (studioMode ? { ideal: 22, max: 24 } : { ideal: 20, max: 24 }),
+          width: { ideal: primaryWidth, max: auraMode ? 1280 : primaryWidth },
+          height: { ideal: primaryHeight, max: auraMode ? 720 : primaryHeight }
+        }
+      },
+      {
+        video: {
+          facingMode: 'user',
+          width: { ideal: fallbackWidth, max: 960 },
+          height: { ideal: fallbackHeight, max: 540 },
+          frameRate: { ideal: 20, max: 24 }
+        }
+      },
+      { video: { facingMode: 'user' } },
+      { video: true }
+    ];
+  }
+
+  async function recoverEngines(message, { preserveRetryCount = false } = {}) {
+    if (engineRecoveryInFlight) return;
+    engineRecoveryInFlight = true;
+    if (loaderEl) {
+      setLoaderState('RECALIBRATING NEURAL ENGINE…', message, { show: true, showBar: true });
+    }
+    try {
+      await cleanupEngines({ preserveRetryCount });
+      await startEngines();
+    } finally {
+      engineRecoveryInFlight = false;
     }
   }
 
@@ -1768,11 +1917,15 @@ a, button { cursor: inherit; }
             : '<i class="bi bi-bounding-box-circles me-2"></i>Initiate X-Ray Link');
     }
     if (loaderSub && !hasStarted) {
-      loaderSub.textContent = auraMode
-        ? 'Hands · Aura Vector Field'
-        : (studioMode
-            ? 'Hands · Studio Skeleton + Objects'
-            : 'Dual Hands · Reactive Filters');
+      setLoaderState(
+        'LOADING DUAL NEURAL ENGINE...',
+        auraMode
+          ? 'Hands · Aura Vector Field'
+          : (studioMode
+              ? 'Hands · Studio Skeleton + Objects'
+              : 'Dual Hands · Reactive Filters'),
+        { show: true, showBar: true }
+      );
     }
   }
 
@@ -1785,12 +1938,15 @@ a, button { cursor: inherit; }
     updateTelemetry();
 
     if (changed && restart && hasStarted) {
-      loaderEl.style.display = '';
-      loaderSub.textContent = isAuraMode()
-        ? 'Switching to hand aura engine…'
-        : (isStudioMode()
-            ? 'Switching to studio object engine…'
-            : 'Switching to dual-hand viewport engine…');
+      setLoaderState(
+        'SWITCHING NEURAL ENGINE…',
+        isAuraMode()
+          ? 'Switching to hand aura engine…'
+          : (isStudioMode()
+              ? 'Switching to studio object engine…'
+              : 'Switching to dual-hand viewport engine…'),
+        { show: true, showBar: true }
+      );
       // Reset perf tier so a sluggish prior session doesn't throttle the new one
       perfTier = 'medium';
       fpsFrameCount = 0;
@@ -4162,31 +4318,24 @@ a, button { cursor: inherit; }
     hasTrackingResults = false;
     lastTrackingResultsAt = 0;
     clearStartupRecoveryTimer();
+    clearEngineWatchdog();
     const bootId = ++engineBootId;
     updateTelemetry();
     try {
       const auraMode = isAuraMode();
       const studioMode = isStudioMode();
-      const lightMode = auraMode || studioMode;
-      loaderEl.style.display = '';
-      loaderSub.textContent = 'Loading MediaPipe Hands…';
+      setLoaderState('LOADING DUAL NEURAL ENGINE…', 'Loading MediaPipe Hands…', { show: true, showBar: true });
       if (!navigator.mediaDevices?.getUserMedia) {
-        loaderEl.innerHTML = 'CAMERA API UNAVAILABLE';
+        setLoaderState('CAMERA API UNAVAILABLE', 'This browser cannot access a live camera stream.', { show: true, showBar: false });
         hasStarted = false;
         updateTelemetry();
         return;
       }
 
-      const preferredVideoWidth = auraMode
-        ? (window.innerWidth <= 900 ? 720 : 960)
-        : (studioMode
-            ? (window.innerWidth <= 900 ? 640 : 848)
-            : (window.innerWidth <= 900 ? 640 : 848));
-      const preferredVideoHeight = auraMode
-        ? (window.innerWidth <= 900 ? 540 : 540)
-        : (studioMode
-            ? (window.innerWidth <= 900 ? 480 : 480)
-            : (window.innerWidth <= 900 ? 480 : 540));
+      const cameraProfiles = buildCameraProfiles(auraMode, studioMode);
+      const primaryProfile = cameraProfiles[0]?.video || {};
+      const preferredVideoWidth = primaryProfile.width?.ideal || (window.innerWidth <= 900 ? 640 : 848);
+      const preferredVideoHeight = primaryProfile.height?.ideal || (window.innerWidth <= 900 ? 480 : 540);
 
       handsEngine = new Hands({
         locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
@@ -4209,52 +4358,46 @@ a, button { cursor: inherit; }
           hasTrackingResults = true;
           startupRetryCount = 0;
           clearStartupRecoveryTimer();
-          loaderEl.style.display = 'none';
-          loaderSub.textContent = auraMode
-            ? 'Camera linked · stabilizing aura field'
-            : (studioMode
-                ? 'Camera linked · staging studio objects'
-                : 'Camera linked · framing reactive viewport');
+          clearEngineWatchdog();
+          if (loaderEl) loaderEl.style.display = 'none';
+          if (loaderSub) {
+            loaderSub.textContent = auraMode
+              ? 'Camera linked · stabilizing aura field'
+              : (studioMode
+                  ? 'Camera linked · staging studio objects'
+                  : 'Camera linked · framing reactive viewport');
+          }
           statusEl.textContent = 'SYSTEM READY';
+          startEngineWatchdog();
           updateTelemetry();
         }
       });
 
-      loaderSub.textContent = 'Accessing camera…';
+      setLoaderState('LOADING DUAL NEURAL ENGINE…', 'Accessing camera…', { show: true, showBar: true });
       let stream;
-      const constraints = {
-        video: {
-          facingMode: 'user',
-          frameRate: auraMode
-            ? { ideal: 24, max: 30 }
-            : (studioMode ? { ideal: 22, max: 24 } : { ideal: 20, max: 24 }),
-          width: {
-            ideal: preferredVideoWidth,
-            max: auraMode ? 1280 : preferredVideoWidth
-          },
-          height: {
-            ideal: preferredVideoHeight,
-            max: auraMode ? 720 : preferredVideoHeight
-          }
-        }
-      };
       try {
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        stream = await requestCameraStream(cameraProfiles);
       } catch (e) {
-        loaderEl.innerHTML = `CAMERA ERROR: ${e.name}`;
+        setLoaderState(`CAMERA ERROR: ${e.name}`, 'Allow camera access and reload this engine.', { show: true, showBar: false });
         hasStarted = false;
         updateTelemetry();
         return;
       }
 
       cameraStream = stream;
+      attachCameraTrackRecovery(stream);
       vid.srcObject = stream;
-      await vid.play();
-      loaderSub.textContent = auraMode
-        ? 'Camera linked · waiting for aura tracking'
-        : (studioMode
-            ? 'Camera linked · waiting for studio tracking'
-            : 'Camera linked · waiting for viewport tracking');
+      try { await vid.play(); } catch (e) {}
+      await waitForVideoReady();
+      setLoaderState(
+        'LOADING DUAL NEURAL ENGINE…',
+        auraMode
+          ? 'Camera linked · waiting for aura tracking'
+          : (studioMode
+              ? 'Camera linked · waiting for studio tracking'
+              : 'Camera linked · waiting for viewport tracking'),
+        { show: true, showBar: true }
+      );
 
       cameraController = new Camera(vid, {
         onFrame: async () => {
@@ -4274,24 +4417,22 @@ a, button { cursor: inherit; }
         width: preferredVideoWidth,
         height: preferredVideoHeight
       });
-      cameraController.start();
+      await Promise.resolve(cameraController.start());
 
       startupRecoveryTimer = setTimeout(async () => {
         if (bootId !== engineBootId || !hasStarted || hasTrackingResults) return;
-        if (startupRetryCount < 1) {
+        if (startupRetryCount < MAX_STARTUP_RECOVERY_ATTEMPTS) {
           startupRetryCount += 1;
-          loaderSub.textContent = 'Tracking handshake slow… retrying';
-          await cleanupEngines({ preserveRetryCount: true });
-          await startEngines();
+          await recoverEngines('Tracking handshake slow… retrying camera link.', { preserveRetryCount: true });
           return;
         }
-        loaderEl.innerHTML = 'TRACKING ENGINE UNSTABLE<br><span class="xv-loader-sub">Retry camera permission or refresh the page</span>';
+        setLoaderState('TRACKING ENGINE UNSTABLE', 'Retry camera permission or refresh the page.', { show: true, showBar: false });
         hasStarted = false;
         updateTelemetry();
-      }, 3500);
+      }, STARTUP_TIMEOUT_MS);
       updateTelemetry();
     } catch (err) {
-      loaderEl.innerHTML = 'ENGINE INITIALIZATION FAILED';
+      setLoaderState('ENGINE INITIALIZATION FAILED', 'Reopen the engine or allow camera access again.', { show: true, showBar: false });
       hasStarted = false;
       updateTelemetry();
       console.error('X-Ray engine error:', err);
@@ -4300,6 +4441,7 @@ a, button { cursor: inherit; }
 
   async function cleanupEngines({ preserveRetryCount = false } = {}) {
     clearStartupRecoveryTimer();
+    clearEngineWatchdog();
     engineBootId += 1;
     try { cameraController?.stop?.(); } catch (e) {}
     cameraController = null;
@@ -4354,7 +4496,21 @@ a, button { cursor: inherit; }
   /* ══ Permission modal flow ══ */
   allowBtn.addEventListener('click', () => {
     permModal.style.display = 'none';
-    startEngines();
+    void startEngines();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || !hasStarted) return;
+    if (!hasLiveVideoTrack() || (hasTrackingResults && lastTrackingResultsAt && (performance.now() - lastTrackingResultsAt) > TRACKING_STALL_TIMEOUT_MS)) {
+      void recoverEngines('Resuming camera session…');
+    }
+  });
+
+  window.addEventListener('pageshow', () => {
+    if (!hasStarted) return;
+    if (!hasLiveVideoTrack()) {
+      void recoverEngines('Refreshing camera session…');
+    }
   });
 
   document.querySelectorAll('.xv-ctrl-btn[data-vision-mode]').forEach(btn => {
