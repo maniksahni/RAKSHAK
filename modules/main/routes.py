@@ -6,10 +6,21 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/health')
 def health_check():
-    """Health check — used by Docker, Railway, any platform."""
+    """Liveness health check — safe for platform startup probes."""
     try:
         from healer import build_health_response
-        payload, code = build_health_response()
+        payload, code = build_health_response(strict=False)
+        return jsonify(payload), code
+    except Exception as e:
+        return jsonify(status='unhealthy', error=str(e)), 503
+
+
+@main_bp.route('/health/strict')
+def health_check_strict():
+    """Deep health check — returns 503 when the database is degraded."""
+    try:
+        from healer import build_health_response
+        payload, code = build_health_response(strict=True)
         return jsonify(payload), code
     except Exception as e:
         return jsonify(status='unhealthy', error=str(e)), 503

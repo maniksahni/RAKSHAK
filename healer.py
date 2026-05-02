@@ -127,13 +127,18 @@ def _check_scheduler():
         return False, None
 
 
-def build_health_response():
-    """Build the full health payload."""
+def build_health_response(strict=False):
+    """Build the full health payload.
+
+    In default mode we treat this as a liveness check so platforms like Railway
+    do not reject an otherwise healthy boot on a transient DB wobble. Pass
+    ``strict=True`` when callers need an error status code for degraded DB state.
+    """
     db_ok, db_ms = _check_db()
     sched_ok, _  = _check_scheduler()
 
     status = 'healthy' if db_ok else 'degraded'
-    code   = 200       if db_ok else 503
+    code   = 200 if (db_ok or not strict) else 503
 
     payload = {
         'status':    status,
