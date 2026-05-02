@@ -1,1 +1,1 @@
-# Gemini AI Guardian Module
+# ARIA Guardian Module
