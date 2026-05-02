@@ -190,7 +190,7 @@ def trigger_sos():
         return jsonify(success=False, error='SOS failed. Please try again.'), 500
 
 
-@sos_bp.route('/notification-preview')
+@sos_bp.route('/notification-preview', methods=['POST'])
 @login_required
 def notification_preview():
     """Preview free SOS notification delivery without creating an alert."""

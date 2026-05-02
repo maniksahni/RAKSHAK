@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'rakshak-dev-secret-key-2024'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = 3600
     WTF_CSRF_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE']  # Allow GET without CSRF token
@@ -31,6 +31,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    SECRET_KEY = Config.SECRET_KEY or 'rakshak-dev-secret-key-2024'
 
 
 class ProductionConfig(Config):

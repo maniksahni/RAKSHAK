@@ -143,7 +143,7 @@ SCHEMA_SQL = [
 ]
 
 # Seed data (passwords pre-hashed with bcrypt cost 12)
-SEEDS = [
+DEMO_SEEDS = [
     # Admin: Manik — Password: Manik@123
     """INSERT IGNORE INTO users (full_name, email, phone, password_hash, role, security_question, security_answer_hash)
        VALUES ('Manik Sahni','manik@rakshak.com','9999999999',
@@ -157,6 +157,18 @@ SEEDS = [
        'user','What is the system name?',
        '$2b$12$PB0tITPBC385UyYcri/8keGQQ4rkV5vNf9P8w/nS/NvIQcBVYDS1u')""",
 ]
+
+
+def allow_demo_seeds():
+    flag = os.environ.get('ALLOW_DEMO_SEEDS')
+    if flag is not None:
+        return flag.strip().lower() in ('1', 'true', 'yes', 'on')
+    env = (os.environ.get('FLASK_ENV') or os.environ.get('ENV') or 'development').strip().lower()
+    return env == 'development'
+
+
+def seed_statements():
+    return DEMO_SEEDS if allow_demo_seeds() else []
 
 
 def _get_conn_kwargs():
@@ -197,17 +209,20 @@ if __name__ == '__main__':
         except Exception as e:
             print(f"  ℹ️  Cleanup note: {e}")
 
-        # Seed
-        for seed in SEEDS:
-            try:
-                cursor.execute(seed)
-            except Exception as e:
-                print(f"  ℹ️  Seed note: {e}")
+        seeds = seed_statements()
+        if seeds:
+            for seed in seeds:
+                try:
+                    cursor.execute(seed)
+                except Exception as e:
+                    print(f"  ℹ️  Seed note: {e}")
+        else:
+            print("  ℹ️  Demo user seeds disabled for this environment.")
 
         # Verify
         cursor.execute("SELECT COUNT(*) FROM users")
         count = cursor.fetchone()[0]
-        print(f"✅ Database ready — {count} user(s) seeded.")
+        print(f"✅ Database ready — {count} user(s) present.")
 
         cursor.close()
         conn.close()

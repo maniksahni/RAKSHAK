@@ -24,6 +24,20 @@ compress  = Compress()
 scheduler = BackgroundScheduler(timezone='UTC', daemon=True)
 
 
+def _acquire_job_lock(lock_name):
+    from models import query_db
+    row = query_db('SELECT GET_LOCK(%s, 0) AS acquired', (lock_name,), one=True)
+    return bool(row and row.get('acquired'))
+
+
+def _release_job_lock(lock_name):
+    try:
+        from models import query_db
+        query_db('SELECT RELEASE_LOCK(%s) AS released', (lock_name,), one=True)
+    except Exception as exc:
+        log.warning(f'Failed to release scheduler lock {lock_name}: {exc}')
+
+
 # ── Scheduled job: AI missed-ping checker ──────────────────────────────────
 def _scheduled_check_missed():
     """
@@ -43,40 +57,47 @@ def _scheduled_check_missed():
         cutoff = datetime.now() - timedelta(seconds=PING_INTERVAL_SEC + 30)
 
         with _app_ctx():
-            stale_users = query_db(
-                """SELECT id, consecutive_missed_pings, full_name, email
-                   FROM users
-                   WHERE is_active=TRUE AND role='user'
-                     AND last_ping IS NOT NULL
-                     AND last_ping < %s""",
-                (cutoff,)
-            )
+            lock_name = 'rakshak:job:ai_ping_check'
+            if not _acquire_job_lock(lock_name):
+                logger.info('Scheduler: skipped duplicate missed-ping run')
+                return
+            try:
+                stale_users = query_db(
+                    """SELECT id, consecutive_missed_pings, full_name, email
+                       FROM users
+                       WHERE is_active=TRUE AND role='user'
+                         AND last_ping IS NOT NULL
+                         AND last_ping < %s""",
+                    (cutoff,)
+                )
 
-            for u in stale_users:
-                try:
-                    missed = u['consecutive_missed_pings'] + 1
-                    query_db(
-                        'UPDATE users SET consecutive_missed_pings=%s WHERE id=%s',
-                        (missed, u['id']), commit=True
-                    )
-                    query_db(
-                        "INSERT INTO ping_logs (user_id, ping_type) VALUES (%s,'missed')",
-                        (u['id'],), commit=True
-                    )
+                for u in stale_users:
+                    try:
+                        missed = u['consecutive_missed_pings'] + 1
+                        query_db(
+                            'UPDATE users SET consecutive_missed_pings=%s WHERE id=%s',
+                            (missed, u['id']), commit=True
+                        )
+                        query_db(
+                            "INSERT INTO ping_logs (user_id, ping_type) VALUES (%s,'missed')",
+                            (u['id'],), commit=True
+                        )
 
-                    risk = ('high' if missed >= AUTO_SOS_THRESHOLD
-                            else 'medium' if missed >= 2 else 'low')
-                    query_db('UPDATE users SET risk_level=%s WHERE id=%s',
-                             (risk, u['id']), commit=True)
-                    emit_risk_update(socketio, u['id'], risk)
-                    logger.info(f'User {u["id"]} risk → {risk} (missed={missed})')
+                        risk = ('high' if missed >= AUTO_SOS_THRESHOLD
+                                else 'medium' if missed >= 2 else 'low')
+                        query_db('UPDATE users SET risk_level=%s WHERE id=%s',
+                                 (risk, u['id']), commit=True)
+                        emit_risk_update(socketio, u['id'], risk)
+                        logger.info(f'User {u["id"]} risk → {risk} (missed={missed})')
 
-                    if missed == AUTO_SOS_THRESHOLD:
-                        from modules.sos.auto_sos import trigger_auto_sos
-                        trigger_auto_sos(u['id'], socketio)
+                        if missed == AUTO_SOS_THRESHOLD:
+                            from modules.sos.auto_sos import trigger_auto_sos
+                            trigger_auto_sos(u['id'], socketio)
 
-                except Exception as e:
-                    logger.error(f'Scheduler: error processing user {u["id"]}: {e}')
+                    except Exception as e:
+                        logger.error(f'Scheduler: error processing user {u["id"]}: {e}')
+            finally:
+                _release_job_lock(lock_name)
 
     except Exception as e:
         log.error(f'Scheduler job _scheduled_check_missed crashed: {e}')
@@ -105,6 +126,8 @@ def create_app(config_name=None):
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
     app.config.from_object(config[config_name])
     _flask_app = app
+    if config_name == 'production' and not app.config.get('SECRET_KEY'):
+        raise RuntimeError('SECRET_KEY must be set in production.')
 
     # ── Self-healing system (logging, health, error capture) ──────────────
     from healer import init_healer
@@ -319,11 +342,17 @@ def create_app(config_name=None):
         keep_alive_url = app.config.get('KEEP_ALIVE_URL', '')
         if keep_alive_url:
             def _keep_alive():
-                try:
-                    import requests
-                    requests.get(keep_alive_url, timeout=10)
-                except Exception:
-                    pass
+                with _app_ctx():
+                    lock_name = 'rakshak:job:keep_alive'
+                    if not _acquire_job_lock(lock_name):
+                        return
+                    try:
+                        import requests
+                        requests.get(keep_alive_url, timeout=10)
+                    except Exception:
+                        pass
+                    finally:
+                        _release_job_lock(lock_name)
             scheduler.add_job(
                 _keep_alive,
                 trigger='interval',
@@ -340,7 +369,7 @@ def create_app(config_name=None):
 
 
 def _auto_init_db(app):
-    """Auto-create tables & seed admin if DB is empty (first-run)."""
+    """Auto-create tables and optional demo seeds on first run."""
     import time
     for attempt in range(10):
         try:
@@ -379,17 +408,21 @@ def _auto_init_db(app):
         conn = mysql.connector.connect(**connect_kwargs)
         conn.autocommit = True
         cursor = conn.cursor()
-        from init_db import SCHEMA_SQL, SEEDS
+        from init_db import SCHEMA_SQL, seed_statements
         for stmt in SCHEMA_SQL:
             cursor.execute(stmt)
-        for seed in SEEDS:
+        seeds = seed_statements()
+        for seed in seeds:
             try:
                 cursor.execute(seed)
             except Exception:
                 pass
         cursor.close()
         conn.close()
-        log.info('DB init complete — tables created & admin seeded.')
+        if seeds:
+            log.info('DB init complete — tables created & demo seeds applied.')
+        else:
+            log.info('DB init complete — tables created without demo seeds.')
     except Exception as e:
         log.error(f'Auto DB init failed: {e}')
 

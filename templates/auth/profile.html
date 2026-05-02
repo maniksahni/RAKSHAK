@@ -720,8 +720,12 @@ async function previewSosDelivery() {
   showLoading('Testing trusted SOS delivery...');
   try {
     const res = await fetch('/sos/notification-preview', {
+      method: 'POST',
       signal: controller.signal,
-      headers: { 'Accept': 'application/json' }
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRFToken': CSRF_TOKEN
+      }
     });
     const data = await res.json();
     if (!data.success) {
