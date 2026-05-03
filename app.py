@@ -12,7 +12,7 @@ from flask_compress import Compress
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from config import config
-from models import User, get_db, close_db
+from models import User, close_db
 
 log = logging.getLogger('rakshak')
 
@@ -47,8 +47,8 @@ def _scheduled_check_missed():
     """
     try:
         from datetime import datetime, timedelta
-        from models import query_db, log_audit
-        from socket_events import emit_risk_update, emit_sos_alert
+        from models import query_db
+        from socket_events import emit_risk_update
         from healer import logger
 
         PING_INTERVAL_SEC  = 120

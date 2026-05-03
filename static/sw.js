@@ -24,7 +24,6 @@ const PRECACHE_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_STATIC).then((cache) => {
-      console.log(`[SW ${SW_VERSION}] Pre-caching app shell`);
       return cache.addAll(PRECACHE_ASSETS);
     })
   );
@@ -39,10 +38,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames
           .filter((name) => !currentCaches.includes(name))
-          .map((name) => {
-            console.log(`[SW ${SW_VERSION}] Purging old cache:`, name);
-            return caches.delete(name);
-          })
+          .map((name) => caches.delete(name))
       );
     })
   );
@@ -151,7 +147,7 @@ async function flushSosQueue() {
         notifyClients({ type: 'SOS_SENT', status: 'delivered', url: originalUrl });
       }
     } catch (err) {
-      console.log(`[SW] SOS retry failed for ${originalUrl}, keeping in queue`);
+      // Keep the queued SOS request for the next background-sync attempt.
     }
   }
 }

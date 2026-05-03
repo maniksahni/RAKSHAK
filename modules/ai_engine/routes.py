@@ -1,7 +1,7 @@
 import logging
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from models import query_db, log_audit
+from models import query_db
 from socket_events import emit_risk_update
 from healer import validate_coords
 from datetime import datetime, timedelta

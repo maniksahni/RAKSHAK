@@ -3,7 +3,6 @@ from flask import (Blueprint, render_template, request, redirect,
                    url_for, flash, jsonify)
 from flask_login import logout_user, login_required, current_user
 from models import query_db, log_audit
-from app import limiter
 import re
 
 auth_bp = Blueprint('auth', __name__)

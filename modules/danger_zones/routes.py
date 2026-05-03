@@ -3,7 +3,6 @@ import logging
 from flask import Blueprint, request, jsonify, render_template
 from flask_login import login_required, current_user
 from models import query_db, log_audit
-from socket_events import emit_danger_zone
 from healer import validate_coords, sanitize_str
 
 danger_bp = Blueprint('danger', __name__)
@@ -11,11 +10,6 @@ log = logging.getLogger('rakshak')
 
 VALID_TYPES     = {'harassment', 'theft', 'poorly_lit', 'other'}
 VALID_SEVERITIES = {'low', 'medium', 'high'}
-
-
-def get_socketio():
-    from app import socketio
-    return socketio
 
 
 def haversine_distance(lat1, lon1, lat2, lon2):

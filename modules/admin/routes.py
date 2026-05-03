@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
 from models import query_db, log_audit
 from socket_events import emit_danger_zone
-from datetime import datetime, timedelta
+from datetime import datetime
 from functools import wraps
 from app import limiter
 

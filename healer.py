@@ -16,7 +16,7 @@ import time
 import logging
 import traceback
 from logging.handlers import RotatingFileHandler
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from flask import jsonify, request, g
 

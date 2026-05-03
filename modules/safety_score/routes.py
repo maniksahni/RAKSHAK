@@ -153,7 +153,7 @@ def check():
         result = calculate_safety_score(lat, lng)
         return jsonify(success=True, **result)
 
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError):
         return jsonify(success=False, error='Invalid coordinates'), 400
     except Exception as e:
         log.error(f'Safety score check failed: {e}')

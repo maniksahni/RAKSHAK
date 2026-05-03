@@ -71,11 +71,6 @@ def generate_sos_report(alert: dict, user: dict, contacts: list) -> BytesIO:
         textColor=BLACK, fontSize=14, spaceBefore=18, spaceAfter=8,
         fontName='Helvetica-Bold', textTransform='uppercase'
     )
-    body_style  = ParagraphStyle(
-        'Body', parent=styles['Normal'],
-        textColor=colors.HexColor('#1f2937'), fontSize=10, leading=16
-    )
-
     story = []
 
     # ── Header Layer ─────────────────────────────────────────────────

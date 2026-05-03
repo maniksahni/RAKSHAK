@@ -1,4 +1,3 @@
-import json
 import logging
 import random
 from datetime import datetime
@@ -126,7 +125,7 @@ def _build_context(user) -> str:
     return " | ".join(ctx_parts)
 
 
-def _safe_hour(value: str, default: int = None) -> int | None:
+def _safe_hour(value, default=None):
     try:
         return int(str(value).split(':', 1)[0])
     except Exception:

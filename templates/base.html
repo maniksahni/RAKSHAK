@@ -1305,7 +1305,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 window.addEventListener('appinstalled', () => {
-  console.log('PWA was installed');
   setInstallButtonVisibility(false);
 });
 </script>
@@ -2861,7 +2860,6 @@ document.addEventListener('click', e => {
 const socket = io({ transports: ['websocket'] });
 
 socket.on('connected', (data) => {
-  console.log('[RAKSHAK] Connected:', data);
   {% if current_user.is_admin %}
   socket.emit('join_admin');
   {% endif %}
@@ -3098,7 +3096,6 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('/static/sw.js', { scope: '/' })
       .then(function(reg) {
-        console.log('[RAKSHAK] SW registered, scope:', reg.scope);
         // Check for updates periodically
         setInterval(function() { reg.update(); }, 60 * 60 * 1000);
       })

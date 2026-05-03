@@ -8,7 +8,7 @@ This is like Uber Surge for safety — crowdsourced emergency response.
 """
 import logging
 import math
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask import Blueprint, request, jsonify, render_template
 from flask_login import login_required, current_user
 from models import query_db, log_audit
@@ -271,7 +271,7 @@ def guardian_status():
             )
         
         return jsonify(success=True, **result)
-    except Exception as e:
+    except Exception:
         return jsonify(success=True, guardian_active=False)
 
 
@@ -302,7 +302,7 @@ def network_stats():
                 'response_avg_min': 3,
             }
         )
-    except Exception as e:
+    except Exception:
         return jsonify(success=True, stats={'active_guardians': 0, 'total_network': 0})
 
 

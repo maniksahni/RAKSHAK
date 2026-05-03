@@ -1,345 +1,174 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/🛡️-RAKSHAK-red?style=for-the-badge&labelColor=1a1a2e&color=e94560" alt="RAKSHAK" height="60"/>
-</p>
+# RAKSHAK
 
-<h1 align="center">
+RAKSHAK is a Flask, Socket.IO, and MySQL based safety platform for real-time SOS response, trusted-contact alerts, danger-zone intelligence, safe-walk tracking, and AI-assisted safety guidance.
 
-```
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║    ██████   █████  ██   ██ ███████ ██   ██  █████  ██   ██   ║
-║    ██   ██ ██   ██ ██  ██  ██      ██   ██ ██   ██ ██  ██    ║
-║    ██████  ███████ █████   ███████ ███████ ███████ █████      ║
-║    ██   ██ ██   ██ ██  ██       ██ ██   ██ ██   ██ ██  ██    ║
-║    ██   ██ ██   ██ ██   ██ ███████ ██   ██ ██   ██ ██   ██   ║
-║                                                              ║
-║     Real-time Alert & Knowledge System for Hazard And Crisis ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
-```
+Live app: https://rakshak.up.railway.app
 
-</h1>
+## Current Stack
 
-<p align="center">
-  <strong>🛡️ AI-Powered Women's Safety & Emergency Response Platform 🛡️</strong>
-</p>
+| Layer | Technology |
+| --- | --- |
+| Backend | Python 3.11+, Flask 3, Flask-SocketIO, Eventlet, Gunicorn |
+| Database | MySQL-compatible provider with optional SSL |
+| Auth | Google OAuth, Flask-Login, optional development login |
+| Realtime | Socket.IO rooms for users, admins, SOS, risk updates, danger zones |
+| Frontend | Jinja templates, custom CSS, Canvas/WebGL experiences |
+| Reports | ReportLab PDF incident dossiers |
+| Deployment | Docker on Railway |
+| PWA | Service worker, manifest, offline fallback |
 
-<p align="center">
-  <a href="https://rakshak.up.railway.app"><img src="https://img.shields.io/badge/🌐_LIVE-rakshak.up.railway.app-e94560?style=for-the-badge&labelColor=1a1a2e" alt="Live Site"/></a>
-</p>
+## Features
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
-  <img src="https://img.shields.io/badge/Flask-3.0-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask"/>
-  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL"/>
-  <img src="https://img.shields.io/badge/Socket.IO-Realtime-010101?style=flat-square&logo=socket.io&logoColor=white" alt="SocketIO"/>
-  <img src="https://img.shields.io/badge/Railway-Deployed-0B0D0E?style=flat-square&logo=railway&logoColor=white" alt="Railway"/>
-  <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=flat-square&logo=bootstrap&logoColor=white" alt="Bootstrap"/>
-  <img src="https://img.shields.io/badge/PWA-Installable-5A0FC8?style=flat-square&logo=pwa&logoColor=white" alt="PWA"/>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"/>
-</p>
+- SOS alerts with trusted-contact delivery links, PDF report support, and realtime admin broadcasts
+- Safe Walk journey tracking with live updates and route state
+- Danger zone reporting, approval workflow, heatmap, proximity checks, and upvotes
+- AI threat engine for heartbeat risk scoring and missed-ping escalation
+- Safety Score calculator based on location, time, danger zones, and recent SOS alerts
+- ARIA Guardian safety assistant and Guardian Network responder mode
+- Valkyrie PIN safety flow, Fake Call, Emergency quick dial, Safety Tips
+- Vision Shield and X-Ray Vision camera experiences
+- Admin command center with analytics, users, alerts, zones, and audit logs
 
-<p align="center">
-  <img src="https://img.shields.io/github/stars/maniksahni/RAKSHAK?style=social" alt="GitHub Stars"/>
-  <img src="https://img.shields.io/github/forks/maniksahni/RAKSHAK?style=social" alt="Forks"/>
-  <img src="https://img.shields.io/github/last-commit/maniksahni/RAKSHAK?style=flat-square&color=red" alt="Last Commit"/>
-</p>
+## Project Layout
 
-<p align="center">
-  <em>Empowering women with real-time safety intelligence, AI-driven threat assessment, and instant emergency response — all in one platform.</em>
-</p>
-
----
-
-## 🔥 About
-
-**RAKSHAK** is a comprehensive, AI-integrated women's safety system designed to provide real-time protection through intelligent threat detection, emergency SOS alerts, danger zone mapping, and a suite of safety tools. Built with Flask and Socket.IO, it delivers instant WebSocket-powered notifications and supports Progressive Web App (PWA) installation for always-available access.
-
-Whether walking alone at night or navigating unfamiliar areas, RAKSHAK acts as a silent guardian — monitoring, alerting, and connecting users to help in seconds.
-
----
-
-## 🌐 Live Demo
-
-<table>
-  <tr>
-    <td align="center"><strong>🔗 Live URL</strong></td>
-    <td><a href="https://rakshak.up.railway.app">https://rakshak.up.railway.app</a></td>
-  </tr>
-  <tr>
-    <td align="center"><strong>🔐 Authentication</strong></td>
-    <td><strong>Google Sign-In only</strong> — click "Sign in with Google" to access the platform</td>
-  </tr>
-</table>
-
----
-
-## ✨ Features
-
-| # | Feature | Description |
-|:-:|---------|-------------|
-| 🎙️ | **Voice-Activated SOS** | Background Web Speech API listener that triggers a silent SOS when you say "Help Rakshak" |
-| 📳 | **Shake-to-Trigger SOS** | Native DeviceMotion gyroscope integration firing emergency override upon violent phone shaking |
-| 💍 | **IoT Wearable Integration** | "Titan Ring" hardware sync simulation demonstrating Bluetooth Low Energy device triggers |
-| 📊 | **Command Center Analytics** | Advanced Admin Dashboard with Chart.js animated telemetry, real-time tracking, and system vitals |
-| 🚨 | **SOS Emergency Alert** | Trigger via physical actions, voice, or triple-tap — sends instant alerts with GPS location |
-| 🗺️ | **Real-time Live Tracking** | Interactive map with `requestAnimationFrame` simulated movement modeling real-time WebSockets |
-| 📈 | **AI Threat Engine & Risk** | Machine-learning-driven threat scoring that analyzes location, time, and historical data |
-| 🛡️ | **Safety Score Calculator** | Personalized safety score based on your route, time of day, and area risk profile |
-| 🚶 | **Safe Walk Security** | Share live location with trusted contacts during walks; auto-alert if you deviate or stop |
-| 📞 | **AI Voice Fake Call** | Synthesized incoming phone calls speaking scripted dialogue to escape dangerous situations |
-| 📋 | **Forensic PDF Dossiers** | Auto-generating cryptographically sealed incident reports (PDF) for law enforcement submission |
-| 🆘 | **Emergency Quick Dial** | One-tap access to Police (100), Women Helpline (1091), Ambulance (102), Fire (101) |
-| 💎 | **Premium Glassmorphism UX** | Deep-dark frosted glass aesthetic, custom smooth scrollbars, and 3D Particle Mesh networking |
-| 👥 | **Trusted Contacts** | Add, manage, and instantly notify your emergency contacts via SMS & Push |
-| 🔐 | **Google OAuth + Secure Auth** | Passwordless Google sign-in alongside bcrypt-hashed credentials |
-| 📱 | **PWA Offline Standby** | Installable Native App with fallback Service Workers cached for No-Signal zones |
-| 🔔 | **Real-time WebSockets** | SocketIO-powered instant global system broadcasts and dashboard synchronization |
-
----
-
-## 🏗️ Tech Stack
-
-| Layer | Technologies |
-|-------|-------------|
-| **Backend** | Python 3.11+, Flask 3.0, Flask-SocketIO, Gunicorn + Eventlet |
-| **Database** | MySQL 8.0 (hosted on Railway) |
-| **Frontend** | Bootstrap 5.3, Custom CSS, HTML5 Canvas Animations, Three.js Shield |
-| **Authentication** | Flask-Login, Google OAuth 2.0 (Authlib), bcrypt |
-| **Real-time** | Socket.IO, WebSocket (Eventlet transport) |
-| **PDF Reports** | ReportLab, Pillow |
-| **Task Scheduling** | APScheduler |
-| **Rate Limiting** | Flask-Limiter |
-| **Deployment** | Railway (Docker) |
-| **PWA** | Service Worker, Web App Manifest |
-
----
-
-## 🏛️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        CLIENT LAYER                             │
-│                                                                 │
-│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │
-│   │ PWA App  │  │ Browser  │  │ Mobile   │  │ Service      │   │
-│   │ Install  │  │ Client   │  │ Browser  │  │ Worker       │   │
-│   └────┬─────┘  └────┬─────┘  └────┬─────┘  └──────┬───────┘   │
-│        └──────────────┴─────────────┴───────────────┘           │
-└────────────────────────────┬────────────────────────────────────┘
-                             │ HTTPS + WebSocket
-┌────────────────────────────┴────────────────────────────────────┐
-│                      SERVER LAYER                               │
-│                                                                 │
-│   ┌─────────────────────────────────────────────────────────┐   │
-│   │              Gunicorn + Eventlet WSGI                   │   │
-│   └───────────────────────┬─────────────────────────────────┘   │
-│                           │                                     │
-│   ┌───────────────────────┴─────────────────────────────────┐   │
-│   │                  Flask Application                      │   │
-│   │                                                         │   │
-│   │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌───────────┐  │   │
-│   │  │   Auth   │ │   SOS    │ │ Danger   │ │ Safe Walk │  │   │
-│   │  │  Module  │ │  Module  │ │  Zones   │ │  Module   │  │   │
-│   │  └──────────┘ └──────────┘ └──────────┘ └───────────┘  │   │
-│   │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌───────────┐  │   │
-│   │  │ AI Threat│ │  Safety  │ │  Admin   │ │ Emergency │  │   │
-│   │  │  Engine  │ │  Score   │ │  Panel   │ │  & Calls  │  │   │
-│   │  └──────────┘ └──────────┘ └──────────┘ └───────────┘  │   │
-│   └─────────────────────────────────────────────────────────┘   │
-│                           │                                     │
-│   ┌───────────────────────┴─────────────────────────────────┐   │
-│   │            Socket.IO (Eventlet WebSocket)               │   │
-│   └─────────────────────────────────────────────────────────┘   │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-┌────────────────────────────┴────────────────────────────────────┐
-│                      DATA LAYER                                 │
-│                                                                 │
-│   ┌──────────────────────┐  ┌───────────────────────────────┐   │
-│   │    MySQL Database    │  │     PDF Report Generator      │   │
-│   │   (Railway Hosted)   │  │        (ReportLab)            │   │
-│   └──────────────────────┘  └───────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+```text
+RAKSHAK/
+├── app.py
+├── config.py
+├── models.py
+├── socket_events.py
+├── healer.py
+├── init_db.py
+├── migrate_guardian.py
+├── pdf_reports.py
+├── wsgi.py
+├── modules/
+│   ├── admin/
+│   ├── ai_engine/
+│   ├── aria_guardian/
+│   ├── auth/
+│   ├── danger_zones/
+│   ├── emergency/
+│   ├── fake_call/
+│   ├── guardian_network/
+│   ├── main/
+│   ├── safe_walk/
+│   ├── safety_score/
+│   ├── safety_tips/
+│   ├── sos/
+│   ├── valkyrie/
+│   ├── vision_shield/
+│   └── xray_vision/
+├── static/
+│   ├── css/
+│   ├── img/
+│   ├── js/
+│   ├── manifest.json
+│   └── sw.js
+├── templates/
+├── Dockerfile
+├── LICENSE
+├── docker-compose.yml
+├── entrypoint.sh
+├── railway.json
+├── requirements.txt
+└── schema.sql
 ```
 
----
+## Environment
 
-## 📸 Screenshots
+Create `.env` from `.env.example` and fill production values before deploy.
 
-<p align="center">
-  <img src="static/images/screenshot-landing.png" alt="Landing Page" width="45%"/>
-  &nbsp;&nbsp;
-  <img src="static/images/screenshot-dashboard.png" alt="Dashboard" width="45%"/>
-</p>
-<p align="center">
-  <img src="static/images/screenshot-sos.png" alt="SOS Alert" width="45%"/>
-  &nbsp;&nbsp;
-  <img src="static/images/screenshot-admin.png" alt="Admin Panel" width="45%"/>
-</p>
+Required in production:
 
-<p align="center"><em>Screenshots coming soon — visit the <a href="https://rakshak.up.railway.app">live demo</a> to explore!</em></p>
+```env
+FLASK_ENV=production
+SECRET_KEY=change-this-to-a-long-random-secret
+ALLOWED_ORIGINS=https://your-domain.example
 
----
+DB_HOST=your-mysql-host
+DB_PORT=3306
+DB_USER=your-mysql-user
+DB_PASSWORD=your-mysql-password
+DB_NAME=rakshak
+DB_SSL=true
 
-## 🚀 Getting Started
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
 
-### Prerequisites
+Railway MySQL variables are also supported automatically:
 
-- Python 3.11+
-- MySQL 8.0+
-- Git
+```env
+MYSQLHOST=
+MYSQLPORT=
+MYSQLUSER=
+MYSQLPASSWORD=
+MYSQLDATABASE=
+```
 
-### Installation
+Optional:
+
+```env
+KEEP_ALIVE_URL=https://rakshak.up.railway.app/ping
+ALLOW_DEV_LOGIN=false
+VALKYRIE_PIN=1234
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_FROM=
+SMTP_USE_TLS=true
+```
+
+## Local Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/maniksahni/RAKSHAK.git
-cd RAKSHAK
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Install dependencies
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-
-# Set up environment variables (see below)
-cp .env.example .env  # Then edit with your values
-
-# Initialize the database
+cp .env.example .env
 python init_db.py
-
-# Run the application
 python app.py
 ```
 
-The app will be available at `http://localhost:5000`.
+The local app runs on `http://localhost:5001` by default. To choose another port:
 
----
-
-## 🔑 Environment Variables
-
-Create a `.env` file in the project root:
-
-```env
-# Flask
-SECRET_KEY=your-secret-key
-FLASK_ENV=development
-
-# MySQL Database
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=your-password
-MYSQL_DATABASE=rakshak
-
-# Google OAuth (optional)
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-# Production (Railway + TiDB Cloud)
-FLASK_ENV=production
-DB_HOST=your-tidb-host
-DB_PORT=4000
-DB_USER=your-tidb-user
-DB_PASSWORD=your-tidb-password
-DB_NAME=test
-DB_SSL=true
-KEEP_ALIVE_URL=https://rakshak.up.railway.app/health
+```bash
+PORT=5000 python app.py
 ```
 
----
+## Deployment
 
-## 📂 Project Structure
+Railway uses the Dockerfile and `entrypoint.sh`.
 
-```
-RAKSHAK/
-├── app.py                  # Flask app factory & main entry point
-├── config.py               # Configuration (env-based)
-├── wsgi.py                 # WSGI entry for Gunicorn
-├── models.py               # Database models & queries
-├── socket_events.py        # Socket.IO event handlers
-├── pdf_reports.py          # Evidence vault PDF generation
-├── healer.py               # Self-healing & monitoring utilities
-├── init_db.py              # Database schema initialization
-├── schema.sql              # MySQL schema definitions
-│
-├── modules/                # Feature modules (Blueprints)
-│   ├── admin/              # Admin command center
-│   ├── ai_engine/          # AI threat assessment engine
-│   ├── auth/               # Authentication (login, register, OAuth)
-│   ├── danger_zones/       # Danger zone CRUD & heatmap API
-│   ├── emergency/          # Emergency contacts & quick dial
-│   ├── fake_call/          # Fake call generator
-│   ├── main/               # Dashboard & core routes
-│   ├── safe_walk/          # Safe walk journey tracking
-│   ├── safety_score/       # Safety score calculator
-│   ├── safety_tips/        # Safety tips & guidelines
-│   └── sos/                # SOS alert system
-│
-├── static/
-│   ├── css/main.css        # Custom styles
-│   ├── js/
-│   │   ├── dashboard.js    # Dashboard interactivity
-│   │   ├── heatmap.js      # Danger zone heatmap rendering
-│   │   ├── sos_triggers.js # Shake, volume, tap SOS triggers
-│   │   ├── three_shield.js # Three.js 3D shield animation
-│   │   └── admin.js        # Admin panel scripts
-│   ├── images/             # Static assets
-│   ├── manifest.json       # PWA manifest
-│   └── sw.js               # Service worker
-│
-├── templates/              # Jinja2 HTML templates
-│   ├── index.html          # Landing page
-│   ├── base.html           # Base layout
-│   ├── offline.html        # PWA offline fallback
-│   ├── dashboard/          # Dashboard views
-│   ├── admin/              # Admin panel views
-│   ├── auth/               # Login / register views
-│   ├── danger_zones/       # Danger zone views
-│   ├── safe_walk/          # Safe walk views
-│   └── errors/             # Error pages (404, 500)
-│
-├── Dockerfile              # Docker build configuration
-├── docker-compose.yml      # Local multi-container setup
-├── requirements.txt        # Python dependencies
-└── README.md               # You are here!
+```bash
+git push origin main
 ```
 
----
+Runtime command:
 
-## 👨‍💻 Contributors
+```bash
+/bin/sh /app/entrypoint.sh
+```
 
-<table>
-  <tr>
-    <td align="center">
-      <strong>Manik Sahni</strong><br/>
-      <em>Lead Developer & Creator</em>
-    </td>
-    <td align="center">
-      <strong>Keshav</strong><br/>
-      <em>Developer & Contributor</em>
-    </td>
-  </tr>
-</table>
+Health check:
 
----
+```text
+/ping
+```
 
-## 📄 License
+## Verification Commands
 
-This project is released under the **MIT License**.
+```bash
+python3 -m py_compile $(git ls-files '*.py')
+for f in $(git ls-files '*.js'); do node --check "$f" || exit 1; done
+```
 
----
+## Contributor
 
-<p align="center">
-  <strong>Made with ❤️ in India for women's safety</strong>
-</p>
+Manik Sahni
 
-<p align="center">
-  <em>Because every woman deserves to feel safe — anytime, anywhere.</em>
-</p>
+## License
 
-<p align="center">
-  <a href="https://rakshak.up.railway.app">🌐 Visit RAKSHAK</a>
-</p>
+MIT
