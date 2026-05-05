@@ -305,7 +305,7 @@
       }
       tripleClickTimestamps = [];
       tripleClickCooldown = true;
-      if (typeof showToast === 'function') showToast('Triple-tap detected! SOS activating...', 'sos');
+      if (typeof showToast === 'function') showToast('Triple-tap detected. SOS triggered.', 'sos');
       showCountdown();
       setTimeout(function () { tripleClickCooldown = false; }, 10000);
     }
