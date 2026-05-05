@@ -161,12 +161,12 @@ def generate_sos_report(alert: dict, user: dict, contacts: list) -> BytesIO:
     # ── Emergency Contacts Broadcast ─────────────────────────────────
     if contacts:
         story.append(Paragraph("IV. EMERGENCY BROADCAST LOG", section_style))
-        contact_rows = [['#', 'PROTOCOL NAME', 'PHONE', 'RELATION']]
+        contact_rows = [['#', 'PROTOCOL NAME', 'EMAIL', 'RELATION']]
         for i, c in enumerate(contacts, 1):
             contact_rows.append([
                 str(i),
                 c.get('contact_name', 'N/A').upper(),
-                c.get('contact_phone', 'N/A'),
+                c.get('contact_email', 'N/A'),
                 c.get('relationship', 'N/A').upper(),
             ])
         contact_table = Table(contact_rows, colWidths=[1.5*cm, 6.5*cm, 5*cm, 5*cm])

@@ -436,9 +436,15 @@ def _auto_migrate_guardian(app):
     ]
     CONTACT_COLUMN_MIGRATIONS = [
         ('notify_email', 'ALTER TABLE trusted_contacts ADD COLUMN notify_email BOOLEAN DEFAULT TRUE'),
-        ('notify_phone', 'ALTER TABLE trusted_contacts ADD COLUMN notify_phone BOOLEAN DEFAULT TRUE'),
+        ('notify_phone', 'ALTER TABLE trusted_contacts ADD COLUMN notify_phone BOOLEAN DEFAULT FALSE'),
     ]
     CONTACT_DATA_CLEANUPS = [
+        (
+            'disable_phone_contact_channels',
+            """UPDATE trusted_contacts
+               SET notify_phone = FALSE
+               WHERE notify_phone = TRUE""",
+        ),
         (
             'disable_reserved_email_contacts',
             """UPDATE trusted_contacts

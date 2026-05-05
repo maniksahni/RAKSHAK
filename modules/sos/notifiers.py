@@ -14,7 +14,6 @@ from base64 import urlsafe_b64encode
 from datetime import datetime
 from email.message import EmailMessage
 from html import escape
-from urllib.parse import quote
 
 import requests
 
@@ -490,75 +489,11 @@ def _send_email_with_fallbacks(contact, subject, body, smtp_options=None, html_b
     }
 
 
-def _send_twilio(contact, body, whatsapp=False):
-    required = ('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN')
-    from_key = 'TWILIO_WHATSAPP_FROM' if whatsapp else 'TWILIO_SMS_FROM'
-    channel = 'whatsapp' if whatsapp else 'sms'
-    if not _configured(*required, from_key):
-        return {'channel': channel, 'contact': _contact_label(contact), 'success': False, 'configured': False, 'detail': f'Twilio {channel} not configured'}
-
-    phone = contact.get('contact_phone')
-    if not phone:
-        return {'channel': channel, 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'missing contact phone'}
-
-    sid = _env('TWILIO_ACCOUNT_SID')
-    token = _env('TWILIO_AUTH_TOKEN')
-    to_number = f'whatsapp:{phone}' if whatsapp and not phone.startswith('whatsapp:') else phone
-    payload = {
-        'From': _env(from_key),
-        'To': to_number,
-        'Body': body,
-    }
-    try:
-        resp = requests.post(
-            f'https://api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json',
-            data=payload,
-            auth=(sid, token),
-            timeout=10,
-        )
-        ok = 200 <= resp.status_code < 300
-        detail = 'sent' if ok else f'{resp.status_code}: {resp.text[:180]}'
-        return {'channel': channel, 'contact': phone, 'success': ok, 'configured': True, 'detail': detail}
-    except Exception as exc:
-        log.warning('SOS %s delivery failed for %s: %s', channel, phone, exc)
-        return {'channel': channel, 'contact': phone, 'success': False, 'configured': True, 'detail': str(exc)}
-
-
-def _free_share_links(contact, subject, body):
-    """Generate zero-cost user-initiated WhatsApp/SMS/Email links."""
-    phone = (contact.get('contact_phone') or '').replace(' ', '').replace('-', '')
-    email = contact.get('contact_email') or ''
-    encoded_body = quote(body)
-    encoded_subject = quote(subject)
-    links = {}
-
-    if _pref_enabled(contact, 'notify_phone') and phone:
-        links['whatsapp'] = f'https://wa.me/{phone.replace("+", "")}?text={encoded_body}'
-        links['sms'] = f'sms:{phone}?&body={encoded_body}'
-    if _pref_enabled(contact, 'notify_email') and email:
-        links['mailto'] = f'mailto:{email}?subject={encoded_subject}&body={encoded_body}'
-
-    return {
-        'channel': 'free_share_links',
-        'contact': _contact_label(contact),
-        'success': bool(links),
-        'configured': True,
-        'detail': 'generated' if links else 'missing phone/email',
-        'links': links,
-    }
-
-
 def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
-    """Send SOS where possible and always provide free manual share links.
+    """Send SOS alerts to trusted contacts over email only.
 
-    Free mode:
     - Gmail API sends automatically over HTTPS when GMAIL_API_* env vars exist.
     - Otherwise SMTP email sends automatically when SMTP_* env vars are configured.
-    - WhatsApp/SMS are generated as wa.me and sms: links because automatic
-      WhatsApp/SMS requires a gateway/provider.
-
-    Optional gateway mode:
-    - Twilio SMS/WhatsApp sends automatically only when TWILIO_* env vars exist.
     """
     contacts = contacts or []
     alert = dict(alert or {})
@@ -579,18 +514,11 @@ def dispatch_sos_notifications(user, contacts, alert, smtp_options=None):
             results.append(_send_email_with_fallbacks(contact, subject, body, smtp_options=smtp_options, html_body=html_body))
         else:
             results.append({'channel': 'email', 'contact': _contact_label(contact), 'success': False, 'configured': True, 'detail': 'disabled for contact'})
-        results.append(_free_share_links(contact, subject, body))
-        if _pref_enabled(contact, 'notify_phone') and _configured('TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN'):
-            results.append(_send_twilio(contact, body, whatsapp=False))
-            results.append(_send_twilio(contact, body, whatsapp=True))
     return results
 
 
 def summarize_delivery(results):
     email_sent = 0
-    sms_sent = 0
-    whatsapp_sent = 0
-    manual_links_generated = 0
     email_disabled = 0
     email_not_configured = 0
     email_failed = 0
@@ -616,14 +544,8 @@ def summarize_delivery(results):
                     first_email_error = (r.get('detail') or '').strip()[:180]
                 if r.get('contact'):
                     email_failure_contacts.append(r.get('contact'))
-        elif channel == 'sms' and success:
-            sms_sent += 1
-        elif channel == 'whatsapp' and success:
-            whatsapp_sent += 1
-        elif channel == 'free_share_links' and success:
-            manual_links_generated += 1
 
-    auto_delivered = email_sent + sms_sent + whatsapp_sent
+    auto_delivered = email_sent
     summary = {
         'attempted': len(results),
         'sent': sum(1 for r in results if r.get('success')),
@@ -631,9 +553,6 @@ def summarize_delivery(results):
         'not_configured': sum(1 for r in results if not r.get('configured')),
         'auto_delivered': auto_delivered,
         'email_sent': email_sent,
-        'sms_sent': sms_sent,
-        'whatsapp_sent': whatsapp_sent,
-        'manual_links_generated': manual_links_generated,
         'email_disabled': email_disabled,
         'email_not_configured': email_not_configured,
         'email_failed': email_failed,

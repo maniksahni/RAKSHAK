@@ -166,15 +166,10 @@ def trigger_sos():
                 f"SOS alert created. Automatic delivery reached "
                 f"{delivery.get('auto_delivered', 0)} channel(s)."
             )
-        elif delivery.get('manual_links_generated', 0) > 0:
-            message_text = (
-                "SOS alert created, but automatic email/SMS did not send. "
-                "Check trusted contact email settings or the configured email provider."
-            )
         else:
             message_text = (
-                "SOS alert created, but no notification channel delivered. "
-                "Check trusted contacts and SOS channel settings."
+                "SOS alert created, but automatic email did not send. "
+                "Check trusted contact email settings or the configured email provider."
             )
 
         emit_sos_alert(get_socketio(), alert_dict, contact_user_ids, current_user.id)
@@ -387,7 +382,7 @@ def evidence_vault(alert_id):
 
         # Trusted contacts who were notified
         contacts = query_db(
-            'SELECT contact_name, contact_email, contact_phone, relationship FROM trusted_contacts WHERE user_id=%s',
+            'SELECT contact_name, contact_email, relationship FROM trusted_contacts WHERE user_id=%s',
             (alert['user_id'],)
         )
         contact_list = [_serialize(c) for c in (contacts or [])]

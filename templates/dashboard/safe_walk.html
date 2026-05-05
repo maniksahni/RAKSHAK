@@ -396,9 +396,6 @@
           <button class="sw-share-btn" onclick="copyShareLink()">
             <i class="bi bi-share"></i> Share Live Location
           </button>
-          <button class="sw-share-btn" onclick="shareViaWhatsApp()" style="background:rgba(239,68,68,0.1);border-color:rgba(16,185,129,0.25);color:#25d366;">
-            <i class="bi bi-whatsapp"></i> WhatsApp
-          </button>
         </div>
         <div id="sw-share-link" class="sw-share-box" onclick="copyShareLink()" style="font-size:0.72rem;">
           Click to copy tracking link
@@ -743,13 +740,6 @@
     navigator.clipboard.writeText(link).then(function() {
       if (typeof showToast === 'function') showToast('Tracking link copied!', 'success');
     });
-  };
-
-  // ── Share via WhatsApp ───────────────────────────────────────────────────
-  window.shareViaWhatsApp = function() {
-    const link = document.getElementById('sw-share-link').textContent;
-    const msg = encodeURIComponent('Track my live journey on RAKSHAK: ' + link);
-    window.open('https://wa.me/?text=' + msg, '_blank');
   };
 
   // ── Reset to start view ───────────────────────────────────────────────────
