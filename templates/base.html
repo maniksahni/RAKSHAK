@@ -2922,7 +2922,7 @@ fetch('/sos/notifications').then(r=>r.json()).then(data=>{
   <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;">Sending SOS alert to your saved emails</div>
   <button id="sos-countdown-cancel" style="margin-top:24px;padding:14px 48px;background:rgba(255,255,255,0.15);color:#fff;border:2px solid rgba(255,255,255,0.4);border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:0.08em;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">CANCEL</button>
 </div>
-<script src="{{ url_for('static', filename='js/sos_triggers.js', v='20260506-disable-auto-sos') }}"></script>
+<script src="{{ url_for('static', filename='js/sos_triggers.js', v='20260506-auto-sos-disabled-permanent') }}"></script>
 {% endif %}
 
 <script src="{{ url_for('static', filename='js/immersive-3d.js') }}"></script>
@@ -3095,7 +3095,7 @@ if ('serviceWorker' in navigator) {
   });
 
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/static/sw.js?v=20260506-disable-auto-sos', {
+    navigator.serviceWorker.register('/static/sw.js?v=20260506-auto-sos-disabled-permanent', {
       scope: '/',
       updateViaCache: 'none'
     })
@@ -3131,7 +3131,7 @@ if ('serviceWorker' in navigator) {
     });
   }
 
-  // ---- Device Shake logic is handled by static/js/sos_triggers.js ----
+  // ---- Automatic SOS triggers are disabled by static/js/sos_triggers.js ----
 }
 </script>
 </body>

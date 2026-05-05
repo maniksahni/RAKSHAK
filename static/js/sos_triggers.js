@@ -1,521 +1,59 @@
 /**
- * RAKSHAK — Shake-to-SOS & Volume Button Trigger
- * Hooks into existing POST /sos/trigger endpoint.
- * Requires: CSRF_TOKEN global (set in base.html), navigator.geolocation
+ * RAKSHAK - automatic SOS trigger guard.
+ *
+ * Automatic/background SOS triggers are permanently disabled. SOS countdowns
+ * should only start from explicit UI controls that call window.triggerGlobalSOS.
  */
 (function () {
   'use strict';
 
-  // ── Settings (localStorage) ─────────────────────────────────────────────────
-  const DEFAULTS = {
-    shake_sos_enabled: false,
-    volume_sos_enabled: false,
-    triple_tap_sos_enabled: false,
-    movement_sos_enabled: false,
-    countdown_seconds: 5
-  };
-  const AUTO_TRIGGER_KEYS = [
+  var AUTO_TRIGGER_KEYS = [
     'shake_sos_enabled',
     'volume_sos_enabled',
     'triple_tap_sos_enabled',
     'movement_sos_enabled'
   ];
-  const AUTO_TRIGGER_RESET_VERSION = '2026-05-06-disable-accidental-auto-sos';
+  var RESET_VERSION = '2026-05-06-auto-sos-permanently-disabled';
 
-  function resetLegacyAutoTriggers() {
+  function disableAutoTriggers() {
     try {
-      if (localStorage.getItem('rakshak_auto_trigger_reset_version') === AUTO_TRIGGER_RESET_VERSION) return;
       AUTO_TRIGGER_KEYS.forEach(function (key) {
         localStorage.setItem('rakshak_' + key, 'false');
       });
-      localStorage.setItem('rakshak_auto_trigger_reset_version', AUTO_TRIGGER_RESET_VERSION);
+      localStorage.setItem('rakshak_auto_trigger_reset_version', RESET_VERSION);
     } catch (_) {
-      // Storage may be unavailable in strict browser modes; defaults still keep auto triggers off.
+      // Defaults are already disabled when storage is unavailable.
     }
   }
 
-  resetLegacyAutoTriggers();
-
-  function getSetting(key) {
-    const raw = localStorage.getItem('rakshak_' + key);
-    if (raw === null) return DEFAULTS[key];
-    if (raw === 'true') return true;
-    if (raw === 'false') return false;
-    const num = Number(raw);
-    return isNaN(num) ? raw : num;
-  }
-
-  function setSetting(key, val) {
-    localStorage.setItem('rakshak_' + key, String(val));
-  }
-
-  // ── Countdown & SOS trigger ─────────────────────────────────────────────────
-  let countdownTimer = null;
-  let countdownValue = 0;
-
-  const overlay = document.getElementById('sos-countdown-overlay');
-  const countdownNum = document.getElementById('sos-countdown-number');
-  const cancelBtn = document.getElementById('sos-countdown-cancel');
-
-  function showCountdown() {
-    if (!overlay) return;
-    countdownValue = getSetting('countdown_seconds');
-    overlay.style.display = 'flex';
-    countdownNum.textContent = countdownValue;
-
-    // Pulse animation restart
-    overlay.classList.remove('sos-pulse');
-    void overlay.offsetWidth; // reflow
-    overlay.classList.add('sos-pulse');
-
-    countdownTimer = setInterval(function () {
-      countdownValue--;
-      if (countdownValue <= 0) {
-        clearInterval(countdownTimer);
-        countdownTimer = null;
-        overlay.style.display = 'none';
-        fireSOS();
-      } else {
-        countdownNum.textContent = countdownValue;
-      }
-    }, 1000);
-  }
-
-  function cancelCountdown() {
-    if (countdownTimer) {
-      clearInterval(countdownTimer);
-      countdownTimer = null;
-    }
+  function hideStaleCountdown() {
+    var overlay = document.getElementById('sos-countdown-overlay');
+    var number = document.getElementById('sos-countdown-number');
     if (overlay) overlay.style.display = 'none';
-    if (typeof showToast === 'function') {
-      showToast('SOS cancelled', 'info');
-    }
+    if (number) number.textContent = '5';
   }
 
-  if (cancelBtn) {
-    cancelBtn.addEventListener('click', cancelCountdown);
+  function hardenPage() {
+    disableAutoTriggers();
+    hideStaleCountdown();
   }
 
-  function fireSOS() {
-    function sendPayload(payload, modeLabel) {
-      var headers = { 'Content-Type': 'application/json' };
-      if (typeof CSRF_TOKEN !== 'undefined') {
-        headers['X-CSRFToken'] = CSRF_TOKEN;
-      }
-      headers['Accept'] = 'application/json';
-      fetch('/sos/trigger', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(payload)
-      })
-        .then(async function (r) {
-          var raw = await r.text();
-          var d = {};
-          try {
-            d = raw ? JSON.parse(raw) : {};
-          } catch (_) {
-            throw new Error(raw || ('HTTP ' + r.status));
-          }
-          if (!r.ok) {
-            throw new Error(d.error || d.message || ('HTTP ' + r.status));
-          }
-          return d;
-        })
-        .then(function (d) {
-          if (d.success) {
-            if (typeof showToast === 'function') {
-              if (modeLabel === 'live') showToast('SOS ALERT SENT', 'sos', 6000);
-              else showToast('SOS ALERT SENT USING LAST KNOWN LOCATION', 'sos', 6500);
-            }
-          } else {
-            if (typeof showToast === 'function') showToast(d.error || 'SOS failed', 'error');
-          }
-        })
-        .catch(function (err) {
-          if (typeof showToast === 'function') {
-            showToast((err && err.message) ? err.message : 'SOS failed', 'error', 8000);
-          }
-        });
-    }
+  hardenPage();
 
-    function buildPayload(location) {
-      var payload = {
-        trigger_type: 'auto_shake',
-        message: 'Auto-triggered via shake/volume detection'
-      };
-      if (location && Number.isFinite(Number(location.lat)) && Number.isFinite(Number(location.lng))) {
-        payload.latitude = Number(location.lat);
-        payload.longitude = Number(location.lng);
-        if (location.accuracy != null && Number.isFinite(Number(location.accuracy))) {
-          payload.accuracy = Number(location.accuracy);
-        }
-        if (location.source && location.source !== 'live') {
-          payload.message += ' [USING LAST KNOWN LOCATION]';
-        }
-      } else {
-        payload.message += ' [LIVE GPS UNAVAILABLE]';
-      }
-      return payload;
-    }
-
-    if (!navigator.geolocation) {
-      var noGeoLocation = typeof window.getRakshakCachedLocation === 'function'
-        ? window.getRakshakCachedLocation()
-        : null;
-      sendPayload(buildPayload(noGeoLocation), noGeoLocation ? 'cached' : 'fallback');
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      function (pos) {
-        var liveLocation = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          accuracy: pos.coords.accuracy,
-          source: 'live'
-        };
-        if (typeof window.cacheRakshakLocation === 'function') {
-          window.cacheRakshakLocation(liveLocation, { source: 'auto-sos' });
-        }
-        sendPayload(buildPayload(liveLocation), 'live');
-      },
-      function () {
-        var fallbackLocation = typeof window.getRakshakCachedLocation === 'function'
-          ? window.getRakshakCachedLocation()
-          : null;
-        sendPayload(buildPayload(fallbackLocation), fallbackLocation ? 'cached' : 'fallback');
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hardenPage, { once: true });
   }
 
-  // ── Shake Detection (DeviceMotionEvent) ─────────────────────────────────────
-  var SHAKE_THRESHOLD = 25; // m/s^2
-  var SHAKE_COUNT_REQUIRED = 3;
-  var SHAKE_WINDOW_MS = 2000;
-  var shakeTimestamps = [];
-  var shakeCooldown = false;
-
-  function handleMotion(event) {
-    if (!getSetting('shake_sos_enabled')) return;
-    if (shakeCooldown || countdownTimer) return;
-
-    var acc = event.accelerationIncludingGravity || event.acceleration;
-    if (!acc) return;
-
-    var x = Math.abs(acc.x || 0);
-    var y = Math.abs(acc.y || 0);
-    var z = Math.abs(acc.z || 0);
-
-    if (x > SHAKE_THRESHOLD || y > SHAKE_THRESHOLD || z > SHAKE_THRESHOLD) {
-      var now = Date.now();
-      shakeTimestamps.push(now);
-
-      // Remove timestamps outside the window
-      shakeTimestamps = shakeTimestamps.filter(function (t) {
-        return now - t < SHAKE_WINDOW_MS;
-      });
-
-      if (shakeTimestamps.length >= SHAKE_COUNT_REQUIRED) {
-        shakeTimestamps = [];
-        shakeCooldown = true;
-        showCountdown();
-        // Prevent re-trigger for 10 seconds
-        setTimeout(function () { shakeCooldown = false; }, 10000);
-      }
-    }
-  }
-
-  // Request permission on iOS 13+
-  function initShakeDetection() {
-    if (typeof DeviceMotionEvent === 'undefined') return;
-
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-      // iOS 13+ requires user gesture to request permission
-      document.addEventListener('click', function requestMotion() {
-        DeviceMotionEvent.requestPermission()
-          .then(function (state) {
-            if (state === 'granted') {
-              window.addEventListener('devicemotion', handleMotion);
-            }
-          })
-          .catch(function () { /* silently fail */ });
-        document.removeEventListener('click', requestMotion);
-      }, { once: true });
-    } else {
-      window.addEventListener('devicemotion', handleMotion);
-    }
-  }
-
-  initShakeDetection();
-
-  // ── Volume Button Trigger ───────────────────────────────────────────────────
-  // Volume buttons on mobile fire "volumechange" on the <audio>/<video> element,
-  // but there is no universal web API for hardware volume buttons.
-  // Strategy: listen for rapid keypresses of VolumeUp/VolumeDown on Android Chrome,
-  // and also monitor volumechange events on a silent media element.
-  var VOLUME_PRESSES_REQUIRED = 5;
-  var VOLUME_WINDOW_MS = 3000;
-  var volumeTimestamps = [];
-  var volumeCooldown = false;
-
-  function recordVolumePress() {
-    if (!getSetting('volume_sos_enabled')) return;
-    if (volumeCooldown || countdownTimer) return;
-
-    var now = Date.now();
-    volumeTimestamps.push(now);
-    volumeTimestamps = volumeTimestamps.filter(function (t) {
-      return now - t < VOLUME_WINDOW_MS;
-    });
-
-    if (volumeTimestamps.length >= VOLUME_PRESSES_REQUIRED) {
-      volumeTimestamps = [];
-      volumeCooldown = true;
-      showCountdown();
-      setTimeout(function () { volumeCooldown = false; }, 10000);
-    }
-  }
-
-  // Keyboard-based detection (works on Android Chrome, desktop testing)
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'AudioVolumeUp' || e.key === 'AudioVolumeDown' ||
-        e.key === 'VolumeUp' || e.key === 'VolumeDown') {
-      recordVolumePress();
-    }
+  window.addEventListener('pageshow', function (event) {
+    disableAutoTriggers();
+    if (event.persisted) hideStaleCountdown();
   });
 
-  // Silent audio element to detect volumechange events (mobile fallback)
-  try {
-    var silentAudio = document.createElement('audio');
-    silentAudio.setAttribute('src', 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=');
-    silentAudio.setAttribute('preload', 'auto');
-    silentAudio.volume = 0.5;
-    silentAudio.muted = false;
-    silentAudio.addEventListener('volumechange', function () {
-      recordVolumePress();
-    });
-    // Keep it alive so the browser keeps the reference
-    silentAudio.loop = true;
-    // We don't actually play it — just having it listen is enough on some browsers
-  } catch (e) {
-    // silently fail if audio element creation fails
-  }
-
-  // ── Triple-Click "Power Button" Trigger ──────────────────────────────────────
-  var TRIPLE_CLICK_WINDOW_MS = 800;
-  var tripleClickTimestamps = [];
-  var tripleClickCooldown = false;
-
-  document.addEventListener('click', function (e) {
-    if (!getSetting('triple_tap_sos_enabled')) return;
-    if (tripleClickCooldown || countdownTimer) return;
-    // Only fire on triple-click (3 clicks in rapid succession)
-    var now = Date.now();
-    tripleClickTimestamps.push(now);
-    tripleClickTimestamps = tripleClickTimestamps.filter(function (t) {
-      return now - t < TRIPLE_CLICK_WINDOW_MS;
-    });
-
-    if (tripleClickTimestamps.length >= 3) {
-      // Ignore if the user clicked inside a form, input, link, or button
-      var tag = (e.target.tagName || '').toLowerCase();
-      if (['input', 'textarea', 'select', 'button', 'a'].indexOf(tag) !== -1) {
-        tripleClickTimestamps = [];
-        return;
-      }
-      tripleClickTimestamps = [];
-      tripleClickCooldown = true;
-      if (typeof showToast === 'function') showToast('Triple-tap detected. SOS triggered.', 'sos');
-      showCountdown();
-      setTimeout(function () { tripleClickCooldown = false; }, 10000);
-    }
-  });
-
-  // ── Geofence Breach Detection ───────────────────────────────────────────────
-  var lastGeoPos = null;
-  var lastGeoTime = null;
-  var geofenceCooldown = false;
-  var GEOFENCE_SPEED_THRESHOLD = 50; // 500m in 10s = 50 m/s
-
-  function checkGeofenceBreach(pos) {
-    if (!getSetting('movement_sos_enabled')) return;
-    var now = Date.now();
-    if (lastGeoPos && lastGeoTime) {
-      var timeDelta = (now - lastGeoTime) / 1000; // seconds
-      if (timeDelta > 0 && timeDelta <= 12) {
-        var dist = haversineDistance(
-          lastGeoPos.latitude, lastGeoPos.longitude,
-          pos.coords.latitude, pos.coords.longitude
-        );
-        var speed = dist / timeDelta; // m/s
-        if (speed >= GEOFENCE_SPEED_THRESHOLD && !geofenceCooldown && !countdownTimer) {
-          geofenceCooldown = true;
-          if (typeof showToast === 'function') {
-            showToast('Unusual movement detected! SOS warning triggered.', 'warning', 6000);
-          }
-          showCountdown();
-          setTimeout(function () { geofenceCooldown = false; }, 30000);
-        }
-      }
-    }
-    lastGeoPos = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
-    lastGeoTime = now;
-  }
-
-  function haversineDistance(lat1, lon1, lat2, lon2) {
-    var R = 6371000; // Earth radius in meters
-    var dLat = (lat2 - lat1) * Math.PI / 180;
-    var dLon = (lon2 - lon1) * Math.PI / 180;
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
-  // Watch position for geofence
-  if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(
-      function (pos) { checkGeofenceBreach(pos); },
-      function () {},
-      { enableHighAccuracy: true, maximumAge: 5000 }
-    );
-  }
-
-  // ── Dead Man's Switch ───────────────────────────────────────────────────────
-  var DEAD_MAN_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
-  var deadManTimer = null;
-  var alertModeActive = false;
-
-  window.setAlertMode = function (enabled) {
-    alertModeActive = enabled;
-    if (enabled) {
-      resetDeadManSwitch();
-      if (typeof showToast === 'function') showToast('Alert mode ON — check-in required every 30 min', 'info');
-    } else {
-      clearDeadManSwitch();
-      if (typeof showToast === 'function') showToast('Alert mode OFF', 'info');
-    }
-  };
-
-  function resetDeadManSwitch() {
-    if (!alertModeActive) return;
-    if (deadManTimer) clearTimeout(deadManTimer);
-    deadManTimer = setTimeout(function () {
-      if (!alertModeActive) return;
-      // Show check-in notification
-      if (typeof showToast === 'function') {
-        showToast('No activity for 30 min — are you safe? Tap to confirm.', 'warning', 15000);
-      }
-      // Give 60 seconds to interact, else trigger SOS
-      deadManTimer = setTimeout(function () {
-        if (!alertModeActive) return;
-        if (typeof showToast === 'function') {
-          showToast('No response — triggering SOS!', 'sos', 8000);
-        }
-        showCountdown();
-      }, 60000);
-    }, DEAD_MAN_TIMEOUT_MS);
-  }
-
-  function clearDeadManSwitch() {
-    if (deadManTimer) { clearTimeout(deadManTimer); deadManTimer = null; }
-  }
-
-  // Reset dead man's switch on any user interaction
-  ['click', 'touchstart', 'keydown', 'scroll'].forEach(function (evt) {
-    document.addEventListener(evt, function () {
-      if (alertModeActive) resetDeadManSwitch();
-    }, { passive: true });
-  });
-
-  // ── Haptic Feedback on SOS ──────────────────────────────────────────────────
-  var origFireSOS = fireSOS;
-  fireSOS = function () {
-    // Trigger haptic vibration pattern: short-long-short
-    if (navigator.vibrate) {
-      navigator.vibrate([100, 50, 200, 50, 100]);
-    }
-    origFireSOS();
-  };
-
-  // ── Settings Panel (callable from dashboard) ────────────────────────────────
+  window.disableRakshakAutoSosTriggers = disableAutoTriggers;
   window.openSOSTriggerSettings = function () {
-    var existing = document.getElementById('sos-trigger-settings-modal');
-    if (existing) existing.remove();
-
-    var shakeEnabled = getSetting('shake_sos_enabled');
-    var volumeEnabled = getSetting('volume_sos_enabled');
-    var tripleTapEnabled = getSetting('triple_tap_sos_enabled');
-    var movementEnabled = getSetting('movement_sos_enabled');
-    var countdown = getSetting('countdown_seconds');
-
-    var modal = document.createElement('div');
-    modal.id = 'sos-trigger-settings-modal';
-    modal.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);';
-    modal.innerHTML =
-      '<div style="background:linear-gradient(135deg,#0f0f17,#1a1a2e);border:1px solid rgba(124,58,237,0.2);border-radius:16px;padding:32px;max-width:400px;width:90%;color:#e2e2e2;box-shadow:0 20px 60px rgba(0,0,0,0.5);">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">' +
-          '<h3 style="margin:0;font-size:1.1rem;color:#7c3aed;font-weight:700;letter-spacing:0.05em;">SOS TRIGGER SETTINGS</h3>' +
-          '<button id="sos-settings-close" style="background:none;border:none;color:#888;font-size:1.4rem;cursor:pointer;padding:0;line-height:1;">&times;</button>' +
-        '</div>' +
-
-        '<div style="margin-bottom:20px;">' +
-          '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
-            '<input type="checkbox" id="sos-set-shake" ' + (shakeEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#7c3aed;">' +
-            '<div><div style="font-weight:600;font-size:0.9rem;">Shake to SOS</div><div style="font-size:0.75rem;color:#888;">Shake your phone aggressively to trigger SOS</div></div>' +
-          '</label>' +
-        '</div>' +
-
-        '<div style="margin-bottom:20px;">' +
-          '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
-            '<input type="checkbox" id="sos-set-volume" ' + (volumeEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#7c3aed;">' +
-            '<div><div style="font-weight:600;font-size:0.9rem;">Volume Button SOS</div><div style="font-size:0.75rem;color:#888;">Press volume buttons 5 times rapidly</div></div>' +
-          '</label>' +
-        '</div>' +
-
-        '<div style="margin-bottom:20px;">' +
-          '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
-            '<input type="checkbox" id="sos-set-triple" ' + (tripleTapEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#7c3aed;">' +
-            '<div><div style="font-weight:600;font-size:0.9rem;">Triple-Tap SOS</div><div style="font-size:0.75rem;color:#888;">Trigger SOS only if you intentionally enable rapid background triple-tap detection</div></div>' +
-          '</label>' +
-        '</div>' +
-
-        '<div style="margin-bottom:20px;">' +
-          '<label style="display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
-            '<input type="checkbox" id="sos-set-movement" ' + (movementEnabled ? 'checked' : '') + ' style="width:18px;height:18px;accent-color:#7c3aed;">' +
-            '<div><div style="font-weight:600;font-size:0.9rem;">Movement SOS Warning</div><div style="font-size:0.75rem;color:#888;">Watch for sudden location jumps and arm SOS only when explicitly enabled</div></div>' +
-          '</label>' +
-        '</div>' +
-
-        '<div style="margin-bottom:24px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);">' +
-          '<label style="font-weight:600;font-size:0.9rem;display:block;margin-bottom:8px;">Countdown (seconds)</label>' +
-          '<input type="range" id="sos-set-countdown" min="3" max="10" value="' + countdown + '" style="width:100%;accent-color:#7c3aed;">' +
-          '<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:#888;"><span>3s</span><span id="sos-countdown-val">' + countdown + 's</span><span>10s</span></div>' +
-        '</div>' +
-
-        '<button id="sos-settings-save" style="width:100%;padding:12px;background:linear-gradient(135deg,#7c3aed,#7c3aed);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.9rem;cursor:pointer;letter-spacing:0.05em;">SAVE SETTINGS</button>' +
-      '</div>';
-
-    document.body.appendChild(modal);
-
-    // Event listeners
-    document.getElementById('sos-settings-close').onclick = function () { modal.remove(); };
-    modal.addEventListener('click', function (e) { if (e.target === modal) modal.remove(); });
-
-    var slider = document.getElementById('sos-set-countdown');
-    var valDisplay = document.getElementById('sos-countdown-val');
-    slider.addEventListener('input', function () { valDisplay.textContent = slider.value + 's'; });
-
-    document.getElementById('sos-settings-save').onclick = function () {
-      setSetting('shake_sos_enabled', document.getElementById('sos-set-shake').checked);
-      setSetting('volume_sos_enabled', document.getElementById('sos-set-volume').checked);
-      setSetting('triple_tap_sos_enabled', document.getElementById('sos-set-triple').checked);
-      setSetting('movement_sos_enabled', document.getElementById('sos-set-movement').checked);
-      setSetting('countdown_seconds', parseInt(slider.value, 10));
-      if (typeof showToast === 'function') showToast('SOS trigger settings saved', 'success');
-      modal.remove();
-    };
+    disableAutoTriggers();
+    if (typeof showToast === 'function') {
+      showToast('Automatic SOS triggers are disabled. Use the SOS button manually.', 'info', 7000);
+    }
   };
-
 })();
