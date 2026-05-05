@@ -3087,10 +3087,32 @@ document.addEventListener('click', function(e) {
 <!-- ── Service Worker Registration ────────────────────────────────────────── -->
 <script>
 if ('serviceWorker' in navigator) {
+  let rakshakSwReloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (rakshakSwReloaded) return;
+    rakshakSwReloaded = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/static/sw.js', { scope: '/' })
+    navigator.serviceWorker.register('/static/sw.js?v=20260506-disable-auto-sos', {
+      scope: '/',
+      updateViaCache: 'none'
+    })
       .then(function(reg) {
-        // Check for updates periodically
+        reg.update();
+        if (reg.waiting) {
+          reg.waiting.postMessage('SKIP_WAITING');
+        }
+        reg.addEventListener('updatefound', function() {
+          var worker = reg.installing;
+          if (!worker) return;
+          worker.addEventListener('statechange', function() {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              worker.postMessage('SKIP_WAITING');
+            }
+          });
+        });
         setInterval(function() { reg.update(); }, 60 * 60 * 1000);
       })
       .catch(function(err) {
