@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Vision Shield — Silent Gesture SOS · RAKSHAK{% endblock %}
+{% block title %}Vision Shield — Gesture Monitor · RAKSHAK{% endblock %}
 
 {% block extra_css %}
 <style>
 /* ══════════════════════════════════════════════════════════════
-   VISION SHIELD — Premium Gesture SOS UI
+   VISION SHIELD — Premium Gesture Monitor UI
    ══════════════════════════════════════════════════════════════ */
 
 /* -- Page-level reset for full immersive canvas -- */
@@ -935,80 +935,6 @@ body, html {
 }
 .vs-btn-icon { font-size: 1rem; }
 
-/* ── ALERT OVERLAY ── */
-.vs-alert-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.92);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.vs-alert-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-.vs-alert-ring {
-  width: 160px; height: 160px;
-  border-radius: 50%;
-  border: 3px solid rgba(239,68,68,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  animation: alertPulseRing 0.8s ease infinite;
-}
-@keyframes alertPulseRing {
-  0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4), inset 0 0 30px rgba(239,68,68,0.1); }
-  70% { box-shadow: 0 0 0 30px rgba(239,68,68,0), inset 0 0 30px rgba(239,68,68,0.25); }
-  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), inset 0 0 30px rgba(239,68,68,0.1); }
-}
-.vs-alert-icon {
-  font-size: 4.5rem;
-  filter: drop-shadow(0 0 20px rgba(239,68,68,0.8));
-}
-.vs-alert-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 900;
-  font-size: 1.8rem;
-  letter-spacing: 0.18em;
-  color: #ef4444;
-  text-shadow: 0 0 30px rgba(239,68,68,0.6);
-  text-transform: uppercase;
-}
-.vs-alert-msg {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.6);
-  text-align: center;
-  max-width: 340px;
-  line-height: 1.7;
-}
-.vs-alert-dismiss {
-  padding: 10px 32px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  color: rgba(255,255,255,0.5);
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.3s;
-  margin-top: 10px;
-}
-.vs-alert-dismiss:hover {
-  background: rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.85);
-}
-
 /* ── PERMISSION REQUEST ── */
 .vs-permission-modal {
   position: fixed;
@@ -1249,7 +1175,7 @@ body, html {
   <!-- Header -->
   <div class="vs-header">
     <h1 class="vs-title">Vision Shield</h1>
-    <p class="vs-subtitle">Silent Gesture SOS · AI-Powered Hand Recognition</p>
+    <p class="vs-subtitle">Gesture Monitor · Manual SOS Only</p>
     <div class="vs-badge">
       <span class="vs-badge-dot"></span>
       <span>MediaPipe · Real-time Detection · Zero Upload</span>
@@ -1374,7 +1300,7 @@ body, html {
         <div class="vs-gesture-status" id="gs-stop">WATCHING</div>
         <div class="vs-gesture-icon">🖐</div>
         <div class="vs-gesture-name">Open Palm</div>
-        <div class="vs-gesture-desc">Raise open hand — hold 2s to broadcast silent SOS alert</div>
+        <div class="vs-gesture-desc">Raise open hand — hold 2s to mark manual SOS ready</div>
         <div class="vs-hold-bar-wrap">
           <div class="vs-hold-bar" id="hb-stop"></div>
         </div>
@@ -1389,7 +1315,7 @@ body, html {
         <div class="vs-gesture-status" id="gs-fist">WATCHING</div>
         <div class="vs-gesture-icon">✊</div>
         <div class="vs-gesture-name">Closed Fist</div>
-        <div class="vs-gesture-desc">Clench fist — hold 2s to fire immediate SOS distress signal</div>
+        <div class="vs-gesture-desc">Clench fist — hold 2s to mark distress gesture</div>
         <div class="vs-hold-bar-wrap">
           <div class="vs-hold-bar" id="hb-fist"></div>
         </div>
@@ -1404,7 +1330,7 @@ body, html {
         <div class="vs-gesture-status" id="gs-v">WATCHING</div>
         <div class="vs-gesture-icon">✌️</div>
         <div class="vs-gesture-name">V-Sign</div>
-        <div class="vs-gesture-desc">Two-finger V — disarms any pending alert, safe confirmation</div>
+        <div class="vs-gesture-desc">Two-finger V — clears gesture state and confirms safe</div>
         <div class="vs-confidence">
           <span class="vs-conf-label">Confidence</span>
           <span class="vs-conf-val" id="conf-v">0%</span>
@@ -1426,35 +1352,20 @@ body, html {
     <div class="vs-legend-row">
       <span class="vs-legend-glyph">🖐</span>
       <span>Open Palm — hold 2s</span>
-      <span class="vs-legend-action danger">SOS</span>
+      <span class="vs-legend-action">READY</span>
     </div>
     <div class="vs-legend-row">
       <span class="vs-legend-glyph">✊</span>
       <span>Closed Fist — hold 2s</span>
-      <span class="vs-legend-action danger">PANIC</span>
+      <span class="vs-legend-action">DISTRESS</span>
     </div>
     <div class="vs-legend-row">
       <span class="vs-legend-glyph">✌️</span>
       <span>V-Sign — instant</span>
-      <span class="vs-legend-action">DISARM</span>
+      <span class="vs-legend-action">CLEAR</span>
     </div>
   </div>
 
-</div>
-
-<!-- ══ SOS ALERT OVERLAY ══ -->
-<div class="vs-alert-overlay" id="vs-alert-overlay">
-  <div class="vs-alert-ring">
-    <div class="vs-alert-icon">🆘</div>
-  </div>
-  <div class="vs-alert-title">SOS BROADCAST</div>
-  <div class="vs-alert-msg">
-    Gesture SOS detected.<br>
-    Transmitting your location to Guardian Network now.
-  </div>
-  <button class="vs-alert-dismiss" onclick="dismissAlert()">
-    <i class="bi bi-x-circle me-1"></i> DISMISS ALERT
-  </button>
 </div>
 
 {% endblock %}
@@ -1550,8 +1461,6 @@ const VS = {
   lastFrameTime: performance.now(),
   frameCount: 0,
   frameIdx: 0,                         /* frame counter for throttling face detection */
-  sosTriggered: false,
-
   /* ══ Creative effects state ══ */
   faceBox: null,                       /* {cx, cy, w, h} in canvas coords, or null */
   fx: { circle: false, torus: false, chrome: false, cycle: false },
@@ -2642,7 +2551,7 @@ function updateCard(id, gesture, conf, holdPct) {
     if (isActive) {
       const cls = (key === 'v') ? 'active' : 'danger-active';
       card.classList.add(cls);
-      statusEl.textContent = key === 'v' ? 'DISARM' : 'DETECTED';
+      statusEl.textContent = key === 'v' ? 'CLEAR' : (holdPct >= 100 ? 'READY' : 'TRACKING');
       if (confEl) confEl.textContent = conf + '%';
       if (barEl) barEl.style.width = holdPct + '%';
     } else {
@@ -2651,25 +2560,6 @@ function updateCard(id, gesture, conf, holdPct) {
       if (barEl) barEl.style.width = '0%';
     }
   });
-}
-
-/* ── SOS Trigger ── */
-function triggerGestureSOS(type) {
-  VS.sosTriggered = false;
-  if (window.tacticalAnnounce) {
-    tacticalAnnounce('Vision Shield gesture detected. Use the SOS button manually if you need help.');
-  }
-  if (typeof showToast === 'function') {
-    showToast('Gesture detected. SOS will only send from the manual SOS button.', 'warning', 7000);
-  }
-}
-
-function dismissAlert() {
-  document.getElementById('vs-alert-overlay').classList.remove('active');
-  VS.sosTriggered = false;
-  /* Reset hold state */
-  VS.holdState.stop.count = 0;
-  VS.holdState.fist.count = 0;
 }
 
 /* ── MediaPipe Results Callback ── */
@@ -2730,9 +2620,8 @@ function onResults(results) {
   }
 
   /* Classify gesture across all hands — pick the strongest signal.
-     V-sign (disarm) takes absolute priority. For stop/fist, use whichever
-     hand has higher confidence. This lets EITHER hand trigger SOS —
-     critical for scenarios where one hand may be restrained. */
+     V-sign (clear) takes absolute priority. For stop/fist, use whichever
+     hand has higher confidence so either hand can register the gesture. */
   let gesture = null;
   let confidence = 0;
   for (let h = 0; h < handCount; h++) {
@@ -2748,29 +2637,25 @@ function onResults(results) {
     }
   }
 
-  /* V-sign: instant disarm */
+  /* V-sign: clear current gesture state */
   if (gesture === 'v') {
     VS.holdState.stop.count = 0;
     VS.holdState.fist.count = 0;
     updateCard(null, 'v', confidence, 0);
     VS.camFrame.classList.add('gesture-detected');
-    VS.camFrame.classList.remove('armed');
-    if (window.tacticalAnnounce) tacticalAnnounce('Vision Shield disarmed. Clear.');
     return;
   }
 
   /* Hold gestures */
   ['stop', 'fist'].forEach(key => {
     if (gesture === key) {
-      VS.holdState[key].count++;
+      VS.holdState[key].count = Math.min(
+        VS.holdState[key].threshold,
+        VS.holdState[key].count + 1
+      );
       const pct = Math.min(100, (VS.holdState[key].count / VS.holdState[key].threshold) * 100);
       updateCard(null, key, confidence, pct);
       VS.camFrame.classList.add('gesture-detected');
-
-      if (VS.holdState[key].count >= VS.holdState[key].threshold && !VS.sosTriggered) {
-        triggerGestureSOS(key);
-        VS.holdState[key].count = 0;
-      }
     } else {
       VS.holdState[key].count = Math.max(0, VS.holdState[key].count - 3);
     }
