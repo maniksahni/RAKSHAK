@@ -390,12 +390,11 @@ async function verifyPin() {
 
 function fireSOS() {
   overlay.innerHTML = `
-    <i class="bi bi-broadcast" style="font-size:8rem; color:#ef4444; animation:pulse 1s infinite"></i>
-    <div class="c-text" style="color:#ef4444">CRITICAL SOS BROADCASTED</div>
-    <p style="color:#fff; margin-top:20px; font-family:'Space Grotesk'">Location locked. Guardians notified.</p>
-    <button onclick="location.href='/'" class="btn-rakshak mt-4" style="background:#ef4444; border:none; padding:10px 30px">SYSTEM OVERRIDE</button>
+    <i class="bi bi-shield-exclamation" style="font-size:8rem; color:#ef4444; animation:pulse 1s infinite"></i>
+    <div class="c-text" style="color:#ef4444">MANUAL SOS REQUIRED</div>
+    <p style="color:#fff; margin-top:20px; font-family:'Space Grotesk'">Automatic SOS is disabled. Press the SOS button yourself if you need help.</p>
+    <button onclick="if(window.triggerGlobalSOS){window.triggerGlobalSOS()}" class="btn-rakshak mt-4" style="background:#ef4444; border:none; padding:10px 30px">TRIGGER SOS MANUALLY</button>
   `;
-  if(window._fireGlobalSOS) window._fireGlobalSOS();
 }
 
 // Add simple pulse anim

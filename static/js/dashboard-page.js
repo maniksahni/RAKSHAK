@@ -198,7 +198,7 @@ function addActivity(type, text, color) {
   const RD = window.RAKSHAK_DATA || {};
   const checks = { 'chk-location':false, 'chk-emergency':true, 'chk-shake':false, 'chk-battery':false, 'chk-gps':false };
   if ((RD.contactCount||0) > 0) checks['chk-location']=true;
-  if (window.DeviceMotionEvent) checks['chk-shake']=true;
+  checks['chk-shake']=true;
   if (navigator.getBattery) navigator.getBattery().then(bat=>{ if(bat.level>0.2){checks['chk-battery']=true;applyChecks();} });
   if (navigator.geolocation) navigator.geolocation.getCurrentPosition(()=>{checks['chk-gps']=true;applyChecks();},()=>{checks['chk-gps']=false;applyChecks();},{timeout:5000});
   function applyChecks() {

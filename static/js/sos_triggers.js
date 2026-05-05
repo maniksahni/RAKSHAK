@@ -13,7 +13,7 @@
     'triple_tap_sos_enabled',
     'movement_sos_enabled'
   ];
-  var RESET_VERSION = '2026-05-06-auto-sos-permanently-disabled';
+  var RESET_VERSION = '2026-05-06-manual-sos-only';
 
   function disableAutoTriggers() {
     try {

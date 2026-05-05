@@ -340,31 +340,14 @@ function triggerOfflineSOS() {
     offline: true
   };
 
-  // Store in localStorage queue
-  const queue = JSON.parse(localStorage.getItem('rakshak_sos_queue') || '[]');
-  queue.push(sosData);
-  localStorage.setItem('rakshak_sos_queue', JSON.stringify(queue));
+  localStorage.removeItem('rakshak_sos_queue');
 
-  // Forward to service worker
-  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage('FLUSH_SOS_QUEUE');
-  }
-
-  // Try to send (will be caught by SW and queued)
-  fetch('/sos/trigger', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(sosData)
-  }).catch(() => {});
-
-  // Vibrate
   if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
 
-  // Update UI
   btn.classList.add('queued');
-  btn.innerHTML = '&#9888; SOS QUEUED — WILL SEND WHEN ONLINE';
-  addLog('OK', 'SOS queued · will transmit on reconnect');
-  showToast('SOS Emergency queued for delivery');
+  btn.innerHTML = '&#9888; OFFLINE — RECONNECT AND PRESS SOS AGAIN';
+  addLog('WARN', 'SOS was not queued · reconnect and press SOS manually');
+  showToast('Offline: reconnect and press SOS again. Nothing was queued.');
 
   // Update metric
   const sosMetric = document.querySelector('.metric-val.green');

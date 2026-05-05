@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="RAKSHAK — AI-Powered Women's Safety Platform. Real-time threat detection, auto-SOS, danger zone mapping.">
+<meta name="description" content="RAKSHAK — AI-Powered Women's Safety Platform. Real-time threat detection, one-tap SOS, danger zone mapping.">
 <title>RAKSHAK — AI-Powered Women's Safety Platform</title>
 <link rel="icon" href="{{ url_for('static', filename='img/rakshak_logo.png') }}" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -999,7 +999,7 @@ a,button{cursor:none}
       <span class="ln ln-1" data-text="Your Safety,">Your Safety,</span>
       <span class="ln ln-2">Our Mission.</span>
     </h1>
-    <p class="hero-p">India's most advanced AI-powered women's safety platform. Real-time threat detection, automatic SOS, danger zone mapping, and 24/7 intelligent monitoring — all powered by cutting-edge AI.</p>
+    <p class="hero-p">India's most advanced AI-powered women's safety platform. Real-time threat detection, one-tap SOS, danger zone mapping, and 24/7 intelligent monitoring — all powered by cutting-edge AI.</p>
     <div class="hero-cta">
       <a href="{{ url_for('auth.login', flow='register') }}" class="mbtn pri" data-mag>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -1024,14 +1024,14 @@ a,button{cursor:none}
     <div class="mqi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg><span>GPS Tracking</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Zero-Trust Auth</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Emergency Contacts</span></div>
-    <div class="mqi"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Auto-SOS Alerts</span></div>
+    <div class="mqi"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>One-Tap SOS Alerts</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Evidence Vault</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>AES-256 Encrypted</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Real-Time AI Engine</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg><span>GPS Tracking</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Zero-Trust Auth</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Emergency Contacts</span></div>
-    <div class="mqi"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Auto-SOS Alerts</span></div>
+    <div class="mqi"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>One-Tap SOS Alerts</span></div>
     <div class="mqi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Evidence Vault</span></div>
   </div>
 </div>
@@ -1070,7 +1070,7 @@ a,button{cursor:none}
   <div class="term-con rv">
     <div class="term-tag">How it works</div>
     <h2 class="term-h">Always-on<br><span class="grad">AI Guardian.</span></h2>
-    <p class="term-p">RAKSHAK's threat engine sends silent heartbeat pings every 2 minutes. Miss three in a row? Auto-SOS fires — zero input needed.</p>
+    <p class="term-p">RAKSHAK's threat engine sends silent heartbeat pings every 2 minutes, updates risk, and keeps SOS manual so alerts only send when you press the button.</p>
     <div class="term-badges"><span class="tb">Python</span><span class="tb">Flask</span><span class="tb">SocketIO</span><span class="tb">TiDB</span><span class="tb">AI/ML</span></div>
     </div>
   <div class="term-vis rv">
@@ -1085,12 +1085,12 @@ a,button{cursor:none}
           <div class="tl">engine.<span class="tf">set_interval</span>(seconds=<span class="tn">120</span>)</div>
           <div class="tl">engine.<span class="tf">set_threshold</span>(missed=<span class="tn">3</span>)</div>
           <div class="tl">&nbsp;</div>
-          <div class="tl"><span class="tc_"># Auto-SOS after 3 missed pings</span></div>
+          <div class="tl"><span class="tc_"># Manual SOS only; missed pings raise risk</span></div>
           <div class="tl"><span class="tk">async def</span> <span class="tf">monitor</span>(user):</div>
           <div class="tl">&nbsp;&nbsp;<span class="tk">if</span> user.missed_pings >= <span class="tn">3</span>:</div>
-          <div class="tl">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">await</span> engine.<span class="tf">deploy_sos</span>(user)</div>
-          <div class="tl">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tf">notify_contacts</span>(user.emergency_list)</div>
-          <div class="tl">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tf">broadcast_location</span>(user.gps)</div>
+          <div class="tl">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">await</span> engine.<span class="tf">raise_risk</span>(user)</div>
+          <div class="tl">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tf">show_manual_sos_ready</span>(user)</div>
+          <div class="tl">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tf">keep_guardian_visible</span>(user.gps)</div>
           <div class="tl">&nbsp;</div>
           <div class="tl">engine.<span class="tf">start</span>() <span class="tc_"># Shield active</span><span class="tcur"></span></div>
       </div>
@@ -1110,7 +1110,7 @@ a,button{cursor:none}
       <p class="show-p">One-tap SOS, real-time location sharing, AI threat detection, and an evidence vault — all from a single interface designed for emergencies.</p>
       <div class="sf-list">
         <div class="sf"><div class="sf-i"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div><div class="sf-t"><strong>Instant SOS</strong> — one-tap alert with GPS</div></div>
-        <div class="sf"><div class="sf-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="sf-t"><strong>AI Heartbeat</strong> — auto-detects silence</div></div>
+        <div class="sf"><div class="sf-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="sf-t"><strong>AI Heartbeat</strong> — raises risk without sending SOS automatically</div></div>
         <div class="sf"><div class="sf-i"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="sf-t"><strong>Danger Zones</strong> — live proximity alerts</div></div>
         <div class="sf"><div class="sf-i"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="sf-t"><strong>Evidence Vault</strong> — court-ready reports</div></div>
     </div>
@@ -1180,12 +1180,12 @@ a,button{cursor:none}
         <div class="hw-heartbeat-line"><svg viewBox="0 0 200 60" preserveAspectRatio="none"><polyline points="0,30 30,30 40,10 50,50 60,30 90,30 100,10 110,50 120,30 150,30 160,10 170,50 180,30 200,30" fill="none" stroke="rgba(34,211,238,.7)" stroke-width="2"/></svg></div>
         <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> All contacts notified</div>
         <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> GPS locked &amp; streaming</div>
-        <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> Auto-SOS armed</div>
+        <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> Manual SOS ready</div>
   </div>
       <div class="hw-step">Step 3</div>
       <div class="hw-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
       <h3>Stay Protected</h3>
-      <p>RAKSHAK watches 24/7. If something goes wrong, auto-SOS triggers and alerts everyone instantly.</p>
+      <p>RAKSHAK watches 24/7 and keeps one-tap SOS ready. Alerts send only when you manually press SOS.</p>
     </div>
   </div>
 </section>
@@ -1197,7 +1197,7 @@ a,button{cursor:none}
   <div class="shd rv"><span class="eye">Features</span><h2 class="stit">Everything you need to <span class="grad">stay safe.</span></h2><p class="ssub">Six powerful modules working together, around the clock.</p></div>
   <div class="bento">
     <div class="bc rv rv-d1"><div class="bc-i"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="bc-h">SOS Emergency</div><p class="bc-p">One-tap emergency trigger with instant GPS capture and encrypted broadcast to your trusted contacts.</p></div>
-    <div class="bc rv rv-d2"><div class="bc-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="bc-h">AI Threat Engine</div><p class="bc-p">Silent 2-minute heartbeat pings detect inactivity. Missed pings auto-deploy SOS after 6 minutes.</p></div>
+    <div class="bc rv rv-d2"><div class="bc-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="bc-h">AI Threat Engine</div><p class="bc-p">Silent 2-minute heartbeat pings detect inactivity and raise risk without sending SOS automatically.</p></div>
     <div class="bc rv rv-d3"><div class="bc-i"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="bc-h">Danger Zone Map</div><p class="bc-p">Community-sourced danger zones on a live map. Entering a hot-zone triggers automatic proximity alerts.</p></div>
     <div class="bc rv rv-d4"><div class="bc-i"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><div class="bc-h">Admin Dashboard</div><p class="bc-p">Command center with live tracking, risk scores, user management, and crisis analytics for admins.</p></div>
     <div class="bc rv rv-d5"><div class="bc-i"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div><div class="bc-h">Evidence Vault</div><p class="bc-p">Tamper-proof incident reports with GPS data, timestamps, and contact logs — exportable as court-ready PDFs.</p></div>
@@ -1265,7 +1265,7 @@ a,button{cursor:none}
     <div class="testi-t">
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"In a moment of genuine danger, I couldn't speak or move — but RAKSHAK's Valkyrie Protocol triggered automatically. My family knew exactly where I was within 8 seconds. This technology is not just useful. It is essential."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#7c3aed,#ff3b3b)">A</div><div><div class="tc-nm">Ananya R.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Postgraduate Researcher &middot; New Delhi</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The community-sourced Danger Zone map is something I check before every late commute. It's not just a feature — it's institutional memory that keeps getting smarter. The proximity alerts alone make me feel like I have an invisible escort."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#ff3b3b,#f97316)">M</div><div><div class="tc-nm">Meera S.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Senior Software Engineer &middot; Mumbai</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I work hospital night shifts and come home at 2 AM. Knowing RAKSHAK's AI heartbeat watches my silence — and escalates automatically if I go dark — has fundamentally changed how fearless I feel. That peace of mind has real, measurable value."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#22d3ee,#7c3aed)">P</div><div><div class="tc-nm">Priya K.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">ICU Nurse, Narayana Health &middot; Bangalore</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I work hospital night shifts and come home at 2 AM. Knowing RAKSHAK keeps my risk visible while leaving SOS under my control has fundamentally changed how confident I feel. That peace of mind has real, measurable value."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#22d3ee,#7c3aed)">P</div><div><div class="tc-nm">Priya K.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">ICU Nurse, Narayana Health &middot; Bangalore</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"As a law student, the Evidence Vault architecture genuinely impressed me. SHA-256 hashed incident records with GPS timestamps and witness-chain logs — this is court-admissible documentation. Every women's hostel in the country should mandate this app."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#34d399,#22d3ee)">S</div><div><div class="tc-nm">Sneha D.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">LLB Final Year &middot; Symbiosis Law School, Pune</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"Vision Shield's gesture-based SOS is designed for exactly the situations where pressing a button is impossible. I was able to trigger an alert with a hand sign my pursuer couldn't see. The product shows a deep understanding of real-world threat dynamics."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#f472b6,#7c3aed)">R</div><div><div class="tc-nm">Riya T.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">High School Teacher &middot; Chennai</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I'm a Guardian Angel on the platform and the network effect is extraordinary. When someone in my 1km radius triggers SOS, I receive an instant alert with approximate distance. Crowdsourced emergency response — this is what community safety looks like in 2026."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#fbbf24,#f97316)">K</div><div><div class="tc-nm">Kavitha N.<span class="tc-vr"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span></div><div class="tc-rl">Journalist, The Hindu &middot; Hyderabad</div></div></div></div>
@@ -1273,7 +1273,7 @@ a,button{cursor:none}
       <!-- dupes for infinite scroll -->
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"In a moment of genuine danger, I couldn't speak or move — but RAKSHAK's Valkyrie Protocol triggered automatically. My family knew exactly where I was within 8 seconds."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#7c3aed,#ff3b3b)">A</div><div><div class="tc-nm">Ananya R.</div><div class="tc-rl">Postgraduate Researcher &middot; New Delhi</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"The community-sourced Danger Zone map is something I check before every late commute. The proximity alerts alone make me feel like I have an invisible escort."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#ff3b3b,#f97316)">M</div><div><div class="tc-nm">Meera S.</div><div class="tc-rl">Senior Software Engineer &middot; Mumbai</div></div></div></div>
-      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I work hospital night shifts and come home at 2 AM. RAKSHAK's AI heartbeat watches my silence and escalates automatically if I go dark. That peace of mind has real, measurable value."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#22d3ee,#7c3aed)">P</div><div><div class="tc-nm">Priya K.</div><div class="tc-rl">ICU Nurse, Narayana Health &middot; Bangalore</div></div></div></div>
+      <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I work hospital night shifts and come home at 2 AM. RAKSHAK's AI heartbeat keeps my risk visible while SOS stays manual. That peace of mind has real, measurable value."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#22d3ee,#7c3aed)">P</div><div><div class="tc-nm">Priya K.</div><div class="tc-rl">ICU Nurse, Narayana Health &middot; Bangalore</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"As a law student, the Evidence Vault architecture genuinely impressed me. SHA-256 hashed records with GPS timestamps — this is court-admissible documentation."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#34d399,#22d3ee)">S</div><div><div class="tc-nm">Sneha D.</div><div class="tc-rl">LLB Final Year &middot; Symbiosis Law School, Pune</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"Vision Shield's gesture-based SOS is designed for situations where pressing a button is impossible. The product shows a deep understanding of real-world threat dynamics."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#f472b6,#7c3aed)">R</div><div><div class="tc-nm">Riya T.</div><div class="tc-rl">High School Teacher &middot; Chennai</div></div></div></div>
       <div class="tc"><div class="tc-st">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p class="tc-tx">"I'm a Guardian Angel on the platform. When someone in my 1km radius triggers SOS, I receive an instant alert. Crowdsourced emergency response — this is what community safety looks like in 2026."</p><div class="tc-au"><div class="tc-av" style="background:linear-gradient(135deg,#fbbf24,#f97316)">K</div><div><div class="tc-nm">Kavitha N.</div><div class="tc-rl">Journalist, The Hindu &middot; Hyderabad</div></div></div></div>

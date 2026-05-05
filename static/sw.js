@@ -1,10 +1,10 @@
-// ── RAKSHAK Service Worker v2.3.0 ───────────────────────────────────────────
-// Multi-cache strategy, SOS background sync, enhanced push notifications
+// ── RAKSHAK Service Worker v2.4.0 ───────────────────────────────────────────
+// Multi-cache strategy and push notifications; SOS background sync is disabled.
 
-const SW_VERSION = '2.3.0';
-const CACHE_STATIC  = 'rakshak-static-v5';
-const CACHE_DYNAMIC = 'rakshak-dynamic-v5';
-const CACHE_API     = 'rakshak-api-v5';
+const SW_VERSION = '2.4.0';
+const CACHE_STATIC  = 'rakshak-static-v6';
+const CACHE_DYNAMIC = 'rakshak-dynamic-v6';
+const CACHE_API     = 'rakshak-api-v6';
 const OFFLINE_URL   = '/offline';
 
 // Static app shell to pre-cache
@@ -50,9 +50,10 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Handle failed SOS POST requests with background sync queue
+  // Never queue SOS requests in the background. Manual SOS must either send now
+  // or fail visibly, so it cannot surprise the user later.
   if (request.method === 'POST' && url.pathname.includes('/sos/')) {
-    event.respondWith(handleSosPost(request));
+    event.respondWith(fetch(request));
     return;
   }
 
@@ -78,45 +79,12 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(networkFirstWithOfflineFallback(request));
 });
 
-// ── SOS Background Sync ────────────────────────────────────────────────────
+// ── SOS Background Sync Disabled ────────────────────────────────────────────
 async function handleSosPost(request) {
-  try {
-    const response = await fetch(request.clone());
-    // Notify clients of successful SOS
-    notifyClients({ type: 'SOS_SENT', status: 'delivered' });
-    return response;
-  } catch (err) {
-    // Queue the SOS for later delivery
-    const body = await request.clone().text();
-    const sosQueue = await caches.open('rakshak-sos-queue');
-    const queueKey = new Request(`/_sos_queue/${Date.now()}`);
-    await sosQueue.put(queueKey, new Response(body, {
-      headers: {
-        'Content-Type': request.headers.get('Content-Type') || 'application/json',
-        'X-Original-URL': request.url,
-        'X-Queued-At': new Date().toISOString()
-      }
-    }));
-
-    // Register for background sync
-    if (self.registration.sync) {
-      await self.registration.sync.register('flush-sos-queue');
-    }
-
-    // Notify clients SOS is queued
-    notifyClients({ type: 'SOS_QUEUED', message: 'SOS saved offline — will send when connected' });
-
-    return new Response(JSON.stringify({
-      status: 'queued',
-      message: 'SOS queued for delivery when connection restores'
-    }), {
-      status: 202,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
+  return fetch(request);
 }
 
-// ── Background Sync: flush SOS queue ────────────────────────────────────────
+// ── Background Sync: clear any legacy SOS queue ─────────────────────────────
 self.addEventListener('sync', (event) => {
   if (event.tag === 'flush-sos-queue') {
     event.waitUntil(flushSosQueue());
@@ -124,32 +92,8 @@ self.addEventListener('sync', (event) => {
 });
 
 async function flushSosQueue() {
-  const sosQueue = await caches.open('rakshak-sos-queue');
-  const keys = await sosQueue.keys();
-
-  for (const key of keys) {
-    const cached = await sosQueue.match(key);
-    if (!cached) continue;
-
-    const body = await cached.text();
-    const originalUrl = cached.headers.get('X-Original-URL');
-    const contentType = cached.headers.get('Content-Type');
-
-    try {
-      const response = await fetch(originalUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': contentType },
-        body: body
-      });
-
-      if (response.ok) {
-        await sosQueue.delete(key);
-        notifyClients({ type: 'SOS_SENT', status: 'delivered', url: originalUrl });
-      }
-    } catch (err) {
-      // Keep the queued SOS request for the next background-sync attempt.
-    }
-  }
+  await caches.delete('rakshak-sos-queue');
+  notifyClients({ type: 'SOS_QUEUE_CLEARED', status: 'manual_only' });
 }
 
 // ── Strategy: network-first ─────────────────────────────────────────────────

@@ -5,7 +5,6 @@ from models import query_db
 from socket_events import emit_risk_update
 from healer import validate_coords
 from datetime import datetime, timedelta
-from modules.sos.auto_sos import trigger_auto_sos
 
 log = logging.getLogger('rakshak')
 
@@ -22,7 +21,7 @@ RISK_THRESHOLDS = {
     'medium': {'min': 2, 'max': 2},
     'high':   {'min': 3, 'max': 999},
 }
-AUTO_SOS_THRESHOLD = 3   # consecutive missed pings before auto-SOS
+HIGH_RISK_THRESHOLD = 3
 PING_INTERVAL_SEC  = 120  # JS pings every 2 minutes
 
 
@@ -102,7 +101,7 @@ def check_missed():
             )
 
             # Calculate risk
-            if missed >= AUTO_SOS_THRESHOLD:
+            if missed >= HIGH_RISK_THRESHOLD:
                 risk = 'high'
             elif missed >= 2:
                 risk = 'medium'
@@ -111,10 +110,6 @@ def check_missed():
 
             query_db('UPDATE users SET risk_level=%s WHERE id=%s', (risk, u['id']), commit=True)
             emit_risk_update(get_socketio(), u['id'], risk)
-
-            # Auto-SOS if threshold reached
-            if missed == AUTO_SOS_THRESHOLD:
-                trigger_auto_sos(u['id'], get_socketio())
 
         return jsonify(success=True, checked=len(stale_users))
 

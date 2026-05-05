@@ -2655,38 +2655,12 @@ function updateCard(id, gesture, conf, holdPct) {
 
 /* ── SOS Trigger ── */
 function triggerGestureSOS(type) {
-  if (VS.sosTriggered) return;
-  VS.sosTriggered = true;
-
-  /* Show alert overlay */
-  document.getElementById('vs-alert-overlay').classList.add('active');
-
-  /* Announce */
-  if (window.tacticalAnnounce) tacticalAnnounce('Vision Shield SOS detected. Broadcasting distress signal.');
-
-  /* Fire SOS */
-  if (window._fireGlobalSOS) {
-    window._fireGlobalSOS();
-  } else {
-    /* Fallback direct fire */
-    navigator.geolocation.getCurrentPosition(pos => {
-      fetch('/sos/trigger', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          trigger_type: 'gesture_' + type,
-          accuracy: pos.coords.accuracy
-        })
-      }).then(r => r.json()).then(d => {
-        if (typeof showToast === 'function') {
-          showToast(d.success ? '🆘 GESTURE SOS BROADCAST SENT' : (d.error || 'SOS failed'), d.success ? 'sos' : 'error');
-        }
-      }).catch(() => {});
-    }, () => {
-      if (typeof showToast === 'function') showToast('GPS unavailable — SOS queued', 'error');
-    });
+  VS.sosTriggered = false;
+  if (window.tacticalAnnounce) {
+    tacticalAnnounce('Vision Shield gesture detected. Use the SOS button manually if you need help.');
+  }
+  if (typeof showToast === 'function') {
+    showToast('Gesture detected. SOS will only send from the manual SOS button.', 'warning', 7000);
   }
 }
 
@@ -2795,6 +2769,7 @@ function onResults(results) {
 
       if (VS.holdState[key].count >= VS.holdState[key].threshold && !VS.sosTriggered) {
         triggerGestureSOS(key);
+        VS.holdState[key].count = 0;
       }
     } else {
       VS.holdState[key].count = Math.max(0, VS.holdState[key].count - 3);

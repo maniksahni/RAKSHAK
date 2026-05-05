@@ -42,8 +42,8 @@ def _release_job_lock(lock_name):
 def _scheduled_check_missed():
     """
     Runs every 2 minutes via APScheduler.
-    Checks all active users for missed heartbeats and escalates risk levels.
-    Auto-fires SOS if consecutive_missed_pings >= 3.
+    Checks all active users for missed heartbeats and escalates risk only.
+    SOS is never fired automatically; users must press SOS manually.
     """
     try:
         from datetime import datetime, timedelta
@@ -52,7 +52,7 @@ def _scheduled_check_missed():
         from healer import logger
 
         PING_INTERVAL_SEC  = 120
-        AUTO_SOS_THRESHOLD = 3
+        HIGH_RISK_THRESHOLD = 3
 
         cutoff = datetime.now() - timedelta(seconds=PING_INTERVAL_SEC + 30)
 
@@ -83,16 +83,12 @@ def _scheduled_check_missed():
                             (u['id'],), commit=True
                         )
 
-                        risk = ('high' if missed >= AUTO_SOS_THRESHOLD
+                        risk = ('high' if missed >= HIGH_RISK_THRESHOLD
                                 else 'medium' if missed >= 2 else 'low')
                         query_db('UPDATE users SET risk_level=%s WHERE id=%s',
                                  (risk, u['id']), commit=True)
                         emit_risk_update(socketio, u['id'], risk)
                         logger.info(f'User {u["id"]} risk → {risk} (missed={missed})')
-
-                        if missed == AUTO_SOS_THRESHOLD:
-                            from modules.sos.auto_sos import trigger_auto_sos
-                            trigger_auto_sos(u['id'], socketio)
 
                     except Exception as e:
                         logger.error(f'Scheduler: error processing user {u["id"]}: {e}')
