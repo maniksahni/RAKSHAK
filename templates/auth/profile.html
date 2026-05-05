@@ -188,8 +188,6 @@
   display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.1);font-size:0.72rem;color:var(--text-secondary);font-weight:800;letter-spacing:0.05em;text-transform:uppercase;
 }
 .sos-channel-box input { accent-color:#8b5cf6; }
-.contact-relationship { background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6); }
-
 /* Toggle Fix */
 .cyber-toggle.active { background:rgba(16,185,129,0.15);border-color:rgba(139,92,246,0.4); }
 .cyber-toggle.active::after { left:23px;background:#10b981;box-shadow:0 0 10px rgba(16,185,129,0.6); }
@@ -288,7 +286,7 @@
       <div class="col-4 col-md-2">
         <div class="profile-stat">
           <div class="profile-stat-num" id="stat-contacts">{{ contacts|length }}</div>
-          <div class="profile-stat-label">Contacts</div>
+          <div class="profile-stat-label">Emails</div>
         </div>
       </div>
       <div class="col-4 col-md-2">
@@ -408,10 +406,10 @@
             <i class="bi bi-shield-check"></i> {{ contacts|length }}/5
           </span>
         </div>
-        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.45rem;">These people will receive SOS alerts through their trusted email only.</p>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.45rem;">These emails will receive SOS alerts only through email.</p>
         <p style="font-size:0.72rem;color:var(--accent-amber);margin-bottom:0.9rem;">
           <i class="bi bi-info-circle me-1"></i>
-          SOS email goes to each trusted contact's email, not your own login email.
+          SOS email goes to the saved alert email, not your own login email.
         </p>
         <div class="d-flex flex-wrap gap-2 mb-3">
           <button type="button" class="btn-rakshak" style="padding:8px 14px;font-size:0.76rem;" onclick="previewSosDelivery()">
@@ -425,14 +423,14 @@
             {% for c in contacts %}
             <div class="contact-card" id="contact-{{ c.id }}">
               {% set email_on = c.get('notify_email', true) %}
+              {% set alert_email = c.contact_email or c.contact_name %}
               <button onclick="deleteContact({{ c.id }})" class="contact-delete" title="Remove">
                 <i class="bi bi-x-lg"></i>
               </button>
               <div class="d-flex align-items-center gap-3 mb-2">
-                <div class="contact-avatar">{{ c.contact_name[0].upper() }}</div>
+                <div class="contact-avatar">{{ alert_email[0].upper() }}</div>
                 <div>
-                  <div style="font-weight:600;font-size:0.85rem;">{{ c.contact_name }}</div>
-                  <div class="contact-meta"><i class="bi bi-envelope-at"></i><span>{{ c.contact_email }}</span></div>
+                  <div class="contact-meta" style="font-size:0.74rem;"><i class="bi bi-envelope-at"></i><span>{{ alert_email }}</span></div>
                 </div>
               </div>
               <div class="contact-channel-row">
@@ -441,7 +439,6 @@
                 </span>
               </div>
               <div class="d-flex align-items-center justify-content-between">
-                <span class="contact-relationship">{{ c.relationship }}</span>
                 <span style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0.05em;">
                   <i class="bi bi-shield-fill-check" style="color:var(--accent-green);font-size:0.5rem;"></i> LINKED
                 </span>
@@ -454,8 +451,8 @@
             <div style="width:56px;height:56px;border-radius:50%;margin:0 auto 1rem;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15);display:flex;align-items:center;justify-content:center;">
               <i class="bi bi-person-plus" style="font-size:1.3rem;color:var(--red-primary);"></i>
             </div>
-            <p style="font-size:0.88rem;">No trusted contacts yet.<br>
-            <span style="color:var(--text-muted);font-size:0.8rem;">Add up to 5 people with trusted email for SOS alerts.</span></p>
+            <p style="font-size:0.88rem;">No trusted emails yet.<br>
+            <span style="color:var(--text-muted);font-size:0.8rem;">Add up to 5 emails for SOS alerts.</span></p>
           </div>
           {% endif %}
         </div>
@@ -464,21 +461,15 @@
         <hr class="glow-line">
         <div id="add-contact-form">
           <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.75rem;font-weight:600;">
-            <i class="bi bi-plus-circle me-1" style="color:var(--red-primary);"></i>Add Trusted Contact + Email
+            <i class="bi bi-plus-circle me-1" style="color:var(--red-primary);"></i>Add Trusted Email
           </p>
           <form id="contact-form" onsubmit="addContact(event)">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="notify_email" value="1">
             <div class="row g-2">
-              <div class="col-6"><input type="text" name="contact_name" class="form-control form-control-dark" placeholder="Trusted contact name" required></div>
-              <div class="col-6"><input type="email" name="contact_email" class="form-control form-control-dark" placeholder="Trusted email for SOS alerts" required></div>
+              <div class="col-12"><input type="email" name="contact_email" class="form-control form-control-dark" placeholder="Email for SOS alerts" required></div>
               <div class="col-12">
-                <select name="relationship" class="form-control form-control-dark form-select-dark" style="appearance:auto;">
-                  <option>Friend</option><option>Family</option><option>Colleague</option><option>Neighbour</option><option>Partner</option>
-                </select>
-              </div>
-              <div class="col-12">
-                <div style="font-size:0.62rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin:4px 0 6px;">SOS channel for this contact</div>
+                <div style="font-size:0.62rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin:4px 0 6px;">SOS channel for this email</div>
                 <div class="d-flex flex-wrap gap-2">
                   <div class="sos-channel-box">
                     <i class="bi bi-envelope-at"></i> Email Alert
@@ -487,7 +478,7 @@
               </div>
               <div class="col-12">
                 <button type="submit" class="btn-rakshak w-100" style="padding:10px 20px;font-size:0.9rem;">
-                  Add Contact <i class="bi bi-plus-circle ms-1"></i>
+                  Add Email <i class="bi bi-plus-circle ms-1"></i>
                 </button>
               </div>
             </div>
@@ -539,8 +530,8 @@
           <div class="notif-toggle-label">
             <i class="bi bi-people-fill"></i>
             <div>
-              <div>Contact Activity</div>
-              <div class="notif-sub">Alerts when trusted contacts are modified</div>
+              <div>Email Activity</div>
+              <div class="notif-sub">Alerts when saved emails are modified</div>
             </div>
           </div>
           <div class="cyber-toggle active" data-pref="contact_activity" onclick="toggleNotif(this)"></div>
@@ -595,7 +586,7 @@
           <div style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">
             <i class="bi bi-cloud-arrow-down me-1" style="color:#ef4444;"></i>Download My Data
           </div>
-          <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:12px;">Export your alerts, contacts, and evidence vault records as a comprehensive PDF report.</p>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin-bottom:12px;">Export your alerts, saved emails, and evidence vault records as a comprehensive PDF report.</p>
           <a href="{{ url_for('sos.history') }}" class="btn-download-data">
             <i class="bi bi-file-earmark-zip"></i> Open Evidence Vault
           </a>
@@ -668,7 +659,7 @@ document.getElementById('profile-form').addEventListener('submit', async functio
   btn.disabled = false; btn.innerHTML = 'Save Changes <i class="bi bi-check-lg ms-1"></i>';
 });
 
-/* ── Add Contact ── */
+/* ── Add Email ── */
 async function addContact(e) {
   e.preventDefault();
   const form = document.getElementById('contact-form');
@@ -676,14 +667,14 @@ async function addContact(e) {
   const res = await fetch('/auth/contacts/add', {method:'POST',body:fd});
   const data = await res.json();
   if (data.success) {
-    showToast('Contact added!', 'success');
+    showToast('Email added!', 'success');
     setTimeout(() => window.location.reload(), 800);
   } else showToast(data.error||'Failed', 'error');
 }
 
-/* ── Delete Contact ── */
+/* ── Delete Email ── */
 async function deleteContact(id) {
-  if (!confirm('Remove this contact?')) return;
+  if (!confirm('Remove this email?')) return;
   const res = await fetch(`/auth/contacts/${id}/delete`, {
     method:'DELETE', headers:{'X-CSRFToken':CSRF_TOKEN}
   });
@@ -691,7 +682,7 @@ async function deleteContact(id) {
   if (data.success) {
     const el = document.getElementById('contact-'+id);
     if (el) { el.style.transition='all .3s'; el.style.opacity='0'; el.style.transform='scale(0.9)'; setTimeout(()=>el.remove(),300); }
-    showToast('Contact removed.', 'info');
+    showToast('Email removed.', 'info');
   } else showToast(data.error||'Failed', 'error');
 }
 
@@ -719,14 +710,14 @@ async function previewSosDelivery() {
     const failedContact = (delivery.email_failure_contacts || [])[0];
     const failedReason = (delivery.first_email_error || '').trim();
     if ((delivery.email_sent || 0) > 0) {
-      showToast(`Trusted email sent to ${delivery.email_sent} contact(s).`, 'success', 7000);
+      showToast(`Trusted email sent to ${delivery.email_sent} email(s).`, 'success', 7000);
     } else if ((delivery.email_not_configured || 0) > 0) {
       showToast('Automatic email provider not configured on this app instance.', 'warning', 8000);
     } else if ((delivery.email_disabled || 0) > 0) {
-      showToast('Email Alert is turned off for one or more trusted contacts.', 'warning', 8000);
+      showToast('Email Alert is turned off for one or more saved emails.', 'warning', 8000);
     } else if ((delivery.email_failed || 0) > 0) {
       const label = failedContact ? `Email to ${failedContact} failed.` : 'Trusted email delivery failed.';
-      const detail = failedReason ? ` ${failedReason}` : ' Recheck the trusted contact email or provider settings.';
+      const detail = failedReason ? ` ${failedReason}` : ' Recheck the saved email or provider settings.';
       showToast((label + detail).slice(0, 240), 'warning', 9000);
     } else {
       showToast('No trusted email delivery channel is active right now.', 'warning', 8000);
@@ -821,9 +812,9 @@ async function previewSosDelivery() {
     { label:'Account created', done:true, icon:'bi-check-lg' },
     { label:'Phone verified', done:{{ 'true' if current_user.phone and current_user.phone|length >= 10 else 'false' }}, icon:'bi-phone' },
     { label:'Address added', done:{{ 'true' if current_user.address else 'false' }}, icon:'bi-house' },
-    { label:'1+ contacts', done:{{ 'true' if contacts|length > 0 else 'false' }}, icon:'bi-person-plus' },
-    { label:'3+ contacts', done:{{ 'true' if contacts|length >= 3 else 'false' }}, icon:'bi-people' },
-    { label:'5 contacts', done:{{ 'true' if contacts|length >= 5 else 'false' }}, icon:'bi-shield-fill-check' },
+    { label:'1+ emails', done:{{ 'true' if contacts|length > 0 else 'false' }}, icon:'bi-person-plus' },
+    { label:'3+ emails', done:{{ 'true' if contacts|length >= 3 else 'false' }}, icon:'bi-people' },
+    { label:'5 emails', done:{{ 'true' if contacts|length >= 5 else 'false' }}, icon:'bi-shield-fill-check' },
   ];
 
   const completed = checks.filter(c => c.done).length;
@@ -856,7 +847,7 @@ async function previewSosDelivery() {
     { type:'login', text:'Logged in to RAKSHAK dashboard', time:new Date(now - 1000*60*5), dotClass:'activity-dot-login', icon:'bi-box-arrow-in-right' },
     { type:'update', text:'Profile information updated', time:new Date(now - 1000*60*60*2), dotClass:'activity-dot-update', icon:'bi-pencil-square' },
     { type:'login', text:'Authenticated via secure session', time:new Date(now - 1000*60*60*24), dotClass:'activity-dot-login', icon:'bi-shield-lock' },
-    { type:'contact', text:'Trusted contact network modified', time:new Date(now - 1000*60*60*48), dotClass:'activity-dot-contact', icon:'bi-person-check' },
+    { type:'contact', text:'Trusted email list modified', time:new Date(now - 1000*60*60*48), dotClass:'activity-dot-contact', icon:'bi-person-check' },
     { type:'login', text:'New session initiated from device', time:new Date(now - 1000*60*60*72), dotClass:'activity-dot-login', icon:'bi-laptop' },
   ];
 

@@ -153,19 +153,20 @@ def add_contact():
             (current_user.id,), one=True
         )
         if count and count['cnt'] >= 5:
-            return jsonify(success=False, error='Maximum 5 trusted contacts allowed.'), 400
+            return jsonify(success=False, error='Maximum 5 trusted emails allowed.'), 400
 
-        name         = request.form.get('contact_name', '').strip()
         email        = request.form.get('contact_email', '').strip().lower()
-        phone        = request.form.get('contact_phone', '').strip()
-        relationship = request.form.get('relationship', 'Friend').strip()
+        phone        = ''
+        relationship = 'Email'
         notify_email = True
         notify_phone = False
 
-        if not all([name, email]):
-            return jsonify(success=False, error='Name and email are required.'), 400
+        if not email:
+            return jsonify(success=False, error='Email is required.'), 400
         if not validate_email(email):
             return jsonify(success=False, error='Invalid email address.'), 400
+        local_part = email.split('@', 1)[0]
+        name = local_part.replace('.', ' ').replace('_', ' ').replace('-', ' ').title()[:100] or 'Trusted Email'
 
         cid = query_db(
             """INSERT INTO trusted_contacts
@@ -175,7 +176,7 @@ def add_contact():
         )
         log_audit(current_user.id, 'add_contact', 'trusted_contacts', cid,
                   ip_address=request.remote_addr)
-        return jsonify(success=True, message='Contact added.', id=cid)
+        return jsonify(success=True, message='Email added.', id=cid)
 
     except Exception as e:
         return jsonify(success=False, error=str(e)), 500
@@ -189,7 +190,7 @@ def delete_contact(cid):
             'DELETE FROM trusted_contacts WHERE id=%s AND user_id=%s',
             (cid, current_user.id), commit=True
         )
-        return jsonify(success=True, message='Contact removed.')
+        return jsonify(success=True, message='Email removed.')
     except Exception as e:
         return jsonify(success=False, error=str(e)), 500
 
