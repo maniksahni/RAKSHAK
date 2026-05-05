@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Vision Shield — Gesture Monitor · RAKSHAK{% endblock %}
+{% block title %}Vision Shield — Silent Gesture SOS · RAKSHAK{% endblock %}
 
 {% block extra_css %}
 <style>
 /* ══════════════════════════════════════════════════════════════
-   VISION SHIELD — Premium Gesture Monitor UI
+   VISION SHIELD — Premium Gesture SOS UI
    ══════════════════════════════════════════════════════════════ */
 
 /* -- Page-level reset for full immersive canvas -- */
@@ -1175,7 +1175,7 @@ body, html {
   <!-- Header -->
   <div class="vs-header">
     <h1 class="vs-title">Vision Shield</h1>
-    <p class="vs-subtitle">Gesture Monitor · Manual SOS Only</p>
+    <p class="vs-subtitle">Silent Gesture SOS · Email Alerts Only</p>
     <div class="vs-badge">
       <span class="vs-badge-dot"></span>
       <span>MediaPipe · Real-time Detection · Zero Upload</span>
@@ -1300,7 +1300,7 @@ body, html {
         <div class="vs-gesture-status" id="gs-stop">WATCHING</div>
         <div class="vs-gesture-icon">🖐</div>
         <div class="vs-gesture-name">Open Palm</div>
-        <div class="vs-gesture-desc">Raise open hand — hold 2s to mark manual SOS ready</div>
+        <div class="vs-gesture-desc">Raise open hand — hold 2s to send silent SOS email</div>
         <div class="vs-hold-bar-wrap">
           <div class="vs-hold-bar" id="hb-stop"></div>
         </div>
@@ -1315,7 +1315,7 @@ body, html {
         <div class="vs-gesture-status" id="gs-fist">WATCHING</div>
         <div class="vs-gesture-icon">✊</div>
         <div class="vs-gesture-name">Closed Fist</div>
-        <div class="vs-gesture-desc">Clench fist — hold 2s to mark distress gesture</div>
+        <div class="vs-gesture-desc">Clench fist — hold 2s to send urgent SOS email</div>
         <div class="vs-hold-bar-wrap">
           <div class="vs-hold-bar" id="hb-fist"></div>
         </div>
@@ -1330,7 +1330,7 @@ body, html {
         <div class="vs-gesture-status" id="gs-v">WATCHING</div>
         <div class="vs-gesture-icon">✌️</div>
         <div class="vs-gesture-name">V-Sign</div>
-        <div class="vs-gesture-desc">Two-finger V — clears gesture state and confirms safe</div>
+        <div class="vs-gesture-desc">Two-finger V — disarms pending gesture state</div>
         <div class="vs-confidence">
           <span class="vs-conf-label">Confidence</span>
           <span class="vs-conf-val" id="conf-v">0%</span>
@@ -1352,17 +1352,17 @@ body, html {
     <div class="vs-legend-row">
       <span class="vs-legend-glyph">🖐</span>
       <span>Open Palm — hold 2s</span>
-      <span class="vs-legend-action">READY</span>
+      <span class="vs-legend-action danger">SOS</span>
     </div>
     <div class="vs-legend-row">
       <span class="vs-legend-glyph">✊</span>
       <span>Closed Fist — hold 2s</span>
-      <span class="vs-legend-action">DISTRESS</span>
+      <span class="vs-legend-action danger">PANIC</span>
     </div>
     <div class="vs-legend-row">
       <span class="vs-legend-glyph">✌️</span>
       <span>V-Sign — instant</span>
-      <span class="vs-legend-action">CLEAR</span>
+      <span class="vs-legend-action">DISARM</span>
     </div>
   </div>
 
@@ -1461,6 +1461,11 @@ const VS = {
   lastFrameTime: performance.now(),
   frameCount: 0,
   frameIdx: 0,                         /* frame counter for throttling face detection */
+  sosTriggered: false,
+  sosSending: false,
+  sosTriggerType: null,
+  lastSosAt: 0,
+  sosCooldownMs: 30000,
   /* ══ Creative effects state ══ */
   faceBox: null,                       /* {cx, cy, w, h} in canvas coords, or null */
   fx: { circle: false, torus: false, chrome: false, cycle: false },
@@ -2551,7 +2556,9 @@ function updateCard(id, gesture, conf, holdPct) {
     if (isActive) {
       const cls = (key === 'v') ? 'active' : 'danger-active';
       card.classList.add(cls);
-      statusEl.textContent = key === 'v' ? 'CLEAR' : (holdPct >= 100 ? 'READY' : 'TRACKING');
+      statusEl.textContent = key === 'v'
+        ? 'DISARM'
+        : (VS.sosTriggered && VS.sosTriggerType === key ? 'SENT' : (holdPct >= 100 ? 'SENDING' : 'TRACKING'));
       if (confEl) confEl.textContent = conf + '%';
       if (barEl) barEl.style.width = holdPct + '%';
     } else {
@@ -2560,6 +2567,128 @@ function updateCard(id, gesture, conf, holdPct) {
       if (barEl) barEl.style.width = '0%';
     }
   });
+}
+
+function getVisionShieldLocation() {
+  return new Promise(resolve => {
+    const cached = typeof window.getRakshakCachedLocation === 'function'
+      ? window.getRakshakCachedLocation()
+      : null;
+
+    if (!navigator.geolocation) {
+      resolve({ location: cached, error: null });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+      const liveLocation = typeof window.cacheRakshakLocation === 'function'
+        ? window.cacheRakshakLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy
+        }, { source: 'vision-shield' })
+        : {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+          source: 'vision-shield'
+        };
+      resolve({ location: liveLocation, error: null });
+    }, err => {
+      const fallback = typeof window.getRakshakCachedLocation === 'function'
+        ? window.getRakshakCachedLocation()
+        : cached;
+      resolve({ location: fallback, error: err });
+    }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 });
+  });
+}
+
+function buildVisionShieldSOSPayload(type, location, geoErr) {
+  const gestureLabel = type === 'fist' ? 'closed fist' : 'open palm';
+  const payload = {
+    trigger_type: 'gesture_' + type,
+    message: 'Vision Shield ' + gestureLabel + ' gesture triggered SOS.'
+  };
+
+  if (location && Number.isFinite(Number(location.lat)) && Number.isFinite(Number(location.lng))) {
+    payload.latitude = Number(location.lat);
+    payload.longitude = Number(location.lng);
+    if (location.accuracy != null && Number.isFinite(Number(location.accuracy))) {
+      payload.accuracy = Number(location.accuracy);
+    }
+  } else if (typeof window.describeRakshakGeoError === 'function') {
+    payload.message += ' ' + window.describeRakshakGeoError(geoErr) + '.';
+  } else {
+    payload.message += ' Location unavailable.';
+  }
+
+  return payload;
+}
+
+async function postVisionShieldSOS(payload) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  };
+  if (typeof CSRF_TOKEN !== 'undefined') {
+    headers['X-CSRFToken'] = CSRF_TOKEN;
+  }
+
+  const response = await fetch('/sos/trigger', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(payload)
+  });
+  const raw = await response.text();
+  let data = {};
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch (_) {
+    throw new Error(raw || ('HTTP ' + response.status));
+  }
+  if (!response.ok || !data.success) {
+    throw new Error(data.error || data.message || ('HTTP ' + response.status));
+  }
+  return data;
+}
+
+async function triggerGestureSOS(type) {
+  const now = Date.now();
+  if (VS.sosSending || VS.sosTriggered || now - VS.lastSosAt < VS.sosCooldownMs) return;
+
+  VS.sosSending = true;
+  VS.sosTriggered = true;
+  VS.sosTriggerType = type;
+  VS.lastSosAt = now;
+
+  if (window.tacticalAnnounce) {
+    tacticalAnnounce('Vision Shield gesture SOS detected. Email alert sending.');
+  }
+  if (typeof showToast === 'function') {
+    showToast('Vision Shield SOS sending to saved emails...', 'sos', 4500);
+  }
+
+  try {
+    const geo = await getVisionShieldLocation();
+    const data = await postVisionShieldSOS(buildVisionShieldSOSPayload(type, geo.location, geo.error));
+    if (typeof showToast === 'function') {
+      const delivery = data.delivery || {};
+      const sent = Number(delivery.auto_delivered || 0);
+      showToast(
+        sent > 0 ? 'Vision Shield SOS email sent.' : (data.message || 'SOS created. Check trusted email settings.'),
+        sent > 0 ? 'sos' : 'warning',
+        sent > 0 ? 6500 : 8500
+      );
+    }
+  } catch (err) {
+    VS.sosTriggered = false;
+    VS.sosTriggerType = null;
+    if (typeof showToast === 'function') {
+      showToast((err && err.message) ? err.message : 'Vision Shield SOS failed.', 'error', 8000);
+    }
+  } finally {
+    VS.sosSending = false;
+  }
 }
 
 /* ── MediaPipe Results Callback ── */
@@ -2620,8 +2749,8 @@ function onResults(results) {
   }
 
   /* Classify gesture across all hands — pick the strongest signal.
-     V-sign (clear) takes absolute priority. For stop/fist, use whichever
-     hand has higher confidence so either hand can register the gesture. */
+     V-sign (disarm) takes absolute priority. For stop/fist, use whichever
+     hand has higher confidence so either hand can trigger SOS. */
   let gesture = null;
   let confidence = 0;
   for (let h = 0; h < handCount; h++) {
@@ -2641,6 +2770,8 @@ function onResults(results) {
   if (gesture === 'v') {
     VS.holdState.stop.count = 0;
     VS.holdState.fist.count = 0;
+    VS.sosTriggered = false;
+    VS.sosTriggerType = null;
     updateCard(null, 'v', confidence, 0);
     VS.camFrame.classList.add('gesture-detected');
     return;
@@ -2656,6 +2787,10 @@ function onResults(results) {
       const pct = Math.min(100, (VS.holdState[key].count / VS.holdState[key].threshold) * 100);
       updateCard(null, key, confidence, pct);
       VS.camFrame.classList.add('gesture-detected');
+
+      if (VS.holdState[key].count >= VS.holdState[key].threshold) {
+        triggerGestureSOS(key);
+      }
     } else {
       VS.holdState[key].count = Math.max(0, VS.holdState[key].count - 3);
     }
@@ -2693,6 +2828,9 @@ function toggleArmed() {
     VS.camFrame.classList.remove('armed', 'gesture-detected');
     VS.holdState.stop.count = 0;
     VS.holdState.fist.count = 0;
+    VS.sosTriggered = false;
+    VS.sosTriggerType = null;
+    VS.lastSosAt = 0;
     updateCard(null, null, 0, 0);
     if (typeof showToast === 'function') showToast('Vision Shield Disarmed', 'info');
   }
