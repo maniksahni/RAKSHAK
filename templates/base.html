@@ -2912,17 +2912,17 @@ fetch('/sos/notifications').then(r=>r.json()).then(data=>{
 </script>
 
 {% if current_user.is_authenticated and not current_user.is_admin %}
-<!-- ── SOS Countdown Overlay (Shake / Volume trigger) ──────────────────────── -->
+<!-- ── SOS Countdown Overlay ───────────────────────────────────────────────── -->
 <div id="sos-countdown-overlay" style="display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:linear-gradient(135deg,rgba(140,110,11,0.97),rgba(80,60,0,0.98));">
   <style>
     #sos-countdown-overlay.sos-pulse {  }
   </style>
   <div style="font-size:1rem;letter-spacing:0.25em;color:rgba(255,255,255,0.7);text-transform:uppercase;font-weight:700;">SOS Alert Triggered</div>
   <div id="sos-countdown-number" style="font-size:8rem;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 40px rgba(239,68,68,0.8);">5</div>
-  <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;">Sending SOS alert to your trusted contacts</div>
+  <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;">Sending SOS alert to your saved emails</div>
   <button id="sos-countdown-cancel" style="margin-top:24px;padding:14px 48px;background:rgba(255,255,255,0.15);color:#fff;border:2px solid rgba(255,255,255,0.4);border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:0.08em;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">CANCEL</button>
 </div>
-<script src="{{ url_for('static', filename='js/sos_triggers.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sos_triggers.js', v='20260506-disable-auto-sos') }}"></script>
 {% endif %}
 
 <script src="{{ url_for('static', filename='js/immersive-3d.js') }}"></script>

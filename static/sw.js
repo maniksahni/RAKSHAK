@@ -1,10 +1,10 @@
-// ── RAKSHAK Service Worker v2.0.0 ───────────────────────────────────────────
+// ── RAKSHAK Service Worker v2.2.0 ───────────────────────────────────────────
 // Multi-cache strategy, SOS background sync, enhanced push notifications
 
-const SW_VERSION = '2.1.0';
-const CACHE_STATIC  = 'rakshak-static-v3';
-const CACHE_DYNAMIC = 'rakshak-dynamic-v3';
-const CACHE_API     = 'rakshak-api-v3';
+const SW_VERSION = '2.2.0';
+const CACHE_STATIC  = 'rakshak-static-v4';
+const CACHE_DYNAMIC = 'rakshak-dynamic-v4';
+const CACHE_API     = 'rakshak-api-v4';
 const OFFLINE_URL   = '/offline';
 
 // Static app shell to pre-cache

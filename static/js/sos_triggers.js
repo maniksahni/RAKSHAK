@@ -14,6 +14,27 @@
     movement_sos_enabled: false,
     countdown_seconds: 5
   };
+  const AUTO_TRIGGER_KEYS = [
+    'shake_sos_enabled',
+    'volume_sos_enabled',
+    'triple_tap_sos_enabled',
+    'movement_sos_enabled'
+  ];
+  const AUTO_TRIGGER_RESET_VERSION = '2026-05-06-disable-accidental-auto-sos';
+
+  function resetLegacyAutoTriggers() {
+    try {
+      if (localStorage.getItem('rakshak_auto_trigger_reset_version') === AUTO_TRIGGER_RESET_VERSION) return;
+      AUTO_TRIGGER_KEYS.forEach(function (key) {
+        localStorage.setItem('rakshak_' + key, 'false');
+      });
+      localStorage.setItem('rakshak_auto_trigger_reset_version', AUTO_TRIGGER_RESET_VERSION);
+    } catch (_) {
+      // Storage may be unavailable in strict browser modes; defaults still keep auto triggers off.
+    }
+  }
+
+  resetLegacyAutoTriggers();
 
   function getSetting(key) {
     const raw = localStorage.getItem('rakshak_' + key);
