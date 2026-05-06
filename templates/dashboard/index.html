@@ -785,6 +785,56 @@
   </div>
 </div>
 
+<!-- ═══ DAILY INTEL BRIEF WIDGET ═══ -->
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="glass-card p-4" style="background:linear-gradient(145deg,rgba(139,92,246,.06),rgba(10,3,8,.97));border:1px solid rgba(139,92,246,.2);border-radius:20px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.8),rgba(247,231,206,.6),transparent);"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+        <!-- Trishul + title -->
+        <div style="display:flex;align-items:center;gap:16px;">
+          <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="" width="44" height="44"
+            style="filter:drop-shadow(0 0 10px rgba(139,92,246,.8));flex-shrink:0;">
+          <div>
+            <div style="font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.25em;color:rgba(139,92,246,.7);margin-bottom:4px;">
+              <span style="display:inline-block;">●</span> DAILY INTEL BRIEF // VALKYRIE PROTOCOL
+            </div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;">
+              Welcome back, <span style="background:linear-gradient(90deg,#8b5cf6,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ current_user.full_name.split()[0] }}</span>.
+              Your shield is <span style="color:#8b5cf6;">ACTIVE</span>.
+            </div>
+          </div>
+        </div>
+        <!-- Quick action chips -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="{{ url_for('safety_score.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);color:#8b5cf6;transition:all .3s;" onmouseover="this.style.background='rgba(139,92,246,.25)'" onmouseout="this.style.background='rgba(139,92,246,.12)'">
+            <i class="bi bi-speedometer2"></i> Safety Score
+          </a>
+          <a href="{{ url_for('danger.map_view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;transition:all .3s;" onmouseover="this.style.background='rgba(139,92,246,.2)'" onmouseout="this.style.background='rgba(139,92,246,.1)'">
+            <i class="bi bi-map-fill"></i> Danger Map
+          </a>
+          <a href="{{ url_for('safe_walk.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;transition:all .3s;" onmouseover="this.style.background='rgba(139,92,246,.18)'" onmouseout="this.style.background='rgba(139,92,246,.08)'">
+            <i class="bi bi-geo-alt-fill"></i> Safe Walk
+          </a>
+          <a href="{{ url_for('vision_shield.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:#93c5fd;transition:all .3s;" onmouseover="this.style.background='rgba(96,165,250,.18)'" onmouseout="this.style.background='rgba(96,165,250,.08)'">
+            <i class="bi bi-camera-video-fill"></i> Vision Shield
+          </a>
+          <a href="{{ url_for('xray_vision.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);color:#67e8f9;transition:all .3s;" onmouseover="this.style.background='rgba(34,211,238,.18)'" onmouseout="this.style.background='rgba(34,211,238,.08)'">
+            <i class="bi bi-badge-3d-fill"></i> X-Ray Vision
+          </a>
+        </div>
+      </div>
+      <!-- Status microchips row -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid rgba(139,92,246,.08);">
+        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">● SHIELD ACTIVE</span>
+        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">⚡ AES-256 ENCRYPTED</span>
+        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">🔱 VALKYRIE PROTOCOL v3</span>
+        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">📡 {{ trusted_contacts|length }} CONTACTS LINKED</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Top row: SOS + Risk + Status -->
 <div class="row g-4 mb-4">
 
@@ -940,60 +990,6 @@
         </div>
       </div>
 
-    </div>
-  </div>
-</div>
-
-
-
-
-
-<!-- ═══ DAILY INTEL BRIEF WIDGET ═══ -->
-<div class="row g-4 mb-4">
-  <div class="col-12">
-    <div class="glass-card p-4" style="background:linear-gradient(145deg,rgba(139,92,246,.06),rgba(10,3,8,.97));border:1px solid rgba(139,92,246,.2);border-radius:20px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.8),rgba(247,231,206,.6),transparent);"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-        <!-- Trishul + title -->
-        <div style="display:flex;align-items:center;gap:16px;">
-          <img src="{{ url_for('static', filename='img/rakshak_logo.png') }}" alt="" width="44" height="44"
-            style="filter:drop-shadow(0 0 10px rgba(139,92,246,.8));flex-shrink:0;">
-          <div>
-            <div style="font-family:'Courier New',monospace;font-size:.6rem;letter-spacing:.25em;color:rgba(139,92,246,.7);margin-bottom:4px;">
-              <span style="display:inline-block;">●</span> DAILY INTEL BRIEF // VALKYRIE PROTOCOL
-            </div>
-            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;">
-              Welcome back, <span style="background:linear-gradient(90deg,#8b5cf6,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">{{ current_user.full_name.split()[0] }}</span>.
-              Your shield is <span style="color:#8b5cf6;">ACTIVE</span>.
-            </div>
-          </div>
-        </div>
-        <!-- Quick action chips -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="{{ url_for('safety_score.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.25);color:#8b5cf6;transition:all .3s;" onmouseover="this.style.background='rgba(139,92,246,.25)'" onmouseout="this.style.background='rgba(139,92,246,.12)'">
-            <i class="bi bi-speedometer2"></i> Safety Score
-          </a>
-          <a href="{{ url_for('danger.map_view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);color:#8b5cf6;transition:all .3s;" onmouseover="this.style.background='rgba(139,92,246,.2)'" onmouseout="this.style.background='rgba(139,92,246,.1)'">
-            <i class="bi bi-map-fill"></i> Danger Map
-          </a>
-          <a href="{{ url_for('safe_walk.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;transition:all .3s;" onmouseover="this.style.background='rgba(139,92,246,.18)'" onmouseout="this.style.background='rgba(139,92,246,.08)'">
-            <i class="bi bi-geo-alt-fill"></i> Safe Walk
-          </a>
-          <a href="{{ url_for('vision_shield.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.2);color:#93c5fd;transition:all .3s;" onmouseover="this.style.background='rgba(96,165,250,.18)'" onmouseout="this.style.background='rgba(96,165,250,.08)'">
-            <i class="bi bi-camera-video-fill"></i> Vision Shield
-          </a>
-          <a href="{{ url_for('xray_vision.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);color:#67e8f9;transition:all .3s;" onmouseover="this.style.background='rgba(34,211,238,.18)'" onmouseout="this.style.background='rgba(34,211,238,.08)'">
-            <i class="bi bi-badge-3d-fill"></i> X-Ray Vision
-          </a>
-        </div>
-      </div>
-      <!-- Status microchips row -->
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid rgba(139,92,246,.08);">
-        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">● SHIELD ACTIVE</span>
-        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">⚡ AES-256 ENCRYPTED</span>
-        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">🔱 VALKYRIE PROTOCOL v3</span>
-        <span style="font-family:'Courier New',monospace;font-size:.6rem;padding:3px 10px;border-radius:4px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.18);color:#8b5cf6;">📡 {{ trusted_contacts|length }} CONTACTS LINKED</span>
-      </div>
     </div>
   </div>
 </div>
