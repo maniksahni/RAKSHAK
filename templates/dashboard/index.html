@@ -785,6 +785,165 @@
   </div>
 </div>
 
+<!-- Top row: SOS + Risk + Status -->
+<div class="row g-4 mb-4">
+
+  <!-- Giant SOS Button -->
+  <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+    <div class="glass-card sos-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center" style="transform:translateZ(10px);">
+      <!-- Radar sweep behind SOS -->
+      <div class="radar-sweep-container">
+        <div class="radar-sweep">
+          <div class="radar-ring-1"></div>
+          <div class="radar-ring-2"></div>
+          <div class="radar-crosshair-h"></div>
+          <div class="radar-crosshair-v"></div>
+        </div>
+      </div>
+      <p style="font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;transform:translateZ(15px);position:relative;z-index:1;">EMERGENCY TRIGGER</p>
+
+      <div class="sos-btn-wrap" id="sos-btn-wrap">
+        <div class="sonar-ring"></div>
+        <div class="sonar-ring"></div>
+        <div class="sonar-ring"></div>
+        <!-- Rotating dots ring -->
+        <div class="sos-rotating-dots"></div>
+        <div class="sos-rotating-dots-inner"></div>
+        <!-- Hold-progress SVG ring -->
+        <svg class="sos-hold-ring" viewBox="0 0 200 200" style="position:absolute;width:200px;height:200px;z-index:11;pointer-events:none;transform:rotate(-90deg);">
+          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(124,58,237,0.15)" stroke-width="4"/>
+          <circle id="sos-progress-ring" cx="100" cy="100" r="92" fill="none" stroke="url(#sosGrad)" stroke-width="5" stroke-linecap="round"
+            stroke-dasharray="578" stroke-dashoffset="578" style="transition:stroke-dashoffset 0.05s linear;filter:drop-shadow(0 0 6px rgba(124,58,237,0.8));"/>
+          <defs>
+            <linearGradient id="sosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#7c3aed"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <button class="sos-btn" id="sos-btn"
+          onmousedown="startSOSHold(event)" onmouseup="endSOSHold()" onmouseleave="endSOSHold()"
+          ontouchstart="startSOSHold(event)" ontouchend="endSOSHold()" ontouchcancel="endSOSHold()">
+          <span id="sos-btn-text">SOS</span>
+          <span class="sos-label" id="sos-label-text">HOLD 2s TO ACTIVATE</span>
+        </button>
+      </div>
+
+      <!-- Hold countdown text -->
+      <p style="font-size:0.9rem;font-weight:700;color:var(--red-primary);margin-top:1rem;min-height:1.4em;opacity:0;transition:opacity .2s;" id="sos-hold-status"></p>
+
+      <!-- Shield active indicator -->
+      <div class="shield-active-indicator">
+        <span class="shield-dot"></span>
+        SHIELD ACTIVE
+      </div>
+
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;" id="sos-status-text">
+        Ready - will capture GPS location automatically
+      </p>
+    </div>
+  </div>
+
+  <!-- Risk Level + Threat Status -->
+  <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
+    <div class="glass-card p-4 h-100 d-flex flex-column gap-3" style="transform:translateZ(10px);">
+      <div>
+        <p style="font-size:0.65rem;letter-spacing:0.22em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.6rem;font-family:'Courier New',monospace;">THREAT RISK LEVEL</p>
+        <!-- Visual gauge bar -->
+        <div style="margin-bottom:0.6rem;">
+          <div style="display:flex;justify-content:space-between;font-size:0.55rem;color:rgba(255,255,255,0.25);letter-spacing:0.12em;font-family:'Courier New',monospace;margin-bottom:5px;">
+            <span>LOW</span><span>MED</span><span>HIGH</span><span>CRIT</span>
+          </div>
+          <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;position:relative;">
+            <div id="risk-gauge-bar" style="height:100%;border-radius:10px;transition:width 1.2s cubic-bezier(.22,1,.36,1);
+              width:{% if current_user.risk_level=='critical' %}96{% elif current_user.risk_level=='high' %}66{% elif current_user.risk_level=='medium' %}36{% else %}8{% endif %}%;
+              background:{% if current_user.risk_level=='critical' %}linear-gradient(90deg,#7c3aed,#8b5cf6){% elif current_user.risk_level=='high' %}linear-gradient(90deg,#8b5cf6,#8b5cf6){% elif current_user.risk_level=='medium' %}linear-gradient(90deg,#8b5cf6,#8b5cf6){% else %}linear-gradient(90deg,#8b5cf6,#8b5cf6){% endif %};
+              box-shadow:0 0 12px {% if current_user.risk_level=='critical' %}rgba(124,58,237,.7){% elif current_user.risk_level=='high' %}rgba(139,92,246,.7){% elif current_user.risk_level=='medium' %}rgba(139,92,246,.7){% else %}rgba(139,92,246,.7){% endif %};">
+            </div>
+          </div>
+        </div>
+        <!-- Badge -->
+        <div id="risk-display">
+          <span class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:1.05rem;font-weight:800;">
+            <span style="width:9px;height:9px;border-radius:50%;background:currentColor;display:inline-block;margin-right:6px;"></span>
+            {{ current_user.risk_level|upper }}
+          </span>
+        </div>
+      </div>
+      <!-- Mini stat tiles -->
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+          <div style="font-size:0.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;margin-bottom:4px;">Missed</div>
+          <div style="font-size:1.4rem;font-weight:800;color:var(--white);line-height:1;" id="missed-count">{{ current_user.consecutive_missed_pings }}</div>
+        </div>
+        <div style="flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+          <div style="font-size:0.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;margin-bottom:4px;">Last Ping</div>
+          <div style="font-size:0.72rem;font-weight:700;color:var(--white);line-height:1.3;" id="last-ping-ts">{{ current_user.last_ping or 'Never' }}</div>
+        </div>
+      </div>
+      <!-- AI engine -->
+      <div class="ai-card-glow" style="margin-top:auto;">
+        <div class="d-flex align-items-center gap-3">
+          <div style="width:36px;height:36px;border-radius:9px;background:rgba(124,58,237,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="bi bi-cpu" style="color:var(--red-primary);font-size:1rem;"></i>
+          </div>
+          <div>
+            <p style="font-size:0.72rem;color:var(--red-primary);font-weight:600;margin:0;">Threat Engine Active</p>
+            <p style="font-size:0.6rem;color:var(--text-muted);margin:0;">Analyzing surroundings...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Stats - PREMIUM -->
+  <div class="col-md-4 animate-in">
+    <div class="row g-3 h-100">
+
+      <!-- Total Alerts -->
+      <div class="col-6">
+        <div class="psc" style="--psc-accent:139,92,246;">
+          <div class="psc-top-bar"></div>
+          <div class="psc-icon"><i class="bi bi-bell-fill" style="color:rgba(124,58,237,.8);"></i></div>
+          <div class="psc-num" id="total-alerts">{{ alerts|length }}</div>
+          <div class="psc-lbl">TOTAL ALERTS</div>
+        </div>
+      </div>
+
+      <!-- Active -->
+      <div class="col-6">
+        <div class="psc" style="--psc-accent:139,92,246;">
+          <div class="psc-top-bar"></div>
+          <div class="psc-icon"><i class="bi bi-exclamation-triangle-fill" style="color:rgba(139,92,246,.8);"></i></div>
+          <div class="psc-num" id="active-alerts" style="color:#8b5cf6;">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
+          <div class="psc-lbl">ACTIVE NOW</div>
+        </div>
+      </div>
+
+      <!-- Missed pings -->
+      <div class="col-6">
+        <div class="psc" style="--psc-accent:139,92,246;">
+          <div class="psc-top-bar"></div>
+          <div class="psc-icon"><i class="bi bi-wifi-off" style="color:rgba(139,92,246,.8);"></i></div>
+          <div class="psc-num" style="color:#8b5cf6;">{{ (current_user.consecutive_missed_pings or 0) }}</div>
+          <div class="psc-lbl">MISSED PINGS</div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div class="col-6">
+        <div class="psc" style="--psc-accent:139,92,246;">
+          <div class="psc-top-bar"></div>
+          <div class="psc-icon"><i class="bi bi-shield-check-fill" style="color:rgba(139,92,246,.8);"></i></div>
+          <div class="psc-num" style="color:#8b5cf6;font-size:1.3rem;">LIVE</div>
+          <div class="psc-lbl">SYS STATUS</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 
 
@@ -1194,167 +1353,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Top row: SOS + Risk + Status -->
-  <div class="row g-4 mb-4">
-
-    <!-- Giant SOS Button -->
-    <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-      <div class="glass-card sos-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center" style="transform:translateZ(10px);">
-        <!-- Radar sweep behind SOS -->
-        <div class="radar-sweep-container">
-          <div class="radar-sweep">
-            <div class="radar-ring-1"></div>
-            <div class="radar-ring-2"></div>
-            <div class="radar-crosshair-h"></div>
-            <div class="radar-crosshair-v"></div>
-          </div>
-        </div>
-        <p style="font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;transform:translateZ(15px);position:relative;z-index:1;">EMERGENCY TRIGGER</p>
-
-        <div class="sos-btn-wrap" id="sos-btn-wrap">
-          <div class="sonar-ring"></div>
-          <div class="sonar-ring"></div>
-          <div class="sonar-ring"></div>
-          <!-- Rotating dots ring -->
-          <div class="sos-rotating-dots"></div>
-          <div class="sos-rotating-dots-inner"></div>
-          <!-- Hold-progress SVG ring -->
-          <svg class="sos-hold-ring" viewBox="0 0 200 200" style="position:absolute;width:200px;height:200px;z-index:11;pointer-events:none;transform:rotate(-90deg);">
-            <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(124,58,237,0.15)" stroke-width="4"/>
-            <circle id="sos-progress-ring" cx="100" cy="100" r="92" fill="none" stroke="url(#sosGrad)" stroke-width="5" stroke-linecap="round"
-              stroke-dasharray="578" stroke-dashoffset="578" style="transition:stroke-dashoffset 0.05s linear;filter:drop-shadow(0 0 6px rgba(124,58,237,0.8));"/>
-            <defs>
-              <linearGradient id="sosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#8b5cf6"/>
-                <stop offset="100%" stop-color="#7c3aed"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <button class="sos-btn" id="sos-btn"
-            onmousedown="startSOSHold(event)" onmouseup="endSOSHold()" onmouseleave="endSOSHold()"
-            ontouchstart="startSOSHold(event)" ontouchend="endSOSHold()" ontouchcancel="endSOSHold()">
-            <span id="sos-btn-text">SOS</span>
-            <span class="sos-label" id="sos-label-text">HOLD 2s TO ACTIVATE</span>
-          </button>
-        </div>
-
-        <!-- Hold countdown text -->
-        <p style="font-size:0.9rem;font-weight:700;color:var(--red-primary);margin-top:1rem;min-height:1.4em;opacity:0;transition:opacity .2s;" id="sos-hold-status"></p>
-
-        <!-- Shield active indicator -->
-        <div class="shield-active-indicator">
-          <span class="shield-dot"></span>
-          SHIELD ACTIVE
-        </div>
-
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;" id="sos-status-text">
-          Ready — will capture GPS location automatically
-        </p>
-      </div>
-    </div>
-
-    <!-- Risk Level + Threat Status -->
-    <div class="col-md-4 animate-in tilt-card" style="transform-style:preserve-3d; transition:transform 0.1s ease-out;">
-      <div class="glass-card p-4 h-100 d-flex flex-column gap-3" style="transform:translateZ(10px);">
-        <div>
-          <p style="font-size:0.65rem;letter-spacing:0.22em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.6rem;font-family:'Courier New',monospace;">THREAT RISK LEVEL</p>
-          <!-- Visual gauge bar -->
-          <div style="margin-bottom:0.6rem;">
-            <div style="display:flex;justify-content:space-between;font-size:0.55rem;color:rgba(255,255,255,0.25);letter-spacing:0.12em;font-family:'Courier New',monospace;margin-bottom:5px;">
-              <span>LOW</span><span>MED</span><span>HIGH</span><span>CRIT</span>
-            </div>
-            <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;position:relative;">
-              <div id="risk-gauge-bar" style="height:100%;border-radius:10px;transition:width 1.2s cubic-bezier(.22,1,.36,1);
-                width:{% if current_user.risk_level=='critical' %}96{% elif current_user.risk_level=='high' %}66{% elif current_user.risk_level=='medium' %}36{% else %}8{% endif %}%;
-                background:{% if current_user.risk_level=='critical' %}linear-gradient(90deg,#7c3aed,#8b5cf6){% elif current_user.risk_level=='high' %}linear-gradient(90deg,#8b5cf6,#8b5cf6){% elif current_user.risk_level=='medium' %}linear-gradient(90deg,#8b5cf6,#8b5cf6){% else %}linear-gradient(90deg,#8b5cf6,#8b5cf6){% endif %};
-                box-shadow:0 0 12px {% if current_user.risk_level=='critical' %}rgba(124,58,237,.7){% elif current_user.risk_level=='high' %}rgba(139,92,246,.7){% elif current_user.risk_level=='medium' %}rgba(139,92,246,.7){% else %}rgba(139,92,246,.7){% endif %};">
-              </div>
-            </div>
-          </div>
-          <!-- Badge -->
-          <div id="risk-display">
-            <span class="risk-badge risk-{{ current_user.risk_level }}" style="font-size:1.05rem;font-weight:800;">
-              <span style="width:9px;height:9px;border-radius:50%;background:currentColor;display:inline-block;margin-right:6px;"></span>
-              {{ current_user.risk_level|upper }}
-            </span>
-          </div>
-        </div>
-        <!-- Mini stat tiles -->
-        <div style="display:flex;gap:8px;">
-          <div style="flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
-            <div style="font-size:0.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;margin-bottom:4px;">Missed</div>
-            <div style="font-size:1.4rem;font-weight:800;color:var(--white);line-height:1;" id="missed-count">{{ current_user.consecutive_missed_pings }}</div>
-          </div>
-          <div style="flex:1;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
-            <div style="font-size:0.55rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;margin-bottom:4px;">Last Ping</div>
-            <div style="font-size:0.72rem;font-weight:700;color:var(--white);line-height:1.3;" id="last-ping-ts">{{ current_user.last_ping or 'Never' }}</div>
-          </div>
-        </div>
-        <!-- AI engine -->
-        <div class="ai-card-glow" style="margin-top:auto;">
-          <div class="d-flex align-items-center gap-3">
-            <div style="width:36px;height:36px;border-radius:9px;background:rgba(124,58,237,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <i class="bi bi-cpu" style="color:var(--red-primary);font-size:1rem;"></i>
-            </div>
-            <div>
-              <p style="font-size:0.72rem;color:var(--red-primary);font-weight:600;margin:0;">Threat Engine Active</p>
-              <p style="font-size:0.6rem;color:var(--text-muted);margin:0;">Analyzing surroundings...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Stats — PREMIUM -->
-    <div class="col-md-4 animate-in">
-      <div class="row g-3 h-100">
-
-        <!-- Total Alerts -->
-        <div class="col-6">
-          <div class="psc" style="--psc-accent:139,92,246;">
-            <div class="psc-top-bar"></div>
-            <div class="psc-icon"><i class="bi bi-bell-fill" style="color:rgba(124,58,237,.8);"></i></div>
-            <div class="psc-num" id="total-alerts">{{ alerts|length }}</div>
-            <div class="psc-lbl">TOTAL ALERTS</div>
-          </div>
-        </div>
-
-        <!-- Active -->
-        <div class="col-6">
-          <div class="psc" style="--psc-accent:139,92,246;">
-            <div class="psc-top-bar"></div>
-            <div class="psc-icon"><i class="bi bi-exclamation-triangle-fill" style="color:rgba(139,92,246,.8);"></i></div>
-            <div class="psc-num" id="active-alerts" style="color:#8b5cf6;">{{ alerts|selectattr('status','eq','active')|list|length }}</div>
-            <div class="psc-lbl">ACTIVE NOW</div>
-          </div>
-        </div>
-
-        <!-- Missed pings -->
-        <div class="col-6">
-          <div class="psc" style="--psc-accent:139,92,246;">
-            <div class="psc-top-bar"></div>
-            <div class="psc-icon"><i class="bi bi-wifi-off" style="color:rgba(139,92,246,.8);"></i></div>
-            <div class="psc-num" style="color:#8b5cf6;">{{ (current_user.consecutive_missed_pings or 0) }}</div>
-            <div class="psc-lbl">MISSED PINGS</div>
-          </div>
-        </div>
-
-        <!-- System Status -->
-        <div class="col-6">
-          <div class="psc" style="--psc-accent:139,92,246;">
-            <div class="psc-top-bar"></div>
-            <div class="psc-icon"><i class="bi bi-shield-check-fill" style="color:rgba(139,92,246,.8);"></i></div>
-            <div class="psc-num" style="color:#8b5cf6;font-size:1.3rem;">LIVE</div>
-            <div class="psc-lbl">SYS STATUS</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-
 
   <!-- Section Gap -->
   <div style="height:8px;"></div>
