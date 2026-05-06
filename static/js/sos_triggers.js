@@ -1,8 +1,8 @@
 /**
  * RAKSHAK - automatic SOS trigger guard.
  *
- * Automatic/background SOS triggers are permanently disabled. SOS countdowns
- * should only start from explicit UI controls that call window.triggerGlobalSOS.
+ * Background and sensor-driven SOS triggers are permanently disabled.
+ * Direct user actions such as the SOS button or Vision Shield gestures remain allowed.
  */
 (function () {
   'use strict';
@@ -53,7 +53,7 @@
   window.openSOSTriggerSettings = function () {
     disableAutoTriggers();
     if (typeof showToast === 'function') {
-      showToast('Automatic SOS triggers are disabled. Use the SOS button manually.', 'info', 7000);
+      showToast('Automatic sensor-based SOS triggers are disabled. Use the SOS button or Vision Shield gesture.', 'info', 7000);
     }
   };
 })();

@@ -1085,7 +1085,7 @@ a,button{cursor:none}
           <div class="tl">engine.<span class="tf">set_interval</span>(seconds=<span class="tn">120</span>)</div>
           <div class="tl">engine.<span class="tf">set_threshold</span>(missed=<span class="tn">3</span>)</div>
           <div class="tl">&nbsp;</div>
-          <div class="tl"><span class="tc_"># Manual SOS only; missed pings raise risk</span></div>
+          <div class="tl"><span class="tc_"># Direct SOS only; missed pings raise risk</span></div>
           <div class="tl"><span class="tk">async def</span> <span class="tf">monitor</span>(user):</div>
           <div class="tl">&nbsp;&nbsp;<span class="tk">if</span> user.missed_pings >= <span class="tn">3</span>:</div>
           <div class="tl">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk">await</span> engine.<span class="tf">raise_risk</span>(user)</div>
@@ -1180,12 +1180,12 @@ a,button{cursor:none}
         <div class="hw-heartbeat-line"><svg viewBox="0 0 200 60" preserveAspectRatio="none"><polyline points="0,30 30,30 40,10 50,50 60,30 90,30 100,10 110,50 120,30 150,30 160,10 170,50 180,30 200,30" fill="none" stroke="rgba(34,211,238,.7)" stroke-width="2"/></svg></div>
         <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> All contacts notified</div>
         <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> GPS locked &amp; streaming</div>
-        <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> Manual SOS ready</div>
+        <div class="hw-status-row"><span class="hw-status-dot hw-dot-green"></span> Direct SOS ready</div>
   </div>
       <div class="hw-step">Step 3</div>
       <div class="hw-i"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
       <h3>Stay Protected</h3>
-      <p>RAKSHAK watches 24/7 and keeps one-tap SOS ready. Alerts send only when you manually press SOS.</p>
+      <p>RAKSHAK watches 24/7 and keeps direct SOS ready. Alerts send when you press SOS or trigger an approved gesture flow.</p>
     </div>
   </div>
 </section>

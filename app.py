@@ -43,7 +43,8 @@ def _scheduled_check_missed():
     """
     Runs every 2 minutes via APScheduler.
     Checks all active users for missed heartbeats and escalates risk only.
-    SOS is never fired automatically; users must press SOS manually.
+    Missed heartbeats never fire SOS automatically; only direct UI actions
+    such as the navbar button or Vision Shield gestures can trigger SOS.
     """
     try:
         from datetime import datetime, timedelta

@@ -113,6 +113,7 @@ Optional:
 KEEP_ALIVE_URL=https://rakshak.up.railway.app/ping
 ALLOW_DEV_LOGIN=false
 VALKYRIE_PIN=1234
+RATELIMIT_STORAGE_URI=redis://default:password@host:6379/0
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=
