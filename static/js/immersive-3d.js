@@ -18,6 +18,11 @@
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
+  function pointerFxEnabled() {
+    if (window.__rakshakPerfMode) return !!window.__rakshakPerfMode.enableHoverFx;
+    return !motionReduced() && window.matchMedia('(pointer: fine)').matches;
+  }
+
   function findInnerFace(host) {
     return host.querySelector('.glass-card, .stat-card, .glass-section, .lp-card-inner');
   }
@@ -34,7 +39,7 @@
 
   function bindPointer(s) {
     s.el.addEventListener('mousemove', function (e) {
-      if (motionReduced()) return;
+      if (!pointerFxEnabled()) return;
       var r = s.el.getBoundingClientRect();
       s.tx = (e.clientX - r.left) / r.width * 2 - 1;
       s.ty = (e.clientY - r.top) / r.height * 2 - 1;
@@ -66,33 +71,17 @@
   }
 
   function registerGlassCards() {
-    document.querySelectorAll('.glass-card:not(.sos-card):not(.no-immersive-tilt)').forEach(function (card) {
-      if (card.closest('.tilt-card') || card.dataset.immersive3dBound) return;
-      card.dataset.immersive3dBound = '1';
-      var s = {
-        el: card,
-        inner: null,
-        tx: 0,
-        ty: 0,
-        cx: 0,
-        cy: 0,
-        maxRx: GLASS_MAX_RX,
-        maxRy: GLASS_MAX_RY,
-        scale3d: false
-      };
-      bindPointer(s);
-      states.push(s);
-    });
+    return;
   }
 
   function collect() {
-    if (motionReduced()) return;
+    if (!pointerFxEnabled()) return;
     registerTiltCards();
     registerGlassCards();
   }
 
   function tick() {
-    if (motionReduced()) {
+    if (!pointerFxEnabled()) {
       states.forEach(resetState);
       return;
     }
@@ -168,7 +157,7 @@
     collect();
     if (window.matchMedia) {
       window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', function () {
-        if (!motionReduced()) collect();
+        if (pointerFxEnabled()) collect();
       });
     }
     document.addEventListener('visibilitychange', function () {

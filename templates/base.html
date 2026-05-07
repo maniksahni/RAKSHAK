@@ -50,28 +50,55 @@
       --red-dark: #7c3aed !important;
     }
   </style>
+  {% if not current_user.is_authenticated %}
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  {% endif %}
 </head>
 <body class="{% if current_user.is_authenticated %}is-auth{% else %}is-public{% endif %}">
 
+  <script>
+    window.__rakshakPerfMode = (function () {
+      var reduced = typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var coarse = typeof window.matchMedia === 'function' &&
+        window.matchMedia('(pointer: coarse)').matches;
+      var saveData = !!(navigator.connection && navigator.connection.saveData);
+      var lowPower = saveData ||
+        (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+        (navigator.deviceMemory && navigator.deviceMemory <= 4);
+      var authPage = {{ 'true' if current_user.is_authenticated else 'false' }};
+      return {
+        reducedMotion: reduced,
+        coarsePointer: coarse,
+        lowPower: lowPower,
+        authPage: authPage,
+        enableParticles: !authPage && !reduced && !lowPower,
+        enableHoverFx: !reduced && !coarse && !lowPower
+      };
+    })();
+  </script>
+
   <!-- GLOBAL PARTICLES BACKGROUND -->
+  {% if not current_user.is_authenticated %}
   <div id="particles-js" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; opacity:0.3; pointer-events:none;"></div>
+  {% endif %}
   
   <script>
-    if (window.particlesJS && document.getElementById('particles-js')) {
+    if (window.__rakshakPerfMode && window.__rakshakPerfMode.enableParticles &&
+        window.particlesJS && document.getElementById('particles-js')) {
       particlesJS('particles-js', {
         particles: {
-          number: { value: 30, density: { enable: true, value_area: 800 } },
+          number: { value: 14, density: { enable: true, value_area: 1000 } },
           color: { value: '#7c3aed' },
           shape: { type: 'circle' },
-          opacity: { value: 0.3, random: true },
+          opacity: { value: 0.22, random: true },
           size: { value: 2, random: true },
-          line_linked: { enable: true, distance: 150, color: '#8b5cf6', opacity: 0.2, width: 1 },
-          move: { enable: true, speed: 1.5, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+          line_linked: { enable: true, distance: 140, color: '#8b5cf6', opacity: 0.14, width: 1 },
+          move: { enable: true, speed: 0.8, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
         },
         interactivity: {
           detect_on: 'window',
-          events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
+          events: { onhover: { enable: false, mode: 'grab' }, onclick: { enable: false, mode: 'push' }, resize: true },
           modes: { grab: { distance: 140, line_linked: { opacity: 0.8 } }, push: { particles_nb: 3 } }
         },
         retina_detect: true

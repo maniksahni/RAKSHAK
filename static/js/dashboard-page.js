@@ -4,6 +4,12 @@
  * Requires window.RAKSHAK_DATA to be set before this script loads
  */
 
+function rakshakHoverFxEnabled() {
+  if (window.__rakshakPerfMode) return !!window.__rakshakPerfMode.enableHoverFx;
+  return !(typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
 /* ── Live Clock / Greeting (new premium header) ── */
 (function(){
   const clockEl = document.getElementById('dsh-clock');
@@ -327,14 +333,16 @@ setTimeout(fetchNearbyPlaces, 800);
 
 /* ── Mouse Parallax for Background (throttled 30fps, pauses when hidden) ── */
 (function(){
+  if (!rakshakHoverFxEnabled()) return;
   let mouseX=0,mouseY=0,currentX=0,currentY=0,rafId=null,lastFrame=0;
   const grid=document.getElementById('cyber-grid'), orbRed=document.getElementById('orb-red'), orbBlue=document.getElementById('orb-blue'), orbPurple=document.getElementById('orb-purple');
+  if (!grid && !orbRed && !orbBlue && !orbPurple) return;
   document.addEventListener('mousemove',e=>{ mouseX=(e.clientX/window.innerWidth-0.5)*2; mouseY=(e.clientY/window.innerHeight-0.5)*2; });
   function animateParallax(ts){
     rafId=null;
     if(ts-lastFrame<32){rafId=requestAnimationFrame(animateParallax);return;}
     lastFrame=ts;
-    if(typeof window.matchMedia==='function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    if(!rakshakHoverFxEnabled()){
       if(!document.hidden)rafId=requestAnimationFrame(animateParallax); return;
     }
     if (Math.abs(mouseX - currentX) < 0.001 && Math.abs(mouseY - currentY) < 0.001) {
@@ -355,6 +363,7 @@ setTimeout(fetchNearbyPlaces, 800);
 
 /* ── SOS Particle Effect ── */
 (function(){
+  if (!rakshakHoverFxEnabled()) return;
   const sosWrap=document.getElementById('sos-btn-wrap'); if(!sosWrap) return;
   let particleInterval=null;
   function spawnParticle(){
